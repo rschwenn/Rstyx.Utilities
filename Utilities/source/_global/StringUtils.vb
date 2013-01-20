@@ -1,0 +1,505 @@
+﻿
+Imports PGK.Extensions
+
+'Namespace Strings
+    
+    ''' <summary> Static utility methods for dealing with strings. </summary>
+    Public NotInheritable Class StringUtils
+        
+        #Region "Private Fields"
+            
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.StringUtils")
+            
+        #End Region
+        
+        #Region "Constructor"
+            
+            Private Sub New
+                'Hides the Constructor
+            End Sub
+            
+        #End Region
+        
+        #Region "General Methods"
+            
+            ''' <summary> String formatting like in C or awk (does not support %e, %E, %g, %G). </summary>
+             ''' <param name="FormatString"> A String like "test: %s  %11.3f" </param>
+             ''' <param name="Parms">        Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
+             ''' <returns>                   The FormatString with expanded variables. </returns>
+            Public Shared Function sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
+                Return sprintf(False, FormatString, Parms)
+            End Function
+            
+            ''' <summary> String formatting like in C or awk (does not support %e, %E, %g, %G). </summary>
+             ''' <param name="FormatString"> A String like "test: %s  %11.3f" </param>
+             ''' <param name="Parms">        Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
+             ''' <param name="ThrowOnError"> If True, an occuring exception is thrown. Otherwise it's catched and logged and an empty string is returned. </param>
+             ''' <returns>                   The FormatString with expanded variables. </returns>
+             ''' <remarks> 
+              ''' <para>
+              ''' Original written in VB6 by Phlip Bradbury (phlipping@yahoo.com) 
+              ''' (http://www.freevbcode.com/ShowCode.asp?ID=5014)
+              ''' </para>
+              ''' <para>
+              ''' <list type="table">
+              ''' <listheader> <description> <b>Escape sequences:</b> </description></listheader>
+              ''' <item> <term> \a    </term>  <description> Alert (Bel)           </description></item>
+              ''' <item> <term> \b    </term>  <description> Backspace             </description></item>
+              ''' <item> <term> \f    </term>  <description> Form Feed             </description></item>
+              ''' <item> <term> \n    </term>  <description> Newline (Line Feed)   </description></item>
+              ''' <item> <term> \r    </term>  <description> Carriage Return       </description></item>
+              ''' <item> <term> \t    </term>  <description> Horizontal Tab        </description></item>
+              ''' <item> <term> \v    </term>  <description> Verical Tab           </description></item>
+              ''' <item> <term> \ddd  </term>  <description> Octal character       </description></item>
+              ''' <item> <term> \xdd  </term>  <description> Hexadecimal character </description></item>
+              ''' <item> <term> \"    </term>  <description> not supported         </description></item>
+              ''' <item> <term> \'    </term>  <description> not supported         </description></item>
+              ''' </list>
+              ''' </para>
+              ''' <para>
+              ''' <b>Parameters:</b> <br />
+              ''' %[flags][width][.precision]formattype
+              ''' </para>
+              ''' <para>
+              ''' <list type="table">
+              ''' <listheader> <description> <b>Flags:</b> </description></listheader>
+              ''' <item> <term> -     </term>  <description> left justify                </description></item>
+              ''' <item> <term> +     </term>  <description> prefix with sign            </description></item>
+              ''' <item> <term> #     </term>  <description> prefixes o,x,X with 0 or 0x </description></item>
+              ''' <item> <term> blank </term>  <description> Prefixes a space character to the result if the first character of 
+              '''                                            a signed conversion is not a sign. Ignored if the "+"-option appear. </description></item>
+              ''' </list>
+              ''' </para>
+              ''' <para>
+              ''' <list type="table">
+              ''' <listheader> <description> <b>Format types:</b> </description></listheader>
+              ''' <item> <term> %d, %i </term>  <description> signed number                          </description></item>
+              ''' <item> <term> %u     </term>  <description> unsigned number                        </description></item>
+              ''' <item> <term> %o     </term>  <description> unsigned octal number                  </description></item>
+              ''' <item> <term> %x, %X </term>  <description> unsigned hexadecimal number            </description></item>
+              ''' <item> <term> %f     </term>  <description> floating point number without exponent </description></item>
+              ''' <item> <term> %c     </term>  <description> single character (from ASCII value)    </description></item>
+              ''' <item> <term> %s     </term>  <description> String                                 </description></item>
+              ''' <item> <term> %e, %E </term>  <description> not supported                          </description></item>
+              ''' <item> <term> %g, %G </term>  <description> not supported                          </description></item>
+              ''' </list>
+              ''' </para>
+              ''' <para>
+              ''' <b>Hints:</b>
+              ''' </para>
+              ''' <para>
+              ''' So e.g. %-6.3d is a number with a minimum of 3 digits left justified in a field a minimum of 6 characters wide.
+              ''' </para>
+              ''' <para>
+              ''' Use \\ to type a backslash and either \% or %% to type a percent sign.
+              ''' </para>
+              ''' <para>
+              ''' Note: %u treats as short (VB As Integer) when converting negative numbers. Values below -32768 will look odd.
+              ''' %o, %x and %X, however, treat as long.
+              ''' </para>
+              ''' <para>
+              ''' Finally %c is sent the ascii value of the character to print, if you want to send a single-character string 
+              ''' use Asc() or %s, so:
+              ''' </para>
+              ''' <para>
+              ''' SPrintF("%s", Char) = SPrintF("%c", Asc(Char)) and
+              ''' </para>
+              ''' <para>
+              ''' SPrintF("%s", Chr(Num)) = SPrintF("%c", Num)
+              ''' </para>
+             ''' </remarks>
+            Public Shared Function sprintf(ByVal ThrowOnError As Boolean, ByVal FormatString As String, ParamArray Parms() As Object) As String
+                
+                Dim Ret           As String = String.Empty
+                Dim OneChar       As Char
+                Dim NumberBuffer  As String
+                Dim ParamUpTo     As Long
+                Dim Flags         As String
+                Dim Width         As String
+                Dim Precision     As String
+                Dim Prec          As String
+                Dim Value         As Double
+                Dim AddStr        As String
+                Dim ParmX         As Object = Nothing
+                'for calculating %e and %g
+                'Dim Mantissa      As 
+                'Dim Exponent      As 
+                'for calculating %g
+                'Dim AddStrPercentF , AddStrPercentE
+                Dim FlatParms()   As Object = new Object() {}
+                Dim VParms()      As Object
+                Dim FormatSave    As String = FormatString
+                
+                Try
+                    'convert encapsulated arrays into one flat parameter array.
+                    VParms = Parms
+                    FlatParms = ArrayUtils.getFlatArray(VParms)
+                    'ReDim FlatParms(UBound(Parms))
+                    'FlatParms = Parms
+                    ParamUpTo = LBound(FlatParms)
+                    
+                    While (Not String.IsNullOrEmpty(FormatString))
+                      OneChar = NextChar(FormatString)
+                      Select Case OneChar
+                        
+                        Case "\"
+                          OneChar = NextChar(FormatString)
+                          Select Case OneChar
+                            Case "a" 'alert (bell)
+                                Ret = Ret & Chr(7)
+                            Case "b" 'backspace
+                                Ret = Ret & vbBack
+                            Case "f" 'formfeed
+                                Ret = Ret & vbFormFeed
+                            Case "n" 'newline (linefeed)
+                                Ret = Ret & vbNewLine
+                            Case "r" 'carriage return
+                                Ret = Ret & vbCr
+                            Case "t" 'horizontal tab
+                                Ret = Ret & vbTab
+                            Case "v" 'vertical tab
+                                Ret = Ret & vbVerticalTab
+                            Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"   'octal character
+                                NumberBuffer = OneChar
+                                While (InStr("01234567", FormatString.Left(1)) And (FormatString.Length > 0))
+                                    NumberBuffer = NumberBuffer & NextChar(FormatString)
+                                End While
+                                Ret = Ret & Chr(GeoMath.Oct2Dec(NumberBuffer))
+                            Case "x" 'hexadecimal character
+                                NumberBuffer = ""
+                                While (InStr("0123456789ABCDEFabcdef", FormatString.Left(1)) And (FormatString.Length > 0))
+                                    NumberBuffer = NumberBuffer & NextChar(FormatString)
+                                End While
+                                Ret = Ret & Chr(GeoMath.Hex2Dec(NumberBuffer))
+                            Case "\" 'backslash
+                                Ret = Ret & "\"
+                            Case "%" 'percent
+                                Ret = Ret & "%"
+                            Case Else 'unrecognised
+                                Ret = Ret & OneChar
+                                Throw New System.Exception(String.Format("sprintf(): Nicht erkannte Escape Sequenz: \{0}", OneChar))
+                          End Select
+                        
+                        Case "%"
+                          OneChar = NextChar(FormatString)
+                          If OneChar = "%" Then
+                            Ret = Ret & "%"
+                          Else
+                            Flags = ""
+                            Width = ""
+                            Precision = ""
+                            While (OneChar = "-" Or OneChar = "+" Or OneChar = "#" Or OneChar = " ")
+                              Flags = Flags & OneChar
+                              OneChar = NextChar(FormatString)
+                            End While
+                            'While IsNumeric(OneChar)
+                            While (Char.IsNumber(OneChar))
+                              Width = Width & OneChar
+                              OneChar = NextChar(FormatString)
+                            End While
+                            If OneChar = "." Then
+                              OneChar = NextChar(FormatString)
+                              'While IsNumeric(OneChar)
+                              While (Char.IsNumber(OneChar))
+                                Precision = Precision & OneChar
+                                OneChar = NextChar(FormatString)
+                              End While
+                            End If
+                            
+                            ParmX = FlatParms(ParamUpTo)
+                            if ((ParmX is Nothing) OrElse ParmX.ToString.IsEmpty()) then
+                              AddStr = ""
+                            else
+                                Select Case OneChar
+                                  
+                                  Case "d", "i" 'signed decimal
+                                    Value = CLng(ParmX)
+                                    AddStr = CStr(System.Math.Abs(Value))
+                                    If (Not Precision.IsEmpty()) Then
+                                      If CDbl(Precision) > AddStr.Length Then
+                                        'AddStr = String(CDbl(Precision) - AddStr.Length, "0") & AddStr
+                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                      End If
+                                    End If
+                                    If Value < 0 Then
+                                      AddStr = "-" & AddStr
+                                    ElseIf InStr(Flags, "+") Then
+                                      AddStr = "+" & AddStr
+                                    ElseIf InStr(Flags, " ") Then
+                                      AddStr = " " & AddStr
+                                    End If
+                                  
+                                  Case "u" 'unsigned decimal
+                                    Value = CLng(ParmX)
+                                    If Value < 0 Then Value = Value + 65536
+                                    AddStr = CStr(Value)
+                                    If Precision <> "" Then
+                                      If CDbl(Precision) > AddStr.Length Then
+                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                      End If
+                                    End If
+                                  
+                                  Case "o" 'unsigned octal value
+                                    Value = CLng(ParmX)
+                                    AddStr = Oct(Value)
+                                    If Precision <> "" Then
+                                      If CDbl(Precision) > AddStr.Length Then
+                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                      End If
+                                    End If
+                                    If InStr(Flags, "#") Then AddStr = "0" & AddStr
+                                  
+                                  Case "x", "X" 'unsigned hexadecimal value
+                                    Value = CLng(ParmX)
+                                    AddStr = Hex(Value)
+                                    If OneChar = "x" Then AddStr = LCase(AddStr)
+                                    If Precision <> "" Then
+                                      If CDbl(Precision) > AddStr.Length Then
+                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                      End If
+                                    End If
+                                    If InStr(Flags, "#") Then AddStr = "0x" & AddStr
+                                  
+                                  Case "f" 'float w/o exponent
+                                    Value = CDbl(ParmX)
+                                    If Precision = "" Then Precision = "6"
+                                    'AddStr = Format(Abs(Value), "0." & String(Precision, "0"))
+                                    AddStr = FormatNumber(System.Math.Abs(Value), Precision, true, false, false)
+                                            'FormatNumber(Ausdruck[, AnzDezimalstellen[, FührendeNull[, KlammernFürNegativeWerte[, ZiffernGruppieren]]]])
+                                            'Die letzten 3 Parameter akzeptieren folgende Werte:
+                                            '-1 = true
+                                            ' 0 = false
+                                            '-2 = Ländereinstellungen des Computers verwenden
+                                    If Value < 0 Then
+                                      AddStr = "-" & AddStr
+                                    ElseIf InStr(Flags, "+") Then
+                                      AddStr = "+" & AddStr
+                                    ElseIf InStr(Flags, " ") Then
+                                      AddStr = " " & AddStr
+                                    End If
+                                  
+                                  'Case "e", "E" 'float w/ exponent
+                                    'Value = CDbl(ParmX)
+                                    'Mantissa = Abs(Value)
+                                    'Exponent = 0
+                                    'If Mantissa > 10 Then
+                                    '  While Mantissa >= 10
+                                    '    Mantissa = Mantissa / 10
+                                    '    Exponent = Exponent + 1
+                                    '  End While
+                                    'Else
+                                    '  While Mantissa < 1
+                                    '    Mantissa = Mantissa * 10
+                                    '    Exponent = Exponent - 1
+                                    '  End While
+                                    'End If
+                                    'If Precision = "" Then Precision = "6"
+                                    ''AddStr = Format(Mantissa, "0." & String(Precision, "0"))
+                                    'AddStr = FormatNumber(Mantissa, Precision, -1)
+                                    'If Right(AddStr, 1) = "." Then AddStr = Left(AddStr, AddStr.Length - 1)
+                                    'AddStr = AddStr & OneChar & IIf(Exponent < 0, "-", "+") & Format(Exponent, "000")
+                                    'If Value < 0 Then
+                                    '  AddStr = "-" & AddStr
+                                    'ElseIf InStr(Flags, "+") Then
+                                    '  AddStr = "+" & AddStr
+                                    'ElseIf InStr(Flags, "-") = 0 Then
+                                    '  AddStr = " " & AddStr
+                                    'End If
+                                  'Case "g", "G" 'float w/ or w/o exponent, shorter
+                                    ''first calculate without
+                                    'Value = CDbl(ParmX)
+                                    'If Precision = "" Then Precision = "6"
+                                    'AddStrPercentF = Format(Abs(Value), "0." & String(Precision, "#"))
+                                    'If Value < 0 Then
+                                    '  AddStrPercentF = "-" & AddStrPercentF
+                                    'ElseIf InStr(Flags, "+") Then
+                                    '  AddStrPercentF = "+" & AddStrPercentF
+                                    'ElseIf InStr(Flags, "-") = 0 Then
+                                    '  AddStrPercentF = " " & AddStrPercentF
+                                    'End If
+                                    ''then calculate with
+                                    'Value = CDbl(ParmX)
+                                    'Mantissa = Abs(Value)
+                                    'Exponent = 0
+                                    'If Mantissa > 10 Then
+                                    '  While Mantissa >= 10
+                                    '    Mantissa = Mantissa / 10
+                                    '    Exponent = Exponent + 1
+                                    '  End While
+                                    'Else
+                                    '  While Mantissa < 1
+                                    '    Mantissa = Mantissa * 10
+                                    '    Exponent = Exponent - 1
+                                    '  End While
+                                    'End If
+                                    'If Precision = "" Then Precision = "6"
+                                    'AddStrPercentE = Format(Mantissa, "0." & String(Precision, "#"))
+                                    'If Right(AddStrPercentE, 1) = "." Then AddStrPercentE = Left(AddStrPercentE, AddStrPercentE.Length - 1)
+                                    'AddStrPercentE = AddStrPercentE & IIf(OneChar = "G", "E", "e") & IIf(Exponent < 0, "-", "+") & Format(Exponent, "000")
+                                    'If Value < 0 Then
+                                    '  AddStrPercentE = "-" & AddStrPercentE
+                                    'ElseIf InStr(Flags, "+") Then
+                                    '  AddStrPercentE = "+" & AddStrPercentE
+                                    'ElseIf InStr(Flags, "-") = 0 Then
+                                    '  AddStrPercentE = " " & AddStrPercentE
+                                    'End If
+                                    ''find shortest
+                                    'AddStr = IIf(AddStrPercentF.Length > AddStrPercentE.Length, AddStrPercentE, AddStrPercentF)
+                                    
+                                  Case "c" 'single character, passed ASCII value
+                                    AddStr = Chr(CByte(ParmX))
+                                  
+                                  Case "s" 'string
+                                    AddStr = CStr(ParmX)
+                                  
+                                  Case Else
+                                    If (Precision <> "") then prec = "." & Precision else prec = ""
+                                    Throw New System.Exception(String.Format("sprintf(): Nicht erkannte Parameter Sequenz: %{0}{1}{2}{3}", Flags, Width, prec, OneChar))
+                                    AddStr = "%" & Flags & Width & prec & OneChar
+                                End Select
+                              
+                            end if
+                            
+                            If Width <> "" Then
+                              If cint(Width) > AddStr.Length Then
+                                If InStr(Flags, "-") Then
+                                  AddStr = AddStr & Space(Width - AddStr.Length)
+                                Else
+                                  AddStr = Space(Width - AddStr.Length) & AddStr
+                                End If
+                              End If
+                            End If
+                            ParamUpTo = ParamUpTo + 1
+                            Ret = Ret & AddStr
+                          End If
+                        Case Else
+                          Ret = Ret & OneChar
+                      End Select
+                    End While
+                    
+                Catch ex As System.Exception
+                    If (ThrowOnError) Then
+                        Throw ex
+                    Else
+                        Ret = String.Empty
+                        Logger.logError(ex, String.Format("sprintf(): Fehler (FormatString = '{0}')", FormatSave))
+                    End If
+                End Try
+                
+                Return Ret
+            End Function
+            
+        #End Region
+        
+        #Region "Private Members"
+            
+            ''' <summary> Returns the first character from a buffer string and removes it from the buffer. </summary>
+             ''' <param name="Buffer"> The working string. </param>
+            Private Shared Function NextChar(ByRef Buffer As String) As String
+                Dim FirstChar = Buffer.Substring(0, 1)
+                Buffer = Buffer.Substring(1)
+                Return FirstChar
+            End Function
+            
+        #End Region
+        
+    End Class
+    
+    ''' <summary> Extension methods for strings or other types dealing with strings. </summary>
+    Public Module StringExtensions
+        
+        ''' <summary>
+        ''' Returns the left part of the string up to the first occurrence of the Delimiter character.
+        ''' If Delimiter isn't found the whole string is returned.
+        ''' </summary>
+         ''' <param name="Value"> Input String. </param>
+         ''' <param name="Delimiter"> String to stop at. </param>
+         ''' <param name="IncludeDelimiter"> If True, the returned string containes the Delimiter, otherwise it doesn't. </param>
+         ''' <returns> Truncated string. </returns>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function Left(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
+            Dim idx  As Integer = Value.IndexOf(Delimiter)
+            If (idx >= 0) Then
+                If (IncludeDelimiter) Then idx = idx + Delimiter.Length
+                Value = Value.Substring(0, idx)
+            End If
+            Return Value
+        End Function
+        
+        ''' <summary>
+        ''' Returns the right part of the string up to the first occurrence of the Delimiter character.
+        ''' If Delimiter isn't found the whole string is returned.
+        ''' </summary>
+         ''' <param name="Value"> Input String. </param>
+         ''' <param name="Delimiter"> String to stop at. </param>
+         ''' <param name="IncludeDelimiter"> If True, the returned string containes the Delimiter, otherwise it doesn't. </param>
+         ''' <returns> Truncated string. </returns>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function Right(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
+            Dim idx  As Integer = Value.LastIndexOf(Delimiter)
+            If (idx >= 0) Then
+                If (Not IncludeDelimiter) Then idx = idx + Delimiter.Length
+                Value = Value.Substring(idx)
+            End If
+            Return Value
+        End Function
+        
+        ''' <summary> Returns the substring between the two Delimiter characters. </summary>
+         ''' <param name="Value"> Input String. </param>
+         ''' <param name="LeftDelimiter"> String to start. </param>
+         ''' <param name="RightDelimiter"> String to stop at. </param>
+         ''' <param name="IncludeDelimiters"> If True, the returned string containes the Delimiters, otherwise it doesn't. </param>
+         ''' <returns> Truncated string. </returns>
+         ''' <remarks>
+         ''' Returns the substring between the first occurrence of the left Delimiter string
+         ''' and the following first occurrence of the right Delimiter string.
+         ''' If left Delimiter isn't found the result string starts at the beginning of input string.
+         ''' If right Delimiter isn't found the result string ends at the end of input string.
+         ''' </remarks>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function Substring(ByVal Value As String, LeftDelimiter As String, RightDelimiter As String, Optional IncludeDelimiters As Boolean = False) As String
+            Dim idx  As Integer = Value.IndexOf(LeftDelimiter)
+            ' Cut left
+            If (idx >= 0) Then
+                If (Not IncludeDelimiters) Then idx = idx + LeftDelimiter.Length
+                Value = Value.Substring(idx)
+            End If
+            ' Cut right
+            If (IncludeDelimiters) Then
+                Value = LeftDelimiter & Value.Substring(LeftDelimiter.Length).Left(RightDelimiter, IncludeDelimiters)
+            Else
+                Value = Value.Left(RightDelimiter, IncludeDelimiters)
+            End If
+            
+            Return Value
+        End Function
+        
+        ''' <summary> Encloses the string in extra 2 lines that consist of "line characters" and adds an empty line above and below. </summary>
+         ''' <param name="Value">    One text line meant as head line. </param>
+         ''' <param name="LineChar"> The character that builds the lines. </param>
+         ''' <returns>               The Headline string. </returns>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function ToHeadLine(Value As String, LineChar As String) As String
+            Dim Line As String = LineChar.Repeat(Value.Length + 2)
+            Return vbNewLine & Line & vbNewLine & " " & Value & vbNewLine & Line & vbNewLine
+        End Function
+        
+        ''' <summary> Converts this Boolean value to "Ja" / "Nein" instead of "True" / "False". </summary>
+         ''' <param name="Value"> The boolean value to convert. </param>
+         ''' <param name="dummy"> This parameter only exists to resolve the overloads to this method. </param>
+         ''' <returns> "Ja" / "Nein" </returns>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function ToString(Value As Boolean, dummy As Integer) As String
+            If (Value) Then
+                Return "Ja"
+            Else
+                Return "Nein"
+            End If
+        End Function
+        
+    End Module
+    
+'End Namespace
+
+' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

@@ -1,0 +1,13 @@
+﻿# Files that shouldn't go into the repository
+
+# binaries
+bin/
+obj/
+
+# temporary backup
+*.bak
+*_
+*[0-9]
+
+# jEdit markers
+*.marks

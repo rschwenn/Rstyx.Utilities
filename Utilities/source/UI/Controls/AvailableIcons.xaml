@@ -1,0 +1,59 @@
+﻿<!-- 
+
+AvailableIcons
+
+- WrapPanel that shows all Icons available in IconResources.xaml
+- The ResourceKey of the selected Icon is shown
+
+-->
+
+<UserControl x:Class="UI.Controls.AvailableIcons"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" d:DesignHeight="220" d:DesignWidth="302"
+    
+    xmlns:RstyxUtils="clr-namespace:Rstyx.Utilities;assembly="
+    xmlns:RstyxResources="clr-namespace:Rstyx.Utilities.UI.Resources;assembly=Rstyx.Utilities"
+    >
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- Include IconResources.xaml -->
+            <!--<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/IconResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>-->
+            
+            <!-- ListBoxItem: Binding DictionaryEntry -->
+            <DataTemplate x:Key="IconDictionaryEntryTemplate">
+                <ContentControl Content="{Binding Path=Value}" Margin="9" Width="Auto" />
+            </DataTemplate>
+            
+            <!-- Make the ListBox wrapable -->
+            <ItemsPanelTemplate x:Key="ListBoxPanelTemplate">
+                <WrapPanel ItemWidth="50" />
+            </ItemsPanelTemplate>
+            
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <DockPanel>
+        <!-- Show ResourceKey of selected Icon -->
+        <DockPanel DockPanel.Dock="Top">
+            <TextBlock DockPanel.Dock="Left"  Margin="5" Text="Selected Icon's ResourceKey:" VerticalAlignment="Center" />
+            <TextBox   DockPanel.Dock="Right" Margin="5" Text="{Binding ElementName=IconListBox, Path=SelectedItem.Key, Mode=OneWay}" VerticalAlignment="Center" IsReadOnly="True" />
+        </DockPanel>
+        
+        <!-- Show all available icons in a wrapable ListBox -->
+        <ListBox Name="IconListBox"
+            ItemsSource="{x:Static RstyxResources:UIResources.IconRectangles}"
+            ItemTemplate="{StaticResource IconDictionaryEntryTemplate}"
+            ItemsPanel="{StaticResource ListBoxPanelTemplate}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            >
+        </ListBox>
+    </DockPanel>
+</UserControl>
+
+<!-- for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:-->

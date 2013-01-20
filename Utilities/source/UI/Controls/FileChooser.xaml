@@ -1,0 +1,149 @@
+﻿<!-- 
+
+FileChooser
+
+- Group of controls for specifying a filename to open or save:
+  - TextBox: file path
+  - Button:  file open dialog
+  - Button:  edit file
+- Some properties can be used for setting as preferences.
+- The resulting path is provided with the "FilePath" property
+
+-->
+
+<RstyxControls:UserControlBase x:Class="UI.Controls.FileChooser"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" d:DesignHeight="30" d:DesignWidth="250"
+    
+    xmlns:RstyxConverters="clr-namespace:Rstyx.Utilities.UI.Binding.Converters;assembly="
+    xmlns:RstyxControls="clr-namespace:Rstyx.Utilities.UI.Controls;assembly="
+    xmlns:RstyxUtils="clr-namespace:Rstyx.Utilities;assembly="
+    
+    Focusable="True"
+    KeyboardNavigation.TabNavigation="Local" GotFocus="OnUcGotFocus"
+    >
+    
+    <!--DataContext="{Binding RelativeSource={x:Static RelativeSource.Self}}"-->
+    
+    <!-- DataContext is inherited. -->
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/IconResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- This Style inherits the current (global) Style for this type. -->
+            <Style x:Key="EditFileButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="IsEnabled" Value="True" />
+                <Setter Property="Opacity" Value="0.5" />
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="True">
+                        <Setter Property="Opacity" Value="1" />
+                    </Trigger>
+                    <DataTrigger Value="False" Binding="{Binding Path=IsExistingFile, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}">
+                        <Setter Property="IsEnabled" Value="False" />
+                    </DataTrigger>
+                    <DataTrigger Value="False" Binding="{Binding Path=EditButtonIsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}">
+                        <Setter Property="IsEnabled" Value="False" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- This Style inherits the current (global) Style for this type. -->
+            <Style x:Key="FileDialogButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="Content" Value="{StaticResource Tango_DocumentSave1_IconRectangle}" />
+                <Setter Property="Opacity" Value="0.5" />
+                <Style.Triggers>
+                    <DataTrigger Value="Open" Binding="{Binding Path=FileMode, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}">
+                        <Setter Property="Content" Value="{StaticResource Tango_FolderOpen_IconRectangle}" />
+                    </DataTrigger>
+                    <Trigger Property="IsEnabled" Value="True">
+                        <Setter Property="Opacity" Value="1" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- This Style inherits the current (global) Style for this type. -->
+            <Style x:Key="FilePathTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Padding"  Value="3" />
+                
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <!--<Condition Property="IsEnabled" Value="true" />-->
+                        <Condition Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}" Value="true" />
+                        <Condition Binding="{Binding Path=FilePath, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}" Value="" />
+                        <Condition Binding="{Binding Path=WarningColorMode, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}" Value="Foreground" />
+                      </MultiDataTrigger.Conditions>
+                      <Setter Property="Foreground" Value="OrangeRed" />
+                    </MultiDataTrigger>
+                    
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}" Value="true" />
+                        <Condition Binding="{Binding Path=FilePath, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}" Value="" />
+                        <Condition Binding="{Binding Path=WarningColorMode, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}" Value="Background" />
+                      </MultiDataTrigger.Conditions>
+                      <Setter Property="Background" Value="LightPink" />
+                    </MultiDataTrigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="FilePathTextBoxGridStyle" BasedOn="{StaticResource {x:Type TextBox}}">
+            </Style>
+            
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <DockPanel>
+        <Button Name="EditFileButton" 
+            Content="{StaticResource Tango_Pencil1_IconRectangle}" 
+            Height="{Binding ElementName=FilePathTextBox, Path=ActualHeight}"
+            Width="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=ActualHeight}"
+            Style="{StaticResource EditFileButtonStyle}"
+            ToolTip="Datei im Editor bearbeiten"
+            Visibility="{Binding Path=EditButtonVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}"
+            DockPanel.Dock="Right"
+            Margin="3,0,0,0" 
+            TabIndex="3" 
+            />
+        <Button Name="FileDialogButton" 
+            Style="{StaticResource FileDialogButtonStyle}"
+            Height="{Binding ElementName=FilePathTextBox, Path=ActualHeight}"
+            Width="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=ActualHeight}"
+            ToolTip="Dateiauswahl-Dialog"
+            DockPanel.Dock="Right"
+            Margin="3,0,0,0" 
+            TabIndex="2" 
+            />
+            
+        <Grid 
+            Background="{Binding ElementName=StyleProxy, Path=Background}"
+            >
+            <TextBlock Name="WatermarkTextBlock"
+                Text="{Binding Path=Watermark, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}"
+                Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                Visibility="{Binding ElementName=FilePathTextBox, Path=Text.IsEmpty, Converter={x:Static RstyxConverters:ConverterProvider.VisibleIfTrueConverter}}"
+                Margin="5,2"
+                >
+            </TextBlock>
+            <TextBox Name="FilePathTextBox" 
+                ToolTip="{Binding Path=TextBoxToolTip, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}"
+                TabIndex="1"
+                Background="Transparent"
+                Style="{StaticResource FilePathTextBoxStyle}"
+                >
+            </TextBox>
+            <TextBox Name="StyleProxy" Visibility="Collapsed" />
+        </Grid>
+        
+    </DockPanel>
+    
+</RstyxControls:UserControlBase>
+
+<!-- for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:-->

@@ -1,0 +1,465 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Rstyx_Utilities_Apps_AppUtils_SupportedEditors_CrimsonEditor" xml:space="preserve">
+    <value>Crimson Editor</value>
+  </data>
+  <data name="Rstyx_Utilities_Apps_AppUtils_SupportedEditors_jEdit" xml:space="preserve">
+    <value>jEdit</value>
+  </data>
+  <data name="Rstyx_Utilities_Apps_AppUtils_SupportedEditors_None" xml:space="preserve">
+    <value>kein Editor</value>
+  </data>
+  <data name="Rstyx_Utilities_Apps_AppUtils_SupportedEditors_UltraEdit" xml:space="preserve">
+    <value>UltraEdit</value>
+  </data>
+  <data name="Rstyx_Utilities_ArrayUtils_SortType_Alphanumeric" xml:space="preserve">
+    <value>Alfanumerisch</value>
+  </data>
+  <data name="Rstyx_Utilities_ArrayUtils_SortType_Numeric" xml:space="preserve">
+    <value>Numerisch</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Base" xml:space="preserve">
+    <value>Basisname</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Base_Ext" xml:space="preserve">
+    <value>Basis.Erweiterung</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Class" xml:space="preserve">
+    <value>Klasse</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir" xml:space="preserve">
+    <value>Verzeichnis</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base" xml:space="preserve">
+    <value>Verzeichnis\Basis</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base_Ext" xml:space="preserve">
+    <value>Verzeichnis\Basis.Erweiterung</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Proj" xml:space="preserve">
+    <value>Verzeichnis\Projekt</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Drive" xml:space="preserve">
+    <value>Laufwerk</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Ext" xml:space="preserve">
+    <value>Erweiterung</value>
+  </data>
+  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Proj" xml:space="preserve">
+    <value>Projekt</value>
+  </data>
+  <data name="Rstyx_Utilities_UI_WarningColorMode_Background" xml:space="preserve">
+    <value>Hintergrund</value>
+  </data>
+  <data name="Rstyx_Utilities_UI_WarningColorMode_Foreground" xml:space="preserve">
+    <value>Vordergrund</value>
+  </data>
+  <data name="Rstyx_Utilities_UI_WarningColorMode_None" xml:space="preserve">
+    <value>kein</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdDesignFileFormat_Unknown" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdDesignFileFormat_Current" xml:space="preserve">
+    <value>Aktuell</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdDesignFileFormat_V7" xml:space="preserve">
+    <value>DGN/V7</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdDesignFileFormat_V8" xml:space="preserve">
+    <value>DGN/V8</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdDesignFileFormat_DWG" xml:space="preserve">
+    <value>DWG</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdDesignFileFormat_DXF" xml:space="preserve">
+    <value>DXF</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdModelType_Default" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdModelType_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdModelType_Sheet" xml:space="preserve">
+    <value>Blatt</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdModelType_Extraction" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdModelType_Drawing" xml:space="preserve">
+    <value>Zeichnung</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_CellLibraryHeader" xml:space="preserve">
+    <value>Bibliotheks-Zelle</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_CellHeader" xml:space="preserve">
+    <value>Zelle</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Line" xml:space="preserve">
+    <value>Linie</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_LineString" xml:space="preserve">
+    <value>Polygon</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_GroupData" xml:space="preserve">
+    <value>Gruppendaten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Shape" xml:space="preserve">
+    <value>Polygonfläche</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_TextNode" xml:space="preserve">
+    <value>TextKnoten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_DigSetData" xml:space="preserve">
+    <value>DigiSatzDaten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_DesignFileHeader" xml:space="preserve">
+    <value>DesignFileHeader</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_LevelSymbology" xml:space="preserve">
+    <value>Ebenensymbolik</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Curve" xml:space="preserve">
+    <value>Kurve</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_ComplexString" xml:space="preserve">
+    <value>Komplexe Kette</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Conic" xml:space="preserve">
+    <value>Conic</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_ComplexShape" xml:space="preserve">
+    <value>Komlexe Polygonfläche</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Ellipse" xml:space="preserve">
+    <value>Ellipse</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Arc" xml:space="preserve">
+    <value>Bogen</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Surface" xml:space="preserve">
+    <value>Oberfläche</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Solid" xml:space="preserve">
+    <value>Solid</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_BsplinePole" xml:space="preserve">
+    <value>B-Spline-Stützpunkt</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_PointString" xml:space="preserve">
+    <value>Punktkette</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Cone" xml:space="preserve">
+    <value>Kegel</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_BsplineSurface" xml:space="preserve">
+    <value>B-Spline-Oberfläche</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_BsplineBoundary" xml:space="preserve">
+    <value>B-Spline-Grenze</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_BsplineKnot" xml:space="preserve">
+    <value>B-Spline-Knoten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_BsplineCurve" xml:space="preserve">
+    <value>B-Spline-Kurve</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_BsplineWeight" xml:space="preserve">
+    <value>B-Spline-Dicke</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Dimension" xml:space="preserve">
+    <value>Bemaßung</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_SharedCellDefinition" xml:space="preserve">
+    <value>Pseudozellen-Definition</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_SharedCell" xml:space="preserve">
+    <value>Pseudozelle</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_MultiLine" xml:space="preserve">
+    <value>Mehrfach-Linie</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Tag" xml:space="preserve">
+    <value>Sachdaten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_DgnStoreComponent" xml:space="preserve">
+    <value>DGN-Speicherkomponente</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_DgnStoreHeader" xml:space="preserve">
+    <value>DGN-Speicher</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_MicroStation" xml:space="preserve">
+    <value>MicroStation</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_RasterHeader" xml:space="preserve">
+    <value>Raster</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_RasterComponent" xml:space="preserve">
+    <value>Raster-Komponente</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_RasterReference" xml:space="preserve">
+    <value>Raster-Referenz</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_RasterReferenceComponent" xml:space="preserve">
+    <value>Raster-Referenz-Komponente</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_RasterFrame" xml:space="preserve">
+    <value>Raster-Rahmen</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_TableEntry" xml:space="preserve">
+    <value>Tabellen-Eintrag</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_Table" xml:space="preserve">
+    <value>Tabelle</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_ViewGroup" xml:space="preserve">
+    <value>Ansichtsgruppe</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_View" xml:space="preserve">
+    <value>Ansicht</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_LevelMask" xml:space="preserve">
+    <value>Ebenenmaske</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_ReferenceAttachment" xml:space="preserve">
+    <value>Referenz-Anhang</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_MatrixHeader" xml:space="preserve">
+    <value>Matrix</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_MatrixIntegerData" xml:space="preserve">
+    <value>Matrix-Integer-Daten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_MatrixDoubleData" xml:space="preserve">
+    <value>Matrix-Double-Daten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_MeshHeader" xml:space="preserve">
+    <value>Gitter</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_ReferenceOverride" xml:space="preserve">
+    <value>Reference-Überschreibung</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_NamedGroupHeader" xml:space="preserve">
+    <value>BenannteGruppe</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdElementType_NamedGroupComponent" xml:space="preserve">
+    <value>BenannteGruppen-Komponente</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdFontType_MicroStation" xml:space="preserve">
+    <value>MicroStation</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdFontType_SHX" xml:space="preserve">
+    <value>AutoCAD SHX</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdFontType_WindowsTrueType" xml:space="preserve">
+    <value>Windows TrueType</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdFontType_Unknown" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_LeftTop" xml:space="preserve">
+    <value>Links Oben</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_LeftCenter" xml:space="preserve">
+    <value>Links Mitte</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_LeftBottom" xml:space="preserve">
+    <value>Links Unten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_CenterTop" xml:space="preserve">
+    <value>Mitte Oben</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_CenterCenter" xml:space="preserve">
+    <value>Mitte Mitte</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_CenterBottom" xml:space="preserve">
+    <value>Mitte Unten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_RightTop" xml:space="preserve">
+    <value>Rechts Oben</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_RightCenter" xml:space="preserve">
+    <value>Rechts Mitte</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTextJustification_RightBottom" xml:space="preserve">
+    <value>Rechts Unten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTagType_Character" xml:space="preserve">
+    <value>Zeichenfolge</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTagType_ShortInteger" xml:space="preserve">
+    <value>Kurze Ganzzahl</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTagType_LongInteger" xml:space="preserve">
+    <value>Lange Ganzzahl</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTagType_Double" xml:space="preserve">
+    <value>Gleitkomma</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdTagType_Binary" xml:space="preserve">
+    <value>Binär</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_General" xml:space="preserve">
+    <value>Allgemein</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_Line" xml:space="preserve">
+    <value>Linie</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_CircularArc" xml:space="preserve">
+    <value>Kreisbogen</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_Circle" xml:space="preserve">
+    <value>Kreis</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_EllipticalArc" xml:space="preserve">
+    <value>elliptischer Bogen</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_Ellipse" xml:space="preserve">
+    <value>Ellipse</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_ParabolicArc" xml:space="preserve">
+    <value>parabolischer Bogen</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdBsplineCurveType_HyperbolicArc" xml:space="preserve">
+    <value>hyperbolischer Bogen</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdCellType_Graphic" xml:space="preserve">
+    <value>Grafik</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdCellType_Menu" xml:space="preserve">
+    <value>Menü</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdCellType_Point" xml:space="preserve">
+    <value>Punkt</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdMeasurementSystem_English" xml:space="preserve">
+    <value>englisch</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdMeasurementSystem_Metric" xml:space="preserve">
+    <value>metrisch</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdMeasurementSystem_Undefined" xml:space="preserve">
+    <value>unbestimmt</value>
+  </data>
+</root>

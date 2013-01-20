@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- :mode=xml::noTabs=true::noWordSep=\::tabSize=2::folding=indent::collapseFolds=2: -->
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>
+    </SchemaVersion>
+    <ProjectGuid>{0540C80D-0672-425A-A4D7-E8D83C4CCB06}</ProjectGuid>
+    <OutputPath>bin\</OutputPath>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Rstyx.Utilities</RootNamespace>
+    <AssemblyName>Rstyx.Utilities</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <DocumentationFile>Rstyx.Utilities.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <DocumentationFile>Rstyx.Utilities.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cinch.WPF">
+      <HintPath>..\..\..\_ThirdPartyAssemblies\CinchV2\Cinch.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="MEFedMVVM.WPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b6db3dc4f5fba1e3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\_ThirdPartyAssemblies\CinchV2\MEFedMVVM.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="PGK.Extensions.Windows">
+      <HintPath>..\..\..\_ThirdPartyAssemblies\PGK.Extensions\PGK.Extensions.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="Rstyx.LoggingConsole">
+      <HintPath>..\..\Rstyx.LoggingConsole\LoggingConsole\bin\Rstyx.LoggingConsole.dll</HintPath>
+    </Reference>
+    <Reference Include="PGK.Extensions">
+      <HintPath>..\..\..\_ThirdPartyAssemblies\PGK.Extensions\PGK.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="doc\NamespaceDoc.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="My Project\Settings.vb" />
+    <Compile Include="source\Apps\AppInfo.vb" />
+    <Compile Include="source\Apps\AppUtils.vb" />
+    <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EnumDisplayStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="source\UI\Binding\Converters\CheckboxConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\CultureInfoConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\DebugConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\EnumDisplayConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\EnumIntConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\ScaleConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\VisibilityToBooleanConverter.vb" />
+    <Compile Include="source\UI\Controls\LooseExpanderToggle.xaml.vb">
+      <DependentUpon>LooseExpanderToggle.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="source\_global\ArrayUtils.vb" />
+    <Compile Include="source\Collections\AlphanumericComparer.vb" />
+    <Compile Include="source\Collections\CollectionExtensions.vb" />
+    <Compile Include="source\Collections\DictionaryBase.vb" />
+    <Compile Include="source\Collections\KeyedCollectionBase.vb" />
+    <Compile Include="source\Collections\SortedKeyedCollectionBase.vb" />
+    <Compile Include="source\_global\DBUtils.vb" />
+    <Compile Include="source\_global\EnumUtils.vb" />
+    <Compile Include="source\Files\FileInfoCollection.vb" />
+    <Compile Include="source\Files\FileUtils.vb" />
+    <Compile Include="source\_global\Extensions.vb" />
+    <Compile Include="source\_global\GeoMath.vb" />
+    <Compile Include="source\_global\Interfaces.vb" />
+    <Compile Include="source\_global\RegUtils.vb" />
+    <Compile Include="source\_global\StringUtils.vb" />
+    <Compile Include="source\_global\SysUtils.vb" />
+    <Compile Include="source\UI\Binding\Converters\ConverterProvider.vb" />
+    <Compile Include="source\UI\Binding\PushBinding\FreezableBinding.vb" />
+    <Compile Include="source\UI\Binding\PushBinding\PushBinding.vb" />
+    <Compile Include="source\UI\Binding\PushBinding\PushBindingCollection.vb" />
+    <Compile Include="source\UI\Binding\PushBinding\PushBindingManager.vb" />
+    <Compile Include="source\UI\Controls\AvailableIcons.xaml.vb">
+      <DependentUpon>AvailableIcons.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="source\UI\Controls\EditorSelector.xaml.vb">
+      <DependentUpon>EditorSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="source\UI\Controls\FileChooser.xaml.vb">
+      <DependentUpon>FileChooser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="source\UI\Controls\RadioButtonList.xaml.vb">
+      <DependentUpon>RadioButtonList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="source\UI\Controls\UserControlBase.vb" />
+    <Compile Include="source\_global\DeferredAction.vb" />
+    <Compile Include="source\UI\ViewModel\AsyncDelegateUICommand.vb" />
+    <Compile Include="source\UI\ViewModel\DelegateUICommand.vb" />
+    <Compile Include="source\UI\ViewModel\DelegateUICommandInfo.vb" />
+    <Compile Include="source\UI\Resources\UIResources.vb" />
+    <Compile Include="source\UI\UIUtils.vb" />
+    <Compile Include="source\UI\ViewModel\UICommandDecoration.vb" />
+    <Compile Include="source\UI\ViewModel\ViewModelBase.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source\Resources\EnumDisplayStrings.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
+      <LastGenOutput>EnumDisplayStrings.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="My Project\app.config" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="source\UI\Controls\AvailableIcons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="source\UI\Controls\EditorSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="source\UI\Controls\FileChooser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="source\UI\Controls\LooseExpanderToggle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="source\UI\Controls\RadioButtonList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Resource Include="source\UI\Resources\IconResources.xaml">
+      <SubType>Designer</SubType>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\Resources\StartExcelAndXLMacro.vbs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

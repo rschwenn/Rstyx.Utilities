@@ -1,0 +1,420 @@
+﻿
+Imports System
+Imports System.ComponentModel
+Imports System.Diagnostics
+Imports System.Linq
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports System.Windows.Input
+Imports System.Windows.Threading
+
+
+Namespace UI.ViewModel
+    
+    ''' <summary> A Delegate Command for use in UI elements, that executes a cancellable action in current or separate thread. </summary>
+     ''' <remarks>
+     ''' <para>
+     ''' While the target command action is executing, the IsBusy property will be True and the provided ICommand.Execute() action 
+     ''' will be a cancel action that can signal a cancel request to the threaded action. The Decoration property is changed accordingly.
+     ''' This way a button that is bound to this command, changes it's appearance and command while the target command is executing.
+     ''' </para>
+     ''' <para>
+     ''' Construction: The target command has to be packed as <see cref="DelegateUICommandInfo"/> and passed to the constructor.
+     ''' </para>
+     ''' <para>
+     ''' Since the Task.Factory.StartNew() method doesn't allow for argument types other than Object, the target command can't have a strongly typed argument!
+     ''' But in order to be cancelable the target execute action has to take an argument of type <see cref="System.Threading.CancellationToken"/>
+     ''' and periodically check and react to CancelToken.IsCancellationRequested.
+     ''' </para>
+     ''' <para>
+     ''' RaiseCanExecuteChanged() has to be called on this command in order to reflect changes of execution conditions that occur outside this command.
+     ''' If the event listener is a dispatcher object (i.e. Button) then the event is raised on it's dispatcher, otherwise on the current thread's dispatcher. 
+     ''' </para>
+     ''' </remarks>
+    Public NotInheritable Class AsyncDelegateUICommand
+        Implements ICommand
+        Implements INotifyPropertyChanged
+        
+        #Region "Fields"
+            
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
+            
+            ''' <summary> Provides access to the target command info. </summary>
+            Public ReadOnly TargetCommandInfo       As DelegateUICommandInfo = Nothing
+            
+            ''' <summary> Provides access to the cancel callback action. </summary>
+            Public ReadOnly CancelCallback          As Action = Nothing
+            
+            ''' <summary> If <c>True</c>, the command will be executed in a separate thread, otherwise not. </summary>
+            Public ReadOnly IsAsync                 As Boolean = False
+            
+            Private CancelTaskCommandInfo           As DelegateUICommandInfo = Nothing
+            Private CmdTask                         As Task = Nothing
+            Private CmdTaskCancelTokenSource        As CancellationTokenSource = Nothing
+            
+            Private _ThrowOnInvalidPropertyName     As Boolean = False
+            Private _IsCancellationSupported        As Boolean = False
+            Private _IsBusy                         As Boolean = False
+            Private _Decoration                     As UICommandDecoration = Nothing
+            
+        #End Region
+        
+        #Region "Constructors"
+            
+            ''' <summary> Creates a new asyncronous command that supports cancellation. </summary>
+             ''' <param name="TargetCommandInfo"> The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
+            Public Sub New(TargetCommandInfo As DelegateUICommandInfo)
+                Me.New(TargetCommandInfo, Nothing, True, False)
+            End Sub
+            
+            ''' <summary> Creates a new asyncronous command. </summary>
+             ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
+             ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
+            Public Sub New(TargetCommandInfo As DelegateUICommandInfo, SupportsCancellation As Boolean)
+                Me.New(TargetCommandInfo, Nothing, SupportsCancellation, False)
+            End Sub
+            
+            ''' <summary> Creates a new asyncronous command. </summary>
+             ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
+             ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. </param>
+             ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
+            Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean)
+                Me.New(TargetCommandInfo, CancelCallback, SupportsCancellation, False)
+            End Sub
+            
+            ''' <summary> Creates a new asyncronous command. </summary>
+             ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
+             ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. </param>
+             ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
+             ''' <param name="runAsync">             If <c>True</c>, the command will be executed in a separate thread, otherwise not. </param>
+            Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean, runAsync As Boolean)
+                
+                ' This is too late, but the call to MyBase.New() has to be the first call here ...
+                If (TargetCommandInfo Is Nothing) Then
+                    Throw New ArgumentNullException("TargetCommand", "TargetCommand can not be null")
+                End If
+                
+                Me.TargetCommandInfo = TargetCommandInfo
+                Me.CancelCallback = CancelCallback
+                
+                Me.IsAsync = runAsync
+                _IsCancellationSupported = SupportsCancellation
+                
+                Me.Decoration = TargetCommandInfo.Decoration
+                CancelTaskCommandInfo = createCancelTaskCommandInfo()
+            End Sub
+            
+        #End Region
+        
+        #Region "Properties" 
+            
+            ''' <summary> Gets or sets the Command's UI Decoration. This is for binding to the UI. </summary>
+            Public Property Decoration() As UICommandDecoration
+                Get
+                    Return _Decoration
+                End Get
+                Set(value As UICommandDecoration)
+                    _Decoration = value
+                    Me.OnPropertyChanged("Decoration")
+                End Set
+            End Property
+            
+            ''' <summary> Returns True if the target command is currently executed. </summary>
+            Public ReadOnly Property IsBusy() As Boolean
+                Get
+                    Return _IsBusy
+                End Get
+            End Property
+            
+            ''' <summary> Returns whether or not cancellation of the running target action is supported. </summary>
+            Public ReadOnly Property IsCancellationSupported() As Boolean
+                Get
+                    Return _IsCancellationSupported
+                End Get
+            End Property
+            
+        #End Region
+        
+        #Region "ICommand Members"
+            
+            Private CanExecuteChangedEvents As New System.Collections.ObjectModel.Collection(Of EventHandler)
+            
+            ''' <summary> Indicates when changes occur that affect whether or not the command could be executed. This isn't raised automatically. </summary>
+             ''' <remarks> 
+             ''' <para> The class which holds this command has to call RaiseCanExecuteChanged() on this command when conditions has been changed. </para>
+             ''' <para> If the event listener is a dispatcher object then the event is raised on it's dispatcher, otherwise on the current thread's dispatcher. </para>
+             ''' </remarks>
+            Public Custom Event CanExecuteChanged As EventHandler Implements ICommand.CanExecuteChanged
+                
+                AddHandler(ByVal value As EventHandler)
+                    If (Not CanExecuteChangedEvents.Contains(value)) Then CanExecuteChangedEvents.Add(value)
+                End AddHandler
+                
+                RemoveHandler(ByVal value As EventHandler)
+                    If (CanExecuteChangedEvents.Contains(value)) Then CanExecuteChangedEvents.Remove(value)
+                End RemoveHandler
+                
+                RaiseEvent(ByVal sender As Object, ByVal e As System.EventArgs)
+                    
+                    For Each Handler as EventHandler In CanExecuteChangedEvents
+                        If (Handler IsNot Nothing) Then
+                            
+                            ' Get the matching dispatcher.
+                            Dim Dispatcher As System.Windows.Threading.Dispatcher = Nothing
+                            If (TypeOf Handler.Target Is System.Windows.Threading.DispatcherObject) Then
+                                Dispatcher = Handler.Target.Dispatcher
+                            Else
+                                Dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher
+                            End If
+                            
+                            ' Invoke the handler.
+                            If (Dispatcher IsNot Nothing) Then
+                                Dispatcher.BeginInvoke(Handler, sender, e)
+                            End If
+                        End If
+                    Next
+                    
+                End RaiseEvent
+            End Event
+            
+            ''' <summary> Raises the CanExecuteChanged event. </summary>
+            Public Sub RaiseCanExecuteChanged()
+                RaiseEvent CanExecuteChanged(Me, System.EventArgs.Empty)
+                If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
+            End Sub
+            
+            ''' <summary> Determines if the currently active command (target or cancel) can execute by invoking the matching Predicate(Of Object). </summary>
+             ''' <param name="parameter"> The parameter to use when determining if this command can execute. </param>
+             ''' <returns> Returns true if the command can execute, False otherwise. </returns>
+            Public Function CanExecute(ByVal parameter As Object) As Boolean Implements ICommand.CanExecute
+                Dim RetValue  As Boolean = True
+                If (Me.IsBusy AndAlso (CancelTaskCommandInfo.CanExecutePredicate IsNot Nothing)) Then
+                    RetValue = CancelTaskCommandInfo.CanExecutePredicate.Invoke(Nothing)
+                ElseIf ((Not Me.IsBusy) AndAlso (TargetCommandInfo.CanExecutePredicate IsNot Nothing)) Then
+                    RetValue = TargetCommandInfo.CanExecutePredicate.Invoke(Nothing)
+                End If
+                Return RetValue
+            End Function
+            
+            ''' <summary> Executes the currently active command (target or cancel) by invoking the matching Action(Of Object). </summary>
+             ''' <param name="parameter"> Data for the command. </param>
+            Public Sub Execute(ByVal parameter As Object) Implements ICommand.Execute
+                Try
+                    If (Me.IsBusy) Then
+                        ' Request Cancellation of the running command.
+                        If (CanCancelTask()) Then
+                            CancelTaskCommandInfo.ExecuteAction(Nothing)
+                        End If
+                    Else
+                        ' Start the target command.
+                        If (TargetCommandInfo.ExecuteAction IsNot Nothing) Then
+                            
+                            ' Always activate CancelTaskCommand. If it isn't supported, then the command will be disabled due to CanCancelTask().
+                            Me.Decoration = CancelTaskCommandInfo.Decoration
+                            
+                            ' Change State.
+                            _IsBusy = True
+                            Me.OnPropertyChanged("IsBusy")
+                            
+                            ' Create a CancellationToken and register CancelCallback if available.
+                            CmdTaskCancelTokenSource = New CancellationTokenSource()
+                            Dim CmdTaskCancelToken As CancellationToken = CmdTaskCancelTokenSource.Token
+                            If (CancelCallback IsNot Nothing) Then CmdTaskCancelToken.Register(CancelCallback)
+                            
+                            If (Me.IsAsync) Then
+                                ' Create and start a task and register the continuation Callback
+                                CmdTask = Task.Factory.StartNew(TargetCommandInfo.ExecuteAction, CmdTaskCancelToken, CmdTaskCancelToken)
+                                CmdTask.ContinueWith(AddressOf finishTask)
+                            Else
+                                ' TODO: Schedule periodic DoEvents()
+                                RaiseCanExecuteChanged()
+                                Cinch.ApplicationHelper.DoEvents()
+                                
+                                TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
+                                finishTask()
+                                
+                                'Dim Operation As DispatcherOperation = Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
+                                'Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
+                                
+                                ''  DispatcherTimer setup
+			                    'Dim DispatchTimer = New DispatcherTimer(DispatcherPriority.Input)
+			                    ''AddHandler DispatchTimer.Tick, AddressOf Cinch.ApplicationHelper.DoEvents
+                                'AddHandler DispatchTimer.Tick, AddressOf test
+			                    'DispatchTimer.Interval = New TimeSpan(0,0,0,0,1)
+			                    'DispatchTimer.Start()
+                                '
+			                    ''Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
+                                'Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
+                                ''TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
+                                'finishTask()
+                                '
+                                'DispatchTimer.Stop()
+                                'RemoveHandler DispatchTimer.Tick, AddressOf test
+                            End If
+                        End If
+                    End If
+                    
+                    RaiseCanExecuteChanged()
+                    If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
+                    
+                Catch ex As System.Exception
+                    Logger.logError(ex, "Execute(): Fehler beim Starten des Task.")
+                End Try
+                
+            End Sub
+            
+            'Private Sub test(ByVal sender As Object, ByVal e As EventArgs)
+            '    Logger.logInfo("=>Timer")
+            'End Sub
+            
+        #End Region
+        
+        #Region "INotifyPropertyChanged Members"
+            
+            ''' <summary>  Raised when a property on this object has a new value. </summary>
+            Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+            
+            ''' <summary> Raises this object's PropertyChanged event. </summary>
+             ''' <param name="propertyName"> The property that has a new value. </param>
+            Private Sub OnPropertyChanged(ByVal propertyName As String)
+                Me.VerifyPropertyName(propertyName)
+                
+                Dim handler As PropertyChangedEventHandler = Me.PropertyChangedEvent
+                If (handler IsNot Nothing) Then
+                    handler.Invoke(Me, New PropertyChangedEventArgs(propertyName))
+                End If
+            End Sub
+            
+        #End Region
+        
+        #Region "Debugging Aides"
+            
+            ''' <summary>
+            ''' Warns the developer if this object does not have
+            ''' a public property with the specified name. This 
+            ''' method does not exist in a Release build.
+            ''' </summary>
+             ''' <param name="propertyName"> The property that has to be verified. </param>
+            <Conditional("DEBUG"), DebuggerStepThrough()> _
+            Public Sub VerifyPropertyName(ByVal propertyName As String)
+                ' Verify that the property name matches a real,  
+                ' public, instance property on this object.
+                If ((From pi As System.Reflection.PropertyInfo In MyClass.GetType.GetProperties() Where pi.Name = propertyName).Count < 1) Then
+                    Dim msg As String = "Invalid property name: " & propertyName
+                    
+                    If Me.ThrowOnInvalidPropertyName Then
+                        Throw New Exception(msg)
+                    Else
+                        Debug.Fail(msg)
+                    End If
+                End If
+            End Sub
+            
+            ''' <summary>
+            ''' Returns whether an exception is thrown, or if a Debug.Fail() is used
+            ''' when an invalid property name is passed to the VerifyPropertyName method.
+            ''' The default value is false, but subclasses used by unit tests might 
+            ''' override this property's getter to return true.
+            ''' </summary>
+            Public Property ThrowOnInvalidPropertyName() As Boolean
+                Get
+                    Return _ThrowOnInvalidPropertyName
+                End Get
+                Set(ByVal value As Boolean)
+                    _ThrowOnInvalidPropertyName = value
+                End Set
+            End Property
+            
+        #End Region
+        
+        #Region "CancelTask Command"
+            
+            ''' <summary> Requests Cancellation of running task. </summary>
+            Private Function createCancelTaskCommandInfo() As DelegateUICommandInfo
+                Dim CmdInfo  As New DelegateUICommandInfo()
+                Try
+                    Dim Decoration As New UICommandDecoration()
+                    Decoration.Caption     = "Abbruch"
+                    Decoration.Description = "Abbruch der laufenden Aktion."
+                    Decoration.IconBrush   = Rstyx.Utilities.UI.Resources.UIResources.IconBrush("Tango_Stop1")
+                    
+                    CmdInfo.ExecuteAction       = AddressOf Me.cancelTask
+                    CmdInfo.CanExecutePredicate = AddressOf Me.CanCancelTask
+                    CmdInfo.Decoration          = Decoration
+                    
+                Catch ex As System.Exception
+                    Logger.logError(ex, "createCancelTaskCommandInfo(): Fehler beim Erzeugen des Abbruch-Befehls.")
+                End Try
+                Return CmdInfo
+            End Function
+            
+            ''' <summary> Checks if the running task could be cancelled. </summary>
+             ''' <returns> Boolean </returns>
+            Private Function CanCancelTask() As Boolean
+                Dim RetValue  As Boolean = False
+                Try
+                    If (Me.IsBusy AndAlso Me.IsCancellationSupported AndAlso (CmdTaskCancelTokenSource IsNot Nothing) AndAlso (CancelTaskCommandInfo.ExecuteAction IsNot Nothing)) Then
+                        
+                        If (Not Me.IsAsync) Then
+                            
+                            RetValue = (Not CmdTaskCancelTokenSource.IsCancellationRequested)
+                            
+                        ElseIf (CmdTask IsNot Nothing) Then
+                            Dim TaskNotFinished  As Boolean = False
+                            
+                            Select Case CmdTask.Status
+                                
+                                Case TaskStatus.Created, TaskStatus.Running, TaskStatus.WaitingForActivation, 
+                                     TaskStatus.WaitingForChildrenToComplete, TaskStatus.WaitingToRun
+                                     
+                                     TaskNotFinished = True
+                            End Select
+                            
+                            RetValue = (TaskNotFinished AndAlso (Not CmdTaskCancelTokenSource.IsCancellationRequested))
+                        End If
+                    End If
+                    
+                Catch ex As System.Exception
+                    Logger.logError(ex, "CanCancelTask(): unerwateter Fehler.")
+                    'Debug.Fail("CanCancelTask(): unerwateter Fehler.")
+                End Try
+                Return RetValue
+            End Function
+            
+            ''' <summary> Requests cancellation of running task. </summary>
+            Private Sub cancelTask()
+                Try
+                    If (CmdTaskCancelTokenSource IsNot Nothing) Then
+                        CmdTaskCancelTokenSource.Cancel()
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, "cancelTask(): Fehler beim Abbruch des Task.")
+                End Try
+            End Sub
+            
+        #End Region
+        
+        #Region "Private Members"
+            
+            ''' <summary> Finish completed task (change decoration and busy status). </summary>
+            Private Sub finishTask()
+                Try
+                    Me.Decoration = TargetCommandInfo.Decoration
+                    
+                    _IsBusy = False
+                    Me.OnPropertyChanged("IsBusy")
+                    
+                    RaiseCanExecuteChanged()
+                    
+                Catch ex As System.Exception
+                    Logger.logError(ex, "finishTask(): Fehler bei Anschlussbearbeitung nach Task.")
+                End Try
+            End Sub
+            
+        #End Region
+    
+    End Class
+    
+End Namespace
+
+' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:
