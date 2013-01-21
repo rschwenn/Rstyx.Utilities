@@ -1,6 +1,6 @@
 # Files that shouldn't go into the repository
 
-# binaries
+# Build and Object Folders
 bin/
 obj/
 
@@ -11,10 +11,6 @@ obj/
 
 # jEdit markers
 *.marks
-
-# Build and Object Folders
-bin/
-obj/
 
 
 ### ****************************************************************************
