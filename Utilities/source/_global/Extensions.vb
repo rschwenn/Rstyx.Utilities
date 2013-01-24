@@ -3,7 +3,7 @@ Imports System
 
 'Namespace Extensions
     
-    ''' <summary> Extension methods for enums or other types dealing with enums. </summary>
+    ''' <summary> Extension methods for various types. </summary>
     Public Module Extensions
         
         ''' <summary> Checks wether or not the given type isn't abstrcat and implements a certain interface. </summary>
