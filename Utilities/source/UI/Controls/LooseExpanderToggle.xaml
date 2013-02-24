@@ -62,8 +62,9 @@ A ToggleButton that controls the visibility of a target element.
                             </ContentControl>
                         </DockPanel>
                         
+                        <!-- Triangle direction dependent on IsChecked and ExpandDirection -->
                         <DataTemplate.Triggers>
-                            <DataTrigger Value="True" Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}">
+                            <!--<DataTrigger Value="True" Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}">
                                 
                                 <DataTrigger.EnterActions>
                                     <BeginStoryboard>
@@ -86,9 +87,9 @@ A ToggleButton that controls the visibility of a target element.
                                     </BeginStoryboard>
                                 </DataTrigger.ExitActions>
                                 
-                            </DataTrigger>
+                            </DataTrigger>-->
                             
-                            <DataTrigger Value="Right" Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}">
+                            <!--<DataTrigger Value="Right" Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Setter TargetName="Arrow" Property="Data" Value="M 1.5,1 L 1.5,8 L 5.5,4.5 Z" />
                             </DataTrigger>
                             
@@ -98,7 +99,72 @@ A ToggleButton that controls the visibility of a target element.
                             
                             <DataTrigger Value="Left" Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Setter TargetName="Arrow" Property="Data" Value="M 5.5,1 L 5.5,8 L 1.5,4.5 Z" />
-                            </DataTrigger>
+                            </DataTrigger>-->
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="False" Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Right" Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 1.5,1 L 1.5,8 L 5.5,4.5 Z" />
+                            </MultiDataTrigger>
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="False" Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Up"    Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 1,5.5 L 4.5,1.5 L 8,5.5 Z" />
+                            </MultiDataTrigger>
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="False" Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Left"  Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 5.5,1 L 5.5,8 L 1.5,4.5 Z" />
+                            </MultiDataTrigger>
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="False" Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Down"  Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 1,1.5 L 4.5,5.5 L 8,1.5 Z" />
+                            </MultiDataTrigger>
+                            
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="True"  Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Right" Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 5.5,1 L 5.5,8 L 1.5,4.5 Z" />
+                            </MultiDataTrigger>
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="True"  Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Up"    Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 1,1.5 L 4.5,5.5 L 8,1.5 Z" />
+                            </MultiDataTrigger>
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="True"  Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Left"  Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 1.5,1 L 1.5,8 L 5.5,4.5 Z" />
+                            </MultiDataTrigger>
+                            
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="True"  Binding="{Binding Path=IsChecked, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Condition Value="Down"  Binding="{Binding Path=ExpandDirection, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="Arrow" Property="Data" Value="M 1,5.5 L 4.5,1.5 L 8,5.5 Z" />
+                            </MultiDataTrigger>
                             
                         </DataTemplate.Triggers>
                     </DataTemplate>

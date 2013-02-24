@@ -4,17 +4,19 @@
     ''' <summary> A provoider of properties to indicate program state (i.e. for binding to status bar). </summary>
     Public Interface IStatusIndicator
         
-        ''' <summary> A status text that (i.e for displaying in status bar). </summary>
+        ''' <summary> A status text (i.e for displaying in status bar). </summary>
         Property StatusText() As String
+        
+        ''' <summary> A default value for <see cref="StatusText"/>. Deaults to String.Empty. </summary>
+        Property StatusTextDefault() As String
         
         ''' <summary> The current progress in percent. </summary>
         Property Progress() As Double
         
-        ''' <summary> Sets status text empty and progress to minimum. </summary>
+        ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero. </summary>
         Sub resetStateIndication()
-            
-        ''' <summary> Clears the status text and sets the progress to minimum. </summary>
-         ''' <param name="Delay"> Delay for reset (in Milliseconds). </param>
+        
+        ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay). </summary>
         Sub resetStateIndication(Delay As Long)
         
     End Interface

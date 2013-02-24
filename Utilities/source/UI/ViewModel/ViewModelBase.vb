@@ -226,6 +226,7 @@ Namespace UI.ViewModel
             
             Private _Progress                   As Double = 0
             Private _StatusText                 As String = String.Empty
+            Private _StatusTextDefault          As String = String.Empty
             
             Private VisibleProgressStepCount    As Double = 90
             Private NextProgressThreshold       As Double = 0
@@ -294,13 +295,27 @@ Namespace UI.ViewModel
                 End Set
             End Property
             
-            ''' <summary> Clears the status text and sets the progress to minimum. </summary>
+            ''' <summary> A default value for <see cref="StatusText"/>. Deaults to String.Empty. </summary>
+            Public Property StatusTextDefault() As String Implements IStatusIndicator.StatusTextDefault
+                Get
+                    Return _StatusTextDefault
+                End Get
+                Set(value As String)
+                    If (Not (value = _StatusTextDefault)) Then
+                        Dim forward As Boolean = ((Me.StatusText.IsEmptyOrWhiteSpace()) OrElse (Me.StatusText = _StatusTextDefault))
+                        _StatusTextDefault = value
+                        If (forward) Then Me.StatusText = _StatusTextDefault
+                    End if
+                End Set
+            End Property
+            
+            ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero. </summary>
             Public Sub resetStateIndication() Implements IStatusIndicator.resetStateIndication
-                Me.StatusText = String.Empty
+                Me.StatusText = Me.StatusTextDefault
                 Me.Progress = 0
             End Sub
             
-            ''' <summary> Clears the status text and sets the progress to minimum. </summary>
+            ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay). </summary>
              ''' <param name="Delay"> Delay for reset (in Milliseconds). </param>
             Public Sub resetStateIndication(Delay As Long) Implements IStatusIndicator.resetStateIndication
                 DeferredResetStateAction.Defer(System.TimeSpan.FromMilliseconds(Delay))
