@@ -144,6 +144,19 @@ Namespace UI.Controls
             
         #End Region
         
+        #Region "Debugging"
+            
+            ''' <summary> If a debugger is attached, the changed value of the dependency property is logged to the trace listeners. </summary>
+             ''' <param name="d"> The DependencyObject. </param>
+             ''' <param name="e"> The event args. </param>
+            Protected Shared Sub debugChangedDP(d As System.Windows.DependencyObject, e As System.Windows.DependencyPropertyChangedEventArgs)
+                If (System.Diagnostics.Debugger.IsAttached) Then
+                    System.Diagnostics.Debug.Print("DependencyProperty changed: " & d.DependencyObjectType.Name & "." & e.Property.Name & " = " & e.NewValue.ToString() & "  (old value = " & e.OldValue.ToString() & ")")
+                End If
+            End Sub
+            
+        #End Region
+        
     End Class
     
 End Namespace
