@@ -1,14 +1,10 @@
 ﻿
 Imports System
-Imports System.Diagnostics
 Imports System.Windows.Data
-Imports System.Globalization
-Imports System.Collections.Generic
-
 
 Namespace UI.Binding.Converters
     
-    ''' <summary> Pass through converter for possiblity to set <b>debugging</b> breakpoints inside binding operations. </summary>
+    ''' <summary> Pass through converter with <b>debugging breakpoints</b>. </summary>
     <ValueConversion(GetType(Object), GetType(Object))>
     Public Class DebugConverter
         Implements IValueConverter
@@ -24,6 +20,7 @@ Namespace UI.Binding.Converters
          ''' <param name="culture">    Ignored. </param>
          ''' <returns>                 Input Object value. </returns>
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
+            System.Diagnostics.Debugger.Break()
             Return value
         End Function
         
@@ -34,6 +31,7 @@ Namespace UI.Binding.Converters
          ''' <param name="culture">    Ignored. </param>
          ''' <returns>                 Input Object value. </returns>
         Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
+            System.Diagnostics.Debugger.Break()
             Return value
         End Function
     End Class

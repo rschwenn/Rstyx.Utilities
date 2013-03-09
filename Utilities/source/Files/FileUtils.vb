@@ -323,75 +323,77 @@ Namespace Files
                                                byVal desiredFilePart As FilePart, _
                                                byVal Optional Absolute As Boolean = true, _
                                                byVal Optional ClassLength As Integer = 2) As String
-                'Deklarationen
-                Dim msg                   As String = String.Empty
                 Dim extractedFilePart     As String = String.Empty
-                Dim Drive                 As String = String.Empty
-                Dim AbsolutePath          As String = String.Empty
-                Dim ParentFolder          As String = String.Empty
-                Dim FileName              As String = String.Empty
-                Dim BaseName              As String = String.Empty
-                Dim Extension             As String = String.Empty
-                Dim ProjectName           As String = String.Empty
-                Dim DgnClass              As String = String.Empty
-                Dim ProjectLength         As Integer
-                
-                Logger.logDebug(StringUtils.sprintf("getFilePart(): gesuchter Namensteil: %s.", desiredFilePart.ToDisplayString()))
-                Logger.logDebug(StringUtils.sprintf("getFilePart(): gegeben : %s.", givenFilename))
-                
                 Try
-                  'Einzelteile normal
-                    AbsolutePath = iif(not Absolute, givenFilename, System.IO.Path.GetFullPath(givenFilename))
+                    Dim msg                   As String = String.Empty
+                    Dim Drive                 As String = String.Empty
+                    Dim AbsolutePath          As String = String.Empty
+                    Dim ParentFolder          As String = String.Empty
+                    Dim FileName              As String = String.Empty
+                    Dim BaseName              As String = String.Empty
+                    Dim Extension             As String = String.Empty
+                    Dim ProjectName           As String = String.Empty
+                    Dim DgnClass              As String = String.Empty
+                    Dim ProjectLength         As Integer
                     
-                    Drive        = System.IO.Path.GetPathRoot(AbsolutePath).TrimEnd(Path.DirectorySeparatorChar)
-                    ParentFolder = System.IO.Path.GetDirectoryName(AbsolutePath)
-                    If (ParentFolder Is Nothing) Then
-                        ParentFolder = AbsolutePath
+                    Logger.logDebug(StringUtils.sprintf("getFilePart(): gesuchter Namensteil: %s.", desiredFilePart.ToDisplayString()))
+                    Logger.logDebug(StringUtils.sprintf("getFilePart(): gegeben : %s.", givenFilename))
+                    
+                    If (givenFilename.IsNotEmptyOrWhiteSpace()) Then
+                        
+                      'Einzelteile normal
+                        AbsolutePath = iif(not Absolute, givenFilename, System.IO.Path.GetFullPath(givenFilename))
+                        
+                        Drive        = System.IO.Path.GetPathRoot(AbsolutePath).TrimEnd(Path.DirectorySeparatorChar)
+                        ParentFolder = System.IO.Path.GetDirectoryName(AbsolutePath)
+                        If (ParentFolder Is Nothing) Then
+                            ParentFolder = AbsolutePath
+                        End If
+                        ParentFolder = ParentFolder.TrimEnd(Path.DirectorySeparatorChar)
+                        
+                        FileName     = System.IO.Path.GetFileName(givenFilename)
+                        BaseName     = System.IO.Path.GetFileNameWithoutExtension(givenFilename)
+                        Extension    = System.IO.Path.GetExtension(givenFilename).TrimStart("."c)
+                      
+                      'Einzelteile iProjekt, iKlasse
+                        if (ClassLength < 0) then ClassLength = 2
+                        
+                        If (BaseName.Length > (ProjectLength + ClassLength)) Then
+                            ProjectLength = BaseName.Length - ClassLength
+                            ProjectName   = BaseName.left(ProjectLength)
+                            DgnClass      = BaseName.right(ClassLength)
+                        End If
+                      
+                      'Debug-Message
+                        msg = vbNewLine & _
+                              "getFilePart(): AbsolutePath = " & AbsolutePath  & vbNewLine & _
+                              "getFilePart(): Drive        = " & Drive         & vbNewLine & _
+                              "getFilePart(): ParentFolder = " & ParentFolder  & vbNewLine & _
+                              "getFilePart(): FileName     = " & FileName      & vbNewLine & _
+                              "getFilePart(): BaseName     = " & BaseName      & vbNewLine & _
+                              "getFilePart(): Extension    = " & Extension     & vbNewLine & _
+                              "getFilePart(): ProjectName  = " & ProjectName   & vbNewLine & _
+                              "getFilePart(): DgnClass     = " & DgnClass
+                        'Logger.logDebug(msg)
+                      
+                      'Ergebnis zusammenstellen
+                        Select Case desiredFilePart
+                            Case FilePart.Drive:         extractedFilePart = Drive
+                            Case FilePart.Dir:           extractedFilePart = ParentFolder
+                            Case FilePart.Base:          extractedFilePart = BaseName
+                            Case FilePart.Ext:           extractedFilePart = Extension
+                            Case FilePart.Proj:          extractedFilePart = ProjectName
+                            Case FilePart.Class:         extractedFilePart = DgnClass
+                            Case FilePart.Base_Ext:      extractedFilePart = FileName
+                            Case FilePart.Dir_Base:      extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & BaseName
+                            Case FilePart.Dir_Base_Ext:  extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & FileName
+                            Case FilePart.Dir_Proj:      extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & ProjectName
+                            Case Else
+                                extractedFilePart = ""
+                                Logger.logError("getFilePart(): Programmfehler: Aufgerufen mit nicht unterstütztem FilePart-Enum-Wert: " & cStr(desiredFilePart))
+                        End Select
+                        
                     End If
-                    ParentFolder = ParentFolder.TrimEnd(Path.DirectorySeparatorChar)
-                    
-                    FileName     = System.IO.Path.GetFileName(givenFilename)
-                    BaseName     = System.IO.Path.GetFileNameWithoutExtension(givenFilename)
-                    Extension    = System.IO.Path.GetExtension(givenFilename).TrimStart("."c)
-                  
-                  'Einzelteile iProjekt, iKlasse
-                    if (ClassLength < 0) then ClassLength = 2
-                    
-                    If (BaseName.Length > (ProjectLength + ClassLength)) Then
-                        ProjectLength = BaseName.Length - ClassLength
-                        ProjectName   = BaseName.left(ProjectLength)
-                        DgnClass      = BaseName.right(ClassLength)
-                    End If
-                  
-                  'Debug-Message
-                    msg = vbNewLine & _
-                          "getFilePart(): AbsolutePath = " & AbsolutePath  & vbNewLine & _
-                          "getFilePart(): Drive        = " & Drive         & vbNewLine & _
-                          "getFilePart(): ParentFolder = " & ParentFolder  & vbNewLine & _
-                          "getFilePart(): FileName     = " & FileName      & vbNewLine & _
-                          "getFilePart(): BaseName     = " & BaseName      & vbNewLine & _
-                          "getFilePart(): Extension    = " & Extension     & vbNewLine & _
-                          "getFilePart(): ProjectName  = " & ProjectName   & vbNewLine & _
-                          "getFilePart(): DgnClass     = " & DgnClass
-                    'Logger.logDebug(msg)
-                  
-                  'Ergebnis zusammenstellen
-                    Select Case desiredFilePart
-                        Case FilePart.Drive:         extractedFilePart = Drive
-                        Case FilePart.Dir:           extractedFilePart = ParentFolder
-                        Case FilePart.Base:          extractedFilePart = BaseName
-                        Case FilePart.Ext:           extractedFilePart = Extension
-                        Case FilePart.Proj:          extractedFilePart = ProjectName
-                        Case FilePart.Class:         extractedFilePart = DgnClass
-                        Case FilePart.Base_Ext:      extractedFilePart = FileName
-                        Case FilePart.Dir_Base:      extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & BaseName
-                        Case FilePart.Dir_Base_Ext:  extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & FileName
-                        Case FilePart.Dir_Proj:      extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & ProjectName
-                        Case Else
-                            extractedFilePart = ""
-                            Logger.logError("getFilePart(): Programmfehler: Aufgerufen mit nicht unterstütztem FilePart-Enum-Wert: " & cStr(desiredFilePart))
-                    End Select
-                    
                 Catch ex As System.NotSupportedException
                     Logger.logDebug("getFilePart(): Der gegebene Pfad ist ungültig")
                     

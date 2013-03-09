@@ -113,6 +113,7 @@
     <Compile Include="source\UI\Controls\LooseExpanderToggle.xaml.vb">
       <DependentUpon>LooseExpanderToggle.xaml</DependentUpon>
     </Compile>
+    <Compile Include="source\UI\XAML\FirstFocusableElementExtension.vb" />
     <Compile Include="source\_global\ArrayUtils.vb" />
     <Compile Include="source\Collections\AlphanumericComparer.vb" />
     <Compile Include="source\Collections\CollectionExtensions.vb" />
@@ -213,6 +214,7 @@
   <ItemGroup>
     <None Include="source\Resources\StartExcelAndXLMacro.vbs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

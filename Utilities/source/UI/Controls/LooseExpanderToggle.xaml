@@ -58,6 +58,7 @@ A ToggleButton that controls the visibility of a target element.
                             <!-- Here goes the Content set for the LooseExpanderToggle -->
                             <ContentControl
                                 Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"
+                                Focusable="false"
                                 >
                             </ContentControl>
                         </DockPanel>
