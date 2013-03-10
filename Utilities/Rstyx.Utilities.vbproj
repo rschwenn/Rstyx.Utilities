@@ -54,9 +54,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\_ThirdPartyAssemblies\CinchV2\MEFedMVVM.WPF.dll</HintPath>
     </Reference>
-    <Reference Include="PGK.Extensions.Windows">
-      <HintPath>..\..\..\_ThirdPartyAssemblies\PGK.Extensions\PGK.Extensions.Windows.dll</HintPath>
-    </Reference>
     <Reference Include="Rstyx.LoggingConsole">
       <HintPath>..\..\Rstyx.LoggingConsole\LoggingConsole\bin\Rstyx.LoggingConsole.dll</HintPath>
     </Reference>
