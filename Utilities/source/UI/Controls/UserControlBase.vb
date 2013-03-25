@@ -151,7 +151,13 @@ Namespace UI.Controls
              ''' <param name="e"> The event args. </param>
             Protected Shared Sub debugChangedDP(d As System.Windows.DependencyObject, e As System.Windows.DependencyPropertyChangedEventArgs)
                 If (System.Diagnostics.Debugger.IsAttached) Then
-                    System.Diagnostics.Debug.Print("DP changed: " & d.DependencyObjectType.Name & "." & e.Property.Name & " = " & e.NewValue.ToString() & "  (old value = " & e.OldValue.ToString() & ")")
+                    
+                    Dim NewValueString As String = "Null"
+                    Dim OldValueString As String = "Null"
+                    If (e.NewValue IsNot Nothing) Then NewValueString = e.NewValue.ToString()
+                    If (e.OldValue IsNot Nothing) Then OldValueString = e.OldValue.ToString()
+                    
+                    System.Diagnostics.Debug.Print("DP changed: " & d.DependencyObjectType.Name & "." & e.Property.Name & " = " & NewValueString & "  (old value = " & OldValueString & ")")
                 End If
             End Sub
             

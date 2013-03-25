@@ -46,6 +46,9 @@
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cinch.WPF">
       <HintPath>..\..\..\_ThirdPartyAssemblies\CinchV2\Cinch.WPF.dll</HintPath>

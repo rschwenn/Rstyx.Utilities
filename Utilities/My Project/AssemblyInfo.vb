@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("General Development Utilities")> 
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("Rstyx.Utilities")> 
-<Assembly: AssemblyCopyright("Copyright © Robert Schwenn 2012")> 
+<Assembly: AssemblyCopyright("Copyright © Robert Schwenn 2012-2013")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
