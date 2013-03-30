@@ -94,7 +94,9 @@ Public Class MainViewModel
             'Next
             'System.Threading.Thread.Sleep(3000)
             
-            Dim success As Boolean = Rstyx.Utilities.Apps.AppUtils.startExcelGeoToolsCSVImport(Me.FilePath1)
+            'Dim success As Boolean = Rstyx.Utilities.Apps.AppUtils.startExcelGeoToolsCSVImport(Me.FilePath1)
+            
+            UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
             
         End Sub
         

@@ -18,6 +18,10 @@ Namespace UI
                 'Hides the Constructor
             End Sub
             
+	        Shared Sub New()
+	            '
+	        End Sub
+            
         #End Region
         
         #Region "Public Static Methods"

@@ -114,6 +114,7 @@
     <Compile Include="source\UI\Binding\Converters\EnumIntConverter.vb" />
     <Compile Include="source\UI\Binding\Converters\ScaleConverter.vb" />
     <Compile Include="source\UI\Binding\Converters\VisibilityToBooleanConverter.vb" />
+    <Compile Include="source\UI\ClassEvents.vb" />
     <Compile Include="source\UI\Controls\LooseExpanderToggle.xaml.vb">
       <DependentUpon>LooseExpanderToggle.xaml</DependentUpon>
     </Compile>
