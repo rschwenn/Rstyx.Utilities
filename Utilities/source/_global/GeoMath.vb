@@ -87,7 +87,7 @@ Imports System.Text.RegularExpressions
                 Try
                     While (Not String.IsNullOrEmpty(Octal))
                         OneChar = Octal.Substring(0, 1)
-                        Dec = Dec * 8 + OneChar
+                        Dec = Dec * 8 + CInt(OneChar)
                         Octal = Octal.Substring(1)
                     End While
                 Catch ex As System.Exception
@@ -173,7 +173,7 @@ Imports System.Text.RegularExpressions
                     SignKm = System.Math.Sign(Kilometer.ConvertTo(Of Double))
                     If (InStr(MiddleSign, "-") > 0) Then SignM = -1 Else SignM = 1
                     If ((SignM = -1) Or (SignKm = -1)) Then SignTotal = -1 Else SignTotal = 1
-                    KmReal = SignTotal * (System.Math.Abs(Kilometer.ConvertTo(Of Double)) * 1000 + Meter)
+                    KmReal = SignTotal * (System.Math.Abs(Kilometer.ConvertTo(Of Double)) * 1000 + CDbl(Meter))
                 End If
                 
                 Return KmReal
@@ -295,7 +295,7 @@ Imports System.Text.RegularExpressions
                         NR = NR + 1
                         if (WorkLine.IsNotEmptyOrWhiteSpace) then
                             FirstString = WorkLine.Trim().Left(4)
-                            if (FirstString = LineNo) then 
+                            if (CDbl(FirstString) = LineNo) then 
                                 LineNoFound = true
                                 LineInfo.SourceLine = NR
                             End If

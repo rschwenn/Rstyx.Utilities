@@ -30,7 +30,7 @@ Class MainWindow
     Private Sub Button1_Click(sender As System.Object , e As System.Windows.RoutedEventArgs) Handles Button1.Click
         'ViewModel.test()
         
-        TestToggle.IsChecked = (Not TestToggle.IsChecked)
+        'TestToggle.IsChecked = (Not TestToggle.IsChecked)
         
         'FileChoser2.InputFilePath = "per code festgelegt"
     End Sub

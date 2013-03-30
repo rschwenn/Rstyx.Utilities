@@ -26,7 +26,9 @@ Namespace UI.Binding.Converters
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
             Dim RetValue  As Nullable(Of Double) = Nothing
             Try
-                RetValue = value * parameter
+                If ((value IsNot Nothing) AndAlso (parameter IsNot Nothing)) Then
+                    RetValue = CDbl(value) * CDbl(parameter)
+                End If
             Catch ex As System.Exception 
                 ' Silently catch
                 System.Diagnostics.Debug.Print("ScaleConverter.Convert(): Exception!")

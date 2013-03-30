@@ -66,7 +66,7 @@ Namespace Apps
                     ' Assembly title
                     Dim Attributes As Object() = _Assembly.GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)
                     If (Attributes.Length > 0) Then
-                        _Title = Attributes(0).Title
+                        _Title = CType(Attributes(0), System.Reflection.AssemblyTitleAttribute).Title
                     End If
                     If (String.IsNullOrWhiteSpace(_Title)) Then
                         _Title = System.IO.Path.GetFileNameWithoutExtension(_Assembly.Location)

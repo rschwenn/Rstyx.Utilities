@@ -122,7 +122,7 @@ Namespace Collections
                     If (Me.Dictionary Is Nothing) Then
                         InternalSearchDictionary = New Dictionary(Of TKey, TItem)
                     Else
-                        InternalSearchDictionary = Me.Dictionary
+                        InternalSearchDictionary = New Dictionary(Of TKey, TItem)(Me.Dictionary)
                     End If
                     Return New Dictionary(Of TKey, TItem).KeyCollection(InternalSearchDictionary)
                  End Get

@@ -41,17 +41,17 @@
              ''' If an error occures, the input Array is returned. </returns>
             Public Shared Function getFlatArray(byRef encapsulatedArray As Object()) As Object()
                 'Deklarationen
-                  Dim i            As Long
-                  Dim j            As Long
-                  Dim k            As Long
-                  Dim ub1          As Long
-                  Dim ub2          As Long
-                  Dim CountParms1  As Long
-                  Dim CountParms2  As Long
-                  Dim EmbedCount() As Long
+                  Dim i            As Integer
+                  Dim j            As Integer
+                  Dim k            As Integer
+                  Dim ub1          As Integer
+                  Dim ub2          As Integer
+                  Dim CountParms1  As Integer
+                  Dim CountParms2  As Integer
+                  Dim EmbedCount() As Integer
                   Dim isEmbedded   As Boolean
-                  Dim tmpArray     As Object = new Object() {}
-                  Dim flatParms    As Object = new Object() {}
+                  Dim tmpArray()   As Object = new Object() {}
+                  Dim flatParms()  As Object = new Object() {}
                   
                 Try
                     'Initialisierung
@@ -65,7 +65,7 @@
                         If (IsArray(encapsulatedArray(i))) Then
                             isEmbedded = True
                             If (not encapsulatedArray(i) is Nothing) then
-                                ub2 = UBound(encapsulatedArray(i))
+                                ub2 = UBound(CType(encapsulatedArray(i), System.Array))
                                 EmbedCount(i) = ub2 + 1
                             Else
                                 EmbedCount(i) = 0
@@ -85,8 +85,8 @@
                         For i = 0 To ub1
                             If (EmbedCount(i) > 0) Then
                                 If (IsArray(encapsulatedArray(i))) Then
-                                    tmpArray = encapsulatedArray(i)
-                                    For k = 0 To UBound(tmpArray)
+                                    tmpArray = CType(encapsulatedArray(i), Object())
+                                    For k = 0 To UBound(CType(tmpArray, System.Array))
                                       flatParms(j) = tmpArray(k)
                                       j = j + 1
                                     Next
@@ -116,10 +116,10 @@
              ''' <param name="SortingType"> Numeric or alfanumeric </param>
              ''' <param name="Descending">  If True, sorting is performed descending. </param>
              ''' <remarks></remarks>
-            Public Shared Sub SortArray2d(byRef Matrix As Object(,), byVal Key_Dim As Long, byVal Key_Idx As Long, byVal SortingType As SortType, byVal Descending As Boolean)
-                Dim LowerIndex  As Long
-                Dim UpperIndex  As Long
-                Dim sec_Dim     As Long
+            Public Shared Sub SortArray2d(byRef Matrix As Object(,), byVal Key_Dim As Integer, byVal Key_Idx As Integer, byVal SortingType As SortType, byVal Descending As Boolean)
+                Dim LowerIndex  As Integer
+                Dim UpperIndex  As Integer
+                Dim sec_Dim     As Integer
                 
                 Try
                     if (Key_Dim = 1) then sec_Dim = 2 else sec_Dim = 1
@@ -150,17 +150,17 @@
              ''' </para>
              ''' </remarks>
             Public Shared Sub QuickSort2d(byRef Matrix As Object(,), _
-                                          byVal Key_Dim As Long, _
-                                          byVal Key_Idx As Long, _ 
+                                          byVal Key_Dim As Integer, _
+                                          byVal Key_Idx As Integer, _ 
                                           byVal SortingType As SortType, _
                                           byVal Descending As Boolean, _
-                                          byVal LowerIndex As Long, _
-                                          byVal UpperIndex As Long)
+                                          byVal LowerIndex As Integer, _
+                                          byVal UpperIndex As Integer)
                 Dim sec_Dim     As Long
-                Dim i           As Long
-                Dim k           As Long
-                Dim idxM        As Long
-                Dim idxColumn   As Long
+                Dim i           As Integer
+                Dim k           As Integer
+                Dim idxM        As Integer
+                Dim idxColumn   As Integer
                 Dim Value_idxM  As Object
                 Dim temp        As Object
                 
@@ -171,7 +171,7 @@
                     else
                         if (Key_Dim = 1) then sec_Dim = 2 else sec_Dim = 1
                         
-                        idxM = System.Math.Truncate((LowerIndex + UpperIndex) / 2)
+                        idxM = CInt(System.Math.Truncate((LowerIndex + UpperIndex) / 2))
                         i    = LowerIndex
                         k    = UpperIndex
                         
@@ -228,7 +228,7 @@
              ''' <param name="Key_Idx"> (0,1,.) No. of Index (in Key_Dim) which points to the key column. </param>
              ''' <param name="Sek_Idx"> (0,1,.) No. of the other Index.                                   </param>
              ''' <returns> Value of a given matrix element. </returns>
-            Private Shared Function ArrayValue(byRef Matrix As Object(,), byVal Key_Dim As Long, byVal Key_Idx As Long, byVal Sek_Idx As Long) As Object
+            Private Shared Function ArrayValue(byRef Matrix As Object(,), byVal Key_Dim As Integer, byVal Key_Idx As Integer, byVal Sek_Idx As Integer) As Object
                 Dim RetValue  As Object = Nothing
                 
                 Try
@@ -278,14 +278,14 @@
                       select case SortingType
                         
                         case SortType.Numeric
-                            Value1 = cDbl(Value1)
-                            Value2 = cDbl(Value2)
-                            if (not Reverse) then CompareResult = (Value1 < Value2) else CompareResult = (Value2 < Value1)
+                            Dim DblValue1 As Double = cDbl(Value1)
+                            Dim DblValue2 As Double = cDbl(Value2)
+                            if (not Reverse) then CompareResult = (DblValue1 < DblValue2) else CompareResult = (DblValue2 < DblValue1)
                             
                         case else  ' Alphanumeric
-                            Value1 = cStr(Value1)
-                            Value2 = cStr(Value2)
-                            if (strComp(Value1, Value2, vbTextCompare) * intRev = -1) then CompareResult = true
+                            Dim String1 As String = cStr(Value1)
+                            Dim String2 As String = cStr(Value2)
+                            if (strComp(String1, String2, vbTextCompare) * intRev = -1) then CompareResult = true
                       end select
                     end if
                     

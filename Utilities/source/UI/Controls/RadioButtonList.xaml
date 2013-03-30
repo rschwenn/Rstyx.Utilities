@@ -65,7 +65,8 @@ A ListBox that's items are re-styled as RadioButtons.
             <Setter Property="Control.Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBox}">
-                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        <ItemsPresenter />
+                        <!--<ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />-->
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

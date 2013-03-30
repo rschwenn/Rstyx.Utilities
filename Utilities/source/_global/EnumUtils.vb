@@ -138,7 +138,7 @@ Imports PGK.Extensions
                             Dim EnumResourceKeyProperty As PropertyInfo = ResourceProvider.GetProperty(ResourceKey, BindingFlags.NonPublic Or BindingFlags.Static)
                             
                             If (EnumResourceKeyProperty IsNot Nothing) Then
-                                Dim DisplayString  As String = EnumResourceKeyProperty.GetValue(Nothing, Nothing)
+                                Dim DisplayString  As String = CStr(EnumResourceKeyProperty.GetValue(Nothing, Nothing))
                                 If (DisplayString.IsNotEmptyOrWhiteSpace()) Then
                                     DisplayStringCache.Item(CultureName).Item(ShortResourceKey) = DisplayString
                                     Exit For

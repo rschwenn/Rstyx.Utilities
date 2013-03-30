@@ -103,7 +103,7 @@
             Public Shared Function getStringValue(ByVal ValuePathName As String) As String
                 Dim Value  As String = Nothing
                 Try
-                    Value = getValue(ValuePathName)
+                    Value = CStr(getValue(ValuePathName))
                 Catch ex As System.Exception
                     Logger.logDebug("getStringValue(): Der Wert " & ValuePathName & " konnte nicht in einen String konvertiert werden.")
                 End Try 
@@ -123,7 +123,7 @@
                 Dim ValueT  As T = Nothing
                 Try
                     ValueO = getValue(ValuePathName)
-                    ValueT = ValueO
+                    ValueT = CType(ValueO, T)
                 Catch ex As System.Exception
                     Logger.logDebug("getValue(): Der Wert " & ValuePathName & " konnte nicht in den Typ " & GetType(T).ToString() & " konvertiert werden.")
                 End Try 

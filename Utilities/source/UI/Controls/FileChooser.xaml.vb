@@ -379,7 +379,7 @@ Namespace UI.Controls
                 ''' <summary> Forwardes InputFilePath to the FilePathTextBox. </summary>
                 Private Shared Sub OnInputFilePathPropertyChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
                     Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
-                    FileChooserInstance.FilePathTextBox.Text = e.NewValue
+                    FileChooserInstance.FilePathTextBox.Text = CType(e.NewValue, String)
                 End Sub
                 ''' <summary> Sets or gets the content of the file path text field. </summary>
                  ''' <remarks> This can be used to require a "desired" file path, wich is validated by the FileChooser like interactive input. </remarks>

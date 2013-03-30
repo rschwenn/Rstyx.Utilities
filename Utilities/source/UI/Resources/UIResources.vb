@@ -41,7 +41,7 @@ Namespace UI.Resources
                             Try
                                 Logger.logDebug("Icons [Get]: Read IconResources.xaml.")
                                 Dim u As Uri = new Uri(My.Settings.UIResources_IconResourcesUri, UriKind.Relative)
-                                Dim tmp  = Application.LoadComponent(u)
+                                Dim tmp As Object  = Application.LoadComponent(u)
                                 _Icons = CType(tmp, ResourceDictionary)
                                 Logger.logDebug("Icons [Get]: Icon resources initialized.")
                             Catch ex As Exception 
@@ -62,9 +62,9 @@ Namespace UI.Resources
                                 _IconRectangles = New Dictionary(Of String, System.Windows.Shapes.Rectangle)
                                 
                                 For Each de As DictionaryEntry in Icons
-                                    Dim Rect As System.Windows.Shapes.Rectangle = getIconRectangle(de.Key)
+                                    Dim Rect As System.Windows.Shapes.Rectangle = getIconRectangle(CType(de.Key, String))
                                     If (Rect IsNot Nothing) Then
-                                        Dim IconName As String = de.Key
+                                        Dim IconName As String = CType(de.Key, String)
                                         If (IconName.EndsWith(IconBrushSuffix) AndAlso (IconName.Length > IconBrushSuffix.Length)) Then 
                                             IconName = IconName.Substring(0, IconName.Length - IconBrushSuffix.Length)
                                         End If

@@ -363,7 +363,7 @@ Namespace UI.ViewModel
                             
                             If (success) Then
                                 Dim NewPropertyValue As TProperty = NewDesiredValue
-                                Dim OldPropertyValue As TProperty = TargetProperty.GetValue(Me, Nothing)
+                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
                                 Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
                                 
                                 If (IsDifferentValue) Then
@@ -422,7 +422,7 @@ Namespace UI.ViewModel
                             
                             If (success) Then
                                 Dim NewPropertyValue As TProperty = NewDesiredValue
-                                Dim OldPropertyValue As TProperty = TargetProperty.GetValue(Me, Nothing)
+                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
                                 Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
                                 
                                 If (IsDifferentValue) Then
@@ -481,7 +481,7 @@ Namespace UI.ViewModel
                             
                             If (success) Then
                                 Dim NewPropertyValue As TProperty = NewDesiredValue
-                                Dim OldPropertyValue As TProperty = TargetProperty.GetValue(Me, Nothing)
+                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
                                 Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
                                 
                                 If (IsDifferentValue) Then
@@ -539,7 +539,7 @@ Namespace UI.ViewModel
                             success = SupportedValues.findKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
                             
                             If (success) Then
-                                Dim OldPropertyValue As TProperty = TargetProperty.GetValue(Me, Nothing)
+                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
                                 Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
                                 
                                 If (IsDifferentValue) Then

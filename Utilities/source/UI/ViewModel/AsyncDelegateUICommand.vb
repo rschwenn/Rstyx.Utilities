@@ -14,7 +14,7 @@ Namespace UI.ViewModel
     ''' <summary> A Delegate Command for use in UI elements, that executes a cancellable action in current or separate thread. </summary>
      ''' <remarks>
      ''' <para>
-     ''' While the target command action is executing, the IsBusy property will be True and the provided ICommand.Execute() action 
+     ''' While the target command action is executing, the <c>IsBusy</c> property will be <c>True</c> and the provided <c>ICommand.Execute()</c> action 
      ''' will be a cancel action that can signal a cancel request to the threaded action. The Decoration property is changed accordingly.
      ''' This way a button that is bound to this command, changes it's appearance and command while the target command is executing.
      ''' </para>
@@ -22,12 +22,12 @@ Namespace UI.ViewModel
      ''' Construction: The target command has to be packed as <see cref="DelegateUICommandInfo"/> and passed to the constructor.
      ''' </para>
      ''' <para>
-     ''' Since the Task.Factory.StartNew() method doesn't allow for argument types other than Object, the target command can't have a strongly typed argument!
+     ''' Since the <c>Task.Factory.StartNew()</c> method doesn't allow for argument types other than Object, the target command can't have a strongly typed argument.
      ''' But in order to be cancelable the target execute action has to take an argument of type <see cref="System.Threading.CancellationToken"/>
-     ''' and periodically check and react to CancelToken.IsCancellationRequested.
+     ''' and periodically check and react to <c>CancelToken.IsCancellationRequested</c>.
      ''' </para>
      ''' <para>
-     ''' RaiseCanExecuteChanged() has to be called on this command in order to reflect changes of execution conditions that occur outside this command.
+     ''' <see cref="M:RaiseCanExecuteChanged"/> has to be called on this command in order to reflect changes of execution conditions that occur outside this command.
      ''' If the event listener is a dispatcher object (i.e. Button) then the event is raised on it's dispatcher, otherwise on the current thread's dispatcher. 
      ''' </para>
      ''' </remarks>
@@ -162,7 +162,7 @@ Namespace UI.ViewModel
                             ' Get the matching dispatcher.
                             Dim Dispatcher As System.Windows.Threading.Dispatcher = Nothing
                             If (TypeOf Handler.Target Is System.Windows.Threading.DispatcherObject) Then
-                                Dispatcher = Handler.Target.Dispatcher
+                                Dispatcher = CType(Handler.Target, System.Windows.Threading.DispatcherObject).Dispatcher
                             Else
                                 Dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher
                             End If

@@ -23,6 +23,8 @@
     Width ="{Binding Source={x:Static global:MySettings.Default}, Path=WindowWidth,  Mode=TwoWay}"
     Top   ="{Binding Source={x:Static global:MySettings.Default}, Path=WindowTop,    Mode=TwoWay}"
     Left  ="{Binding Source={x:Static global:MySettings.Default}, Path=WindowLeft,   Mode=TwoWay}"
+    
+    UseLayoutRounding="True"
     >
     
     <Window.Resources>
@@ -180,7 +182,7 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     Padding="{TemplateBinding Padding}"
-                                    SnapsToDevicePixels="true">
+                                    >
                                 <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -381,18 +383,14 @@
                         OverridesDefaultStyle="False"-->
                     </ToggleButton>
                     
-                    <StackPanel>
+                    <!--<StackPanel>
                     <RstyxControls:LooseExpanderToggle
                         Name="TestToggle"
                         ExpandDirection="Right"
                         Target="ToolBar1"
                         >
-                        <!--Background="{Binding Source={StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}, Path=Resources[ToolBarButtonHover]}"-->
-                        <!-- OK: Background="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=DocumentViewerToolBarGradient}}"-->
-                        <!--Style="{StaticResource ToggleButtonStyle_2}"-->
-                        
                     </RstyxControls:LooseExpanderToggle>
-                    </StackPanel>
+                    </StackPanel>-->
                     
                     <ToolBar Height="37" Name="ToolBar1" Width="164" Visibility="Hidden" >
                         <Button Content="Button" Width="50"/>

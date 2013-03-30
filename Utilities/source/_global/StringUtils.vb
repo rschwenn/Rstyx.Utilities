@@ -143,45 +143,45 @@ Imports PGK.Extensions
                       OneChar = NextChar(FormatString)
                       Select Case OneChar
                         
-                        Case "\"
+                        Case "\"c
                           OneChar = NextChar(FormatString)
                           Select Case OneChar
-                            Case "a" 'alert (bell)
+                            Case "a"c 'alert (bell)
                                 Ret = Ret & Chr(7)
-                            Case "b" 'backspace
+                            Case "b"c 'backspace
                                 Ret = Ret & vbBack
-                            Case "f" 'formfeed
+                            Case "f"c 'formfeed
                                 Ret = Ret & vbFormFeed
-                            Case "n" 'newline (linefeed)
+                            Case "n"c 'newline (linefeed)
                                 Ret = Ret & vbNewLine
-                            Case "r" 'carriage return
+                            Case "r"c 'carriage return
                                 Ret = Ret & vbCr
-                            Case "t" 'horizontal tab
+                            Case "t"c 'horizontal tab
                                 Ret = Ret & vbTab
-                            Case "v" 'vertical tab
+                            Case "v"c 'vertical tab
                                 Ret = Ret & vbVerticalTab
-                            Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"   'octal character
+                            Case "0"c, "1"c, "2"c, "3"c, "4"c, "5"c, "6"c, "7"c, "8"c, "9"c   'octal character
                                 NumberBuffer = OneChar
-                                While (InStr("01234567", FormatString.Left(1)) And (FormatString.Length > 0))
+                                While ((InStr("01234567", FormatString.Left(1)) > 0) And (FormatString.Length > 0))
                                     NumberBuffer = NumberBuffer & NextChar(FormatString)
                                 End While
-                                Ret = Ret & Chr(GeoMath.Oct2Dec(NumberBuffer))
-                            Case "x" 'hexadecimal character
+                                Ret = Ret & CStr(GeoMath.Oct2Dec(NumberBuffer))
+                            Case "x"c 'hexadecimal character
                                 NumberBuffer = ""
-                                While (InStr("0123456789ABCDEFabcdef", FormatString.Left(1)) And (FormatString.Length > 0))
+                                While ((InStr("0123456789ABCDEFabcdef", FormatString.Left(1)) > 0) And (FormatString.Length > 0))
                                     NumberBuffer = NumberBuffer & NextChar(FormatString)
                                 End While
-                                Ret = Ret & Chr(GeoMath.Hex2Dec(NumberBuffer))
-                            Case "\" 'backslash
+                                Ret = Ret & CStr(GeoMath.Hex2Dec(NumberBuffer))
+                            Case "\"c 'backslash
                                 Ret = Ret & "\"
-                            Case "%" 'percent
+                            Case "%"c 'percent
                                 Ret = Ret & "%"
                             Case Else 'unrecognised
                                 Ret = Ret & OneChar
                                 Throw New System.Exception(String.Format("sprintf(): Nicht erkannte Escape Sequenz: \{0}", OneChar))
                           End Select
                         
-                        Case "%"
+                        Case "%"c
                           OneChar = NextChar(FormatString)
                           If OneChar = "%" Then
                             Ret = Ret & "%"
@@ -207,65 +207,65 @@ Imports PGK.Extensions
                               End While
                             End If
                             
-                            ParmX = FlatParms(ParamUpTo)
+                            ParmX = FlatParms(CInt(ParamUpTo))
                             if ((ParmX is Nothing) OrElse ParmX.ToString.IsEmpty()) then
                               AddStr = ""
                             else
                                 Select Case OneChar
                                   
-                                  Case "d", "i" 'signed decimal
+                                  Case "d"c, "i"c 'signed decimal
                                     Value = CLng(ParmX)
                                     AddStr = CStr(System.Math.Abs(Value))
                                     If (Not Precision.IsEmpty()) Then
                                       If CDbl(Precision) > AddStr.Length Then
                                         'AddStr = String(CDbl(Precision) - AddStr.Length, "0") & AddStr
-                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                        AddStr = "0".Repeat(CInt(CDbl(Precision) - AddStr.Length)) & AddStr
                                       End If
                                     End If
                                     If Value < 0 Then
                                       AddStr = "-" & AddStr
-                                    ElseIf InStr(Flags, "+") Then
+                                    ElseIf (InStr(Flags, "+") > 0) Then
                                       AddStr = "+" & AddStr
-                                    ElseIf InStr(Flags, " ") Then
+                                    ElseIf (InStr(Flags, " ") > 0) Then
                                       AddStr = " " & AddStr
                                     End If
                                   
-                                  Case "u" 'unsigned decimal
+                                  Case "u"c 'unsigned decimal
                                     Value = CLng(ParmX)
                                     If Value < 0 Then Value = Value + 65536
                                     AddStr = CStr(Value)
                                     If Precision <> "" Then
                                       If CDbl(Precision) > AddStr.Length Then
-                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                        AddStr = "0".Repeat(CInt(CDbl(Precision) - AddStr.Length)) & AddStr
                                       End If
                                     End If
                                   
-                                  Case "o" 'unsigned octal value
+                                  Case "o"c 'unsigned octal value
                                     Value = CLng(ParmX)
                                     AddStr = Oct(Value)
                                     If Precision <> "" Then
                                       If CDbl(Precision) > AddStr.Length Then
-                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                        AddStr = "0".Repeat(CInt(CDbl(Precision) - AddStr.Length)) & AddStr
                                       End If
                                     End If
-                                    If InStr(Flags, "#") Then AddStr = "0" & AddStr
+                                    If (InStr(Flags, "#") > 0) Then AddStr = "0" & AddStr
                                   
-                                  Case "x", "X" 'unsigned hexadecimal value
+                                  Case "x"c, "X"c 'unsigned hexadecimal value
                                     Value = CLng(ParmX)
                                     AddStr = Hex(Value)
                                     If OneChar = "x" Then AddStr = LCase(AddStr)
                                     If Precision <> "" Then
                                       If CDbl(Precision) > AddStr.Length Then
-                                        AddStr = "0".Repeat(CDbl(Precision) - AddStr.Length) & AddStr
+                                        AddStr = "0".Repeat(CInt(CDbl(Precision) - AddStr.Length)) & AddStr
                                       End If
                                     End If
-                                    If InStr(Flags, "#") Then AddStr = "0x" & AddStr
+                                    If (InStr(Flags, "#") > 0) Then AddStr = "0x" & AddStr
                                   
-                                  Case "f" 'float w/o exponent
+                                  Case "f"c 'float w/o exponent
                                     Value = CDbl(ParmX)
                                     If Precision = "" Then Precision = "6"
                                     'AddStr = Format(Abs(Value), "0." & String(Precision, "0"))
-                                    AddStr = FormatNumber(System.Math.Abs(Value), Precision, true, false, false)
+                                    AddStr = FormatNumber(System.Math.Abs(Value), CInt(Precision), TriState.True, TriState.False, TriState.False)
                                             'FormatNumber(Ausdruck[, AnzDezimalstellen[, FührendeNull[, KlammernFürNegativeWerte[, ZiffernGruppieren]]]])
                                             'Die letzten 3 Parameter akzeptieren folgende Werte:
                                             '-1 = true
@@ -273,9 +273,9 @@ Imports PGK.Extensions
                                             '-2 = Ländereinstellungen des Computers verwenden
                                     If Value < 0 Then
                                       AddStr = "-" & AddStr
-                                    ElseIf InStr(Flags, "+") Then
+                                    ElseIf (InStr(Flags, "+") > 0) Then
                                       AddStr = "+" & AddStr
-                                    ElseIf InStr(Flags, " ") Then
+                                    ElseIf (InStr(Flags, " ") > 0) Then
                                       AddStr = " " & AddStr
                                     End If
                                   
@@ -347,10 +347,10 @@ Imports PGK.Extensions
                                     ''find shortest
                                     'AddStr = IIf(AddStrPercentF.Length > AddStrPercentE.Length, AddStrPercentE, AddStrPercentF)
                                     
-                                  Case "c" 'single character, passed ASCII value
+                                  Case "c"c 'single character, passed ASCII value
                                     AddStr = Chr(CByte(ParmX))
                                   
-                                  Case "s" 'string
+                                  Case "s"c 'string
                                     AddStr = CStr(ParmX)
                                   
                                   Case Else
@@ -361,12 +361,12 @@ Imports PGK.Extensions
                               
                             end if
                             
-                            If Width <> "" Then
+                            If (Width <> "") Then
                               If cint(Width) > AddStr.Length Then
-                                If InStr(Flags, "-") Then
-                                  AddStr = AddStr & Space(Width - AddStr.Length)
+                                If (InStr(Flags, "-") > 0) Then
+                                  AddStr = AddStr & Space(CInt(Width) - AddStr.Length)
                                 Else
-                                  AddStr = Space(Width - AddStr.Length) & AddStr
+                                  AddStr = Space(CInt(Width) - AddStr.Length) & AddStr
                                 End If
                               End If
                             End If
@@ -396,8 +396,8 @@ Imports PGK.Extensions
             
             ''' <summary> Returns the first character from a buffer string and removes it from the buffer. </summary>
              ''' <param name="Buffer"> The working string. </param>
-            Private Shared Function NextChar(ByRef Buffer As String) As String
-                Dim FirstChar = Buffer.Substring(0, 1)
+            Private Shared Function NextChar(ByRef Buffer As String) As Char
+                Dim FirstChar As Char = CChar(Buffer.Substring(0, 1))
                 Buffer = Buffer.Substring(1)
                 Return FirstChar
             End Function
