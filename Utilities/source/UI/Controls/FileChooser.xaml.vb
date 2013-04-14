@@ -3,7 +3,7 @@ Imports System
 Imports System.IO
 Imports System.Windows
 
-Imports Rstyx.Utilities.Files
+Imports Rstyx.Utilities.IO
 
 Namespace UI.Controls
     

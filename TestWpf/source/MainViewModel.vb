@@ -154,7 +154,7 @@ Public Class MainViewModel
             'Dim File     As String = "uedit*.exe;ultaedit*.exe"
             ''Logger.logInfo(Folders.IndexOfAny(System.IO.Path.GetInvalidPathChars()))
             ''
-            'Dim found  As System.Collections.ObjectModel.Collection(Of System.IO.fileinfo) = Files.FileUtils.findFiles(File, Folders, ";", IO.SearchOption.AllDirectories)
+            'Dim found  As System.Collections.ObjectModel.Collection(Of System.IO.fileinfo) = IO.FileUtils.findFiles(File, Folders, ";", IO.SearchOption.AllDirectories)
             '
             'If (found.IsNotNull) Then 
             '    For Each fi In found 

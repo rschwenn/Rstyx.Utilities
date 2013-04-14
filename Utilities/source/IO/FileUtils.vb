@@ -8,7 +8,7 @@ Imports System.Collections.ObjectModel
 
 'Imports Rstyx.Utilities.Files
 
-Namespace Files
+Namespace IO
     
     ''' <summary> Static utility methods for dealing with the file system and file or path names. </summary>
     Public NotInheritable Class FileUtils

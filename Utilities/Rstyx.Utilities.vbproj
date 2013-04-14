@@ -127,8 +127,8 @@
     <Compile Include="source\Collections\SortedKeyedCollectionBase.vb" />
     <Compile Include="source\_global\DBUtils.vb" />
     <Compile Include="source\_global\EnumUtils.vb" />
-    <Compile Include="source\Files\FileInfoCollection.vb" />
-    <Compile Include="source\Files\FileUtils.vb" />
+    <Compile Include="source\IO\FileInfoCollection.vb" />
+    <Compile Include="source\IO\FileUtils.vb" />
     <Compile Include="source\_global\Extensions.vb" />
     <Compile Include="source\_global\GeoMath.vb" />
     <Compile Include="source\_global\Interfaces.vb" />

@@ -27,7 +27,7 @@
         End Class
     End Namespace
     
-    Namespace Files
+    Namespace IO
         ''' <summary>
         ''' General-purpose development utilities for dealing with files.
         ''' </summary>

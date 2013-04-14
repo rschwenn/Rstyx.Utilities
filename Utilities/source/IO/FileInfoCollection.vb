@@ -1,5 +1,5 @@
 ﻿
-Namespace Files
+Namespace IO
     
     ''' <summary>  A keyed collection of <see cref="System.IO.FileInfo"/> objects (Key = Full Path). </summary>
      ''' <remarks> Since the key is the full path, so one file can't be added twice. </remarks>

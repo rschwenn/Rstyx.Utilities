@@ -536,7 +536,7 @@ Namespace Apps
                 if (not Success) then
                     CEditExe = String.Empty
                     Logger.logDebug("getAppPathCrimsonEditor(): Programmdatei von Crimson Editor im Dateisystem suchen im %PATH%.")
-                    fi = Files.FileUtils.findFile(AppName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
+                    fi = IO.FileUtils.findFile(AppName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
                     If (fi.IsNotNull()) Then CEditExe = fi.FullName
                 end if
                 
@@ -577,7 +577,7 @@ Namespace Apps
                 ' Search in %PATH%
                 if (UEditExe.IsEmptyOrWhiteSpace()) then
                     Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
-                    fi = Files.FileUtils.findFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
+                    fi = IO.FileUtils.findFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
                     If (fi.IsNotNull()) Then UEditExe = fi.FullName
                 end if
                 
@@ -606,14 +606,14 @@ Namespace Apps
                 if (_JAVA_HOME.isNull()) Then
                     _JAVA_HOME = String.Empty
                 Else
-                    fi = Files.FileUtils.findFile(AppNames, _JAVA_HOME, ";", SearchOption.TopDirectoryOnly)
+                    fi = IO.FileUtils.findFile(AppNames, _JAVA_HOME, ";", SearchOption.TopDirectoryOnly)
                     If (fi.IsNotNull()) Then JavaExe = fi.FullName
                 End If
                 
                 ' Search dafault Java in %PATH%
                 if (JavaExe.IsEmptyOrWhiteSpace()) then
                     Logger.logDebug("getJavaEnvironment(): Programmdatei der Java-Standardinstallation im Dateisystem suchen im %PATH%.")
-                    fi = Files.FileUtils.findFile(AppNames, Environment.GetEnvironmentVariable("PATH"), ";", SearchOption.TopDirectoryOnly)
+                    fi = IO.FileUtils.findFile(AppNames, Environment.GetEnvironmentVariable("PATH"), ";", SearchOption.TopDirectoryOnly)
                     If (fi.IsNotNull()) Then JavaExe = fi.FullName
                 end if
                 
@@ -626,7 +626,7 @@ Namespace Apps
                 '' Search in %PROGRAMFILES%
                 'if (JavaExe.IsEmptyOrWhiteSpace()) then
                 '    Logger.logDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %PROGRAMFILES%.")
-                '    fi = Files.FileUtils.findFile(AppNames, Environment.GetEnvironmentVariable("PROGRAMFILES"), ";", SearchOption.AllDirectories)
+                '    fi = IO.FileUtils.findFile(AppNames, Environment.GetEnvironmentVariable("PROGRAMFILES"), ";", SearchOption.AllDirectories)
                 '    If (fi.IsNotNull()) Then JavaExe = fi.FullName
                 'end if
                 
@@ -635,7 +635,7 @@ Namespace Apps
                     _JAVA_HOME = String.Empty
                     Logger.logDebug("getJavaEnvironment(): Programmdatei von Java nicht gefunden.")
                 Else
-                    _JAVA_HOME = Files.FileUtils.getFilePart(JavaExe, Files.FileUtils.FilePart.Dir)
+                    _JAVA_HOME = IO.FileUtils.getFilePart(JavaExe, IO.FileUtils.FilePart.Dir)
                     Logger.logDebug(StringUtils.sprintf("getJavaEnvironment(): Programmdatei von Java gefunden: '%s'.", JavaExe))
                 end if
                 
@@ -702,7 +702,7 @@ Namespace Apps
                 ' Search in %PATH%
                 if (not Success) then
                     Logger.logDebug("getJEditEnvironment(): jEdit.jar im Dateisystem suchen im %PATH%.")
-                    fi = Files.FileUtils.findFile(JarName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
+                    fi = IO.FileUtils.findFile(JarName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
                     If (fi.IsNotNull()) Then jEditJar = fi.FullName
                 end if
                 
@@ -723,7 +723,7 @@ Namespace Apps
                     Logger.logDebug("getJEditEnvironment(): Programmdatei von jEdit nicht gefunden.")
                 else
                     _AppPathJEdit = jEditJar
-                    _JEDIT_HOME   = Files.FileUtils.getFilePart(jEditJar, Files.FileUtils.FilePart.Dir)
+                    _JEDIT_HOME   = IO.FileUtils.getFilePart(jEditJar, IO.FileUtils.FilePart.Dir)
                     Logger.logDebug(StringUtils.sprintf("getJEditEnvironment(): Programmdatei von jEdit gefunden: '%s'.", jEditJar))
                 end if
             End Sub
