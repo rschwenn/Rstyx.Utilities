@@ -29,7 +29,16 @@
     
     Namespace IO
         ''' <summary>
-        ''' General-purpose development utilities for dealing with files.
+        ''' General-purpose development utilities for input/output.
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
+    Namespace IO.CSV
+        ''' <summary>
+        ''' Handling of CSV files. (CSV Reader: see http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader)
         ''' </summary>
         <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
         Class NamespaceDoc

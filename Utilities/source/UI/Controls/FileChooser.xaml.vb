@@ -699,10 +699,13 @@ Namespace UI.Controls
                         ' File doesn't have to exist, that's why it has to be a valid path...
                         If (InputFileAbsolute.IsEmpty()) Then
                             ' File is somehow invalid: Remove invalid characters.
-                            InputFileAbsolute = FileUtils.getFilePart(FileUtils.validateFilePathSpelling(InputFilePathTrimmed, String.Empty), FileUtils.FilePart.Dir_Base_Ext)
+                            Try
+                                InputFileAbsolute = FileUtils.getFilePart(FileUtils.validateFilePathSpelling(InputFilePathTrimmed, String.Empty), FileUtils.FilePart.Dir_Base_Ext)
+                            Catch ex as exception
+                            End Try
                         End If
                         If (InputFileAbsolute.IsEmpty()) Then
-                            ' Still invalid (i.e. a ":" at the wrong position.
+                            ' Still invalid (i.e. a ":" at the wrong position).
                             isValidFileName = False
                         Else
                             isValidFileName = True

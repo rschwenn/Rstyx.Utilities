@@ -333,6 +333,7 @@
                     <Label Target="{Binding ElementName=tbTest}" Content="_Test"/>
                     <TextBox
                         Name="tbTest"
+                        Text="{Binding Path=Textbox, Mode=TwoWay}"
                         />
                 </DockPanel>
                 

@@ -423,86 +423,154 @@ Namespace IO
             
             ''' <summary> Checks if a given file name is valid for file system operations. It doesn't have to exist. </summary>
              ''' <param name="FileName"> The file name to validate (without path). </param>
-             ''' <returns> True, if file system or file name operations shouldn't complain about this name, otherwise False. </returns>
+             ''' <returns> <c>True</c>, if file system or file name operations shouldn't complain about this name, otherwise <c>False</c>. </returns>
+             ''' <remarks> 
+             ''' The given <paramref name="FileName"/> may not contain path separators.
+             ''' This method doesn't check environment conditions. So, real file operations may fail due to security reasons
+             ''' or a too long path because the used directory were too long.
+             ''' </remarks>
             Public Shared Function isValidFileName(byVal FileName As String) As Boolean
                 Dim isValid  As Boolean = True
-                If (Not (FileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) < 0)) Then
+                If (FileName.IsEmptyOrWhiteSpace()) Then
+                    isValid = False
+                ElseIf (FileName.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) >= 0) Then
                     ' FileName contains invalid characters.
                     isValid = False
-                Else
-                    Try 
-                        Dim AbsolutePath As String = Path.GetFullPath(FileName)
-                    Catch ex As System.Exception
-                        ' FileName is invalid for other reasons.
-                        isValid = False
-                    End Try
                 End If
                 Return isValid
             End Function
             
             ''' <summary> Checks if a given file name filter seems to be valid. </summary>
              ''' <param name="FileNameFilter"> The file name filter to validate (without path). </param>
-             ''' <returns> True, if file name filter operations shouldn't complain about this name filter, otherwise False. </returns>
+             ''' <returns> <c>True</c>, if file name filter operations shouldn't complain about this name filter, otherwise <c>False</c>. </returns>
             Public Shared Function isValidFileNameFilter(byVal FileNameFilter As String) As Boolean
                 Dim isValid  As Boolean = True
                 
-                For Each TestChar As Char In System.IO.Path.GetInvalidFileNameChars()
-                    If (Not ((TestChar = "*") Or (TestChar = "?"))) Then
-                        If (FileNameFilter.Contains(TestChar)) Then
-                            isValid = False
+                If (FileNameFilter Is Nothing) Then
+                    isValid = False
+                Else
+                    For Each TestChar As Char In System.IO.Path.GetInvalidFileNameChars()
+                        If (Not ((TestChar = "*") Or (TestChar = "?"))) Then
+                            If (FileNameFilter.Contains(TestChar)) Then
+                                isValid = False
+                            End If
                         End If
-                    End If
-                Next 
+                    Next 
+                End If
                 
                 Return isValid
             End Function
             
             ''' <summary> Checks if a given file path is valid for file system operations. It doesn't have to exist. </summary>
              ''' <param name="FilePath"> The file path to validate (absolute or relative). </param>
-             ''' <returns> True, if file system or path name operations shouldn't complain about this path, otherwise False. </returns>
+             ''' <returns> <c>True</c>, if file system or path name operations shouldn't complain about this path, otherwise <c>False</c>. </returns>
             Public Shared Function isValidFilePath(byVal FilePath As String) As Boolean
-                Dim isValid  As Boolean = True
-                If (Not (FilePath.IndexOfAny(System.IO.Path.GetInvalidPathChars()) < 0)) Then
-                    ' FilePath contains invalid characters.
-                    isValid = False
-                Else
-                    Try 
-                        Dim AbsolutePath As String = Path.GetFullPath(FilePath)
-                    Catch ex As System.Exception
-                        ' FilePath is invalid for other reasons.
-                        isValid = False
-                    End Try
-                End If
+                Dim isValid  As Boolean = False
+                Try
+                    Dim fi As New FileInfo(FilePath)
+                    isValid = True
+                Catch e As Exception
+                End Try
                 Return isValid
             End Function
             
             ''' <summary> Replaces invalid characters in a given file name string. </summary>
              ''' <param name="FileName"> The file name without path. </param>
              ''' <param name="ReplaceString"> [Optional] The replace string for invalid characters (defaults to "_"). </param>
-             ''' <returns> A given file name with invalid characters replaced by the ReplaceString. </returns>
+             ''' <returns>
+             ''' The given <paramref name="FileName"/> if it's a valid file name, otherwise
+             ''' a valid file name where invalid characters are replaced by <paramref name="ReplaceString"/>.
+             ''' </returns>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileName"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.ArgumentException"> <paramref name="FileName"/> is empty or white space. </exception>
+             ''' <exception cref="T:System.FormatException"> Validation of <paramref name="FileName"/> has been tried, but failed. </exception>
             Public Shared Function validateFileNameSpelling(byVal FileName As String, Optional byVal ReplaceString As String = "_") As String
-                Dim invalidString  As String
-                For Each invalidChar As Char In System.IO.Path.GetInvalidFileNameChars()
-                    invalidString = Char.Parse(invalidChar)
-                    If (invalidString.Length > 0) Then
-                        FileName = FileName.Replace(invalidString, ReplaceString)
+                If (FileName Is Nothing) Then
+                    Throw New System.ArgumentNullException("FileName")
+                ElseIf (FileName.IsEmptyOrWhiteSpace()) Then
+                    Throw New System.ArgumentException("Dateiname ist leer.", "FileName")
+                Else
+                    ' Replace invalid characters if present.
+                    Dim InvalidFileNameChars() As Char = System.IO.Path.GetInvalidFileNameChars()
+                    If (FileName.IndexOfAny(InvalidFileNameChars) >= 0) Then
+                        ' FileName contains invalid characters.
+                        Dim invalidString  As String
+                        For Each invalidChar As Char In InvalidFileNameChars
+                            invalidString = Char.Parse(invalidChar)
+                            If (invalidString.Length > 0) Then
+                                FileName = FileName.Replace(invalidString, ReplaceString)
+                            End If
+                        Next
                     End If
-                Next
+                    
+                    ' Throw exception if not successful.
+                    If (Not isValidFileName(FileName)) Then
+                        Throw New System.FormatException("Ungültiger Dateiname konnte nicht bereinigt werden: '" & FileName & "'")
+                    End If
+                End If
                 Return FileName
             End Function
             
             ''' <summary> Replaces invalid characters in a given file path string. </summary>
              ''' <param name="FilePath"> The file path to validate (absolute or relative). </param>
              ''' <param name="ReplaceString"> [Optional] The replace string for invalid characters (defaults to "_"). </param>
-             ''' <returns> A given file path with invalid characters replaced by the ReplaceString. </returns>
+             ''' <returns>
+             ''' The given <paramref name="FilePath"/> if it's a valid file path, otherwise
+             ''' a valid file path where invalid characters are replaced by <paramref name="ReplaceString"/>.
+             ''' </returns>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FilePath"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.ArgumentException"> <paramref name="FilePath"/> is empty or white space. </exception>
+             ''' <exception cref="T:System.Security.SecurityException"> The caller does not have the required permission. </exception>
+             ''' <exception cref="T:System.UnauthorizedAccessException"> Access to <paramref name="FilePath"/> is denied. </exception>
+             ''' <exception cref="T:System.IO.PathTooLongException"> <paramref name="FilePath"/> is too long. </exception>
+             ''' <exception cref="T:System.FormatException"> Validation of <paramref name="FilePath"/> has been tried, but failed. </exception>
             Public Shared Function validateFilePathSpelling(byVal FilePath As String, Optional byVal ReplaceString As String = "_") As String
-                Dim invalidString  As String
-                For Each invalidChar As Char In System.IO.Path.GetInvalidPathChars()
-                    invalidString = Char.Parse(invalidChar)
-                    If (invalidString.Length > 0) Then
-                        FilePath = FilePath.Replace(invalidString, ReplaceString)
-                    End If
-                Next
+                If (FilePath Is Nothing) Then
+                    Throw New System.ArgumentNullException("FilePath")
+                ElseIf (FilePath.IsEmptyOrWhiteSpace()) Then
+                    Throw New System.ArgumentException("Dateipfad ist leer.", "FilePath")
+                Else
+                    Try
+                        FilePath = FilePath.Trim()
+                        Dim fi As New FileInfo(FilePath)
+                        
+                    'Catch e As System.Security.SecurityException
+                        ' Unsufficient rights
+                        
+                    Catch e As System.ArgumentException
+                        ' FilePath (is empty or white space or) ** contains invalid characters **
+                        Dim invalidString  As String
+                        For Each invalidChar As Char In System.IO.Path.GetInvalidPathChars()
+                            invalidString = Char.Parse(invalidChar)
+                            If (invalidString.Length > 0) Then
+                                FilePath = FilePath.Replace(invalidString, ReplaceString)
+                            End If
+                        Next
+                        ' Re-throw if not successful.
+                        If (Not isValidFilePath(FilePath)) Then
+                            Throw New System.FormatException("Ungültiger Dateipfad konnte nicht bereinigt werden: '" & FilePath & "'", e)
+                        End If
+                        
+                    'Catch e As System.UnauthorizedAccessException
+                        ' Access denied
+                        
+                    Catch e As System.IO.PathTooLongException
+                        Throw New System.IO.PathTooLongException("Dateipfad ist zu lang: '" & FilePath & "'", e)
+                        
+                    Catch e As System.NotSupportedException
+                        ' FilePath contains a colon (:) outside drive letter
+                        Dim Root As String = Path.GetPathRoot(FilePath)
+                        If (Root.IsEmpty()) Then
+                            FilePath = FilePath.Replace(":", ReplaceString)
+                        Else
+                            FilePath = Root & FilePath.Right(Root, False).Replace(":", ReplaceString)
+                        End If
+                        ' Re-throw if not successful.
+                        If (Not isValidFilePath(FilePath)) Then
+                            Throw New System.FormatException("Ungültiger Dateipfad konnte nicht bereinigt werden: '" & FilePath & "'", e)
+                        End If
+                    End Try
+                End If
                 Return FilePath
             End Function
             

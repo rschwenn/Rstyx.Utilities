@@ -2,7 +2,6 @@
 Imports System.IO
 Imports System.Threading.Tasks
 
-Imports Rstyx.Utilities.Files
 Imports Rstyx.Utilities.UI.ViewModel
 
 Public Class MainViewModel
@@ -32,6 +31,7 @@ Public Class MainViewModel
         Private _TestTaskAsyncCommand   As AsyncDelegateUICommand = Nothing
         
         Public Property FilePath1 As String
+        Public Property Textbox   As String
         
         ''' <summary> Determines the current ShellCommand for the Test button. </summary>
         Public Property TestTaskAsyncCommand() As AsyncDelegateUICommand
@@ -78,26 +78,31 @@ Public Class MainViewModel
         End Sub
         
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
-            
-            'Dim TestEnum As Cinch.CustomDialogIcons = Cinch.CustomDialogIcons.Question
-            'Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum.ToString(), TestEnum.ToDisplayString()))
-            'Me.StatusText = TestEnum.ToDisplayString()
-            '
-            'System.Threading.Thread.Sleep(3000)
-            '
-            'For i = 1 To 10000
-            '    Dim TestEnum2 As ArrayUtils.SortType = ArrayUtils.SortType.Numeric
-            '    Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
-            '    'Me.StatusText = TestEnum2.ToDisplayString()
-            '    Cinch.ApplicationHelper.DoEvents()
-            '    If (CancelToken.IsCancellationRequested) Then Exit For
-            'Next
-            'System.Threading.Thread.Sleep(3000)
-            
-            'Dim success As Boolean = Rstyx.Utilities.Apps.AppUtils.startExcelGeoToolsCSVImport(Me.FilePath1)
-            
-            UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
-            
+            Try
+                'Dim TestEnum As Cinch.CustomDialogIcons = Cinch.CustomDialogIcons.Question
+                'Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum.ToString(), TestEnum.ToDisplayString()))
+                'Me.StatusText = TestEnum.ToDisplayString()
+                '
+                'System.Threading.Thread.Sleep(3000)
+                '
+                'For i = 1 To 10000
+                '    Dim TestEnum2 As ArrayUtils.SortType = ArrayUtils.SortType.Numeric
+                '    Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
+                '    'Me.StatusText = TestEnum2.ToDisplayString()
+                '    Cinch.ApplicationHelper.DoEvents()
+                '    If (CancelToken.IsCancellationRequested) Then Exit For
+                'Next
+                'System.Threading.Thread.Sleep(3000)
+                
+                'Dim success As Boolean = Rstyx.Utilities.Apps.AppUtils.startExcelGeoToolsCSVImport(Me.FilePath1)
+                
+                'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
+                Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
+                Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
+                
+            Catch e As System.Exception
+                Logger.logError(e, "test_1(): Unerwarteter Fehler.")
+            End Try
         End Sub
         
         Public Sub test_0()

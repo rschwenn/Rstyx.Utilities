@@ -102,6 +102,16 @@
     <Compile Include="My Project\Settings.vb" />
     <Compile Include="source\Apps\AppInfo.vb" />
     <Compile Include="source\Apps\AppUtils.vb" />
+    <Compile Include="source\IO\CSV\CsvReader.vb" />
+    <Compile Include="source\IO\CSV\Enums.vb" />
+    <Compile Include="source\IO\CSV\MalformedCsvException.vb" />
+    <Compile Include="source\IO\CSV\MissingFieldCsvException.vb" />
+    <Compile Include="source\IO\CSV\ParseErrorEventArgs.vb" />
+    <Compile Include="source\IO\CSV\Resources\ExceptionMessage.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessage.resx</DependentUpon>
+    </Compile>
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -168,6 +178,11 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source\IO\CSV\Resources\ExceptionMessage.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessage.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>IO.CSV</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="source\Resources\EnumDisplayStrings.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
