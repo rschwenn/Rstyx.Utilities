@@ -24,22 +24,26 @@ Namespace IO.CSV
     '''</summary>
     <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
-     Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
-    Friend Module ExceptionMessage
+     Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
+    Friend Class CsvExceptionMessage
         
-        Private resourceMan As Global.System.Resources.ResourceManager
+        Private Shared resourceMan As Global.System.Resources.ResourceManager
         
-        Private resourceCulture As Global.System.Globalization.CultureInfo
+        Private Shared resourceCulture As Global.System.Globalization.CultureInfo
+        
+        <Global.System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>  _
+        Friend Sub New()
+            MyBase.New
+        End Sub
         
         '''<summary>
         '''  Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
+        Friend Shared ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
             Get
                 If Object.ReferenceEquals(resourceMan, Nothing) Then
-                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("Rstyx.Utilities.ExceptionMessage", GetType(ExceptionMessage).Assembly)
+                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("Rstyx.Utilities.CsvExceptionMessage", GetType(CsvExceptionMessage).Assembly)
                     resourceMan = temp
                 End If
                 Return resourceMan
@@ -51,7 +55,7 @@ Namespace IO.CSV
         '''  Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend Property Culture() As Global.System.Globalization.CultureInfo
+        Friend Shared Property Culture() As Global.System.Globalization.CultureInfo
             Get
                 Return resourceCulture
             End Get
@@ -63,7 +67,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Buffer size must be 1 or more. ähnelt.
         '''</summary>
-        Friend ReadOnly Property BufferSizeTooSmall() As String
+        Friend Shared ReadOnly Property BufferSizeTooSmall() As String
             Get
                 Return ResourceManager.GetString("BufferSizeTooSmall", resourceCulture)
             End Get
@@ -72,7 +76,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Cannot move to a previous record in forward-only mode. ähnelt.
         '''</summary>
-        Friend ReadOnly Property CannotMovePreviousRecordInForwardOnly() As String
+        Friend Shared ReadOnly Property CannotMovePreviousRecordInForwardOnly() As String
             Get
                 Return ResourceManager.GetString("CannotMovePreviousRecordInForwardOnly", resourceCulture)
             End Get
@@ -81,7 +85,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Cannot read record at index &apos;{0}&apos;. ähnelt.
         '''</summary>
-        Friend ReadOnly Property CannotReadRecordAtIndex() As String
+        Friend Shared ReadOnly Property CannotReadRecordAtIndex() As String
             Get
                 Return ResourceManager.GetString("CannotReadRecordAtIndex", resourceCulture)
             End Get
@@ -90,7 +94,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Enumeration has either not started or has already finished. ähnelt.
         '''</summary>
-        Friend ReadOnly Property EnumerationFinishedOrNotStarted() As String
+        Friend Shared ReadOnly Property EnumerationFinishedOrNotStarted() As String
             Get
                 Return ResourceManager.GetString("EnumerationFinishedOrNotStarted", resourceCulture)
             End Get
@@ -99,7 +103,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Collection was modified; enumeration operation may not execute. ähnelt.
         '''</summary>
-        Friend ReadOnly Property EnumerationVersionCheckFailed() As String
+        Friend Shared ReadOnly Property EnumerationVersionCheckFailed() As String
             Get
                 Return ResourceManager.GetString("EnumerationVersionCheckFailed", resourceCulture)
             End Get
@@ -108,7 +112,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die &apos;{0}&apos; field header not found. ähnelt.
         '''</summary>
-        Friend ReadOnly Property FieldHeaderNotFound() As String
+        Friend Shared ReadOnly Property FieldHeaderNotFound() As String
             Get
                 Return ResourceManager.GetString("FieldHeaderNotFound", resourceCulture)
             End Get
@@ -117,7 +121,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Field index must be included in [0, FieldCount[. Specified field index was : &apos;{0}&apos;. ähnelt.
         '''</summary>
-        Friend ReadOnly Property FieldIndexOutOfRange() As String
+        Friend Shared ReadOnly Property FieldIndexOutOfRange() As String
             Get
                 Return ResourceManager.GetString("FieldIndexOutOfRange", resourceCulture)
             End Get
@@ -126,7 +130,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die The CSV appears to be corrupt near record &apos;{0}&apos; field &apos;{1} at position &apos;{2}&apos;. Current raw data : &apos;{3}&apos;. ähnelt.
         '''</summary>
-        Friend ReadOnly Property MalformedCsvException() As String
+        Friend Shared ReadOnly Property MalformedCsvException() As String
             Get
                 Return ResourceManager.GetString("MalformedCsvException", resourceCulture)
             End Get
@@ -135,7 +139,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die &apos;{0}&apos; is not a supported missing field action. ähnelt.
         '''</summary>
-        Friend ReadOnly Property MissingFieldActionNotSupported() As String
+        Friend Shared ReadOnly Property MissingFieldActionNotSupported() As String
             Get
                 Return ResourceManager.GetString("MissingFieldActionNotSupported", resourceCulture)
             End Get
@@ -144,7 +148,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die No current record. ähnelt.
         '''</summary>
-        Friend ReadOnly Property NoCurrentRecord() As String
+        Friend Shared ReadOnly Property NoCurrentRecord() As String
             Get
                 Return ResourceManager.GetString("NoCurrentRecord", resourceCulture)
             End Get
@@ -153,7 +157,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die The CSV does not have headers (CsvReader.HasHeaders property is false). ähnelt.
         '''</summary>
-        Friend ReadOnly Property NoHeaders() As String
+        Friend Shared ReadOnly Property NoHeaders() As String
             Get
                 Return ResourceManager.GetString("NoHeaders", resourceCulture)
             End Get
@@ -162,7 +166,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die The number of fields in the record is greater than the available space from index to the end of the destination array. ähnelt.
         '''</summary>
-        Friend ReadOnly Property NotEnoughSpaceInArray() As String
+        Friend Shared ReadOnly Property NotEnoughSpaceInArray() As String
             Get
                 Return ResourceManager.GetString("NotEnoughSpaceInArray", resourceCulture)
             End Get
@@ -171,7 +175,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die &apos;{0}&apos; is not a valid ParseErrorAction while inside a ParseError event. ähnelt.
         '''</summary>
-        Friend ReadOnly Property ParseErrorActionInvalidInsideParseErrorEvent() As String
+        Friend Shared ReadOnly Property ParseErrorActionInvalidInsideParseErrorEvent() As String
             Get
                 Return ResourceManager.GetString("ParseErrorActionInvalidInsideParseErrorEvent", resourceCulture)
             End Get
@@ -180,7 +184,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die &apos;{0}&apos; is not a supported ParseErrorAction. ähnelt.
         '''</summary>
-        Friend ReadOnly Property ParseErrorActionNotSupported() As String
+        Friend Shared ReadOnly Property ParseErrorActionNotSupported() As String
             Get
                 Return ResourceManager.GetString("ParseErrorActionNotSupported", resourceCulture)
             End Get
@@ -189,7 +193,7 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die This operation is invalid when the reader is closed. ähnelt.
         '''</summary>
-        Friend ReadOnly Property ReaderClosed() As String
+        Friend Shared ReadOnly Property ReaderClosed() As String
             Get
                 Return ResourceManager.GetString("ReaderClosed", resourceCulture)
             End Get
@@ -198,10 +202,10 @@ Namespace IO.CSV
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Record index must be 0 or more. ähnelt.
         '''</summary>
-        Friend ReadOnly Property RecordIndexLessThanZero() As String
+        Friend Shared ReadOnly Property RecordIndexLessThanZero() As String
             Get
                 Return ResourceManager.GetString("RecordIndexLessThanZero", resourceCulture)
             End Get
         End Property
-    End Module
+    End Class
 End Namespace

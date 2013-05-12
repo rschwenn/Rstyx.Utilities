@@ -107,15 +107,20 @@
     <Compile Include="source\IO\CSV\MalformedCsvException.vb" />
     <Compile Include="source\IO\CSV\MissingFieldCsvException.vb" />
     <Compile Include="source\IO\CSV\ParseErrorEventArgs.vb" />
-    <Compile Include="source\IO\CSV\Resources\ExceptionMessage.Designer.vb">
+    <Compile Include="source\IO\CSV\Resources\CsvExceptionMessage.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>ExceptionMessage.resx</DependentUpon>
+      <DependentUpon>CsvExceptionMessage.resx</DependentUpon>
     </Compile>
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>EnumDisplayStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="source\Resources\Messages.Designer.vb">
+      <DependentUpon>Messages.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="source\UI\Binding\Converters\CheckboxConverter.vb" />
     <Compile Include="source\UI\Binding\Converters\CultureInfoConverter.vb" />
@@ -143,6 +148,7 @@
     <Compile Include="source\_global\GeoMath.vb" />
     <Compile Include="source\_global\Interfaces.vb" />
     <Compile Include="source\_global\RegUtils.vb" />
+    <Compile Include="source\_global\RemarkException.vb" />
     <Compile Include="source\_global\StringUtils.vb" />
     <Compile Include="source\_global\SysUtils.vb" />
     <Compile Include="source\UI\Binding\Converters\ConverterProvider.vb" />
@@ -179,15 +185,24 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="source\IO\CSV\Resources\ExceptionMessage.resx">
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExceptionMessage.Designer.vb</LastGenOutput>
+    <EmbeddedResource Include="source\IO\CSV\Resources\CsvExceptionMessage.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <!--<Generator>VbMyResourcesResXFileCodeGenerator</Generator>-->
+      <LastGenOutput>CsvExceptionMessage.Designer.vb</LastGenOutput>
       <CustomToolNamespace>IO.CSV</CustomToolNamespace>
+      <!--<LogicalName>IO.CSV.ExceptionMessage.resources</LogicalName>-->
     </EmbeddedResource>
     <EmbeddedResource Include="source\Resources\EnumDisplayStrings.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <CustomToolNamespace>Resources</CustomToolNamespace>
       <LastGenOutput>EnumDisplayStrings.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="source\Resources\Messages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <!--<Generator>VbMyResourcesResXFileCodeGenerator</Generator>-->
+      <LastGenOutput>Messages.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
+      <!--<LogicalName>Resources.ExceptionMessage.resources</LogicalName>-->
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

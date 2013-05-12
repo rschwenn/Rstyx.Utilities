@@ -52,9 +52,13 @@ Namespace UI
 	        
             ''' <summary> Selects all text of a text box, if desired. </summary>
 	        Private Shared Sub OnTextBoxGotKeyboardFocus(ByVal sender As Object, ByVal e As KeyboardFocusChangedEventArgs)
-                If (_SelectAllOnTextBoxGotFocus) Then
-	                CType(sender, TextBox).SelectAll()
-                End If
+	            Try
+                    If (_SelectAllOnTextBoxGotFocus) Then
+	                    CType(sender, TextBox).SelectAll()
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
 	        End Sub
             
         #End Region

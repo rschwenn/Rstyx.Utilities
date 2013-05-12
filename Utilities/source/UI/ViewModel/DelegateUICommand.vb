@@ -1,7 +1,6 @@
 ﻿
 Imports System
 
-
 Namespace UI.ViewModel
     
     ''' <summary> An ICommand for use in UI elements whose delegates take one parameter of given type. </summary>
@@ -42,7 +41,7 @@ Namespace UI.ViewModel
             
             ''' <summary> Creates a new command that always can execute. </summary>
              ''' <param name="ExecuteAction"> The execution logic. </param>
-             ''' <param name="Decoration">    The decoration that should be applied to  the bound UI element. </param>
+             ''' <param name="Decoration">    The decoration that should be applied to the bound UI element. </param>
             Public Sub New(ByVal ExecuteAction As Action(Of T2), Decoration As UICommandDecoration)
                 MyBase.New(ExecuteAction)
                 _Decoration = Decoration
@@ -59,7 +58,7 @@ Namespace UI.ViewModel
             
         #End Region
         
-        #Region "Properties" 
+        #Region "Properties"
             
             ''' <summary> Returns the Command's UI Decoration information. This is for binding to the UI. </summary>
             Public ReadOnly Property Decoration As UICommandDecoration

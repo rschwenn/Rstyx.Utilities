@@ -35,11 +35,17 @@
         
         #Region "Public Static Methods"
             
-            ''' <summary> Winds up a one-staged encapsulated Array into a flat Array. </summary>
-             ''' <param name="encapsulatedArray"> 1d-Array, whose elements can be 1d-Arrays. </param>
-             ''' <returns> A flat 1d-Array (provides the input encapsulation has been one-staged only).
-             ''' If an error occures, the input Array is returned. </returns>
-            Public Shared Function getFlatArray(byRef encapsulatedArray As Object()) As Object()
+            ''' <summary> Unwinds a one-staged encapsulated Array into a flat Array. </summary>
+             ''' <param name="WrapArray"> 1d-Array, which elements can be 1d-Arrays. </param>
+             ''' <returns>
+             ''' A flat 1d-Array (provides the input encapsulation has been one-staged only).
+             ''' If an error occures, the input Array is returned. 
+             ''' </returns>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="WrapArray"/> is <see langword="null"/> or empty. </exception>
+            Public Shared Function getFlatArray(byRef WrapArray As Object()) As Object()
+                
+                If (WrapArray Is Nothing) Then Throw New System.ArgumentNullException("WrapArray")
+                
                 'Deklarationen
                   Dim i            As Integer
                   Dim j            As Integer
@@ -49,23 +55,23 @@
                   Dim CountParms1  As Integer
                   Dim CountParms2  As Integer
                   Dim EmbedCount() As Integer
-                  Dim isEmbedded   As Boolean
+                  Dim IsEmbedded   As Boolean
                   Dim tmpArray()   As Object = new Object() {}
                   Dim flatParms()  As Object = new Object() {}
                   
-                Try
-                    'Initialisierung
-                      ub1 = UBound(encapsulatedArray)
+                'Try
+                    ' Initialisierung
+                      ub1 = UBound(WrapArray)
                       CountParms1 = ub1 + 1
                       CountParms2 = 0
                       ReDim EmbedCount(ub1)
                     
-                    'Feststellen, ob und an welchen Stellen das Eingabe-Array verschachtelte Parameter enthält
+                    ' Feststellen, ob und an welchen Stellen das Eingabe-Array verschachtelte Parameter enthält
                     For i = 0 To ub1
-                        If (IsArray(encapsulatedArray(i))) Then
-                            isEmbedded = True
-                            If (not encapsulatedArray(i) is Nothing) then
-                                ub2 = UBound(CType(encapsulatedArray(i), System.Array))
+                        If (IsArray(WrapArray(i))) Then
+                            IsEmbedded = True
+                            If (WrapArray(i) IsNot Nothing) Then
+                                ub2 = UBound(CType(WrapArray(i), System.Array))
                                 EmbedCount(i) = ub2 + 1
                             Else
                                 EmbedCount(i) = 0
@@ -76,22 +82,22 @@
                         CountParms2 = CountParms2 + EmbedCount(i)
                     Next
                     
-                    'ggf. das übernommene ParamArray in ein nicht verschachteltes Array wandeln
-                    If (Not isEmbedded) Then
-                        flatParms = encapsulatedArray
+                    ' Ggf. das übernommene ParamArray in ein nicht verschachteltes Array wandeln
+                    If (Not IsEmbedded) Then
+                        flatParms = WrapArray
                     Else
                         ReDim flatParms(CountParms2 - 1)
                         j = 0
                         For i = 0 To ub1
                             If (EmbedCount(i) > 0) Then
-                                If (IsArray(encapsulatedArray(i))) Then
-                                    tmpArray = CType(encapsulatedArray(i), Object())
+                                If (IsArray(WrapArray(i))) Then
+                                    tmpArray = CType(WrapArray(i), Object())
                                     For k = 0 To UBound(CType(tmpArray, System.Array))
                                       flatParms(j) = tmpArray(k)
                                       j = j + 1
                                     Next
                                 Else
-                                    flatParms(j) = encapsulatedArray(i)
+                                    flatParms(j) = WrapArray(i)
                                     j = j + 1
                                 End If
                             End If
@@ -99,17 +105,15 @@
                     End If
                     tmpArray = flatParms
                     
-                Catch ex As System.Exception
-                    Logger.logError(ex, "getFlatArray(): unbekannter Fehler")
-                    tmpArray = encapsulatedArray
-                End Try
+                'Catch ex As System.Exception
+                '    Logger.logError(ex, "getFlatArray(): unbekannter Fehler")
+                '    tmpArray = WrapArray
+                'End Try
                 
                 Return tmpArray
             End Function
             
-            ''' <summary>
-            ''' Sorts the the whole 2d-Array "Matrix" by a given column by invoking <see cref="ArrayUtils.QuickSort2d" />.
-            ''' </summary>
+            ''' <summary> Sorts the the whole 2d-Array "Matrix" by a given column by invoking <see cref="ArrayUtils.QuickSort2d" />. </summary>
              ''' <param name="Matrix">      The Array to sort. </param>
              ''' <param name="Key_Dim">     Determines the column to sort by (in conjunction with "Key_Idx"). </param>
              ''' <param name="Key_Idx">     Determines the column to sort by (in conjunction with "Key_Dim"). </param>
@@ -117,21 +121,19 @@
              ''' <param name="Descending">  If True, sorting is performed descending. </param>
              ''' <remarks></remarks>
             Public Shared Sub SortArray2d(byRef Matrix As Object(,), byVal Key_Dim As Integer, byVal Key_Idx As Integer, byVal SortingType As SortType, byVal Descending As Boolean)
-                Dim LowerIndex  As Integer
-                Dim UpperIndex  As Integer
-                Dim sec_Dim     As Integer
+                Dim sec_Dim  As Integer
                 
-                Try
-                    if (Key_Dim = 1) then sec_Dim = 2 else sec_Dim = 1
-                    LowerIndex = lbound(Matrix, sec_Dim)
-                    UpperIndex = ubound(Matrix, sec_Dim)
+                'Try
+                    If (Key_Dim = 1) Then sec_Dim = 2 Else sec_Dim = 1
+                    Dim LowerIndex  As Integer = lbound(Matrix, sec_Dim)
+                    Dim UpperIndex  As Integer = ubound(Matrix, sec_Dim)
                     Logger.logDebug(StringUtils.sprintf("SortArray2d(): Initialisierung QuickSort2d(Matrix,%s,%s,%s,%s,%s,%s", Key_Dim, Key_Idx, SortingType.ToDisplayString(), Descending, LowerIndex, UpperIndex))
                     QuickSort2d(Matrix, Key_Dim, Key_Idx, SortingType, Descending, LowerIndex, UpperIndex)
                     
-                Catch ex As System.Exception
-                    Logger.logError(ex, "SortArray2d(): unbekannter Fehler")
-                End Try
-            end Sub
+                'Catch ex As System.Exception
+                '    Logger.logError(ex, "SortArray2d(): unbekannter Fehler")
+                'End Try
+            End Sub
             
             ''' <summary> Sorts a given range of a 2d-Array "Matrix" by a given column. </summary>
              ''' <param name="Matrix">      The Array to sort. </param>
@@ -164,12 +166,12 @@
                 Dim Value_idxM  As Object
                 Dim temp        As Object
                 
-                Try
+                'Try
                     'Logger.logDebug("QuickSort2d(): Starte QuickSort2d(Matrix," & Key_Dim & "," & Key_Idx & "," & SortingType & "," & Descending & "," & LowerIndex & "," & UpperIndex & ")") 
-                    if ((LowerIndex < 0) or (UpperIndex < 0)) then
+                    If ((LowerIndex < 0) or (UpperIndex < 0)) Then
                         Logger.logDebug("QuickSort2d(): Sortieren unmöglich, da mindestens ein Index < 0!")
-                    else
-                        if (Key_Dim = 1) then sec_Dim = 2 else sec_Dim = 1
+                    Else
+                        if (Key_Dim = 1) Then sec_Dim = 2 Else sec_Dim = 1
                         
                         idxM = CInt(System.Math.Truncate((LowerIndex + UpperIndex) / 2))
                         i    = LowerIndex
@@ -179,12 +181,12 @@
                         Value_idxM = ArrayValue(Matrix, Key_Dim, Key_Idx, idxM)
                         
                         Do
-                            Do While isLesser(ArrayValue(Matrix, Key_Dim, Key_Idx, i), Value_idxM, SortingType, Descending)
+                            Do While IsLesser(ArrayValue(Matrix, Key_Dim, Key_Idx, i), Value_idxM, SortingType, Descending)
                                 i = i + 1
                                 'Schleifenausgang spätestens mit i = idxM + 1
                             Loop
                             
-                            Do While isLesser(Value_idxM, ArrayValue(Matrix, Key_Dim, Key_Idx, k), SortingType, Descending)
+                            Do While IsLesser(Value_idxM, ArrayValue(Matrix, Key_Dim, Key_Idx, k), SortingType, Descending)
                                 k = k - 1
                                 'Schleifenausgang spätestens mit k = idxM - 1
                             Loop
@@ -192,11 +194,11 @@
                             If (i <= k) Then
                                 'Arraywerte der Indizes i und k tauschen.
                                 For idxColumn = lbound(Matrix, Key_Dim) To ubound(Matrix, Key_Dim)
-                                    if (Key_Dim = 1) then
+                                    if (Key_Dim = 1) Then
                                         temp = Matrix(idxColumn, k)
                                         Matrix(idxColumn, k) = Matrix(idxColumn, i)
                                         Matrix(idxColumn, i) = temp
-                                    else
+                                    Else
                                         temp = Matrix(k, idxColumn)
                                         Matrix(k, idxColumn) = Matrix(i, idxColumn)
                                         Matrix(i, idxColumn) = temp
@@ -211,11 +213,11 @@
                         
                         If (LowerIndex < k) Then QuickSort2d(Matrix, Key_Dim, Key_Idx, SortingType, Descending, LowerIndex, k)
                         If (i < UpperIndex) Then QuickSort2d(Matrix, Key_Dim, Key_Idx, SortingType, Descending, i, UpperIndex)
-                    end if
+                    End If
                     
-                Catch ex As System.Exception
-                    Logger.logError(ex, "QuickSort2d(): unbekannter Fehler")
-                End Try
+                'Catch ex As System.Exception
+                '    Logger.logError(ex, "QuickSort2d(): unbekannter Fehler")
+                'End Try
             End Sub
             
         #End Region
@@ -231,19 +233,14 @@
             Private Shared Function ArrayValue(byRef Matrix As Object(,), byVal Key_Dim As Integer, byVal Key_Idx As Integer, byVal Sek_Idx As Integer) As Object
                 Dim RetValue  As Object = Nothing
                 
-                Try
-                    if (Key_Dim = 1) then
-                      RetValue = Matrix(Key_Idx, Sek_Idx)
-                    else
-                      RetValue = Matrix(Sek_Idx, Key_Idx)
-                    end if
-                    
-                Catch ex As System.Exception
-                    Logger.logError(ex, "ArrayValue(): unbekannter Fehler")
-                End Try
+                If (Key_Dim = 1) Then
+                    RetValue = Matrix(Key_Idx, Sek_Idx)
+                Else
+                    RetValue = Matrix(Sek_Idx, Key_Idx)
+                End if
                 
                 Return RetValue
-            end function
+            End Function
             
             ''' <summary> Compares two object values </summary>
              ''' <param name="Value1"> First value </param>
@@ -252,49 +249,43 @@
              ''' <param name="Reverse"> If true, the return value means "isGreater" </param>
              ''' <returns> True, if first value is lesser than second otherwise false. </returns>
              ''' <remarks> A Null value is lesser than all other values. </remarks>
-            Private Shared Function isLesser(ByRef Value1 As Object, ByRef Value2 As Object, ByVal SortingType As SortType, ByVal Reverse As Boolean) As Boolean
-                dim CompareResult     As Boolean = false
-                dim intRev            As Integer
+            Private Shared Function IsLesser(ByRef Value1 As Object, ByRef Value2 As Object, ByVal SortingType As SortType, ByVal Reverse As Boolean) As Boolean
+                Dim CompareResult     As Boolean = false
+                Dim intRev            As Integer
                 
-                Try
-                    if (Reverse) then intRev = -1 else intRev = 1
-                    
-                    if (isNothing(Value1) OrElse isNothing(Value2)) then
-                      'Ein NULL-Wert ist immer kleiner als alle anderen Werte
-                      if (isNothing(Value1) And isNothing(Value2)) then
+                If (Reverse) Then intRev = -1 Else intRev = 1
+                
+                If (IsNothing(Value1) OrElse IsNothing(Value2)) Then
+                    'Ein NULL-Wert ist immer kleiner als alle anderen Werte
+                    If (IsNothing(Value1) And IsNothing(Value2)) Then
                         CompareResult = false
-                      elseif (isNothing(Value1)) then
-                        if (not Reverse) then CompareResult = true else CompareResult = false
-                      else
-                        if (Reverse) then CompareResult = true else CompareResult = false
-                      end if
-                      
-                    else
-                      if (SortingType = SortType.Numeric) then
+                    Elseif (IsNothing(Value1)) Then
+                        If (not Reverse) Then CompareResult = true Else CompareResult = false
+                    Else
+                        If (Reverse) Then CompareResult = true Else CompareResult = false
+                    End if
+                Else
+                    If (SortingType = SortType.Numeric) Then
                         'Wenn numerisch nicht möglich, dann Alphanumerisch => Texte werden ans Ende sortiert.
-                        if (not (isNumeric(Value1) and isNumeric(Value2))) then SortingType = SortType.Alphanumeric
-                      end if
-                      
-                      select case SortingType
-                        
-                        case SortType.Numeric
-                            Dim DblValue1 As Double = cDbl(Value1)
-                            Dim DblValue2 As Double = cDbl(Value2)
-                            if (not Reverse) then CompareResult = (DblValue1 < DblValue2) else CompareResult = (DblValue2 < DblValue1)
-                            
-                        case else  ' Alphanumeric
-                            Dim String1 As String = cStr(Value1)
-                            Dim String2 As String = cStr(Value2)
-                            if (strComp(String1, String2, vbTextCompare) * intRev = -1) then CompareResult = true
-                      end select
-                    end if
+                        if (not (isNumeric(Value1) and isNumeric(Value2))) Then SortingType = SortType.Alphanumeric
+                    End if
                     
-                Catch ex As System.Exception
-                    Logger.logError(ex, "isLesser(): unbekannter Fehler")
-                End Try
+                    Select Case SortingType
+                      
+                      Case SortType.Numeric
+                          Dim DblValue1 As Double = cDbl(Value1)
+                          Dim DblValue2 As Double = cDbl(Value2)
+                          if (not Reverse) Then CompareResult = (DblValue1 < DblValue2) Else CompareResult = (DblValue2 < DblValue1)
+                          
+                      Case Else  ' Alphanumeric
+                          Dim String1 As String = cStr(Value1)
+                          Dim String2 As String = cStr(Value2)
+                          if (strComp(String1, String2, vbTextCompare) * intRev = -1) Then CompareResult = true
+                    End Select
+                End if
                 
                 Return CompareResult
-            end function
+            End Function
             
         #End Region
         

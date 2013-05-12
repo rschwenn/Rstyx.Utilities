@@ -45,7 +45,7 @@ Namespace UI.Resources
                                 _Icons = CType(tmp, ResourceDictionary)
                                 Logger.logDebug("Icons [Get]: Icon resources initialized.")
                             Catch ex As Exception 
-                                Logger.logError(ex, "Icons [Get]: IconResources.xaml konnte nicht gelesen werden.")
+                                Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ResourceNotFound, My.Settings.UIResources_IconResourcesUri))
                             End Try 
                         End If
                     End SyncLock
@@ -72,7 +72,7 @@ Namespace UI.Resources
                                     End If
                                 Next
                             Catch ex As Exception 
-                                Logger.logError(ex, "IconRectangles [Get]: unerwateter Fehler.")
+                                Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
                             End Try 
                         End If
                     End SyncLock
@@ -120,7 +120,7 @@ Namespace UI.Resources
                             End If
                         End If
                     Catch ex As Exception 
-                        Logger.logError(ex, "getIconBrush: Fehler beim Erstellen des Icon-DrawingBrush.")
+                        Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconDrawingBrush, ResourceName))
                     End Try 
                 End SyncLock
                 Return RetBrush
@@ -145,7 +145,7 @@ Namespace UI.Resources
                             End If
                         End If
                     Catch ex As Exception 
-                        Logger.logError(ex, "getIconRectangle: Fehler beim Erstellen des Icon-Rechtecks.")
+                        Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconRectangle, ResourceName))
                     End Try 
                 End SyncLock
                 Return RetRectangle

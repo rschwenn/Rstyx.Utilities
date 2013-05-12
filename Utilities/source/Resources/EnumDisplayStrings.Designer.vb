@@ -981,90 +981,90 @@ Namespace Resources
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Basisname ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Base() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Base() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Base", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Base", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Basis.Erweiterung ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Base_Ext() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Base_Ext() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Base_Ext", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Base_Ext", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Klasse ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Class() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Class() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Class", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Class", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Verzeichnis ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Dir() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Dir() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Dir", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Dir", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Verzeichnis\Basis ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Base() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Base", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Verzeichnis\Basis.Erweiterung ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base_Ext() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Base_Ext() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base_Ext", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Base_Ext", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Verzeichnis\Projekt ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Proj() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Proj() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Proj", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Proj", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Laufwerk ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Drive() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Drive() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Drive", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Drive", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Erweiterung ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Ext() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Ext() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Ext", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Ext", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Projekt ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Files_FileUtils_FilePart_Proj() As String
+        Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Proj() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Files_FileUtils_FilePart_Proj", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_FileUtils_FilePart_Proj", resourceCulture)
             End Get
         End Property
         

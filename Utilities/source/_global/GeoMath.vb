@@ -10,7 +10,6 @@ Imports System.Text.RegularExpressions
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
             Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.GeoMath")
             
         #End Region
@@ -46,18 +45,18 @@ Imports System.Text.RegularExpressions
              ''' <param name="Radiant"> Angle in [Rad] </param>
              ''' <returns> Angle in [Rad] between -PI and +PI </returns>
             Public Shared Function normalizeRadiant(ByVal Radiant As Double) As Double
-                dim TwoPI   As Double
-                dim Angle   As Double
+                Dim TwoPI   As Double
+                Dim Angle   As Double
                 TwoPI = 2 * System.Math.PI
                 Angle = Radiant
-                if (not Double.IsNaN(Angle)) then
-                    do While (Angle < -System.Math.PI)
+                If (not Double.IsNaN(Angle)) Then
+                    Do While (Angle < -System.Math.PI)
                         Angle = Angle + TwoPI
                     Loop
-                    do While (Angle > System.Math.PI)
+                    Do While (Angle > System.Math.PI)
                         Angle = Angle - TwoPI
                     Loop
-                end if
+                End If
                 Return Angle
             End Function
             
@@ -67,20 +66,20 @@ Imports System.Text.RegularExpressions
             Public Shared Function normalizeGon(ByVal Gon As Double) As Double
                 Dim Angle  As Double
                 Angle = Gon
-                if (not Double.IsNaN(Angle)) then
-                    do While (Angle < 0)
+                If (not Double.IsNaN(Angle)) Then
+                    Do While (Angle < 0)
                        Angle = Angle + 400
                     Loop
-                    do While (Angle > 400)
+                    Do While (Angle > 400)
                         Angle = Angle - 400
                     Loop
-                end if
+                End If
                 Return Angle
             End Function
             
             ''' <summary> Convert octal String representation without prefix to decimal Long (i.e "20" => 16). </summary>
              ''' <param name="Octal"> String representation of a number that is to be interpreted as octal. </param>
-             ''' <returns> Decimal number </returns>
+             ''' <returns> Decimal number or <see langword="null"/> </returns>
             Public Shared Function Oct2Dec(ByVal Octal As String) As Nullable(Of Long)
                 Dim OneChar As String = String.Empty
                 Dim Dec     As Nullable(Of Long) = 0
@@ -98,7 +97,7 @@ Imports System.Text.RegularExpressions
             
             ''' <summary> Convert hexadecimal String representation without prefix to decimal Long (i.e "FF" => 255). </summary>
              ''' <param name="Hexadecimal"> String representation of a number that is to be interpreted as hex. </param>
-             ''' <returns> Decimal number </returns>
+             ''' <returns> Decimal number or <see langword="null"/> </returns>
             Public Shared Function Hex2Dec(ByVal Hexadecimal As String) As Nullable(Of Long)
                 Dim Dec     As Nullable(Of Long)
                 Try
@@ -121,10 +120,10 @@ Imports System.Text.RegularExpressions
              ''' <returns> Usual Kilometer String </returns>
              ''' <remarks> Example output: "12.3 + 05.67", "12.3 + 5.67", "12.3 +  5.67" </remarks>
             Public Shared Function formatKilometer(byVal Kilometer As Double, byVal Precision As Integer, byVal PrefixMeter As String) As String
-                dim HektoMeter As Double
-                dim Meter      As Double
-                dim Part1      As String
-                dim Part2      As String
+                Dim HektoMeter As Double
+                Dim Meter      As Double
+                Dim Part1      As String
+                Dim Part2      As String
                 
                 ' Format without blanks
                 HektoMeter = System.Math.Truncate(Kilometer / 100)
@@ -134,20 +133,20 @@ Imports System.Text.RegularExpressions
                 Part2 = StringUtils.sprintf("%+." & Precision & "f", Meter)
                 
                 ' Tuning part 2
-                if (Kilometer >= 0) then
-                    if ((Meter < 10) and (PrefixMeter <> "")) then Part2 = replace(Part2, "+", "+" & PrefixMeter)
+                If (Kilometer >= 0) Then
+                    If ((Meter < 10) and (PrefixMeter <> "")) Then Part2 = replace(Part2, "+", "+" & PrefixMeter)
                     Part2 = replace(Part2, "+", " + ")
-                else
-                    if ((Meter > -10) and (PrefixMeter <> "")) then Part2 = replace(Part2, "-", "-" & PrefixMeter)
+                Else
+                    If ((Meter > -10) and (PrefixMeter <> "")) Then Part2 = replace(Part2, "-", "-" & PrefixMeter)
                     Part2 = replace(Part2, "-", " - ")
-                end if
+                End If
                 
                 Return Part1 & Part2
             End Function
             
             ''' <summary> Converts a usual DBAG Kilometer notation into the corresponding numerical value (i.e "123.4+56.789" => 123456.789). </summary>
              ''' <param name="KilometerString"> A usual DBAG Kilometer notation or a numerical String. </param>
-             ''' <returns> The corresponding numerical value if possible or NULL. </returns>
+             ''' <returns> The corresponding numerical value if possible or <see langword="null"/>. </returns>
             Public Shared Function getKilometer(ByVal KilometerString As String) As Nullable(Of Double)
                 Dim Kilometer     As String
                 Dim Meter         As String
@@ -185,7 +184,7 @@ Imports System.Text.RegularExpressions
              ''' <param name="strict">        If True, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first number is used. </param>
              ''' <param name="absolute">      If True, the returned Cant value is always positive. </param>
              ''' <param name="editPointInfo"> If True, the Cant pattern substring is removed from Pointinfo. </param>
-             ''' <returns> The found Cant value or NULL </returns>
+             ''' <returns> The found Cant value or <see langword="null"/> </returns>
              ''' <remarks> 
              ''' <para>
              ''' Es wird versucht, der Punktinfo die gemessene Ist-Überhöhung nach folgenden Regeln zu entnehmen:
@@ -231,16 +230,16 @@ Imports System.Text.RegularExpressions
                     End If
                 End If
                 
-                if (ui.IsNotEmpty()) then
+                If (ui.IsNotEmpty()) Then
                     ' 3. Cant value found.
                     Cant = cdbl(ui)
-                    if (absolute) then Cant = System.Math.Abs(Cant.ConvertTo(Of Double))
-                    if (editPointInfo) then Pointinfo = Pointinfo.replace(oMatch.Groups(1).Value, String.Empty)
+                    If (absolute) Then Cant = System.Math.Abs(Cant.ConvertTo(Of Double))
+                    If (editPointInfo) Then Pointinfo = Pointinfo.replace(oMatch.Groups(1).Value, String.Empty)
                     Success = true
-                else
+                Else
                     Success = false
                     Cant = Nothing
-                end if
+                End If
                 
                 Return Success
             End Function
@@ -261,13 +260,13 @@ Imports System.Text.RegularExpressions
             Public Shared Function getDBAGLineTitle(byVal LineNo As Integer) As DBAGLineInfo
               ' Declarations:
                 Dim LineFromFile     As String = String.Empty
-                dim LineTextShort    As String = String.Empty
-                dim FirstString      As String = String.Empty
-                dim WorkLine         As String = String.Empty
-                dim FromTo()         As String
-                dim tmp()            As String
+                Dim LineTextShort    As String = String.Empty
+                Dim FirstString      As String = String.Empty
+                Dim WorkLine         As String = String.Empty
+                Dim FromTo()         As String
+                Dim tmp()            As String
                 Dim NR               As Long    = 0
-                dim LineNoFound      As Boolean = false
+                Dim LineNoFound      As Boolean = false
                 Dim oSR              As StreamReader = Nothing
                 Dim LineInfo         As New DBAGLineInfo With {.Number = LineNo}
                 
@@ -278,7 +277,7 @@ Imports System.Text.RegularExpressions
                 End If 
                 
               ' Process LineInfo.SourceFile
-                if (not File.Exists(LineInfo.SourceFile)) then
+                If (not File.Exists(LineInfo.SourceFile)) Then
                     Logger.logError(StringUtils.sprintf("getDBAGLineTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGLinesFile, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFile)))
                     Logger.logError(StringUtils.sprintf("getDBAGLineTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGLinesFileFallback, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFileFallback)))
                     
@@ -286,31 +285,31 @@ Imports System.Text.RegularExpressions
                     LineInfo.ShortTitle = LineInfo.LongTitle
                     LineInfo.ShortDescription = LineInfo.LongTitle
                     LineInfo.LongDescription  = LineInfo.LongTitle
-                else
+                Else
                   ' Open File in default ANSII encoding ("Windows-1252" alias "iso-8859-1") and read until LineNo found.
                     'oSR = New StreamReader(LineInfo.SourceFile, System.Text.Encoding.GetEncoding("Windows-1252"))
                     oSR = New StreamReader(LineInfo.SourceFile, System.Text.Encoding.Default)
-                    Do while (not (oSR.EndOfStream or LineNoFound))
+                    Do While (not (oSR.EndOfStream or LineNoFound))
                         WorkLine = oSR.ReadLine
                         NR = NR + 1
-                        if (WorkLine.IsNotEmptyOrWhiteSpace) then
+                        If (WorkLine.IsNotEmptyOrWhiteSpace) Then
                             FirstString = WorkLine.Trim().Left(4)
-                            if (CDbl(FirstString) = LineNo) then 
+                            If (CDbl(FirstString) = LineNo) Then
                                 LineNoFound = true
                                 LineInfo.SourceLine = NR
                             End If
-                        end If
+                        End If
                     Loop
-                    if (LineNoFound) then LineFromFile = WorkLine.Trim()
+                    If (LineNoFound) Then LineFromFile = WorkLine.Trim()
                     oSR.Close
                   
                   ' Determine output text.
-                    If (LineFromFile.IsEmptyOrWhiteSpace) Then
+                    If (LineFromFile.IsEmptyOrWhiteSpace()) Then
                         LineInfo.LongTitle = "Strecke '" & LineNo & "' nicht gefunden! "
                         LineInfo.ShortTitle = LineInfo.LongTitle
                         LineInfo.ShortDescription = LineInfo.LongTitle
                         LineInfo.LongDescription  = LineInfo.LongTitle
-                    else
+                    Else
                         LineInfo.LongTitle = LineFromFile.Substring(4).Trim()
                         LineInfo.LongDescription = "Strecke " & LineNo & "  " & LineInfo.LongTitle
                         
@@ -319,17 +318,17 @@ Imports System.Text.RegularExpressions
                         tmp    = FromTo(0).Split(",")
                         LineTextShort = tmp(0)
                         
-                        if (ubound(FromTo) > 0) then
-                            for i As Integer = 1 to ubound(FromTo)
+                        If (ubound(FromTo) > 0) Then
+                            For i As Integer = 1 to ubound(FromTo)
                                 tmp = FromTo(i).Split(",")
                                 LineTextShort = LineTextShort & " - " & tmp(0)
-                            next
-                        end if
+                            Next
+                        End If
                         LineInfo.ShortTitle = LineTextShort
                         LineInfo.ShortDescription = "Strecke " & LineNo & "  " & LineInfo.ShortTitle
                         LineInfo.isValid = True
-                    end if
-                end if
+                    End If
+                End If
                 
                 Return LineInfo
             End Function
@@ -365,10 +364,6 @@ Imports System.Text.RegularExpressions
                 ''' <summary> Line number in source file, where the line number has been found. </summary>
                 Public SourceLine        As Long    = 0
             End Class
-            
-        #End Region
-        
-        #Region "Private Members"
             
         #End Region
         

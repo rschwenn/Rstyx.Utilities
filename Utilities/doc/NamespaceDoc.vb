@@ -82,7 +82,7 @@
         ''' </para>
         ''' <para>
         ''' <b>CAUTION:</b> The binding source property should belong directly to the datacontext,
-        ''' otherwise PushBinding may fail. This is expected to be happen especially
+        ''' otherwise PushBinding may fail. This is expected to happen especially
         ''' when the binding source object isn't already there when PushBinding is initailized.
         ''' </para>
         ''' </remarks>

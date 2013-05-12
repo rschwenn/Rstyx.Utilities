@@ -22,16 +22,14 @@ Namespace UI.Binding.Converters
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 The display string. </returns>
+         ''' <returns>                 The display string. On error the input value itself is returned. </returns>
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
-            Dim RetValue  As String = String.Empty
             Try
-                RetValue = CType(value, System.Enum).ToDisplayString()
-            Catch ex As System.Exception 
-                ' Silently catch
-                System.Diagnostics.Debug.Print("EnumDisplayConverter.Convert(): Exception!")
-            End Try 
-            Return RetValue
+                Return CType(value, System.Enum).ToDisplayString()
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
+            End Try
         End Function
         
         ''' <summary> Not Implemented. </summary>
@@ -39,9 +37,10 @@ Namespace UI.Binding.Converters
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 System.NotImplementedException. </returns>
+         ''' <returns>                 The input value itself. </returns>
         Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
-            Return New System.NotImplementedException()
+            System.Diagnostics.Trace.WriteLine("EnumDisplayConverter[ConvertBack]: This is Not Implemented => return input value!")
+            Return value
         End Function
     End Class
     

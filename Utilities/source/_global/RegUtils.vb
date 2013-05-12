@@ -26,12 +26,12 @@
              ''' <returns> True, if the key exists AND can be accessed with actual permissions, otherwise False. </returns>
              ''' <remarks> Example for a registry key name: "HKEY_CURRENT_USER\MyTestKey\Key2\Key3". </remarks>
             Public Shared Function KeyExists(ByVal KeyPathName As String) As Boolean
-                Dim TestValue As Object
-                Dim success   As Boolean = false
+                
+                Dim success As Boolean = False
                 
                 Try
-                    TestValue = Microsoft.Win32.Registry.GetValue(KeyPathName, "", "default")
-                    success   = (TestValue isNot Nothing)
+                    Dim TestValue As Object = Microsoft.Win32.Registry.GetValue(KeyPathName, "", "default")
+                    success = (TestValue IsNot Nothing)
                     
                 Catch ex as System.ArgumentException
                     Logger.logError(ex, "KeyExists(): ungültiger Stammschlüsselname in ValuePathName " & KeyPathName)
@@ -40,7 +40,7 @@
                     Logger.logError(ex, "KeyExists(): Der RegistryKey " & KeyPathName & " wurde zum Löschen markiert.")
                     
                 Catch ex as System.Security.SecurityException
-                    Logger.logDebug("KeyExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
+                    Logger.logError("KeyExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
                     
                 Catch ex as System.Exception
                     Logger.logError(ex, "KeyExists(): unbekannter Fehler")
@@ -59,15 +59,14 @@
             Public Shared Function ValueExists(ByVal ValuePathName As String) As Boolean
                 
                 Const UniqValue As String = "@mns4u6e8le9k6fe3rkjui548@"
-                Dim TestValue   As Object
-                Dim success     As Boolean = false
                 
+                Dim success     As Boolean = false
                 Dim ValueName   As String = getValueName(ValuePathName)
                 Dim KeyPathName As String = getKeyPathName(ValuePathName)
                 
                 Try
-                    TestValue = Microsoft.Win32.Registry.GetValue(KeyPathName, ValueName, UniqValue)
-                    success   = ((TestValue isNot Nothing) AndAlso (not TestValue.ToString().Equals(UniqValue)))
+                    Dim TestValue As Object = Microsoft.Win32.Registry.GetValue(KeyPathName, ValueName, UniqValue)
+                    success = ((TestValue isNot Nothing) AndAlso (not TestValue.ToString().Equals(UniqValue)))
                     
                 Catch ex as System.ArgumentException
                     Logger.logError(ex, "ValueExists(): ungültiger Stammschlüsselname in ValuePathName " & ValuePathName)
@@ -76,7 +75,7 @@
                     Logger.logError(ex, "ValueExists(): Der RegistryKey " & KeyPathName & " wurde zum Löschen markiert.")
                     
                 Catch ex as System.Security.SecurityException
-                    Logger.logDebug("ValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
+                    Logger.logError("ValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
                     
                 Catch ex as System.Exception
                     Logger.logError(ex, "ValueExists(): unbekannter Fehler")

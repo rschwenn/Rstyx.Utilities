@@ -32,13 +32,15 @@ Namespace IO
             
             ''' <summary> Returns the full path of the file that matches one of a given file filters and is found first in the Folders list. </summary>
              ''' <param name="FileFilters">    File filters without path (wildcards allowed), delimited by a given delimiter. </param>
-             ''' <param name="Folders">        Folders that should be searched. Absolute or relative (but not "..\" or ".\"), delimited by a given delimiter. Embedded Environment variables (quoted by "%") are expanded! </param>
-             ''' <param name="DelimiterRegEx"> The Delimiter for both the FileFilter and Folder lists (Regular Expression). Defaults to ";" (if it's Null). </param>
+             ''' <param name="Folders">        Folders that should be searched. Absolute or relative (but not "..\" or ".\"), delimited by a given delimiter. Embedded Environment variables (quoted by "%") are expanded. </param>
+             ''' <param name="DelimiterRegEx"> The Delimiter for both the FileFilter and Folder lists (Regular Expression). Defaults to ";" (if it's <see langword="null"/>). </param>
              ''' <param name="SearchOptions">  Available System.IO.SearchOptions (mainly recursive or not). </param>
-             ''' <returns>                     The full path of the found file or Null. </returns>
+             ''' <returns>                     The full path of the found file, or <see langword="null"/>. </returns>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFile(FileFilters    As String,
                                             Folders        As String,
-                                            DelimiterRegEx As String,
+                                            ByVal DelimiterRegEx As String,
                                             SearchOptions  As System.IO.SearchOption
                                             ) As FileInfo
                 Logger.logDebug(StringUtils.sprintf("findFile(): FileFilter: '%s', Verzeichnisse: '%s'.", FileFilters, Folders))
@@ -59,234 +61,226 @@ Namespace IO
             
             ''' <summary> Searches for files in a list of directories, matching a list of file filters. </summary>
              ''' <param name="FileFilters">    File filters without path (wildcards allowed), delimited by a given delimiter. </param>
-             ''' <param name="Folders">        Folders that should be searched. Absolute or relative (but not "..\" or ".\"), delimited by a given delimiter. Embedded Environment variables (quoted by "%") are expanded! </param>
-             ''' <param name="DelimiterRegEx"> The Delimiter for both the FileFilter and Folder lists (Regular Expression). Defaults to ";" (if it's Null). </param>
+             ''' <param name="Folders">        Folders that should be searched. Absolute or relative (but not "..\" or ".\"), delimited by a given delimiter. Embedded Environment variables (quoted by "%") are expanded. </param>
+             ''' <param name="DelimiterRegEx"> The Delimiter for both the FileFilter and Folder lists (Regular Expression). Defaults to ";" (if it's <see langword="null"/>). </param>
              ''' <param name="SearchOptions">  Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">    If True, the search is canceled when the first file is found. Defaults to False. </param>
              ''' <returns>                     The resulting list with found files. </returns>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFiles(FileFilters    As String,
                                              Folders        As String,
-                                             DelimiterRegEx As String,
+                                             ByVal DelimiterRegEx As String,
                                              SearchOptions  As System.IO.SearchOption,
                                              Optional OnlyOneFile As Boolean = false
                                             ) As FileInfoCollection
-                Dim FoundFiles  As New FileInfoCollection
                 
-                If (FileFilters.IsNull()) Then
-                    Logger.logWarning("findFiles(): Keine Dateimaske(n) angegeben!")
-                ElseIf (Folders.IsNull()) Then
-                    Logger.logWarning("findFiles(): Keine zu durchsuchenden Verzeichnisse angegeben!")
-                Else
-                    If (DelimiterRegEx.IsNull()) Then DelimiterRegEx = ";"
-                    FoundFiles = findFiles(FileFilters.Split(DelimiterRegEx), Folders.Split(DelimiterRegEx), SearchOptions, OnlyOneFile)
-                End If
+                If (FileFilters.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FileFilters", Rstyx.Utilities.Resources.Messages.FileUtils_NoFileFilter)
+                If (Folders.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Folders", Rstyx.Utilities.Resources.Messages.FileUtils_NoSearchDir)
                 
-                Return FoundFiles
+                If (DelimiterRegEx.IsEmpty()) Then DelimiterRegEx = ";"
+                
+                Return findFiles(FileFilters.Split(DelimiterRegEx), Folders.Split(DelimiterRegEx), SearchOptions, OnlyOneFile)
             End Function
             
             ''' <summary> Searches for files in a list of directories, matching a list of file filters. </summary>
              ''' <param name="FileFilters">   File filters without path (wildcards allowed). </param>
-             ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded! </param>
+             ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded. </param>
              ''' <param name="SearchOptions"> Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">   If True, the search is canceled when the first file is found. Defaults to False. </param>
              ''' <returns>                    The resulting list with found files. </returns>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFiles(FileFilters    As IEnumerable(Of String), 
                                              Folders        As IEnumerable(Of DirectoryInfo), 
                                              SearchOptions  As System.IO.SearchOption,
                                              Optional OnlyOneFile As Boolean = false
                                              ) As FileInfoCollection
-                Dim FoundFiles  As New FileInfoCollection
                 
-                If (FileFilters.IsNull()) Then
-                    Logger.logWarning("findFiles(): Keine Dateimaske(n) angegeben!")
-                ElseIf (Folders.IsNull()) Then
-                    Logger.logWarning("findFiles(): Keine zu durchsuchenden Verzeichnisse angegeben!")
-                Else
-                    ' Unify list of folders.
-                    Dim StringFolders As New Collection(Of String)
-                    For Each di As DirectoryInfo In Folders
-                        StringFolders.Add(di.FullName)
-                    Next
-                    
-                    FoundFiles = findFiles(FileFilters, StringFolders, SearchOptions, OnlyOneFile)
-                End If
+                If (FileFilters Is Nothing) Then Throw New System.ArgumentNullException("FileFilters", Rstyx.Utilities.Resources.Messages.FileUtils_NoFileFilter)
+                If (Folders Is Nothing) Then Throw New System.ArgumentNullException("Folders", Rstyx.Utilities.Resources.Messages.FileUtils_NoSearchDir)
                 
-                Return FoundFiles
+                ' Unify list of folders.
+                Dim StringFolders As New Collection(Of String)
+                For Each di As DirectoryInfo In Folders
+                    StringFolders.Add(di.FullName)
+                Next
+                
+                Return findFiles(FileFilters, StringFolders, SearchOptions, OnlyOneFile)
             End Function
             
             ''' <summary> Searches for files in a list of directories, matching a list of file filters. </summary>
              ''' <param name="FileFilters">   File filters without path (wildcards allowed). </param>
-             ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded! </param>
+             ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded. </param>
              ''' <param name="SearchOptions"> Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">   If True, the search is canceled when the first file is found. Defaults to False. </param>
              ''' <returns>                    The resulting list with found files. </returns>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFiles(FileFilters    As IEnumerable(Of String), 
                                              Folders        As IEnumerable(Of String), 
                                              SearchOptions  As System.IO.SearchOption,
                                              Optional OnlyOneFile As Boolean = false
                                              ) As FileInfoCollection
-                Dim FoundFiles  As New FileInfoCollection
+                Dim FoundFiles  As New FileInfoCollection()
                 
-                If (FileFilters.IsNull()) Then
-                    Logger.logWarning("findFiles(): Keine Dateimaske(n) angegeben!")
-                ElseIf (Folders.IsNull()) Then
-                    Logger.logWarning("findFiles(): Keine zu durchsuchenden Verzeichnisse angegeben!")
-                Else
-                    
-                    Dim oStopwatch  As System.Diagnostics.Stopwatch = System.Diagnostics.Stopwatch.StartNew()
-                    
-                    Logger.logDebug("\nfindFiles(): Start search with these settings:")
-                    Logger.logDebug(StringUtils.sprintf("findFiles(): - Only one file:     %s", OnlyOneFile))
-                    Logger.logDebug(StringUtils.sprintf("findFiles(): - Options:           %s", SearchOptions.ToString()))
-                    
-                    Logger.logDebug(StringUtils.sprintf("findFiles(): - FileFilters (%d):", FileFilters.Count))
-                    For Each FileFilter As String in FileFilters
-                        Logger.logDebug(StringUtils.sprintf("findFiles():   - FileFilter:      %s", FileFilter))
-                    Next
-                    
-                    Logger.logDebug(StringUtils.sprintf("findFiles(): - Folders (%d):", Folders.Count))
-                    For Each Folder As String in Folders
-                        Logger.logDebug(StringUtils.sprintf("findFiles():   - Folder:          %s", Folder))
-                    Next
-                    Logger.logDebug("")
-                    findAddFiles(FoundFiles, FileFilters, Folders, SearchOptions, OnlyOneFile)
-                    
-                    oStopwatch.Stop()
-                    Logger.logDebug(StringUtils.sprintf("\nfindFiles(): Found %d files (in %.3f sec.)\n", FoundFiles.Count, oStopwatch.ElapsedMilliseconds/1000))
-                End If
+                If (FileFilters Is Nothing) Then Throw New System.ArgumentNullException("FileFilters", Rstyx.Utilities.Resources.Messages.FileUtils_NoFileFilter)
+                If (Folders Is Nothing) Then Throw New System.ArgumentNullException("Folders", Rstyx.Utilities.Resources.Messages.FileUtils_NoSearchDir)
+                
+                Dim oStopwatch  As System.Diagnostics.Stopwatch = System.Diagnostics.Stopwatch.StartNew()
+                
+                ' Log Arguments
+                Logger.logDebug("\nfindFiles(): Start search with these settings:")
+                Logger.logDebug(StringUtils.sprintf("findFiles(): - Only one file:     %s", OnlyOneFile))
+                Logger.logDebug(StringUtils.sprintf("findFiles(): - Options:           %s", SearchOptions.ToString()))
+                
+                Logger.logDebug(StringUtils.sprintf("findFiles(): - FileFilters (%d):", FileFilters.Count))
+                For Each FileFilter As String in FileFilters
+                    Logger.logDebug(StringUtils.sprintf("findFiles():   - FileFilter:      %s", FileFilter))
+                Next
+                
+                Logger.logDebug(StringUtils.sprintf("findFiles(): - Folders (%d):", Folders.Count))
+                For Each Folder As String in Folders
+                    Logger.logDebug(StringUtils.sprintf("findFiles():   - Folder:          %s", Folder))
+                Next
+                Logger.logDebug("")
+                
+                ' Find Files.
+                findAddFiles(FoundFiles, FileFilters, Folders, SearchOptions, OnlyOneFile)
+                
+                oStopwatch.Stop()
+                Logger.logDebug(StringUtils.sprintf("\nfindFiles(): Found %d files (in %.3f sec.)\n", FoundFiles.Count, oStopwatch.ElapsedMilliseconds/1000))
                 
                 Return FoundFiles
             End Function
             
             ''' <summary> Backend of findFiles(): Searches for files in a list of directories, matching a list of file filters. </summary>
-             ''' <param name="FoundFiles">    The Collection to add the found files to. If Null it will be created. </param>
+             ''' <param name="FoundFiles">    [Output] The Collection to add the found files to. If <see langword="null"/> it will be created. </param>
              ''' <param name="FileFilters">   File filters without path (wildcards allowed). </param>
-             ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded! </param>
+             ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded. </param>
              ''' <param name="SearchOptions"> Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">   If True, the search is canceled when the first file is found. Defaults to False. </param>
-            Private Shared Sub findAddFiles(FoundFiles     As FileInfoCollection, 
-                                            FileFilters    As IEnumerable(Of String), 
-                                            Folders        As IEnumerable(Of String), 
-                                            SearchOptions  As System.IO.SearchOption,
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
+             ''' <exception cref="T:System.ArgumentException"> <paramref name="Folders"/> doesn't contain any existent Folder. </exception>
+            Private Shared Sub findAddFiles(ByRef FoundFiles As FileInfoCollection,
+                                            FileFilters      As IEnumerable(Of String),
+                                            Folders          As IEnumerable(Of String),
+                                            SearchOptions    As System.IO.SearchOption,
                                             Optional OnlyOneFile As Boolean = false
                                             )
-                Dim Files()         As FileInfo
-                Dim SearchFinished  As Boolean = False
+                ' Check Arguments
+                If (FoundFiles Is Nothing) Then FoundFiles = New FileInfoCollection()
+                If (FileFilters Is Nothing) Then Throw New System.ArgumentNullException("FileFilters", Rstyx.Utilities.Resources.Messages.FileUtils_NoFileFilter)
+                If (Folders Is Nothing) Then Throw New System.ArgumentNullException("Folders", Rstyx.Utilities.Resources.Messages.FileUtils_NoSearchDir)
                 
-                ' Ensure that the resulting collection is never returned as Null (for convenience).
-                If (FoundFiles.IsNull()) Then FoundFiles = New FileInfoCollection
+                ' Consolidate and check file filters.
+                Dim ConsolidatedFileFilters As New Collection(Of String)
+                For Each FileFilter As String in FileFilters
+                    FileFilter = FileFilter.Trim()
+                    
+                    If (FileFilter.IsEmptyOrWhiteSpace()) Then
+                        Logger.logWarning(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFileFilter)
+                    ElseIf (Not isValidFileNameFilter(FileFilter)) Then
+                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFileFilter, FileFilter))
+                    ElseIf (ConsolidatedFileFilters.Contains(FileFilter)) Then
+                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFileFilter, FileFilter))
+                    Else
+                        ConsolidatedFileFilters.Add(FileFilter)
+                    End If
+                Next
+                If (ConsolidatedFileFilters.Count < 1) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.FileUtils_NoValidFileFilter, "FileFilters")
                 
-                If (FileFilters.IsNull()) Then
-                    Logger.logWarning("findAddFiles(): Keine Dateifilter angegeben!")
-                ElseIf (Folders.IsNull()) Then
-                    Logger.logWarning("findAddFiles(): Keine zu durchsuchenden Verzeichnisse angegeben!")
-                ElseIf (SearchOptions.IsNull()) Then
-                    Logger.logWarning("findAddFiles(): Keine Suchoptionen angegeben!")
-                Else
-                    ' Consolidate file filters
-                    Dim ConsolidatedFileFilters As New Collection(Of String)
-                    For Each FileFilter As String in FileFilters
-                        FileFilter = FileFilter.Trim()
-                        
-                        If (Not isValidFileNameFilter(FileFilter)) Then
-                            Logger.logWarning("findAddFiles(): Dateifilter für Dateisuche enthält ungültige Zeichen und wird ignoriert: '" & FileFilter & "'.")
-                        ElseIf (FileFilter.IsEmptyOrWhiteSpace) Then
-                            Logger.logWarning("findAddFiles(): Dateifilter für Dateisuche ist leer und wird ignoriert.")
-                        ElseIf (ConsolidatedFileFilters.Contains(FileFilter)) Then
-                            Logger.logWarning("findAddFiles(): Dateifilter für Dateisuche ist wiederholt angegeben und wird ignoriert: '" & FileFilter & "'.")
+                ' Consolidate and check folder names (also expand environment variables).
+                Dim ConsolidatedFolders As New Collection(Of String)
+                For Each FolderName As String in Folders
+                    FolderName = Environment.ExpandEnvironmentVariables(FolderName.Trim())
+                    
+                    If (Not Directory.Exists(FolderName)) Then
+                        If (FolderName.IsEmptyOrWhiteSpace()) Then
+                            Logger.logWarning(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFolderName)
+                        ElseIf (Not isValidFilePath(FolderName)) Then
+                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFolderName, FolderName))
                         Else
-                            ConsolidatedFileFilters.Add(FileFilter)
-                        End If
+                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchFolderNotFound, FolderName, Directory.GetCurrentDirectory()))
+                        End If 
+                    ElseIf (ConsolidatedFolders.Contains(FolderName)) Then
+                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFolderName, FolderName))
+                    Else
+                        ConsolidatedFolders.Add(FolderName)
+                    End If
+                Next
+                If (ConsolidatedFolders.Count < 1) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.FileUtils_NoExistentFolderName, "Folders")
+                
+                ' Search each folder of given folder list.
+                For Each FolderName As String in ConsolidatedFolders
+                    
+                    Dim Files()         As FileInfo
+                    Dim SearchFinished  As Boolean = False
+                    
+                    Dim SearchDir As DirectoryInfo = New DirectoryInfo(FolderName)
+                    Logger.logDebug(StringUtils.sprintf("\nfindAddFiles(): Suche in Verzeichnis: '%s'.", Path.GetFullPath(FolderName)))
+                    
+                    ' Search files of current folder.
+                    For Each FileFilter As String in ConsolidatedFileFilters
+                        Try
+                            ' Get the matching files of this directory, possibly inclusive subdirectories.
+                            Files = SearchDir.GetFiles(FileFilter, System.IO.SearchOption.TopDirectoryOnly)
+                            
+                            For Each fi As FileInfo in Files
+                                If (Not FoundFiles.Contains(fi)) Then
+                                    FoundFiles.Add(fi)
+                                    Logger.logDebug(StringUtils.sprintf("findAddFiles(): %6d. Datei gefunden:   '%s'", FoundFiles.Count, FoundFiles(FoundFiles.Count - 1).FullName))
+                                    If (OnlyOneFile) Then
+                                        SearchFinished = True
+                                        Exit For
+                                    End If
+                                End If
+                            Next
+                            
+                        Catch ex as System.Security.SecurityException
+                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): SecurityException at processing files of %s.", FolderName))
+                            
+                        Catch ex as System.UnauthorizedAccessException
+                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): UnauthorizedAccessException at processing files of %s.", FolderName))
+                            
+                        Catch ex as System.Exception
+                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorProcessingFolder, FolderName))
+                        End Try
+                        
+                        If (SearchFinished) Then Exit For
                     Next
                     
-                    If (ConsolidatedFileFilters.Count < 1) Then
-                        Logger.logWarning("findAddFiles(): Keine gültigen Dateifilter verfügbar!")
-                    Else
-                        ' Search each folder of given folder list.
-                        For Each FolderName As String in Folders
+                    ' Optional: Search subfolders of current folder (*** recursive ***).
+                    If (Not SearchFinished AndAlso (SearchOptions = System.IO.SearchOption.AllDirectories)) Then
+                        Try
+                            ' Get all sub folders of this directory.
+                            Dim SubFolders()  As DirectoryInfo = SearchDir.GetDirectories()
                             
-                            FolderName = Environment.ExpandEnvironmentVariables(FolderName.Trim())
-                            
-                            If (not Directory.Exists(FolderName)) Then
-                                If (FolderName.IsEmptyOrWhiteSpace()) Then
-                                    Logger.logDebug("findAddFiles(): Leeres Verzeichnis für Dateisuche => wird ignoriert.")
-                                ElseIf (FolderName.IndexOfAny(System.IO.Path.GetInvalidPathChars()) > -1) Then
-                                    Logger.logWarning("findAddFiles(): Verzeichnis für Dateisuche enthält ungültige Zeichen: '" & FolderName & "'.")
-                                Else
-                                    Logger.logWarning(StringUtils.sprintf("findAddFiles(): Verzeichnis für Dateisuche existiert nicht: '%s' (Arbeitsverzeichnis: '%s').", FolderName, Directory.GetCurrentDirectory))
-                                End If 
-                            else
-                                Dim SearchDir As DirectoryInfo = New DirectoryInfo(FolderName)
-                                Logger.logDebug(StringUtils.sprintf("\nfindAddFiles(): Suche in Verzeichnis: '%s'.", Path.GetFullPath(FolderName)))
-                                
-                                ' Search files of current folder.
-                                For Each FileFilter As String in ConsolidatedFileFilters
-                                    Try
-                                        FileFilter = FileFilter.Trim()
-                                        
-                                        If (Not isValidFileNameFilter(FileFilter)) Then
-                                            Logger.logWarning("findAddFiles(): Dateifilter für Dateisuche enthält ungültige Zeichen: '" & FileFilter & "'.")
-                                        ElseIf (FileFilter.IsEmptyOrWhiteSpace) Then
-                                            Logger.logWarning("findAddFiles(): Dateifilter für Dateisuche ist leer und wird ignoriert.")
-                                        Else
-                                            ' Get the matching files of this directory, possibly inclusive subdirectories.
-                                            Files = SearchDir.GetFiles(FileFilter, System.IO.SearchOption.TopDirectoryOnly)
-                                            
-                                            For Each fi As FileInfo in Files
-                                                If (Not FoundFiles.Contains(fi)) Then
-                                                    FoundFiles.Add(fi)
-                                                    Logger.logDebug(StringUtils.sprintf("findAddFiles(): %6d. Datei gefunden:   '%s'", FoundFiles.Count, FoundFiles(FoundFiles.Count - 1).FullName))
-                                                    If (OnlyOneFile) Then
-                                                        SearchFinished = True
-                                                        Exit For
-                                                    End If
-                                                End If
-                                            Next
-                                        End If
-                                        
-                                    Catch ex as System.Security.SecurityException
-                                        Logger.logDebug(StringUtils.sprintf("findAddFiles(): SecurityException at processing files of %s.", FolderName))
-                                        
-                                    Catch ex as System.UnauthorizedAccessException
-                                        Logger.logDebug(StringUtils.sprintf("findAddFiles(): UnauthorizedAccessException at processing files of %s.", FolderName))
-                                        
-                                    Catch ex as System.Exception
-                                        Logger.logError(ex, StringUtils.sprintf("findAddFiles(): Fehler bei Verarbeitung der Dateien des Ordners .", FolderName))
-                                    End Try
-                                    
-                                    If (SearchFinished) Then Exit For
+                            If (SubFolders.Length > 0) Then
+                                ' Unify list of folders.
+                                Dim StringSubFolders As New Collection(Of String)
+                                For Each di As DirectoryInfo In SubFolders
+                                    StringSubFolders.Add(di.FullName)
                                 Next
                                 
-                                ' Optional: Search subfolders of current folder (*** recursive ***).
-                                If (Not SearchFinished AndAlso (SearchOptions = System.IO.SearchOption.AllDirectories)) Then
-                                    Try
-                                        Dim SubFolders()  As DirectoryInfo = SearchDir.GetDirectories()
-                                        If (SubFolders.Length > 0) Then
-                                            ' Unify list of folders.
-                                            Dim StringSubFolders As New Collection(Of String)
-                                            For Each di As DirectoryInfo In SubFolders
-                                                StringSubFolders.Add(di.FullName)
-                                            Next
-                                            
-                                            findAddFiles(FoundFiles, ConsolidatedFileFilters, StringSubFolders, SearchOptions, OnlyOneFile)
-                                        End If 
-                                        
-                                    Catch ex as System.Security.SecurityException
-                                        Logger.logDebug(StringUtils.sprintf("findAddFiles(): SecurityException at processing subfolders of %s.", FolderName))
-                                        
-                                    Catch ex as System.UnauthorizedAccessException
-                                        Logger.logDebug(StringUtils.sprintf("findAddFiles(): UnauthorizedAccessException at processing subfolders of %s.", FolderName))
-                                        
-                                    Catch ex as System.Exception
-                                        Logger.logError(ex, StringUtils.sprintf("findAddFiles(): Fehler bei Verarbeitung der Unterverzeichnisse des Ordners .", FolderName))
-                                    End Try
-                                End If
-                                
-                            End If
-                            If (SearchFinished) Then Exit For
-                        Next
+                                findAddFiles(FoundFiles, ConsolidatedFileFilters, StringSubFolders, SearchOptions, OnlyOneFile)
+                            End If 
+                            
+                        Catch ex as System.Security.SecurityException
+                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): SecurityException at processing subfolders of %s.", FolderName))
+                            
+                        Catch ex as System.UnauthorizedAccessException
+                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): UnauthorizedAccessException at processing subfolders of %s.", FolderName))
+                            
+                        Catch ex as System.Exception
+                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorProcessingSubFolders, FolderName))
+                        End Try
                     End If
-                End If
+                        
+                    If (SearchFinished) Then Exit For
+                Next
             End Sub
             
         #End Region
@@ -298,7 +292,7 @@ Namespace IO
              ''' <param name="desiredFilePart"> Determines the parts of the filename to return. </param>
              ''' <param name="Absolute">        If True, and a given file name is relative, it will be "rooted". If False, returned drive and directory may be empty. Defaults to True. </param>
              ''' <param name="ClassLength">     Number of characters to define the class name (at end of base name) - defaults to 2. </param>
-             ''' <returns> A string with the desired parts of the input path name, or String.Empty. </returns>
+             ''' <returns> A string with the desired parts of the input path name, or String.Empty on error. </returns>
              ''' <remarks>
              ''' <para>
              ''' I.e. for a given file name of "D:\daten\Test_QP\qp_ueb.dgn", the results are:
@@ -323,7 +317,7 @@ Namespace IO
                                                byVal desiredFilePart As FilePart, _
                                                byVal Optional Absolute As Boolean = true, _
                                                byVal Optional ClassLength As Integer = 2) As String
-                Dim extractedFilePart     As String = String.Empty
+                Dim extractedFilePart  As String = String.Empty
                 Try
                     Dim msg                   As String = String.Empty
                     Dim Drive                 As String = String.Empty
@@ -390,7 +384,7 @@ Namespace IO
                             Case FilePart.Dir_Proj:      extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & ProjectName
                             Case Else
                                 extractedFilePart = ""
-                                Logger.logError("getFilePart(): Programmfehler: Aufgerufen mit nicht unterstütztem FilePart-Enum-Wert: " & cStr(desiredFilePart))
+                                Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_InvalidFilepartEnumValue, desiredFilePart.ToDisplayString()))
                         End Select
                         
                     End If
@@ -401,7 +395,7 @@ Namespace IO
                     Logger.logDebug("getFilePart(): Der gegebene Pfad ist ungültig")
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, "getFilePart(): unbekannter Fehler")
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
                 End Try
                 
                 Logger.logDebug(StringUtils.sprintf("getFilePart(): Ergebnis: %s.", extractedFilePart))
@@ -423,7 +417,7 @@ Namespace IO
             
             ''' <summary> Checks if a given file name is valid for file system operations. It doesn't have to exist. </summary>
              ''' <param name="FileName"> The file name to validate (without path). </param>
-             ''' <returns> <c>True</c>, if file system or file name operations shouldn't complain about this name, otherwise <c>False</c>. </returns>
+             ''' <returns> <see langword="true"/>, if file system or file name operations shouldn't complain about this name, otherwise <see langword="false"/>. </returns>
              ''' <remarks> 
              ''' The given <paramref name="FileName"/> may not contain path separators.
              ''' This method doesn't check environment conditions. So, real file operations may fail due to security reasons
@@ -442,7 +436,7 @@ Namespace IO
             
             ''' <summary> Checks if a given file name filter seems to be valid. </summary>
              ''' <param name="FileNameFilter"> The file name filter to validate (without path). </param>
-             ''' <returns> <c>True</c>, if file name filter operations shouldn't complain about this name filter, otherwise <c>False</c>. </returns>
+             ''' <returns> <see langword="true"/>, if file name filter operations shouldn't complain about this name filter, otherwise <see langword="false"/>. </returns>
             Public Shared Function isValidFileNameFilter(byVal FileNameFilter As String) As Boolean
                 Dim isValid  As Boolean = True
                 
@@ -463,7 +457,7 @@ Namespace IO
             
             ''' <summary> Checks if a given file path is valid for file system operations. It doesn't have to exist. </summary>
              ''' <param name="FilePath"> The file path to validate (absolute or relative). </param>
-             ''' <returns> <c>True</c>, if file system or path name operations shouldn't complain about this path, otherwise <c>False</c>. </returns>
+             ''' <returns> <see langword="true"/>, if file system or path name operations shouldn't complain about this path, otherwise <see langword="false"/>. </returns>
             Public Shared Function isValidFilePath(byVal FilePath As String) As Boolean
                 Dim isValid  As Boolean = False
                 Try
@@ -481,33 +475,30 @@ Namespace IO
              ''' The given <paramref name="FileName"/> if it's a valid file name, otherwise
              ''' a valid file name where invalid characters are replaced by <paramref name="ReplaceString"/>.
              ''' </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileName"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.ArgumentException"> <paramref name="FileName"/> is empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileName"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="T:System.FormatException"> Validation of <paramref name="FileName"/> has been tried, but failed. </exception>
             Public Shared Function validateFileNameSpelling(byVal FileName As String, Optional byVal ReplaceString As String = "_") As String
-                If (FileName Is Nothing) Then
-                    Throw New System.ArgumentNullException("FileName")
-                ElseIf (FileName.IsEmptyOrWhiteSpace()) Then
-                    Throw New System.ArgumentException("Dateiname ist leer.", "FileName")
-                Else
-                    ' Replace invalid characters if present.
-                    Dim InvalidFileNameChars() As Char = System.IO.Path.GetInvalidFileNameChars()
-                    If (FileName.IndexOfAny(InvalidFileNameChars) >= 0) Then
-                        ' FileName contains invalid characters.
-                        Dim invalidString  As String
-                        For Each invalidChar As Char In InvalidFileNameChars
-                            invalidString = Char.Parse(invalidChar)
-                            If (invalidString.Length > 0) Then
-                                FileName = FileName.Replace(invalidString, ReplaceString)
-                            End If
-                        Next
-                    End If
-                    
-                    ' Throw exception if not successful.
-                    If (Not isValidFileName(FileName)) Then
-                        Throw New System.FormatException("Ungültiger Dateiname konnte nicht bereinigt werden: '" & FileName & "'")
-                    End If
+                
+                If (FileName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FileName")
+                
+                ' Replace invalid characters if present.
+                Dim InvalidFileNameChars() As Char = System.IO.Path.GetInvalidFileNameChars()
+                If (FileName.IndexOfAny(InvalidFileNameChars) >= 0) Then
+                    ' FileName contains invalid characters.
+                    Dim invalidString  As String
+                    For Each invalidChar As Char In InvalidFileNameChars
+                        invalidString = Char.Parse(invalidChar)
+                        If (invalidString.Length > 0) Then
+                            FileName = FileName.Replace(invalidString, ReplaceString)
+                        End If
+                    Next
                 End If
+                
+                ' Throw exception if not successful.
+                If (Not isValidFileName(FileName)) Then
+                    Throw New System.FormatException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFileName, FileName))
+                End If
+                
                 Return FileName
             End Function
             
@@ -518,59 +509,56 @@ Namespace IO
              ''' The given <paramref name="FilePath"/> if it's a valid file path, otherwise
              ''' a valid file path where invalid characters are replaced by <paramref name="ReplaceString"/>.
              ''' </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FilePath"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.ArgumentException"> <paramref name="FilePath"/> is empty or white space. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FilePath"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="T:System.Security.SecurityException"> The caller does not have the required permission. </exception>
              ''' <exception cref="T:System.UnauthorizedAccessException"> Access to <paramref name="FilePath"/> is denied. </exception>
              ''' <exception cref="T:System.IO.PathTooLongException"> <paramref name="FilePath"/> is too long. </exception>
              ''' <exception cref="T:System.FormatException"> Validation of <paramref name="FilePath"/> has been tried, but failed. </exception>
             Public Shared Function validateFilePathSpelling(byVal FilePath As String, Optional byVal ReplaceString As String = "_") As String
-                If (FilePath Is Nothing) Then
-                    Throw New System.ArgumentNullException("FilePath")
-                ElseIf (FilePath.IsEmptyOrWhiteSpace()) Then
-                    Throw New System.ArgumentException("Dateipfad ist leer.", "FilePath")
-                Else
-                    Try
-                        FilePath = FilePath.Trim()
-                        Dim fi As New FileInfo(FilePath)
-                        
-                    'Catch e As System.Security.SecurityException
-                        ' Unsufficient rights
-                        
-                    Catch e As System.ArgumentException
-                        ' FilePath (is empty or white space or) ** contains invalid characters **
-                        Dim invalidString  As String
-                        For Each invalidChar As Char In System.IO.Path.GetInvalidPathChars()
-                            invalidString = Char.Parse(invalidChar)
-                            If (invalidString.Length > 0) Then
-                                FilePath = FilePath.Replace(invalidString, ReplaceString)
-                            End If
-                        Next
-                        ' Re-throw if not successful.
-                        If (Not isValidFilePath(FilePath)) Then
-                            Throw New System.FormatException("Ungültiger Dateipfad konnte nicht bereinigt werden: '" & FilePath & "'", e)
+                
+                If (FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FilePath")
+                
+                Try
+                    FilePath = FilePath.Trim()
+                    Dim fi As New FileInfo(FilePath)
+                    
+                'Catch e As System.Security.SecurityException
+                    ' Unsufficient rights
+                    
+                Catch e As System.ArgumentException
+                    ' FilePath (is empty or white space or) ** contains invalid characters **
+                    Dim invalidString  As String
+                    For Each invalidChar As Char In System.IO.Path.GetInvalidPathChars()
+                        invalidString = Char.Parse(invalidChar)
+                        If (invalidString.Length > 0) Then
+                            FilePath = FilePath.Replace(invalidString, ReplaceString)
                         End If
-                        
-                    'Catch e As System.UnauthorizedAccessException
-                        ' Access denied
-                        
-                    Catch e As System.IO.PathTooLongException
-                        Throw New System.IO.PathTooLongException("Dateipfad ist zu lang: '" & FilePath & "'", e)
-                        
-                    Catch e As System.NotSupportedException
-                        ' FilePath contains a colon (:) outside drive letter
-                        Dim Root As String = Path.GetPathRoot(FilePath)
-                        If (Root.IsEmpty()) Then
-                            FilePath = FilePath.Replace(":", ReplaceString)
-                        Else
-                            FilePath = Root & FilePath.Right(Root, False).Replace(":", ReplaceString)
-                        End If
-                        ' Re-throw if not successful.
-                        If (Not isValidFilePath(FilePath)) Then
-                            Throw New System.FormatException("Ungültiger Dateipfad konnte nicht bereinigt werden: '" & FilePath & "'", e)
-                        End If
-                    End Try
-                End If
+                    Next
+                    ' Re-throw if not successful.
+                    If (Not isValidFilePath(FilePath)) Then
+                        Throw New System.FormatException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
+                    End If
+                    
+                'Catch e As System.UnauthorizedAccessException
+                    ' Access denied
+                    
+                Catch e As System.IO.PathTooLongException
+                    Throw New System.IO.PathTooLongException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_PathTooLong, FilePath), e)
+                    
+                Catch e As System.NotSupportedException
+                    ' FilePath contains a colon (:) outside drive letter
+                    Dim Root As String = Path.GetPathRoot(FilePath)
+                    If (Root.IsEmpty()) Then
+                        FilePath = FilePath.Replace(":", ReplaceString)
+                    Else
+                        FilePath = Root & FilePath.Right(Root, False).Replace(":", ReplaceString)
+                    End If
+                    ' Re-throw if not successful.
+                    If (Not isValidFilePath(FilePath)) Then
+                        Throw New System.FormatException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
+                    End If
+                End Try
+                
                 Return FilePath
             End Function
             

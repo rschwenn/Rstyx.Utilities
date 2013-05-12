@@ -21,17 +21,15 @@ Namespace UI.Binding.Converters
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 The underlying Enum Integer (0 on error). </returns>
+         ''' <returns>                 The underlying Enum Integer. On error the input value itself is returned. </returns>
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
             ' Enum => Integer
-            Dim RetValue  As Integer = 0
             Try
-                RetValue = value
-            Catch ex As System.Exception 
-                ' Silently catch
-                System.Diagnostics.Debug.Print("EnumIntConverter.Convert(): Exception!")
+                Return CInt(value)
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
             End Try 
-            Return RetValue
         End Function
         
         ''' <summary> Converts an Integer to an Enum. </summary>
@@ -39,16 +37,16 @@ Namespace UI.Binding.Converters
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 The matching Enum value (default value on error). </returns>
+         ''' <returns>                 The matching Enum value. On error the input value itself is returned. </returns>
         Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
-            Dim RetValue  As Object = System.Activator.CreateInstance(targetType)
+            ' Integer => Enum
             Try
-                RetValue = System.Enum.ToObject(targetType, value)
+                Return System.Enum.ToObject(targetType, value)
             Catch ex As System.Exception 
-                ' Silently catch
-                System.Diagnostics.Debug.Print("EnumIntConverter.ConvertBack(): Exception!")
+                System.Diagnostics.Trace.WriteLine(ex)
+                'Dim RetValue  As Object = System.Activator.CreateInstance(targetType)
+                Return value
             End Try
-            Return RetValue
         End Function
     End Class
     

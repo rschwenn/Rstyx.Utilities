@@ -25,12 +25,12 @@ Namespace Apps
             
             ''' <summary> Creates a new AppInfo for a given assembly. </summary>
              ''' <param name="Assembly"> The assembly of interest. </param>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Assembly"/> is <see langword="null"/>. </exception>
             Public Sub New(Assembly As System.Reflection.Assembly)
-                If (Not Assembly Is Nothing) Then
-                    _Assembly = Assembly
-                Else
-                    _Assembly = System.Reflection.Assembly.GetExecutingAssembly()
-                End If
+                
+                If (Assembly Is Nothing) Then Throw New System.ArgumentNullException("Assembly")
+                
+                _Assembly = Assembly
                 
                 initAppInfo()
             End Sub
@@ -59,7 +59,7 @@ Namespace Apps
             
             ''' <summary> Collects all information. </summary>
             Private Sub initAppInfo()
-                Try
+                'Try
                     ' Preliminaries
                     _AssemblyName = New System.Reflection.AssemblyName(_Assembly.FullName)
                     
@@ -75,9 +75,9 @@ Namespace Apps
                     ' Assembly version
                     _Version = _AssemblyName.Version
                     
-                Catch ex As System.Exception
-                    Logger.logError(ex, "initAppInfo(): Fehler beim Bestimmen der Anwendungsinformationen.")
-                End Try
+                'Catch ex As System.Exception
+                '    Logger.logError(ex, "initAppInfo(): Fehler beim Bestimmen der Anwendungsinformationen.")
+                'End Try
             End Sub
             
         #End Region

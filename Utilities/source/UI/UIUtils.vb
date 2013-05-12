@@ -19,7 +19,6 @@ Namespace UI
             End Sub
             
 	        Shared Sub New()
-	            '
 	        End Sub
             
         #End Region
@@ -67,11 +66,6 @@ Namespace UI
                 End SyncLock
                 Return AppMainWindow
             End Function
-            
-        #End Region
-        
-        #Region "Private Members"
-            '
             
         #End Region
         

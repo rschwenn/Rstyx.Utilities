@@ -8,7 +8,7 @@ Imports System.Collections.Generic
 
 Namespace UI.Binding.Converters
     
-    ''' <summary> Converts between CultureInfo and its NativeName String - and vice versa. </summary>
+    ''' <summary> Converts between CultureInfo and it's NativeName String - and vice versa. </summary>
      ''' <remarks> Support for single variables and List(Of CultureInfo). </remarks>
     <ValueConversion(GetType(System.Globalization.CultureInfo), GetType(String))>
     Public Class CultureInfoConverter
@@ -29,9 +29,9 @@ Namespace UI.Binding.Converters
             End If
             
             'Remember mapping of NativeName and CultureInfo
-            if (not NativeName2CultureInfo.ContainsKey(NativeName)) then
+            If (Not NativeName2CultureInfo.ContainsKey(NativeName)) then
                 NativeName2CultureInfo.Add(NativeName, Culture)
-            end if
+            End if
             
             Return NativeName
         End Function
@@ -41,24 +41,30 @@ Namespace UI.Binding.Converters
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 The matching NativeName String. </returns>
+         ''' <returns>                 The matching NativeName String. On error the input value itself is returned. </returns>
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
-            Dim ret As Object = Nothing
-            
-            if (value isNot Nothing) then
-                Dim valueType   As Type = value.GetType()
+            Try
+                Dim ret As Object = Nothing
                 
-                if (valueType.IsGenericType) then
-                    dim retList As New List(Of String)
-                    for each ci as CultureInfo in value
-                        retList.add(CultureInfo2Name(ci))
-                    next
-                    ret = retList
-                else
-                    ret = CultureInfo2Name(value)
-                end if
-            end if
-            Return ret
+                If (value IsNot Nothing) then
+                    Dim valueType As Type = value.GetType()
+                    
+                    If (valueType.IsGenericType) Then
+                        Dim retList As New List(Of String)
+                        For Each ci As CultureInfo In value
+                            retList.add(CultureInfo2Name(ci))
+                        Next
+                        ret = retList
+                    Else
+                        ret = CultureInfo2Name(value)
+                    End if
+                End if
+                Return ret
+                
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
+            End Try
         End Function
         
         
@@ -67,17 +73,23 @@ Namespace UI.Binding.Converters
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 The matching CultureInfo. </returns>
+         ''' <returns>                 The matching CultureInfo. On error the input value itself is returned. </returns>
         Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
-            Dim ret As Object = Nothing
-            
-            if (not NativeName2CultureInfo.ContainsKey(value)) then
-                Debug.WriteLine(String.Format("CultureInfoConverter[ConvertBack]: can't get CultureInfo for NativeName", value))
-            else
-                ret = NativeName2CultureInfo(value)
-            end if
-            
-            Return ret
+            Try
+                Dim ret As Object = Nothing
+                
+                If (Not NativeName2CultureInfo.ContainsKey(value)) then
+                    Trace.WriteLine(String.Format("CultureInfoConverter[ConvertBack]: Can't get CultureInfo for NativeName {0}", value))
+                Else
+                    ret = NativeName2CultureInfo(value)
+                End if
+                
+                Return ret
+                
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
+            End Try
         End Function
     End Class
     

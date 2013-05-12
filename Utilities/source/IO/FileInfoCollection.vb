@@ -29,10 +29,7 @@ Namespace IO
              ''' <returns>           The key. </returns>
             Protected Overrides Function GetKeyForItem(ByVal Item As System.IO.FileInfo) As String
                 Dim Key  As String = "dummy"
-                Try
-                    If (Item IsNot Nothing) Then Key = Item.FullName
-                Catch ex As System.Exception
-                End Try
+                If (Item IsNot Nothing) Then Key = Item.FullName
                 Return Key
             End Function
             

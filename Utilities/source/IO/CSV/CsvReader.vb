@@ -318,12 +318,10 @@ Namespace IO.CSV
                     _allocStack = New System.Diagnostics.StackTrace()
                 #End If
                 
-                If (reader Is Nothing) Then
-                    Throw New ArgumentNullException("reader")
-                End If
+                If (reader Is Nothing) Then Throw New ArgumentNullException("reader")
                 
                 If (bufferSize <= 0) Then
-                    Throw New ArgumentOutOfRangeException("bufferSize", bufferSize, ExceptionMessage.BufferSizeTooSmall)
+                    Throw New ArgumentOutOfRangeException("bufferSize", bufferSize, CsvExceptionMessage.BufferSizeTooSmall)
                 End If
                 
                 _bufferSize = bufferSize
@@ -370,8 +368,11 @@ Namespace IO.CSV
             ''' </summary>
             ''' <param name="e">The <see cref="ParseErrorEventArgs"/> that contains the event data.</param>
             Protected Overridable Sub OnParseError(e As ParseErrorEventArgs)
-                RaiseEvent ParseError(Me, e)
-                RaiseEvent ParseError(Me, e)
+                Try
+                    RaiseEvent ParseError(Me, e)
+                Catch ex As System.Exception
+                    'Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
         #End Region
@@ -615,7 +616,7 @@ Namespace IO.CSV
             Public Default ReadOnly Property Item(record As Integer, field As String) As String
                 Get
                     If Not MoveTo(record) Then
-                        Throw New InvalidOperationException(String.Format(CultureInfo.InvariantCulture, ExceptionMessage.CannotReadRecordAtIndex, record))
+                        Throw New InvalidOperationException(String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.CannotReadRecordAtIndex, record))
                     End If
                     
                     Return Me(field)
@@ -638,7 +639,7 @@ Namespace IO.CSV
             Public Default ReadOnly Property Item(record As Integer, field As Integer) As String
                 Get
                     If Not MoveTo(record) Then
-                        Throw New InvalidOperationException(String.Format(CultureInfo.InvariantCulture, ExceptionMessage.CannotReadRecordAtIndex, record))
+                        Throw New InvalidOperationException(String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.CannotReadRecordAtIndex, record))
                     End If
                     
                     Return Me(field)
@@ -656,18 +657,16 @@ Namespace IO.CSV
             ''' <exception cref="T:System.ComponentModel.ObjectDisposedException"> The instance has been disposed of. </exception>
             Public Default ReadOnly Property Item(field As String) As String
                 Get
-                    If (String.IsNullOrEmpty(field)) Then
-                        Throw New ArgumentNullException("field")
-                    End If
+                    If (String.IsNullOrEmpty(field)) Then Throw New ArgumentNullException("field")
                     
                     If (Not _hasHeaders) Then
-                        Throw New InvalidOperationException(ExceptionMessage.NoHeaders)
+                        Throw New InvalidOperationException(CsvExceptionMessage.NoHeaders)
                     End If
                     
                     Dim index As Integer = GetFieldIndex(field)
                     
                     If (index < 0) Then
-                        Throw New ArgumentException(String.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldHeaderNotFound, field), "field")
+                        Throw New ArgumentException(String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.FieldHeaderNotFound, field), "field")
                     End If
                     
                     Return Me(index)
@@ -742,20 +741,19 @@ Namespace IO.CSV
             ''' <exception cref="InvalidOperationException"> No current record. </exception>
             ''' <exception cref="ArgumentException"> The number of fields in the record is greater than the available space from <paramref name="index"/> to the end of <paramref name="array"/>. </exception>
             Public Sub CopyCurrentRecordTo(array As String(), index As Integer)
-                If (array Is Nothing) Then
-                    Throw New ArgumentNullException("array")
-                End If
+                
+                If (array Is Nothing) Then Throw New ArgumentNullException("array")
                 
                 If ((index < 0) OrElse (index >= array.Length)) Then
                     Throw New ArgumentOutOfRangeException("index", index, String.Empty)
                 End If
                 
                 If ((_currentRecordIndex < 0) OrElse (Not _initialized)) Then
-                    Throw New InvalidOperationException(ExceptionMessage.NoCurrentRecord)
+                    Throw New InvalidOperationException(CsvExceptionMessage.NoCurrentRecord)
                 End If
                 
                 If ((array.Length - index) < _fieldCount) Then
-                    Throw New ArgumentException(ExceptionMessage.NotEnoughSpaceInArray, "array")
+                    Throw New ArgumentException(CsvExceptionMessage.NotEnoughSpaceInArray, "array")
                 End If
                 
                 For i As Integer = 0 To _fieldCount - 1
@@ -947,11 +945,11 @@ Namespace IO.CSV
             Private Function ReadField(field As Integer, initializing As Boolean, discardValue As Boolean) As String
                 If Not initializing Then
                     If (field < 0 OrElse field >= _fieldCount) Then
-                        Throw New ArgumentOutOfRangeException("field", field, String.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, field))
+                        Throw New ArgumentOutOfRangeException("field", field, String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.FieldIndexOutOfRange, field))
                     End If
                     
                     If (_currentRecordIndex < 0) Then
-                        Throw New InvalidOperationException(ExceptionMessage.NoCurrentRecord)
+                        Throw New InvalidOperationException(CsvExceptionMessage.NoCurrentRecord)
                     End If
                     
                     ' Directly return field if cached
@@ -1513,9 +1511,8 @@ Namespace IO.CSV
             ''' <param name="pos">The current position in the buffer.</param>
             ''' <exception cref="ArgumentNullException"> <paramref name="error"/> is <see langword="null"/>. </exception>
             Private Sub HandleParseError([error] As MalformedCsvException, ByRef pos As Integer)
-                If [error] Is Nothing Then
-                    Throw New ArgumentNullException("error")
-                End If
+                
+                If [error] Is Nothing Then Throw New ArgumentNullException("error")
                 
                 _parseErrorFlag = True
                 
@@ -1532,7 +1529,7 @@ Namespace IO.CSV
                                 Throw e.[Error]
                                 
                             Case ParseErrorAction.[RaiseEvent]
-                                Throw New InvalidOperationException(String.Format(CultureInfo.InvariantCulture, ExceptionMessage.ParseErrorActionInvalidInsideParseErrorEvent, e.Action), e.[Error])
+                                Throw New InvalidOperationException(String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.ParseErrorActionInvalidInsideParseErrorEvent, e.Action), e.[Error])
                                 
                             Case ParseErrorAction.AdvanceToNextLine
                                 ' already at EOL when fields are missing, so don't skip to next line in that case
@@ -1542,7 +1539,7 @@ Namespace IO.CSV
                                 Exit Select
                             Case Else
                                 
-                                Throw New NotSupportedException(String.Format(CultureInfo.InvariantCulture, ExceptionMessage.ParseErrorActionNotSupported, e.Action), e.[Error])
+                                Throw New NotSupportedException(String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.ParseErrorActionNotSupported, e.Action), e.[Error])
                         End Select
                         Exit Select
                         
@@ -1554,7 +1551,7 @@ Namespace IO.CSV
                         Exit Select
                     Case Else
                         
-                        Throw New NotSupportedException(String.Format(CultureInfo.InvariantCulture, ExceptionMessage.ParseErrorActionNotSupported, _defaultParseErrorAction), [error])
+                        Throw New NotSupportedException(String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.ParseErrorActionNotSupported, _defaultParseErrorAction), [error])
                 End Select
             End Sub
             
@@ -1571,7 +1568,7 @@ Namespace IO.CSV
             ''' </returns>
             Private Function HandleMissingField(value As String, fieldIndex As Integer, ByRef currentPosition As Integer) As String
                 If ((fieldIndex < 0) OrElse (fieldIndex >= _fieldCount)) Then
-                    Throw New ArgumentOutOfRangeException("fieldIndex", fieldIndex, String.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, fieldIndex))
+                    Throw New ArgumentOutOfRangeException("fieldIndex", fieldIndex, String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.FieldIndexOutOfRange, fieldIndex))
                 End If
                 
                 _missingFieldFlag = True
@@ -1595,7 +1592,7 @@ Namespace IO.CSV
                             Return Nothing
                         Case Else
                             
-                            Throw New NotSupportedException(String.Format(CultureInfo.InvariantCulture, ExceptionMessage.MissingFieldActionNotSupported, _missingFieldAction))
+                            Throw New NotSupportedException(String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.MissingFieldActionNotSupported, _missingFieldAction))
                     End Select
                 End If
             End Function

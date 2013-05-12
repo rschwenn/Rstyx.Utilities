@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppUtils_ErrorInvokingXlGeoToolsImport" xml:space="preserve">
+    <value>Fehler beim Start des Excel-GeoTools-Import der Datei '%s' ...</value>
+    <comment>CSV Path:String</comment>
+  </data>
+  <data name="AppUtils_GeoToolsCsvNotFound" xml:space="preserve">
+    <value>CSV-Datei für Excel-GeoTools-Import nicht gefunden.</value>
+    <comment>(FileNotFoundException)</comment>
+  </data>
+  <data name="AppUtils_InvokeGeoToolsCsvImport" xml:space="preserve">
+    <value>Starte Excel-GeoTools-CSV-Import der Datei '%s' ...</value>
+    <comment>CSV Path:String</comment>
+  </data>
+  <data name="AppUtils_NoEditorAvailable" xml:space="preserve">
+    <value>Es ist kein Editor verfügbar.</value>
+  </data>
+  <data name="AppUtils_XlmVBScriptNotFound" xml:space="preserve">
+    <value>Import nach Excel nicht möglich, da extrahiertes VB-Skript nicht existiert.</value>
+    <comment>(FileNotFoundException)</comment>
+  </data>
+  <data name="AsyncDelegateUICommand_AsyncExecuteFailed" xml:space="preserve">
+    <value>Unerwarteter Fehler bei asynchroner Ausführung des Befehls '%s'.</value>
+    <comment>Command Caption</comment>
+  </data>
+  <data name="AsyncDelegateUICommand_ErrorCancellingTask" xml:space="preserve">
+    <value>Fehler beim Abbruch des Task.</value>
+  </data>
+  <data name="AsyncDelegateUICommand_ErrorCreatingCancelCommand" xml:space="preserve">
+    <value>Fehler beim Erzeugen des Abbruch-Befehls.</value>
+  </data>
+  <data name="AsyncDelegateUICommand_ErrorInCalledCanExecuteChangedHandler" xml:space="preserve">
+    <value>Fehler bei Aufruf der Ereignis-Handler für Befehl '%s'.</value>
+    <comment>Command Caption</comment>
+  </data>
+  <data name="AsyncDelegateUICommand_SyncExecuteFailed" xml:space="preserve">
+    <value>Unerwarteter Fehler bei synchroner Ausführung des Befehls '%s'.</value>
+    <comment>Command Caption</comment>
+  </data>
+  <data name="AsyncDelegateUICommand_TaskFinishingFailed" xml:space="preserve">
+    <value>Fehler bei Anschlussbearbeitung nach Ausführung des Befehls '%s'.</value>
+    <comment>Command Caption</comment>
+  </data>
+  <data name="DBUtils_ConnectionToExcelWorkbookFailed" xml:space="preserve">
+    <value>Datenbank-Verbindung zur Excel-Arbeitsmappe '%s' konnte nicht hergestelt werden.</value>
+    <comment>ExcelWorkbook Path:String</comment>
+  </data>
+  <data name="DBUtils_ExcelWorkbookNotFound" xml:space="preserve">
+    <value>Excel-Arbeitsmappe nicht gefunden.</value>
+    <comment>(FileNotFoundException)</comment>
+  </data>
+  <data name="DBUtils_FieldNotFoundInTable" xml:space="preserve">
+    <value>Das Feld '%s' existiert nicht in der Tabelle '%s'.</value>
+    <comment>Field Name: String; Table Name: String</comment>
+  </data>
+  <data name="DBUtils_OpenExcelWorksheetFailed" xml:space="preserve">
+    <value>Tabelle '%s' aus Excel-Arbeitsmappe '%s' konnte nicht geöffnet werden.</value>
+    <comment>ExcelWorksheet Name:String; ExcelWorkbook Path:String</comment>
+  </data>
+  <data name="FileUtils_ErrorProcessingFolder" xml:space="preserve">
+    <value>Fehler bei Verarbeitung der Dateien des Ordners '%s'.</value>
+    <comment>Parent Folder Path: String</comment>
+  </data>
+  <data name="FileUtils_ErrorProcessingSubFolders" xml:space="preserve">
+    <value>Fehler bei Verarbeitung der Unterverzeichnisse des Ordners '%s'.</value>
+    <comment>Parent Folder Path: String</comment>
+  </data>
+  <data name="FileUtils_ErrorValidatingInvalidFileName" xml:space="preserve">
+    <value>Ungültiger Dateiname konnte nicht bereinigt werden: '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="FileUtils_ErrorValidatingInvalidFilePath" xml:space="preserve">
+    <value>Ungültiger Dateipfad konnte nicht bereinigt werden: '%s'.</value>
+    <comment>File Path: String</comment>
+  </data>
+  <data name="FileUtils_InvalidFilepartEnumValue" xml:space="preserve">
+    <value>Aufgerufen mit nicht unterstütztem FilePart-Enum-Wert: '%s'</value>
+    <comment>FilePart Enum Value</comment>
+  </data>
+  <data name="FileUtils_NoExistentFolderName" xml:space="preserve">
+    <value>Kein existierendes Verzeichnis angegeben.</value>
+  </data>
+  <data name="FileUtils_NoFileFilter" xml:space="preserve">
+    <value>Keine Dateimaske(n) angegeben.</value>
+  </data>
+  <data name="FileUtils_NoSearchDir" xml:space="preserve">
+    <value>Keine zu durchsuchenden Verzeichnisse angegeben.</value>
+  </data>
+  <data name="FileUtils_NoValidFileFilter" xml:space="preserve">
+    <value>Keinen gültigen Dateifilter angegeben.</value>
+  </data>
+  <data name="FileUtils_PathTooLong" xml:space="preserve">
+    <value>Dateipfad ist zu lang: '%s'</value>
+    <comment>File Path: String</comment>
+  </data>
+  <data name="FileUtils_SearchFolderNotFound" xml:space="preserve">
+    <value>Verzeichnis für Dateisuche existiert nicht: '%s' (Arbeitsverzeichnis: '%s').</value>
+    <comment>Folder Name: String; Current Working Directory: String</comment>
+  </data>
+  <data name="FileUtils_SearchIgnoresEmptyFileFilter" xml:space="preserve">
+    <value>Leerer Dateifilter für Dateisuche wird ignoriert.</value>
+  </data>
+  <data name="FileUtils_SearchIgnoresEmptyFolderName" xml:space="preserve">
+    <value>Leeres Verzeichnis für Dateisuche wird ignoriert.</value>
+  </data>
+  <data name="FileUtils_SearchIgnoresInvalidFileFilter" xml:space="preserve">
+    <value>Dateifilter für Dateisuche enthält ungültige Zeichen und wird ignoriert: '%s'.</value>
+    <comment>File Filter: String</comment>
+  </data>
+  <data name="FileUtils_SearchIgnoresInvalidFolderName" xml:space="preserve">
+    <value>Verzeichnis für Dateisuche enthält ungültige Zeichen und wird ignoriert: '%s'.</value>
+    <comment>Folder Name: String</comment>
+  </data>
+  <data name="FileUtils_SearchIgnoresRepeatedFileFilter" xml:space="preserve">
+    <value>Dateifilter für Dateisuche ist wiederholt angegeben und wird ignoriert: '%s'.</value>
+    <comment>File Filter: String</comment>
+  </data>
+  <data name="FileUtils_SearchIgnoresRepeatedFolderName" xml:space="preserve">
+    <value>Verzeichnis für Dateisuche ist wiederholt angegeben und wird ignoriert: '%s'.</value>
+    <comment>Folder Name: String</comment>
+  </data>
+  <data name="Global_DispatcherUnhandledException" xml:space="preserve">
+    <value>Unerwarteter Anwendungsfehler (Application_DispatcherUnhandledException).</value>
+  </data>
+  <data name="Global_DoEventsFailed" xml:space="preserve">
+    <value>Fehler bei Ausführung von Cinch.ApplicationHelper.DoEvents().</value>
+  </data>
+  <data name="Global_ErrorFromCalledEventHandler" xml:space="preserve">
+    <value>Fehler in einem aufgerufenen Ereignishandler.</value>
+    <comment>(Message from outside a handler)</comment>
+  </data>
+  <data name="Global_ErrorFromInsideEventHandler" xml:space="preserve">
+    <value>Fehler bei der Ereignisbehandlung.</value>
+    <comment>(Message from inside a handler)</comment>
+  </data>
+  <data name="Global_NotImplemented" xml:space="preserve">
+    <value>'%s()' wurde noch nicht implementiert!</value>
+    <comment>Method Name</comment>
+  </data>
+  <data name="Global_PropertyIsReadOnly" xml:space="preserve">
+    <value>Eigenschaft '%s' ist schreibgeschützt.</value>
+    <comment>Property Name: String</comment>
+  </data>
+  <data name="Global_PropertyNotFound" xml:space="preserve">
+    <value>Eigenschaft '%s' existiert nicht.</value>
+    <comment>Property Name: String</comment>
+  </data>
+  <data name="Global_ResourceNotFound" xml:space="preserve">
+    <value>Resource konnte nicht gelesen werden: '%s'.</value>
+    <comment>Resource Name</comment>
+  </data>
+  <data name="Global_UnexpectedError" xml:space="preserve">
+    <value>Unerwarteter Fehler.</value>
+  </data>
+  <data name="Sprintf_InvalidEscapeSequence" xml:space="preserve">
+    <value>Nicht erkannte Escape Sequenz: \{0}</value>
+    <comment>Escape Character:String</comment>
+  </data>
+  <data name="Sprintf_InvalidParameterSequence" xml:space="preserve">
+    <value>Nicht erkannte Parameter Sequenz: %{0}{1}{2}{3}</value>
+    <comment>Flags, Width, prec, OneChar</comment>
+  </data>
+  <data name="UIResources_ErrorCreatingIconDrawingBrush" xml:space="preserve">
+    <value>Fehler beim Erstellen des Icon-DrawingBrush '%s'.</value>
+    <comment>Resource Name</comment>
+  </data>
+  <data name="UIResources_ErrorCreatingIconRectangle" xml:space="preserve">
+    <value>Fehler beim Erstellen des Icon-Rechtecks '%s'.</value>
+    <comment>Resource Name</comment>
+  </data>
+</root>

@@ -35,9 +35,21 @@ Namespace UI.ViewModel
         Implements ICommand
         Implements INotifyPropertyChanged
         
-        #Region "Fields"
+        #Region "Private Fields"
             
             Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
+            
+            Private CancelTaskCommandInfo           As DelegateUICommandInfo = Nothing
+            Private CmdTask                         As Task = Nothing
+            Private CmdTaskCancelTokenSource        As CancellationTokenSource = Nothing
+            
+            Private _IsCancellationSupported        As Boolean = False
+            Private _IsBusy                         As Boolean = False
+            Private _Decoration                     As UICommandDecoration = Nothing
+            
+        #End Region
+        
+        #Region "Public Fields"
             
             ''' <summary> Provides access to the target command info. </summary>
             Public ReadOnly TargetCommandInfo       As DelegateUICommandInfo = Nothing
@@ -48,52 +60,49 @@ Namespace UI.ViewModel
             ''' <summary> If <c>True</c>, the command will be executed in a separate thread, otherwise not. </summary>
             Public ReadOnly IsAsync                 As Boolean = False
             
-            Private CancelTaskCommandInfo           As DelegateUICommandInfo = Nothing
-            Private CmdTask                         As Task = Nothing
-            Private CmdTaskCancelTokenSource        As CancellationTokenSource = Nothing
-            
-            Private _ThrowOnInvalidPropertyName     As Boolean = False
-            Private _IsCancellationSupported        As Boolean = False
-            Private _IsBusy                         As Boolean = False
-            Private _Decoration                     As UICommandDecoration = Nothing
-            
         #End Region
         
         #Region "Constructors"
             
-            ''' <summary> Creates a new asyncronous command that supports cancellation. </summary>
+            ''' <summary> Creates a new command that runs in current thread and supports cancellation. </summary>
              ''' <param name="TargetCommandInfo"> The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo)
                 Me.New(TargetCommandInfo, Nothing, True, False)
             End Sub
             
-            ''' <summary> Creates a new asyncronous command. </summary>
+            ''' <summary> Creates a new command that runs in current thread and may support cancellation. </summary>
              ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
              ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, SupportsCancellation As Boolean)
                 Me.New(TargetCommandInfo, Nothing, SupportsCancellation, False)
             End Sub
             
-            ''' <summary> Creates a new asyncronous command. </summary>
+            ''' <summary> Creates a new command that runs in current thread and may support cancellation and a cancelation callback. </summary>
              ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
              ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. </param>
              ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean)
                 Me.New(TargetCommandInfo, CancelCallback, SupportsCancellation, False)
             End Sub
             
-            ''' <summary> Creates a new asyncronous command. </summary>
+            ''' <summary> Creates a new asyncronous command that may run in a separate thread and may support cancellation and a cancelation callback. </summary>
              ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
-             ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. </param>
-             ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
+             ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. May be <see langword="null"/> </param>
+             ''' <param name="SupportsCancellation"> Should be <c>False</c>, when the target action doesn't worry about cancellation requests. </param>
              ''' <param name="runAsync">             If <c>True</c>, the command will be executed in a separate thread, otherwise not. </param>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
+             ''' <remarks> If <paramref name="SupportsCancellation"/> is <see langword="True"/>, the cancellation command won't be available. </remarks>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean, runAsync As Boolean)
                 
-                ' This is too late, but the call to MyBase.New() has to be the first call here ...
-                If (TargetCommandInfo Is Nothing) Then
-                    Throw New ArgumentNullException("TargetCommand", "TargetCommand can not be null")
-                End If
-                
+                If (TargetCommandInfo Is Nothing) Then Throw New ArgumentNullException("TargetCommandInfo")
+                If (TargetCommandInfo.ExecuteAction Is Nothing) Then Throw New ArgumentNullException("TargetCommandInfo.ExecuteAction")
                 Me.TargetCommandInfo = TargetCommandInfo
                 Me.CancelCallback = CancelCallback
                 
@@ -119,7 +128,7 @@ Namespace UI.ViewModel
                 End Set
             End Property
             
-            ''' <summary> Returns True if the target command is currently executed. </summary>
+            ''' <summary> Returns True if the target command is currently beeing executed. </summary>
             Public ReadOnly Property IsBusy() As Boolean
                 Get
                     Return _IsBusy
@@ -155,32 +164,38 @@ Namespace UI.ViewModel
                 End RemoveHandler
                 
                 RaiseEvent(ByVal sender As Object, ByVal e As System.EventArgs)
-                    
-                    For Each Handler as EventHandler In CanExecuteChangedEvents
-                        If (Handler IsNot Nothing) Then
-                            
-                            ' Get the matching dispatcher.
-                            Dim Dispatcher As System.Windows.Threading.Dispatcher = Nothing
-                            If (TypeOf Handler.Target Is System.Windows.Threading.DispatcherObject) Then
-                                Dispatcher = CType(Handler.Target, System.Windows.Threading.DispatcherObject).Dispatcher
-                            Else
-                                Dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher
+                    Try
+                        For Each Handler as EventHandler In CanExecuteChangedEvents
+                            If (Handler IsNot Nothing) Then
+                                
+                                ' Get the matching dispatcher.
+                                Dim Dispatcher As System.Windows.Threading.Dispatcher = Nothing
+                                If (TypeOf Handler.Target Is System.Windows.Threading.DispatcherObject) Then
+                                    Dispatcher = CType(Handler.Target, System.Windows.Threading.DispatcherObject).Dispatcher
+                                Else
+                                    Dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher
+                                End If
+                                
+                                ' Invoke the handler.
+                                If (Dispatcher IsNot Nothing) Then
+                                    Dispatcher.BeginInvoke(Handler, sender, e)
+                                End If
                             End If
-                            
-                            ' Invoke the handler.
-                            If (Dispatcher IsNot Nothing) Then
-                                Dispatcher.BeginInvoke(Handler, sender, e)
-                            End If
-                        End If
-                    Next
-                    
+                        Next
+                    Catch ex As System.Exception
+                        Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorInCalledCanExecuteChangedHandler, Me.TargetCommandInfo.Decoration.Caption))
+                    End Try
                 End RaiseEvent
             End Event
             
             ''' <summary> Raises the CanExecuteChanged event. </summary>
             Public Sub RaiseCanExecuteChanged()
-                RaiseEvent CanExecuteChanged(Me, System.EventArgs.Empty)
-                If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
+                Try
+                    RaiseEvent CanExecuteChanged(Me, System.EventArgs.Empty)
+                    If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                End Try
             End Sub
             
             ''' <summary> Determines if the currently active command (target or cancel) can execute by invoking the matching Predicate(Of Object). </summary>
@@ -188,11 +203,15 @@ Namespace UI.ViewModel
              ''' <returns> Returns true if the command can execute, False otherwise. </returns>
             Public Function CanExecute(ByVal parameter As Object) As Boolean Implements ICommand.CanExecute
                 Dim RetValue  As Boolean = True
-                If (Me.IsBusy AndAlso (CancelTaskCommandInfo.CanExecutePredicate IsNot Nothing)) Then
-                    RetValue = CancelTaskCommandInfo.CanExecutePredicate.Invoke(Nothing)
-                ElseIf ((Not Me.IsBusy) AndAlso (TargetCommandInfo.CanExecutePredicate IsNot Nothing)) Then
-                    RetValue = TargetCommandInfo.CanExecutePredicate.Invoke(Nothing)
-                End If
+                Try
+                    If (Me.IsBusy AndAlso (CancelTaskCommandInfo.CanExecutePredicate IsNot Nothing)) Then
+                        RetValue = CancelTaskCommandInfo.CanExecutePredicate.Invoke(Nothing)
+                    ElseIf ((Not Me.IsBusy) AndAlso (TargetCommandInfo.CanExecutePredicate IsNot Nothing)) Then
+                        RetValue = TargetCommandInfo.CanExecutePredicate.Invoke(Nothing)
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                End Try
                 Return RetValue
             End Function
             
@@ -222,34 +241,33 @@ Namespace UI.ViewModel
                             If (CancelCallback IsNot Nothing) Then CmdTaskCancelToken.Register(CancelCallback)
                             
                             If (Me.IsAsync) Then
-                                ' Create and start a task and register the continuation Callback
+                                ' Create and start a new task.
                                 CmdTask = Task.Factory.StartNew(TargetCommandInfo.ExecuteAction, CmdTaskCancelToken, CmdTaskCancelToken)
-                                CmdTask.ContinueWith(AddressOf finishTask)
+                                
+                                #If DEBUG Then
+                                    If (System.Windows.Application.Current IsNot Nothing) Then Debug.Print("AsyncDelegateUICommand \ Execute: WPF UI thread ID  = " & System.Windows.Application.Current.Dispatcher.Thread.ManagedThreadId.ToString())
+                                    Debug.Print("AsyncDelegateUICommand \ Execute: Current thread ID = " & Dispatcher.CurrentDispatcher.Thread.ManagedThreadId.ToString())
+                                #End If
+                                
+                                ' Register the task's continuation callback, which will be invoked in current thread (which shuld be the UI thread since this command is an UI command).
+                                Try
+                                    CmdTask.ContinueWith(AddressOf finishTask, TaskScheduler.FromCurrentSynchronizationContext())
+                                Catch ex As System.ObjectDisposedException
+                                    ' Task has been finished already (?)
+                                    finishTask(CmdTask)
+                                End Try 
                             Else
-                                ' TODO: Schedule periodic DoEvents()
+                                ' Start ExecuteAction in current thread.
+                                ' Nevertheless pass the cancellation token in order to enable the action to get cancellation requests.
                                 RaiseCanExecuteChanged()
                                 Cinch.ApplicationHelper.DoEvents()
-                                
-                                TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
-                                finishTask()
-                                
-                                'Dim Operation As DispatcherOperation = Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
-                                'Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
-                                
-                                ''  DispatcherTimer setup
-			                    'Dim DispatchTimer = New DispatcherTimer(DispatcherPriority.Input)
-			                    ''AddHandler DispatchTimer.Tick, AddressOf Cinch.ApplicationHelper.DoEvents
-                                'AddHandler DispatchTimer.Tick, AddressOf test
-			                    'DispatchTimer.Interval = New TimeSpan(0,0,0,0,1)
-			                    'DispatchTimer.Start()
-                                '
-			                    ''Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
-                                'Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, TargetCommandInfo.ExecuteAction, CmdTaskCancelToken)
-                                ''TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
-                                'finishTask()
-                                '
-                                'DispatchTimer.Stop()
-                                'RemoveHandler DispatchTimer.Tick, AddressOf test
+                                Try
+                                    TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
+                                Catch ex As System.Exception
+                                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_SyncExecuteFailed, Me.TargetCommandInfo.Decoration.Caption))
+                                Finally
+                                    finishTask(Nothing)
+                                End Try
                             End If
                         End If
                     End If
@@ -258,14 +276,9 @@ Namespace UI.ViewModel
                     If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, "Execute(): Fehler beim Starten des Task.")
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
                 End Try
-                
             End Sub
-            
-            'Private Sub test(ByVal sender As Object, ByVal e As EventArgs)
-            '    Logger.logInfo("=>Timer")
-            'End Sub
             
         #End Region
         
@@ -274,15 +287,15 @@ Namespace UI.ViewModel
             ''' <summary>  Raised when a property on this object has a new value. </summary>
             Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
             
-            ''' <summary> Raises this object's PropertyChanged event. </summary>
+            ''' <summary> Raises this object's <c>PropertyChanged</c> event. </summary>
              ''' <param name="propertyName"> The property that has a new value. </param>
             Private Sub OnPropertyChanged(ByVal propertyName As String)
                 Me.VerifyPropertyName(propertyName)
-                
-                Dim handler As PropertyChangedEventHandler = Me.PropertyChangedEvent
-                If (handler IsNot Nothing) Then
-                    handler.Invoke(Me, New PropertyChangedEventArgs(propertyName))
-                End If
+                Try
+                    RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                End Try
             End Sub
             
         #End Region
@@ -299,7 +312,7 @@ Namespace UI.ViewModel
             Public Sub VerifyPropertyName(ByVal propertyName As String)
                 ' Verify that the property name matches a real,  
                 ' public, instance property on this object.
-                If ((From pi As System.Reflection.PropertyInfo In MyClass.GetType.GetProperties() Where pi.Name = propertyName).Count < 1) Then
+                If ((From pi As System.Reflection.PropertyInfo In MyClass.GetType.GetProperties() Where pi.Name = propertyName.Replace("[]", String.Empty)).Count < 1) Then
                     Dim msg As String = "Invalid property name: " & propertyName
                     
                     If Me.ThrowOnInvalidPropertyName Then
@@ -309,6 +322,8 @@ Namespace UI.ViewModel
                     End If
                 End If
             End Sub
+            
+            Private _ThrowOnInvalidPropertyName As Boolean = False
             
             ''' <summary>
             ''' Returns whether an exception is thrown, or if a Debug.Fail() is used
@@ -343,7 +358,7 @@ Namespace UI.ViewModel
                     CmdInfo.Decoration          = Decoration
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, "createCancelTaskCommandInfo(): Fehler beim Erzeugen des Abbruch-Befehls.")
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorCreatingCancelCommand)
                 End Try
                 Return CmdInfo
             End Function
@@ -375,8 +390,7 @@ Namespace UI.ViewModel
                     End If
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, "CanCancelTask(): unerwateter Fehler.")
-                    'Debug.Fail("CanCancelTask(): unerwateter Fehler.")
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
                 End Try
                 Return RetValue
             End Function
@@ -388,7 +402,7 @@ Namespace UI.ViewModel
                         CmdTaskCancelTokenSource.Cancel()
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, "cancelTask(): Fehler beim Abbruch des Task.")
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorCancellingTask)
                 End Try
             End Sub
             
@@ -396,8 +410,17 @@ Namespace UI.ViewModel
         
         #Region "Private Members"
             
+            ' ''' <summary> Finish completed task (change decoration and busy status). </summary>
+            ' Private Sub finishTaskInCurrentThread(FinishedTask As Task)
+            '     #If DEBUG Then
+            '         If (System.Windows.Application.Current IsNot Nothing) Then Debug.Print("AsyncDelegateUICommand \ finishTaskInCurrentThread: WPF UI thread ID  = " & System.Windows.Application.Current.Dispatcher.Thread.ManagedThreadId.ToString())
+            '         Debug.Print("AsyncDelegateUICommand \ finishTaskInCurrentThread: Current thread ID = " & Dispatcher.CurrentDispatcher.Thread.ManagedThreadId.ToString())
+            '     #End If
+            '     Dispatcher.CurrentDispatcher.Invoke(New Action(Of Task)(AddressOf finishTask), {FinishedTask})
+            ' End Sub
+            
             ''' <summary> Finish completed task (change decoration and busy status). </summary>
-            Private Sub finishTask()
+            Private Sub finishTask(FinishedTask As Task)
                 Try
                     Me.Decoration = TargetCommandInfo.Decoration
                     
@@ -406,8 +429,25 @@ Namespace UI.ViewModel
                     
                     RaiseCanExecuteChanged()
                     
+                    #If DEBUG Then
+                        If (System.Windows.Application.Current IsNot Nothing) Then Debug.Print("AsyncDelegateUICommand \ finishTask: WPF UI thread ID  = " & System.Windows.Application.Current.Dispatcher.Thread.ManagedThreadId.ToString())
+                        Debug.Print("AsyncDelegateUICommand \ finishTask: Current thread ID = " & Dispatcher.CurrentDispatcher.Thread.ManagedThreadId.ToString())
+                    #End If
+                    
+                    If (FinishedTask IsNot Nothing) Then
+                        If (FinishedTask.Exception IsNot Nothing) Then
+                            'For Each ex As Exception In FinishedTask.Exception.InnerExceptions
+                            '    Throw ex
+                            'Next
+                            'FinishedTask.Exception.Handle(Function(x)
+                            '                                   Return True
+                            '                              End Function)
+                            Logger.logError(FinishedTask.Exception.Flatten(), StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_AsyncExecuteFailed, Me.TargetCommandInfo.Decoration.Caption))
+                        End If
+                    End If
+                    
                 Catch ex As System.Exception
-                    Logger.logError(ex, "finishTask(): Fehler bei Anschlussbearbeitung nach Task.")
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_TaskFinishingFailed, Me.TargetCommandInfo.Decoration.Caption))
                 End Try
             End Sub
             

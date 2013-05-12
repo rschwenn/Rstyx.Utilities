@@ -21,12 +21,12 @@ Imports PGK.Extensions
             
         #End Region
         
-        #Region "General Methods"
+        #Region "Public Methods"
             
             ''' <summary> String formatting like in C or awk (does not support %e, %E, %g, %G). </summary>
              ''' <param name="FormatString"> A String like "test: %s  %11.3f" </param>
              ''' <param name="Parms">        Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
-             ''' <returns>                   The FormatString with expanded variables. </returns>
+             ''' <returns>                   The <paramref name="FormatString"/> with expanded variables, or an empty string if an error occurs. </returns>
             Public Shared Function sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
                 Return sprintf(False, FormatString, Parms)
             End Function
@@ -34,8 +34,12 @@ Imports PGK.Extensions
             ''' <summary> String formatting like in C or awk (does not support %e, %E, %g, %G). </summary>
              ''' <param name="FormatString"> A String like "test: %s  %11.3f" </param>
              ''' <param name="Parms">        Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
-             ''' <param name="ThrowOnError"> If True, an occuring exception is thrown. Otherwise it's catched and logged and an empty string is returned. </param>
-             ''' <returns>                   The FormatString with expanded variables. </returns>
+             ''' <param name="ThrowOnError"> If <see langword="true"/>, an occuring exception is thrown. Otherwise it's catched and logged and an empty string is returned. </param>
+             ''' <returns>
+             ''' The <paramref name="FormatString"/> with expanded variables, 
+             ''' or an empty string if an error occurs and <paramref name="ThrowOnError"/> is <see langword="false"/>.
+             ''' </returns>
+             ''' <exception cref="T:System.FormatException"> <paramref name="FormatString"/> is not well formed. </exception>
              ''' <remarks> 
               ''' <para>
               ''' Original written in VB6 by Phlip Bradbury (phlipping@yahoo.com) 
@@ -112,31 +116,29 @@ Imports PGK.Extensions
             Public Shared Function sprintf(ByVal ThrowOnError As Boolean, ByVal FormatString As String, ParamArray Parms() As Object) As String
                 
                 Dim Ret           As String = String.Empty
-                Dim OneChar       As Char
-                Dim NumberBuffer  As String
-                Dim ParamUpTo     As Long
-                Dim Flags         As String
-                Dim Width         As String
-                Dim Precision     As String
-                Dim Prec          As String
-                Dim Value         As Double
-                Dim AddStr        As String
-                Dim ParmX         As Object = Nothing
-                'for calculating %e and %g
-                'Dim Mantissa      As 
-                'Dim Exponent      As 
-                'for calculating %g
-                'Dim AddStrPercentF , AddStrPercentE
-                Dim FlatParms()   As Object = new Object() {}
-                Dim VParms()      As Object
                 Dim FormatSave    As String = FormatString
-                
                 Try
-                    'convert encapsulated arrays into one flat parameter array.
+                    Dim OneChar       As Char
+                    Dim NumberBuffer  As String
+                    Dim ParamUpTo     As Long
+                    Dim Flags         As String
+                    Dim Width         As String
+                    Dim Precision     As String
+                    Dim Prec          As String
+                    Dim Value         As Double
+                    Dim AddStr        As String
+                    Dim ParmX         As Object = Nothing
+                    'for calculating %e and %g
+                    'Dim Mantissa      As 
+                    'Dim Exponent      As 
+                    'for calculating %g
+                    'Dim AddStrPercentF , AddStrPercentE
+                    Dim FlatParms()   As Object = new Object() {}
+                    Dim VParms()      As Object
+                    
+                    ' Unwind encapsulated arrays into one flat parameter array.
                     VParms = Parms
                     FlatParms = ArrayUtils.getFlatArray(VParms)
-                    'ReDim FlatParms(UBound(Parms))
-                    'FlatParms = Parms
                     ParamUpTo = LBound(FlatParms)
                     
                     While (Not String.IsNullOrEmpty(FormatString))
@@ -178,7 +180,7 @@ Imports PGK.Extensions
                                 Ret = Ret & "%"
                             Case Else 'unrecognised
                                 Ret = Ret & OneChar
-                                Throw New System.Exception(String.Format("sprintf(): Nicht erkannte Escape Sequenz: \{0}", OneChar))
+                                Throw New System.FormatException(String.Format(Rstyx.Utilities.Resources.Messages.Sprintf_InvalidEscapeSequence, OneChar))
                           End Select
                         
                         Case "%"c
@@ -355,7 +357,7 @@ Imports PGK.Extensions
                                   
                                   Case Else
                                     If (Precision <> "") then prec = "." & Precision else prec = ""
-                                    Throw New System.Exception(String.Format("sprintf(): Nicht erkannte Parameter Sequenz: %{0}{1}{2}{3}", Flags, Width, prec, OneChar))
+                                    Throw New System.FormatException(String.Format(Rstyx.Utilities.Resources.Messages.Sprintf_InvalidParameterSequence, Flags, Width, prec, OneChar))
                                     AddStr = "%" & Flags & Width & prec & OneChar
                                 End Select
                               
@@ -380,7 +382,7 @@ Imports PGK.Extensions
                     
                 Catch ex As System.Exception
                     If (ThrowOnError) Then
-                        Throw ex
+                        Throw
                     Else
                         Ret = String.Empty
                         Logger.logError(ex, String.Format("sprintf(): Fehler (FormatString = '{0}')", FormatSave))
@@ -413,9 +415,9 @@ Imports PGK.Extensions
         ''' Returns the left part of the string up to the first occurrence of the Delimiter character.
         ''' If Delimiter isn't found the whole string is returned.
         ''' </summary>
-         ''' <param name="Value"> Input String. </param>
-         ''' <param name="Delimiter"> String to stop at. </param>
-         ''' <param name="IncludeDelimiter"> If True, the returned string containes the Delimiter, otherwise it doesn't. </param>
+         ''' <param name="Value">            Input String. </param>
+         ''' <param name="Delimiter">        String to stop at. </param>
+         ''' <param name="IncludeDelimiter"> If <see langword="true"/>, the returned string containes the <paramref name="Delimiter"/>, otherwise it doesn't. </param>
          ''' <returns> Truncated string. </returns>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Left(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
@@ -431,9 +433,9 @@ Imports PGK.Extensions
         ''' Returns the right part of the string up to the first occurrence of the Delimiter character.
         ''' If Delimiter isn't found the whole string is returned.
         ''' </summary>
-         ''' <param name="Value"> Input String. </param>
-         ''' <param name="Delimiter"> String to stop at. </param>
-         ''' <param name="IncludeDelimiter"> If True, the returned string containes the Delimiter, otherwise it doesn't. </param>
+         ''' <param name="Value">            Input String. </param>
+         ''' <param name="Delimiter">        String to stop at. </param>
+         ''' <param name="IncludeDelimiter"> If <see langword="true"/>, the returned string containes the <paramref name="Delimiter"/>, otherwise it doesn't. </param>
          ''' <returns> Truncated string. </returns>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Right(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
@@ -446,14 +448,14 @@ Imports PGK.Extensions
         End Function
         
         ''' <summary> Returns the substring between the two Delimiter characters. </summary>
-         ''' <param name="Value"> Input String. </param>
-         ''' <param name="LeftDelimiter"> String to start. </param>
-         ''' <param name="RightDelimiter"> String to stop at. </param>
-         ''' <param name="IncludeDelimiters"> If True, the returned string containes the Delimiters, otherwise it doesn't. </param>
+         ''' <param name="Value">             Input String. </param>
+         ''' <param name="LeftDelimiter">     String to start. </param>
+         ''' <param name="RightDelimiter">    String to stop at. </param>
+         ''' <param name="IncludeDelimiters"> If <see langword="true"/>, the returned string containes the Delimiters, otherwise it doesn't. </param>
          ''' <returns> Truncated string. </returns>
          ''' <remarks>
-         ''' Returns the substring between the first occurrence of the left Delimiter string
-         ''' and the following first occurrence of the right Delimiter string.
+         ''' Returns the substring between the first occurrence of the <paramref name="LeftDelimiter"/> string
+         ''' and the following first occurrence of the <paramref name="RightDelimiter"/> string.
          ''' If left Delimiter isn't found the result string starts at the beginning of input string.
          ''' If right Delimiter isn't found the result string ends at the end of input string.
          ''' </remarks>

@@ -135,34 +135,34 @@
   <data name="Rstyx_Utilities_ArrayUtils_SortType_Numeric" xml:space="preserve">
     <value>Numerisch</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Base" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Base" xml:space="preserve">
     <value>Basisname</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Base_Ext" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Base_Ext" xml:space="preserve">
     <value>Basis.Erweiterung</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Class" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Class" xml:space="preserve">
     <value>Klasse</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Dir" xml:space="preserve">
     <value>Verzeichnis</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Base" xml:space="preserve">
     <value>Verzeichnis\Basis</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Base_Ext" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Base_Ext" xml:space="preserve">
     <value>Verzeichnis\Basis.Erweiterung</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Dir_Proj" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Dir_Proj" xml:space="preserve">
     <value>Verzeichnis\Projekt</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Drive" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Drive" xml:space="preserve">
     <value>Laufwerk</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Ext" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Ext" xml:space="preserve">
     <value>Erweiterung</value>
   </data>
-  <data name="Rstyx_Utilities_Files_FileUtils_FilePart_Proj" xml:space="preserve">
+  <data name="Rstyx_Utilities_IO_FileUtils_FilePart_Proj" xml:space="preserve">
     <value>Projekt</value>
   </data>
   <data name="Rstyx_Utilities_UI_WarningColorMode_Background" xml:space="preserve">

@@ -16,24 +16,41 @@ Namespace UI.Binding.Converters
         Public Sub New()
         End Sub
         
-        ''' <summary> Converts a Boolean to a Checkbox state resp. Nullable(Of Boolean). </summary>
-         ''' <param name="value">      Boolean value. </param>
+        ''' <summary> Converts a <c>Boolean</c> to a Checkbox state resp. <c>Nullable(Of Boolean)</c>. </summary>
+         ''' <param name="value">      <c>Boolean</c> value. </param>
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 Nullable(Of Boolean): True or False. </returns>
+         ''' <returns>                 <c>Nullable(Of Boolean)</c>: True or False. On error the input value itself is returned. </returns>
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
-            Return New Nullable(Of Boolean)(CBool(value))
+            Try
+                Return New Nullable(Of Boolean)(CBool(value))
+                
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
+            End Try
         End Function
         
-        ''' <summary> Converts a Checkbox state resp. Nullable(Of Boolean) to a Boolean. </summary>
-         ''' <param name="value">      Nullable(Of Boolean) value. </param>
+        ''' <summary> Converts a Checkbox state resp. <c>Nullable(Of Boolean)</c> to a <c>Boolean</c>. </summary>
+         ''' <param name="value">      <c>Nullable(Of Boolean)</c> value. </param>
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  Ignored. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 Boolean: True if input value is True, otherwise False. </returns>
+         ''' <returns>                 <c>Boolean</c>: <see langword="true"/> if input value is <see langword="true"/>, otherwise <see langword="false"/>. On error the input value itself is returned. </returns>
         Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
-            Return value
+            Try
+                Dim InputValue As Nullable(Of Boolean) = CType(value, Nullable(Of Boolean))
+                Dim RetValue   As Nullable(Of Boolean) = False
+                If (InputValue.HasValue) Then
+                    RetValue = InputValue.Value
+                End If
+                Return RetValue
+                
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
+            End Try
         End Function
     End Class
     

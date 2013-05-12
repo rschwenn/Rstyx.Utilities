@@ -20,7 +20,7 @@ Namespace UI.ViewModel
     
     End Class
     
-    ''' <summary> A shortcut to create a <see cref="DelegateUICommand(Of Object, Object)"/>. </summary>
+    ''' <summary> A shortcut to create a <see cref="DelegateUICommandInfo(Of Object, Object)"/>. </summary>
     Public Class DelegateUICommandInfo
         Inherits DelegateUICommandInfo(Of Object, Object)
     End Class

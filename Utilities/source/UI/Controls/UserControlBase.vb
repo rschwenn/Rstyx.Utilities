@@ -2,6 +2,7 @@
 Imports System
 Imports System.ComponentModel
 Imports System.Linq
+Imports System.Diagnostics
 
 Namespace UI.Controls
     
@@ -28,10 +29,10 @@ Namespace UI.Controls
         
         #Region "Private Fields"
             
-            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.Controls.UserControlBase")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.Controls.UserControlBase")
             
-            Private _DisplayName                 As String = Nothing
-            Private _DisplayNameLong             As String = Nothing
+            Private _DisplayName        As String = Nothing
+            Private _DisplayNameLong    As String = Nothing
             
         #End Region
         
@@ -42,17 +43,25 @@ Namespace UI.Controls
             
             ''' <summary> Custom Initializing: register event handlers. </summary>
             Private Sub UserControlBase_Loaded(sender As Object, e As System.Windows.RoutedEventArgs) Handles Me.Loaded
-                'Subscribe for notifications of user settings changes.
-                'AddHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
-                '
-                ' TODO: Check MakeWeak!
-                Dim WeakPropertyChangedListener As Cinch.WeakEventProxy(Of PropertyChangedEventArgs) = New Cinch.WeakEventProxy(Of PropertyChangedEventArgs)(AddressOf OnUserSettingsChanged)
-                AddHandler My.Settings.PropertyChanged, AddressOf WeakPropertyChangedListener.Handler
+                Try
+                    'Subscribe for notifications of user settings changes.
+                    'AddHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
+                    '
+                    ' TODO: Check MakeWeak!
+                    Dim WeakPropertyChangedListener As Cinch.WeakEventProxy(Of PropertyChangedEventArgs) = New Cinch.WeakEventProxy(Of PropertyChangedEventArgs)(AddressOf OnUserSettingsChanged)
+                    AddHandler My.Settings.PropertyChanged, AddressOf WeakPropertyChangedListener.Handler
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                End Try
             End Sub
             
             ''' <summary> Unregister event handlers. </summary>
             Private Sub UserControlBase_Unloaded(sender As Object, e As System.Windows.RoutedEventArgs) Handles Me.Unloaded
-                RemoveHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
+                Try
+                    RemoveHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                End Try
             End Sub
             
             #If DEBUG Then
@@ -114,15 +123,22 @@ Namespace UI.Controls
              ''' </list>
              ''' </remarks>
             Private Sub OnUserSettingsChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs)
-                
-                Dim ActualClassType     As System.Type = MyClass.GetType
-                Dim Properties()        As System.Reflection.PropertyInfo = ActualClassType.GetProperties()
-                Dim ProjectSettingName  As String = e.PropertyName
-                Dim ClassPropertyName   As String = ProjectSettingName.Right(ActualClassType.Name & "_")
-                
-                If ((From pi In Properties Where pi.Name = ClassPropertyName).Count > 0) Then 
-                    Me.OnClrPropertyChanged(ClassPropertyName)
-                End If
+                Try
+                    Dim ActualClassType     As System.Type = MyClass.GetType
+                    Dim Properties()        As System.Reflection.PropertyInfo = ActualClassType.GetProperties()
+                    Dim ProjectSettingName  As String = e.PropertyName
+                    Dim ClassPropertyName   As String = ProjectSettingName.Right(ActualClassType.Name & "_")
+                    
+                    If ((From pi In Properties Where pi.Name = ClassPropertyName).Count > 0) Then
+                        Try
+                            Me.OnClrPropertyChanged(ClassPropertyName)
+                        Catch ex As System.Exception
+                            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                        End Try
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
         #End Region
@@ -132,19 +148,62 @@ Namespace UI.Controls
             ''' <summary>  Raised when a property on this object has a new value. </summary>
             Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
             
-            ''' <summary> Raises this object's PropertyChanged event. </summary>
+            ''' <summary> Raises this object's <c>PropertyChanged</c> event. </summary>
              ''' <param name="propertyName"> The property that has a new value. </param>
             Protected Overridable Sub OnClrPropertyChanged(ByVal propertyName As String)
-                
-                Dim handler As PropertyChangedEventHandler = Me.PropertyChangedEvent
-                If handler IsNot Nothing Then
-                    handler.Invoke(Me, New PropertyChangedEventArgs(propertyName))
-                End If
+                Me.VerifyPropertyName(propertyName)
+                Try
+                    RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                End Try
             End Sub
             
         #End Region
         
-        #Region "Debugging"
+        #Region "Debugging Aides"
+            
+            ''' <summary>
+            ''' Warns the developer if this object does not have
+            ''' a public property with the specified name. This 
+            ''' method does not exist in a Release build.
+            ''' </summary>
+             ''' <param name="propertyName"> The property that has to be verified. </param>
+            <Conditional("DEBUG"), DebuggerStepThrough()> _
+            Public Sub VerifyPropertyName(ByVal propertyName As String)
+                ' Verify that the property name matches a real,  
+                ' public, instance property on this object.
+                If ((From pi As System.Reflection.PropertyInfo In MyClass.GetType.GetProperties() Where pi.Name = propertyName.Replace("[]", String.Empty)).Count < 1) Then
+                    Dim msg As String = "Invalid property name: " & propertyName
+                    
+                    If Me.ThrowOnInvalidPropertyName Then
+                        Throw New Exception(msg)
+                    Else
+                        Debug.Fail(msg)
+                    End If
+                End If
+            End Sub
+            
+            Private _ThrowOnInvalidPropertyName As Boolean = False
+            
+            ''' <summary>
+            ''' Returns whether an exception is thrown, or if a Debug.Fail() is used
+            ''' when an invalid property name is passed to the VerifyPropertyName method.
+            ''' The default value is false, but subclasses used by unit tests might 
+            ''' override this property's getter to return true.
+            ''' </summary>
+            Public Property ThrowOnInvalidPropertyName() As Boolean
+                Get
+                    Return _ThrowOnInvalidPropertyName
+                End Get
+                Set(ByVal value As Boolean)
+                    _ThrowOnInvalidPropertyName = value
+                End Set
+            End Property
+            
+        #End Region
+        
+        #Region "Debug Dependency Attributes"
             
             ''' <summary> If a debugger is attached, the changed value of the dependency property is logged to the trace listeners. </summary>
              ''' <param name="d"> The DependencyObject. </param>

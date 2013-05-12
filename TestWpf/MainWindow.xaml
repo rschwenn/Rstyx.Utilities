@@ -12,6 +12,7 @@
     xmlns:RstyxPush="clr-namespace:Rstyx.Utilities.UI.Binding.PushBinding;assembly=Rstyx.Utilities"
     xmlns:RstyxUtils="clr-namespace:Rstyx.Utilities;assembly=Rstyx.Utilities"
     xmlns:RstyxControls="clr-namespace:Rstyx.Utilities.UI.Controls;assembly=Rstyx.Utilities"
+    xmlns:RstyxConverters="clr-namespace:Rstyx.Utilities.UI.Binding.Converters;assembly=Rstyx.Utilities"
     xmlns:RstyxResources="clr-namespace:Rstyx.Utilities.UI.Resources;assembly=Rstyx.Utilities"
     xmlns:global="clr-namespace:Rstyx.Utilities.TestWpf;assembly="
     xmlns:Ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"
@@ -335,6 +336,7 @@
                         Name="tbTest"
                         Text="{Binding Path=Textbox, Mode=TwoWay}"
                         />
+                        <!--Text="{Binding Path=Textbox, Mode=TwoWay, Converter={x:Static RstyxConverters:ConverterProvider.DebugConverter}}"-->
                 </DockPanel>
                 
             </StackPanel>

@@ -96,27 +96,31 @@ Namespace UI.ViewModel
             
             #Region "Command Support"
                 
-                ''' <summary> Calls the <c>RaiseCanExecuteChanged</c> method for all ICommands that are available via view model properties (and provide this method). </summary>
+                ''' <summary> Calls the <c>RaiseCanExecuteChanged</c> method for all <c>ICommands</c> that are available via view model properties (and that provide this method). </summary>
                  ''' <remarks> Since the command properties are not all read-only, they have to be re-queried every time. </remarks>
                 Protected Sub RaiseCanExecuteChangedForAll()
-                    
-                    Dim Properties()        As System.Reflection.PropertyInfo = MyClass.GetType().GetProperties()
-                    Dim CommandProperties   As IEnumerable(Of System.Reflection.PropertyInfo) = 
-                                               (From pi In Properties Where pi.PropertyType.IsImplementing(GetType(System.Windows.Input.ICommand)))
-                    
-                    For Each CommandProperty As System.Reflection.PropertyInfo In CommandProperties
-                        Try
-                            Dim Command As System.Windows.Input.ICommand = CType(CommandProperty.GetValue(Me, Nothing), System.Windows.Input.ICommand)
-                            Dim CommandRaiseMethod As System.Reflection.MethodInfo = CommandProperty.PropertyType.GetMethod("RaiseCanExecuteChanged")
-                            
-                            If (CommandRaiseMethod IsNot Nothing) Then
-                                CommandRaiseMethod.Invoke(Command, Nothing)
-                            End If
-                            
-                        Catch ex As Exception
-                            ' Gets here if CommandRaiseMethod is ambiguous.
-                        End Try
-                    Next
+                    Try
+                        Dim Properties()        As System.Reflection.PropertyInfo = MyClass.GetType().GetProperties()
+                        Dim CommandProperties   As IEnumerable(Of System.Reflection.PropertyInfo) = 
+                                                   (From pi In Properties Where pi.PropertyType.IsImplementing(GetType(System.Windows.Input.ICommand)))
+                        
+                        For Each CommandProperty As System.Reflection.PropertyInfo In CommandProperties
+                            Try
+                                Dim Command As System.Windows.Input.ICommand = CType(CommandProperty.GetValue(Me, Nothing), System.Windows.Input.ICommand)
+                                Dim CommandRaiseMethod As System.Reflection.MethodInfo = CommandProperty.PropertyType.GetMethod("RaiseCanExecuteChanged")
+                                
+                                If (CommandRaiseMethod IsNot Nothing) Then
+                                    CommandRaiseMethod.Invoke(Command, Nothing)
+                                End If
+                                
+                            Catch ex As Exception
+                                ' Gets here if CommandRaiseMethod is ambiguous.
+                                Debug.Print("RaiseCanExecuteChangedForAll(): 'CommandRaiseMethod' ist nicht eindeutig, oder Fehler bei der Ereignisbehandlung.")
+                            End Try
+                        Next
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                    End Try
                 End Sub
                 
             #End Region
@@ -125,14 +129,14 @@ Namespace UI.ViewModel
                 
                 Private _CloseViewCommand   As DelegateUICommand = Nothing
                 
-                ''' <summary> Provides an UI Command which raises the Cinch.ViewModelBase.CloseRequest event. </summary>
+                ''' <summary> Provides an UI Command which raises the <c>Cinch.ViewModelBase.CloseRequest</c> event. </summary>
                 Public ReadOnly Property CloseViewCommand() As DelegateUICommand
                     Get
                         If (_CloseViewCommand Is Nothing) Then
                             
                             Dim Decoration As New UICommandDecoration()
-                            Decoration.Caption     = "Schließen" 
-                            Decoration.Description = "Fenster schließen"
+                            Decoration.Caption     = "Schlieï¿½en" 
+                            Decoration.Description = "Fenster schlieï¿½en"
                             Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Handmade_Power4")
                             
                             _CloseViewCommand = New DelegateUICommand(AddressOf Me.closeView, Decoration)
@@ -142,9 +146,13 @@ Namespace UI.ViewModel
                     End Get
                 End Property
                 
-                ''' <summary> Raises the Cinch.ViewModelBase.CloseRequest event. </summary>
+                ''' <summary> Raises the <c>Cinch.ViewModelBase.CloseRequest</c> event. </summary>
                 Private Sub closeView()
-                    MyBase.RaiseCloseRequest(Nothing)
+                    Try
+                        MyBase.RaiseCloseRequest(Nothing)
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                    End Try
                 End Sub
                 
             #End Region
@@ -173,7 +181,7 @@ Namespace UI.ViewModel
                 ''' <summary> Shows the help file if overridden in a derived class. </summary>
                 ''' <remarks> i.e.:  Rstyx.Microstation.Utilities.FileUtils.showHelpFile(HelpFileName) </remarks>
                 Protected Overridable Sub showHelpFile()
-                    Throw New System.NotImplementedException("Rstyx.Utilities.UI.ViewModel.ViewModelBase.showHelpFile()")
+                    Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_NotImplemented, "showHelpFile"))
                 End Sub
                 
             #End Region
@@ -210,15 +218,21 @@ Namespace UI.ViewModel
         
         #Region "IDisposable Members"
             
-            '' <summary> Should be invoked to dispose unmanaged resources, so this object will be subject to garbage collection. </summary>
-            'Public Sub Dispose() Implements IDisposable.Dispose
-            '    RemoveHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
-            '    Me.OnDispose()
-            'End Sub
-            
-            '' <summary> Child classes can override this method to perform clean-up logic, such as removing event handlers. </summary>
-            'Protected Overridable Sub OnDispose()
-            'End Sub
+            ''' <summary> Hooks for <see cref="M:Cinch.ViewModelBase.Dispose"/>. </summary>
+            Protected Overrides Sub OnDispose()
+                ' Release timer resources.
+                DeferredResetStateAction.Dispose()
+                DeferredSetProgressAction.Dispose()
+                
+                ' All used events should be weak, but ...
+                If (Me.ViewAwareStatusService IsNot Nothing) Then
+                    RemoveHandler Me.ViewAwareStatusService.ViewLoaded,   AddressOf OnViewLoaded
+                    RemoveHandler Me.ViewAwareStatusService.ViewUnloaded, AddressOf OnViewUnloaded
+                End If
+                
+                ' There's no reference to "WeakPropertyChangedListener" => should be o.k.
+                'RemoveHandler My.Settings.PropertyChanged, AddressOf WeakPropertyChangedListener.Handler
+            End Sub
             
         #End Region
         
@@ -325,13 +339,17 @@ Namespace UI.ViewModel
         
         #Region "TrySetProperty"
             
-            ''' <summary> Tries to set a view model's property to a given value, if this is a supported value. </summary>
-             ''' <typeparam name="TProperty">           Type of the target property. </typeparam>
+            ''' <summary> Sets a view model's property to a given value, if this is a supported value. </summary>
+             ''' <typeparam name="TProperty">           Type of the target property designated by <paramref name="PropertyName"/> and also of the <c>IList</c> items of <paramref name="SupportedValues"/>. </typeparam>
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
-             ''' <param name="SupportedValues">         List of supported property values (i.e. the item source of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If True and the property has really changed, this method calls "OnPropertyChanged(PropertyName)". </param>
-             ''' <returns>                              True, if NewDesiredValue is supported (and the property may have changed). </returns>
+             ''' <param name="SupportedValues">         <c>IList</c> of supported property values (i.g. the item source of an ItemsControl). </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
+             ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetProperty(Of TProperty) _
                                              (PropertyName As String, _
@@ -340,57 +358,50 @@ Namespace UI.ViewModel
                                               Optional NotifyOnPropertyChanged As Boolean = False _
                                               ) As Boolean
                 Dim success As Boolean = False
-                Try
-                    If (String.IsNullOrWhiteSpace(PropertyName)) Then
-                        'Throw New System.ArgumentNullException("PropertyName")
-                        Logger.logError("TrySetProperty(): Argument 'PropertyName' ist NULL oder leer!")
-                        
-                    ElseIf (SupportedValues is Nothing) Then 
-                        'Throw New System.ArgumentNullException("SupportedValues")
-                        Logger.logError("TrySetProperty(): Argument 'SupportedValues' ist NULL!")
-                        
-                    Else
-                        Dim PropertyValueType  As System.Type = GetType(TProperty)
-                        Dim TargetProperty     As System.Reflection.PropertyInfo = Me.GetType.GetProperty(PropertyName, PropertyValueType)
-                        
-                        If (TargetProperty Is Nothing) Then
-                            Logger.logError(StringUtils.sprintf("TrySetProperty(): Zu setzende Eigenschaft '%s' existiert nicht!", PropertyName))
-                        ElseIf (Not TargetProperty.CanWrite) Then
-                            Logger.logError(StringUtils.sprintf("TrySetProperty(): Zu setzende Eigenschaft '%s' ist schreibgaschützt!", PropertyName))
-                        Else
-                            ' Look up the list for the desired property value.
-                            success = SupportedValues.Contains(NewDesiredValue)
-                            
-                            If (success) Then
-                                Dim NewPropertyValue As TProperty = NewDesiredValue
-                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
-                                Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
-                                
-                                If (IsDifferentValue) Then
-                                    TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                                    If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
-                                        MyBase.NotifyPropertyChanged(PropertyName)
-                                    End If
-                                End If
-                            End If
+                
+                ' Check arguments.
+                If (String.IsNullOrWhiteSpace(PropertyName)) Then Throw New System.ArgumentNullException("PropertyName")
+                If (SupportedValues Is Nothing) Then Throw New System.ArgumentNullException("SupportedValues")
+                
+                Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
+                If (TargetProperty Is Nothing) Then
+                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                End If
+                If (Not TargetProperty.CanWrite) Then
+                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                End If
+                
+                ' Look up the list values for the desired property value.
+                If (SupportedValues.Contains(NewDesiredValue)) Then
+                    
+                    Dim NewPropertyValue As TProperty = NewDesiredValue
+                    Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
+                    Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
+                    
+                    If (IsDifferentValue) Then
+                        TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                            MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
-                    
-                Catch ex As System.Exception
-                    Logger.logError(ex, "TrySetProperty(): Unerwarteter Fehler.")
-                End Try
+                    success = True
+                End If
                 
                 Return success
             End Function
             
-            ''' <summary> Tries to set a view model's property to a given value, if this is a supported value. </summary>
-             ''' <typeparam name="TProperty">           Type of the target property. </typeparam>
-             ''' <typeparam name="TCollectionItem">     Type of the KeyedCollection items. </typeparam>
+            ''' <summary> Sets a view model's property to a given value, if this is a supported value. </summary>
+             ''' <typeparam name="TProperty">           Type of the target property designated by <paramref name="PropertyName"/>. </typeparam>
+             ''' <typeparam name="TCollectionItem">     Type of the <c>KeyedCollection</c> items of <paramref name="SupportedValues"/>. </typeparam>
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
-             ''' <param name="SupportedValues">         KeyedCollection where the keys are the supported property values (i.e. the item source of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If True and the property has really changed, this method calls "OnPropertyChanged(PropertyName)". </param>
-             ''' <returns>                              True, if NewDesiredValue is supported (and the property may have changed). </returns>
+             ''' <param name="SupportedValues">         <c>KeyedCollection</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetProperty(Of TProperty, TCollectionItem) _
                                              (PropertyName As String, _
@@ -399,57 +410,50 @@ Namespace UI.ViewModel
                                               Optional NotifyOnPropertyChanged As Boolean = False _
                                               ) As Boolean
                 Dim success As Boolean = False
-                Try
-                    If (String.IsNullOrWhiteSpace(PropertyName)) Then
-                        'Throw New System.ArgumentNullException("PropertyName")
-                        Logger.logError("TrySetProperty(): Argument 'PropertyName' ist NULL oder leer!")
-                        
-                    ElseIf (SupportedValues is Nothing) Then 
-                        'Throw New System.ArgumentNullException("SupportedValues")
-                        Logger.logError("TrySetProperty(): Argument 'SupportedValues' ist NULL!")
-                        
-                    Else
-                        Dim PropertyValueType  As System.Type = GetType(TProperty)
-                        Dim TargetProperty     As System.Reflection.PropertyInfo = Me.GetType.GetProperty(PropertyName, PropertyValueType)
-                        
-                        If (TargetProperty Is Nothing) Then
-                            Logger.logError(StringUtils.sprintf("TrySetProperty(): Zu setzende Eigenschaft '%s' existiert nicht!", PropertyName))
-                        ElseIf (Not TargetProperty.CanWrite) Then
-                            Logger.logError(StringUtils.sprintf("TrySetProperty(): Zu setzende Eigenschaft '%s' ist schreibgaschützt!", PropertyName))
-                        Else
-                            ' Look up the keys for the desired property value.
-                            success = SupportedValues.Contains(NewDesiredValue)
-                            
-                            If (success) Then
-                                Dim NewPropertyValue As TProperty = NewDesiredValue
-                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
-                                Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
-                                
-                                If (IsDifferentValue) Then
-                                    TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                                    If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
-                                        MyBase.NotifyPropertyChanged(PropertyName)
-                                    End If
-                                End If
-                            End If
+                
+                ' Check arguments.
+                If (String.IsNullOrWhiteSpace(PropertyName)) Then Throw New System.ArgumentNullException("PropertyName")
+                If (SupportedValues Is Nothing) Then Throw New System.ArgumentNullException("SupportedValues")
+                
+                Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
+                If (TargetProperty Is Nothing) Then
+                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                End If
+                If (Not TargetProperty.CanWrite) Then
+                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                End If
+                
+                ' Look up the keys for the desired property value.
+                If (SupportedValues.Contains(NewDesiredValue)) Then
+                    
+                    Dim NewPropertyValue As TProperty = NewDesiredValue
+                    Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
+                    Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
+                    
+                    If (IsDifferentValue) Then
+                        TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                            MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
-                    
-                Catch ex As System.Exception
-                    Logger.logError(ex, "TrySetProperty(): Unerwarteter Fehler.")
-                End Try
+                    success = True
+                End If
                 
                 Return success
             End Function
             
-            ''' <summary> Tries to set a view model's property to a given value, if this is a supported value. </summary>
-             ''' <typeparam name="TProperty">           Type of the target property. </typeparam>
-             ''' <typeparam name="TCollectionItem">     Type of the IDictionary items. </typeparam>
+            ''' <summary> Sets a view model's property to a given value, if this is a supported value. </summary>
+             ''' <typeparam name="TProperty">           Type of the target property designated by <paramref name="PropertyName"/>. </typeparam>
+             ''' <typeparam name="TCollectionItem">     Type of the <c>IDictionary</c> items of <paramref name="SupportedValues"/>. </typeparam>
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
-             ''' <param name="SupportedValues">         IDictionary where the keys are the supported property values (i.e. the item source of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If True and the property has really changed, this method calls "OnPropertyChanged(PropertyName)". </param>
-             ''' <returns>                              True, if NewDesiredValue is supported (and the property may have changed). </returns>
+             ''' <param name="SupportedValues">         <c>IDictionary</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetProperty(Of TProperty, TCollectionItem) _
                                              (PropertyName As String, _
@@ -458,56 +462,48 @@ Namespace UI.ViewModel
                                               Optional NotifyOnPropertyChanged As Boolean = False _
                                               ) As Boolean
                 Dim success As Boolean = False
-                Try
-                    If (String.IsNullOrWhiteSpace(PropertyName)) Then
-                        'Throw New System.ArgumentNullException("PropertyName")
-                        Logger.logError("TrySetProperty(): Argument 'PropertyName' ist NULL oder leer!")
-                        
-                    ElseIf (SupportedValues is Nothing) Then 
-                        'Throw New System.ArgumentNullException("SupportedValues")
-                        Logger.logError("TrySetProperty(): Argument 'SupportedValues' ist NULL!")
-                        
-                    Else
-                        Dim PropertyValueType  As System.Type = GetType(TProperty)
-                        Dim TargetProperty     As System.Reflection.PropertyInfo = Me.GetType.GetProperty(PropertyName, PropertyValueType)
-                        
-                        If (TargetProperty Is Nothing) Then
-                            Logger.logError(StringUtils.sprintf("TrySetProperty(): Zu setzende Eigenschaft '%s' existiert nicht!", PropertyName))
-                        ElseIf (Not TargetProperty.CanWrite) Then
-                            Logger.logError(StringUtils.sprintf("TrySetProperty(): Zu setzende Eigenschaft '%s' ist schreibgaschützt!", PropertyName))
-                        Else
-                            ' Look up the keys for the desired property value.
-                            success = SupportedValues.ContainsKey(NewDesiredValue)
-                            
-                            If (success) Then
-                                Dim NewPropertyValue As TProperty = NewDesiredValue
-                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
-                                Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
-                                
-                                If (IsDifferentValue) Then
-                                    TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                                    If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
-                                        MyBase.NotifyPropertyChanged(PropertyName)
-                                    End If
-                                End If
-                            End If
+                
+                ' Check arguments.
+                If (String.IsNullOrWhiteSpace(PropertyName)) Then Throw New System.ArgumentNullException("PropertyName")
+                If (SupportedValues Is Nothing) Then Throw New System.ArgumentNullException("SupportedValues")
+                
+                Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
+                If (TargetProperty Is Nothing) Then
+                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                End If
+                If (Not TargetProperty.CanWrite) Then
+                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                End If
+                
+                ' Look up the dictionary keys for the desired property value.
+                If (SupportedValues.ContainsKey(NewDesiredValue)) Then
+                    Dim NewPropertyValue As TProperty = NewDesiredValue
+                    Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
+                    Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
+                    
+                    If (IsDifferentValue) Then
+                        TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                            MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
-                    
-                Catch ex As System.Exception
-                    Logger.logError(ex, "TrySetProperty(): Unerwarteter Fehler.")
-                End Try
+                    success = True
+                End If
                 
                 Return success
             End Function
             
-            ''' <summary> Tries to set a view model's property to a given value's associated display string, if this is a supported value. </summary>
-             ''' <typeparam name="TProperty">           Type of the target property. </typeparam>
+            ''' <summary> Sets a view model's property to a given value's associated display string, if this is a supported value. </summary>
+             ''' <typeparam name="TProperty">           Type of the target property designated by <paramref name="PropertyName"/>. </typeparam>
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredDisplayValue">  Display string, whose corresponding dictionary key should become the new property value. </param>
              ''' <param name="SupportedValues">         IDictionary where the keys are the supported property values and the items the display strings (of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If True and the property has really changed, this method calls "OnPropertyChanged(PropertyName)". </param>
-             ''' <returns>                              True, if NewDesiredValue is supported (and the property may have changed). </returns>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetPropertyByDisplayString(Of TProperty) _
                                                             (PropertyName As String, _
@@ -516,45 +512,34 @@ Namespace UI.ViewModel
                                                              Optional NotifyOnPropertyChanged As Boolean = False _
                                                              ) As Boolean
                 Dim success As Boolean = False
-                Try
-                    If (String.IsNullOrWhiteSpace(PropertyName)) Then
-                        'Throw New System.ArgumentNullException("PropertyName")
-                        Logger.logError("TrySetPropertyByDisplayString(): Argument 'PropertyName' ist NULL oder leer!")
-                        
-                    ElseIf (SupportedValues is Nothing) Then 
-                        'Throw New System.ArgumentNullException("SupportedValues")
-                        Logger.logError("TrySetPropertyByDisplayString(): Argument 'SupportedValues' ist NULL!")
-                        
-                    Else
-                        Dim PropertyValueType  As System.Type = GetType(TProperty)
-                        Dim TargetProperty     As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, PropertyValueType)
-                        
-                        If (TargetProperty Is Nothing) Then
-                            Logger.logError(StringUtils.sprintf("TrySetPropertyByDisplayString(): Zu setzende Eigenschaft '%s' existiert nicht!", PropertyName))
-                        ElseIf (Not TargetProperty.CanWrite) Then
-                            Logger.logError(StringUtils.sprintf("TrySetPropertyByDisplayString(): Zu setzende Eigenschaft '%s' ist schreibgaschützt!", PropertyName))
-                        Else
-                            ' Look up for the display string and get the corresponding property value
-                            Dim NewPropertyValue  As TProperty = Nothing
-                            success = SupportedValues.findKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
-                            
-                            If (success) Then
-                                Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
-                                Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
-                                
-                                If (IsDifferentValue) Then
-                                    TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                                    If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
-                                        MyBase.NotifyPropertyChanged(PropertyName)
-                                    End If
-                                End If
-                            End If
+                
+                ' Check arguments.
+                If (String.IsNullOrWhiteSpace(PropertyName)) Then Throw New System.ArgumentNullException("PropertyName")
+                If (SupportedValues Is Nothing) Then Throw New System.ArgumentNullException("SupportedValues")
+                
+                Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
+                If (TargetProperty Is Nothing) Then
+                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                End If
+                If (Not TargetProperty.CanWrite) Then
+                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                End If
+                
+                ' Look up for the display string and get the corresponding property value
+                Dim NewPropertyValue  As TProperty = Nothing
+                success = SupportedValues.findKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
+                
+                If (success) Then
+                    Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
+                    Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
+                    
+                    If (IsDifferentValue) Then
+                        TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                            MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
-                    
-                Catch ex As System.Exception
-                    Logger.logError(ex, "TrySetPropertyByDisplayString(): Unerwarteter Fehler.")
-                End Try
+                End If
                 
                 Return success
             End Function
@@ -563,7 +548,7 @@ Namespace UI.ViewModel
         
         #Region "Private Members"
             
-            ''' <summary> Raises "PropertyChanged()" for a local property when a corresponding My.Settings setting is changed. </summary>
+            ''' <summary> Raises <c>PropertyChanged</c> event for a local property when a corresponding My.Settings setting is changed. </summary>
              ''' <remarks>
              ''' "Corresponding" means one of these:
              ''' <list type="bullet">
@@ -572,15 +557,22 @@ Namespace UI.ViewModel
              ''' </list>
              ''' </remarks>
             Private Sub OnUserSettingsChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs)
-                
-                Dim ActualClassType     As System.Type = MyClass.GetType()
-                Dim Properties()        As System.Reflection.PropertyInfo = ActualClassType.GetProperties()
-                Dim ProjectSettingName  As String = e.PropertyName
-                Dim ClassPropertyName   As String = ProjectSettingName.Right(ActualClassType.Name & "_")
-                
-                If ((From pi In Properties Where pi.Name = ClassPropertyName).Count > 0) Then 
-                    MyBase.NotifyPropertyChanged(ClassPropertyName)
-                End If
+                Try
+                    Dim ActualClassType     As System.Type = MyClass.GetType()
+                    Dim Properties()        As System.Reflection.PropertyInfo = ActualClassType.GetProperties()
+                    Dim ProjectSettingName  As String = e.PropertyName
+                    Dim ClassPropertyName   As String = ProjectSettingName.Right(ActualClassType.Name & "_")
+                    
+                    If ((From pi In Properties Where pi.Name = ClassPropertyName).Count > 0) Then
+                        Try
+                            MyBase.NotifyPropertyChanged(ClassPropertyName)
+                        Catch ex As System.Exception
+                            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                        End Try
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
         #End Region
@@ -589,4 +581,4 @@ Namespace UI.ViewModel
     
 End Namespace
 
-' for jEdit:  :collapseFolds=4::tabSize=4:
+' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

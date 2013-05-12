@@ -44,14 +44,18 @@ Namespace UI.Controls
             
             ''' <summary> Unregister event handlers. </summary>
             Private Sub UserControlBase_Unloaded(sender As Object, e As System.Windows.RoutedEventArgs) Handles Me.Unloaded
-                If (FileWatcher IsNot Nothing) Then
-                    FileWatcher.EnableRaisingEvents = False
-                    RemoveHandler FileWatcher.Created, AddressOf OnFileCreatedOrDeleted
-                    RemoveHandler FileWatcher.Deleted, AddressOf OnFileCreatedOrDeleted
-                    RemoveHandler FileWatcher.Renamed, AddressOf OnFileRenamed
-                    FileWatcher.Dispose()
-                    FileWatcher = Nothing
-                End If
+                Try
+                    If (FileWatcher IsNot Nothing) Then
+                        FileWatcher.EnableRaisingEvents = False
+                        RemoveHandler FileWatcher.Created, AddressOf OnFileCreatedOrDeleted
+                        RemoveHandler FileWatcher.Deleted, AddressOf OnFileCreatedOrDeleted
+                        RemoveHandler FileWatcher.Renamed, AddressOf OnFileRenamed
+                        FileWatcher.Dispose()
+                        FileWatcher = Nothing
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
         #End Region
@@ -71,9 +75,13 @@ Namespace UI.Controls
                 Public Shared ReadOnly FilePathProperty As DependencyProperty = FilePathPropertyKey.DependencyProperty
                 
                 Private Shared Sub OnFilePathChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
-                    Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
-                    FileChooserInstance.RaiseFilePathChanged()
-                    'Logger.logInfo(StringUtils.sprintf("OnFilePathChanged(): FilePath changed to: '%s'", e.NewValue))
+                    Try
+                        Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
+                        FileChooserInstance.RaiseFilePathChanged()
+                        'Logger.logInfo(StringUtils.sprintf("OnFilePathChanged(): FilePath changed to: '%s'", e.NewValue))
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    End Try
                 End Sub
                 
                 ''' <summary> Provides the resulting valid file path, otherwise String.Empty. If <see cref="FileMode"/> is <c>Open</c> then the file does exist (ReadOnly). </summary>
@@ -106,7 +114,11 @@ Namespace UI.Controls
                 Public Shared ReadOnly IsExistingFileProperty As DependencyProperty = IsExistingFilePropertyKey.DependencyProperty
                 
                 Private Shared Sub OnIsExistingFileChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
-                    'Logger.logInfo(BooleanUtils.sprintf("OnIsExistingFileChanged(): IsExistingFile changed to: '%s'", e.NewValue))
+                    Try
+                        'Logger.logInfo(BooleanUtils.sprintf("OnIsExistingFileChanged(): IsExistingFile changed to: '%s'", e.NewValue))
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    End Try
                 End Sub
                 
                 ''' <summary> Indicates whether or not the actual file path corresponds to an existing file (ReadOnly). </summary>
@@ -131,7 +143,11 @@ Namespace UI.Controls
                 Public Shared ReadOnly IsValidFilePathProperty As DependencyProperty = IsValidFilePathPropertyKey.DependencyProperty
                 
                 Private Shared Sub OnIsValidFilePathChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
-                    'Logger.logInfo(BooleanUtils.sprintf("OnIsValidFilePathChanged(): IsValidFilePath changed to: '%s'", e.NewValue))
+                    Try
+                        'Logger.logInfo(BooleanUtils.sprintf("OnIsValidFilePathChanged(): IsValidFilePath changed to: '%s'", e.NewValue))
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    End Try
                 End Sub
                 
                 ''' <summary> Indicates whether or not the actual input file path is valid spelled (ReadOnly). </summary>
@@ -323,7 +339,11 @@ Namespace UI.Controls
                                                 )
                 '
                 Private Shared Sub OnFileFilterIndexChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
-                    'OnClrPropertyChanged("FileFilterIndex")
+                    Try
+                        'OnClrPropertyChanged("FileFilterIndex")
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    End Try
                 End Sub
                 
                 ''' <summary> Sets or gets the current <see cref="FileFilter"/> index for the file dialog. </summary>
@@ -349,8 +369,12 @@ Namespace UI.Controls
                                                 )
                 '
                 Private Shared Sub OnFileModeChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
-                    Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
-                    FileChooserInstance.SetValue(TextBoxToolTipPropertyKey, getTextBoxToolTip(FileChooserInstance))
+                    Try
+                        Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
+                        FileChooserInstance.SetValue(TextBoxToolTipPropertyKey, getTextBoxToolTip(FileChooserInstance))
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    End Try
                 End Sub
                 
                 ''' <summary> Determines if the chosen file is intended to be opened or saved. Defaults to <c>Open</c>. </summary>
@@ -378,8 +402,13 @@ Namespace UI.Controls
                 '
                 ''' <summary> Forwardes InputFilePath to the FilePathTextBox. </summary>
                 Private Shared Sub OnInputFilePathPropertyChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
-                    Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
-                    FileChooserInstance.FilePathTextBox.Text = CType(e.NewValue, String)
+                    Try
+                        Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
+                        'FileChooserInstance.FilePathTextBox.Text = CType(e.NewValue, String)
+                        FileChooserInstance.FilePathTextBox.SetCurrentValue(System.Windows.Controls.TextBox.TextProperty, CType(e.NewValue, String))
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    End Try
                 End Sub
                 ''' <summary> Sets or gets the content of the file path text field. </summary>
                  ''' <remarks> This can be used to require a "desired" file path, wich is validated by the FileChooser like interactive input. </remarks>
@@ -456,7 +485,11 @@ Namespace UI.Controls
                 End RemoveHandler
                 
                 RaiseEvent(ByVal sender As Object, ByVal e As EventArgs)
-                    FilePathChangedWeakEvent.Raise(sender, e)
+                    Try
+                        FilePathChangedWeakEvent.Raise(sender, e)
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                    End Try
                 End RaiseEvent
                 
             End Event
@@ -472,80 +505,95 @@ Namespace UI.Controls
             
             ''' <summary> Evaluates the file path text field and triggers all dependencies. It's the FileChooser's main logic. </summary>
             Private Sub OnFilePathTextBoxChanged(sender As System.Object , e As System.Windows.Controls.TextChangedEventArgs) Handles FilePathTextBox.TextChanged
-                OnInputFilePathChanged()
+                Try
+                    OnInputFilePathChanged()
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
-            ''' <summary> Shows a file dialog and writes the choosen file into the file path text box. Current directory won't be changed. </summary>
+            ''' <summary> Shows a file dialog and writes the choosen file path into the file path text box. Current directory won't be changed. </summary>
             Private Sub getFilePathFromDialog() Handles FileDialogButton.Click
-                
-                Dim Aborted            As Boolean = True
-                Dim ChoosenFile        As String  = String.Empty
-                Dim InitialFileName    As String  = String.Empty
-                Dim OpenFile           As Boolean = (Me.FileMode = System.IO.FileMode.Open)
-                
-                ' Initial file name (must exist)
-                If (File.Exists(Me.FilePath)) Then
-                    InitialFileName = Me.FilePath
-                End If
-                
-                ' Init and show dialog.
-                If (OpenFile) Then
-                    Logger.logDebug("getFilePathFromDialog(): Initialize OpenFileDialog.")
-                    Dim Dialog As Microsoft.Win32.OpenFileDialog = New Microsoft.Win32.OpenFileDialog()
+                Try
+                    Dim Aborted            As Boolean = True
+                    Dim ChoosenFile        As String  = String.Empty
+                    Dim InitialFileName    As String  = String.Empty
+                    Dim OpenFile           As Boolean = (Me.FileMode = System.IO.FileMode.Open)
                     
-                    Dialog.Title            = Me.FileDialogTitle
-                    Dialog.FileName         = InitialFileName
-                    Dialog.InitialDirectory = getInitialDirectory(Me, ForDialog:=True)
-                    Dialog.Filter           = Me.FileFilter
-                    Dialog.FilterIndex      = Me.FileFilterIndex
-                    Dialog.RestoreDirectory = True
-                    Dialog.ValidateNames    = True
+                    ' Initial file name (must exist)
+                    If (File.Exists(Me.FilePath)) Then
+                        InitialFileName = Me.FilePath
+                    End If
                     
-                    If (Dialog.ShowDialog(UIUtils.getMainWindow())) Then
-                        Aborted = False
-                        ChoosenFile = Dialog.FileName
-                        SetCurrentValue(InputFilePathProperty, Dialog.FileName)
-                        SetCurrentValue(FileFilterIndexProperty, Dialog.FilterIndex)
-                    End if
-                Else
-                    Logger.logDebug("getFilePathFromDialog(): Initialize SaveFileDialog.")
-                    Dim Dialog As Microsoft.Win32.SaveFileDialog = New Microsoft.Win32.SaveFileDialog()
+                    ' Init and show dialog.
+                    If (OpenFile) Then
+                        Logger.logDebug("getFilePathFromDialog(): Initialize OpenFileDialog.")
+                        Dim Dialog As Microsoft.Win32.OpenFileDialog = New Microsoft.Win32.OpenFileDialog()
+                        
+                        Dialog.Title            = Me.FileDialogTitle
+                        Dialog.FileName         = InitialFileName
+                        Dialog.InitialDirectory = getInitialDirectory(Me, ForDialog:=True)
+                        Dialog.Filter           = Me.FileFilter
+                        Dialog.FilterIndex      = Me.FileFilterIndex
+                        Dialog.RestoreDirectory = True
+                        Dialog.ValidateNames    = True
+                        
+                        If (Dialog.ShowDialog(UIUtils.getMainWindow())) Then
+                            Aborted = False
+                            ChoosenFile = Dialog.FileName
+                            SetCurrentValue(InputFilePathProperty, Dialog.FileName)
+                            SetCurrentValue(FileFilterIndexProperty, Dialog.FilterIndex)
+                        End if
+                    Else
+                        Logger.logDebug("getFilePathFromDialog(): Initialize SaveFileDialog.")
+                        Dim Dialog As Microsoft.Win32.SaveFileDialog = New Microsoft.Win32.SaveFileDialog()
+                        
+                        Dialog.Title            = Me.FileDialogTitle
+                        Dialog.FileName         = InitialFileName
+                        Dialog.InitialDirectory = getInitialDirectory(Me, ForDialog:=True)
+                        Dialog.Filter           = Me.FileFilter
+                        Dialog.FilterIndex      = Me.FileFilterIndex
+                        Dialog.RestoreDirectory = True
+                        Dialog.ValidateNames    = True
+                        Dialog.OverwritePrompt  = True
+                        
+                        If (Dialog.ShowDialog(UIUtils.getMainWindow())) Then
+                            Aborted = False
+                            ChoosenFile = Dialog.FileName
+                            SetCurrentValue(InputFilePathProperty, Dialog.FileName)
+                            SetCurrentValue(FileFilterIndexProperty, Dialog.FilterIndex)
+                        End if
+                    End If
                     
-                    Dialog.Title            = Me.FileDialogTitle
-                    Dialog.FileName         = InitialFileName
-                    Dialog.InitialDirectory = getInitialDirectory(Me, ForDialog:=True)
-                    Dialog.Filter           = Me.FileFilter
-                    Dialog.FilterIndex      = Me.FileFilterIndex
-                    Dialog.RestoreDirectory = True
-                    Dialog.ValidateNames    = True
-                    Dialog.OverwritePrompt  = True
-                    
-                    If (Dialog.ShowDialog(UIUtils.getMainWindow())) Then
-                        Aborted = False
-                        ChoosenFile = Dialog.FileName
-                        SetCurrentValue(InputFilePathProperty, Dialog.FileName)
-                        SetCurrentValue(FileFilterIndexProperty, Dialog.FilterIndex)
-                    End if
-                End If
-                
-                ' Log result.
-                If (Aborted) Then
-                    Logger.logDebug("getFilePathFromDialog(): FileDialog aborted.")
-                Else 
-                    Logger.logDebug(StringUtils.sprintf("getFilePathFromDialog(): Choosen file: '%s'", ChoosenFile))
-                End If
+                    ' Log result.
+                    If (Aborted) Then
+                        Logger.logDebug("getFilePathFromDialog(): FileDialog aborted.")
+                    Else 
+                        Logger.logDebug(StringUtils.sprintf("getFilePathFromDialog(): Choosen file: '%s'", ChoosenFile))
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
             ''' <summary> Loads Me.FilePath into the current editor. </summary>
             Private Sub EditFile(sender As System.Object, e As System.Windows.RoutedEventArgs) Handles EditFileButton.Click
-                Apps.AppUtils.startEditor(Apps.AppUtils.CurrentEditor, """" & Me.FilePath & """")
+                Try
+                    Apps.AppUtils.startEditor(Apps.AppUtils.CurrentEditor, """" & Me.FilePath & """")
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
             ''' <summary> Forward the focus from the user control into the text field. </summary>
             Private Sub OnUcGotFocus(sender As System.Object, e As System.Windows.RoutedEventArgs) Handles Me.GotFocus
-                If (Not (FilePathTextBox.IsFocused Or FileDialogButton.IsFocused Or EditFileButton.IsFocused)) Then
-                    FilePathTextBox.Focus()
-                End If
+                Try
+                    If (Not (FilePathTextBox.IsFocused Or FileDialogButton.IsFocused Or EditFileButton.IsFocused)) Then
+                        FilePathTextBox.Focus()
+                    End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
         #End Region
@@ -742,36 +790,30 @@ Namespace UI.Controls
             
             ''' <summary> Initializes and/or updates the file watcher to watch the actual file. </summary>
             Private Sub updateFileWatcher()
-                Try
-                    ' Create the watcher.
-                    If (FileWatcher Is Nothing) Then
-                        
-                        FileWatcher = New FileSystemWatcher()
-                        FileWatcher.NotifyFilter = NotifyFilters.FileName
-                        
-                        AddHandler FileWatcher.Created, AddressOf OnFileCreatedOrDeleted
-                        AddHandler FileWatcher.Deleted, AddressOf OnFileCreatedOrDeleted
-                        AddHandler FileWatcher.Renamed, AddressOf OnFileRenamed
-                    End If
+                ' Create the watcher.
+                If (FileWatcher Is Nothing) Then
                     
-                    ' Update the watcher.
-                    FileWatcher.EnableRaisingEvents = False
+                    FileWatcher = New FileSystemWatcher()
+                    FileWatcher.NotifyFilter = NotifyFilters.FileName
                     
-                    If (Me.IsValidFilePath) Then
-                        Try
-                            Dim FileToWatch As String = Me.InputFilePath
-                            FileWatcher.Path = System.IO.Path.GetDirectoryName(FileToWatch)
-                            FileWatcher.Filter = System.IO.Path.GetFileName(FileToWatch)
-                            FileWatcher.EnableRaisingEvents = True
-                        Catch ex As System.Exception
-                            ' Silently catch wrong path names.
-                            'Logger.logError(ex, "updateFileWatcher(): unerwarteter Fehler")
-                        End Try
-                    End If
-                    
-                Catch ex As System.Exception
-                    Logger.logError(ex, "updateFileWatcher(): unerwarteter Fehler")
-                End Try
+                    AddHandler FileWatcher.Created, AddressOf OnFileCreatedOrDeleted
+                    AddHandler FileWatcher.Deleted, AddressOf OnFileCreatedOrDeleted
+                    AddHandler FileWatcher.Renamed, AddressOf OnFileRenamed
+                End If
+                
+                ' Update the watcher.
+                FileWatcher.EnableRaisingEvents = False
+                
+                If (Me.IsValidFilePath) Then
+                    Try
+                        Dim FileToWatch As String = Me.InputFilePath
+                        FileWatcher.Path = System.IO.Path.GetDirectoryName(FileToWatch)
+                        FileWatcher.Filter = System.IO.Path.GetFileName(FileToWatch)
+                        FileWatcher.EnableRaisingEvents = True
+                    Catch ex As System.Exception
+                        ' Silently catch wrong path names.
+                    End Try
+                End If
             End Sub
             
             ''' <summary> Response to creating or deleting the actual file in the file system.. </summary>
@@ -793,7 +835,7 @@ Namespace UI.Controls
                     OnInputFilePathChanged()
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, "onFileExistenceChanged(): unerwarteter Fehler")
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             

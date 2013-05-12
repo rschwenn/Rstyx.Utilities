@@ -13,8 +13,8 @@ Namespace Collections
      ''' <listheader><description> <b>Features:</b> </description></listheader>
      ''' <item><description> <c>Add</c> silently ignores an Item with an already existing key and also an Item that is Null. </description></item>
      ''' <item><description> An <see cref="System.Collections.Generic.IEqualityComparer(Of TKey)"/> can be set for comparing keys (check for existence). </description></item>
-     ''' <item><description> The <c>INotifyCollectionChanged</c> interface is provided: Use "OnCollectionChanged(ChangeType)" to notify the binding system about collection changes. </description></item>
-     ''' <item><description> The <c>Keys</c> property implements the same functionality as the <see cref="Dictionary(Of TKey, TValue)"/>.Keys property. </description></item>
+     ''' <item><description> The <see cref="P:Keys"/> property implements the same functionality as the <see cref="Dictionary(Of TKey, TValue)"/>.Keys property. </description></item>
+     ''' <item><description> The <see cref="System.Collections.Specialized.INotifyCollectionChanged"/> interface is provided: Use <c>OnCollectionChanged(ChangeType)</c> to notify the binding system about collection changes. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
@@ -22,7 +22,9 @@ Namespace Collections
         Inherits   KeyedCollection(Of TKey, TItem)
         Implements System.Collections.Specialized.INotifyCollectionChanged
         
-        Private _KeyComparer    As IComparer(Of TKey) = Nothing
+        Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.KeyedCollectionBase")
+        
+        Private _KeyComparer  As IComparer(Of TKey) = Nothing
         
         ''' <summary>  Initializes the KeyedCollection with a default <see cref="System.Collections.Generic.IEqualityComparer(Of TKey)"/>. </summary>
         Protected Sub New()
@@ -38,14 +40,15 @@ Namespace Collections
         ''' <summary> This is called by <see cref="System.Collections.ObjectModel.KeyedCollection(Of TKey, TItem)"/>.Add and changes it's default behavior. </summary>
          ''' <param name="Index"> Collection index. </param>
          ''' <param name="Item">  The item to add. </param>
-         ''' <remarks>            If Item is Null or if the key of the item already exists, silently nothing is done. Otherwise the Item is added at the given index. </remarks>
+         ''' <remarks>            If Item is <see langword="null"/> or if the key of the item already exists, silently nothing is done. Otherwise the Item is added at the given index. </remarks>
+         ''' <exception cref="T:System.ArgumentOutOfRangeException"> <paramref name="Index"/> is less than 0, or greater than <see cref="P:Count"/>. </exception>
         Protected Overrides Sub InsertItem(Index As Integer, Item As TItem)
-            Try
+            'Try
                 If ((Not Item is Nothing) AndAlso (Not MyClass.Contains(GetKeyForItem(Item)))) Then
                     MyBase.InsertItem(Index, Item)
                 End If
-            Catch ex As System.Exception
-            End Try
+            'Catch ex As System.Exception
+            'End Try
         End Sub
         
         #Region "INotifyCollectionChanged Members"
@@ -56,11 +59,11 @@ Namespace Collections
             ''' <summary> [Helper] Raises this object's CollectionChanged event. </summary>
              ''' <param name="ChangeType"> Indicates the type of changes. </param>
             Protected Overridable Sub OnCollectionChanged(ByVal ChangeType As System.Collections.Specialized.NotifyCollectionChangedAction)
-                
-                Dim handler As System.Collections.Specialized.NotifyCollectionChangedEventHandler = Me.CollectionChangedEvent
-                If handler IsNot Nothing Then
-                    handler.Invoke(Me, New System.Collections.Specialized.NotifyCollectionChangedEventArgs(ChangeType))
-                End If
+                Try
+                    RaiseEvent CollectionChanged(Me, New System.Collections.Specialized.NotifyCollectionChangedEventArgs(ChangeType))
+                Catch ex As System.Exception
+                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                End Try
             End Sub
             
         #End Region

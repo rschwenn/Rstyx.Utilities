@@ -21,29 +21,41 @@ Namespace UI.Binding.Converters
          ''' <param name="targetType"> System.Type to convert to. </param>
          ''' <param name="parameter">  The scale factor to apply. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 The scaled input value. </returns>
+         ''' <returns>                 The scaled input value. On error the input value itself is returned. </returns>
          ''' <remarks>                 Sample: Input=10, scale=1.3  => Return=13.0. </remarks>
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.Convert
-            Dim RetValue  As Nullable(Of Double) = Nothing
             Try
+                Dim RetValue  As Nullable(Of Double) = Nothing
                 If ((value IsNot Nothing) AndAlso (parameter IsNot Nothing)) Then
                     RetValue = CDbl(value) * CDbl(parameter)
                 End If
-            Catch ex As System.Exception 
-                ' Silently catch
-                System.Diagnostics.Debug.Print("ScaleConverter.Convert(): Exception!")
-            End Try 
-            Return RetValue
+                Return RetValue
+                
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
+            End Try
         End Function
         
-        ''' <summary> Not Implemented. </summary>
-         ''' <param name="value">      Integer value. </param>
+        ''' <summary> Takes a Double, applies the reciprocal of a scale factor and returns the resulting Double. </summary>
+         ''' <param name="value">      Input value. </param>
          ''' <param name="targetType"> System.Type to convert to. </param>
-         ''' <param name="parameter">  Ignored. </param>
+         ''' <param name="parameter">  The scale factor to apply. </param>
          ''' <param name="culture">    Ignored. </param>
-         ''' <returns>                 System.NotImplementedException. </returns>
+         ''' <returns>                 The scaled input value. On error the input value itself is returned. </returns>
+         ''' <remarks>                 Sample: Input=10, scale=1.3  => Return=7.692307692307692. </remarks>
         Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
-            Return New System.NotImplementedException()
+            Try
+                Dim RetValue  As Nullable(Of Double) = Nothing
+                If ((value IsNot Nothing) AndAlso (parameter IsNot Nothing)) Then
+                    RetValue = CDbl(value) / CDbl(parameter)
+                End If
+                Return RetValue
+                
+            Catch ex As System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+                Return value
+            End Try
         End Function
     End Class
     

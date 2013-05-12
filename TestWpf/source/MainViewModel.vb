@@ -1,13 +1,16 @@
 ﻿
+Imports System.Data.DataTableExtensions
+'Imports System.Linq
 Imports System.IO
 Imports System.Threading.Tasks
 
+Imports Rstyx.Utilities
 Imports Rstyx.Utilities.UI.ViewModel
 
 Public Class MainViewModel
     Inherits Rstyx.Utilities.UI.ViewModel.ViewModelBase
     
-    Private Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.MainViewModel")
+    Private Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.MainViewModel")
     
     
     #Region "Initializing and Finalizing"
@@ -15,7 +18,6 @@ Public Class MainViewModel
         ''' <summary> Creates a new instance and sets display names. </summary>
         Public Sub New()
             Logger.logDebug("New(): Init MainViewModel ...")
-            
         End Sub
         
         '' <summary> Disposes WpfPanel. </summary>
@@ -32,6 +34,13 @@ Public Class MainViewModel
         
         Public Property FilePath1 As String
         Public Property Textbox   As String
+
+        Private _TextField  As String
+        Public ReadOnly Property TextField  As String
+            Get
+                Return _TextField
+            End Get
+        End Property
         
         ''' <summary> Determines the current ShellCommand for the Test button. </summary>
         Public Property TestTaskAsyncCommand() As AsyncDelegateUICommand
@@ -46,13 +55,13 @@ Public Class MainViewModel
                         
                         Dim CmdInfo As New DelegateUICommandInfo
                         CmdInfo.ExecuteAction       = AddressOf Me.test_1
-                        'CmdInfo.CanExecutePredicate = AddressOf Me.CanStartTestTask
+                        CmdInfo.CanExecutePredicate = AddressOf Me.CanStartTestTask
                         CmdInfo.Decoration          = Decoration
                         
-                        _TestTaskAsyncCommand = New AsyncDelegateUICommand(CmdInfo, False)
+                        _TestTaskAsyncCommand = New AsyncDelegateUICommand(CmdInfo, CancelCallback:=Nothing, SupportsCancellation:=False, runAsync:=True)
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, "TestTaskAsyncCommand[Get]: Fehler beim Erzeugen des Plot-Befehls.")
+                    Logger.logError(ex, "TestTaskAsyncCommand[Get]: Fehler beim Erzeugen des Test-Befehls.")
                 End Try
                 
                 Return _TestTaskAsyncCommand
@@ -79,31 +88,60 @@ Public Class MainViewModel
         
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             Try
-                'Dim TestEnum As Cinch.CustomDialogIcons = Cinch.CustomDialogIcons.Question
-                'Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum.ToString(), TestEnum.ToDisplayString()))
-                'Me.StatusText = TestEnum.ToDisplayString()
-                '
-                'System.Threading.Thread.Sleep(3000)
-                '
-                'For i = 1 To 10000
-                '    Dim TestEnum2 As ArrayUtils.SortType = ArrayUtils.SortType.Numeric
-                '    Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
-                '    'Me.StatusText = TestEnum2.ToDisplayString()
-                '    Cinch.ApplicationHelper.DoEvents()
-                '    If (CancelToken.IsCancellationRequested) Then Exit For
-                'Next
-                'System.Threading.Thread.Sleep(3000)
+                'Apps.AppUtils.startEditor(5, "")
+                'Logger.logInfo(Rstyx.Utilities.IO.FileUtils.FilePart.Dir.ToDisplayString())
+                'Dim success As Boolean = TrySetProperty("Textbox", "teschtttt", New String() {"hh", "teschtttyy"})
                 
-                'Dim success As Boolean = Rstyx.Utilities.Apps.AppUtils.startExcelGeoToolsCSVImport(Me.FilePath1)
+                'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
+                Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Dateiy", Nothing, Nothing)
+                Logger.logInfo(fi.FullName)
+
+                'Dim Field = "UserDomaiN"
+                'Dim TableName = "Standorte$y"
+                'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsy"
+                ''
+                ''Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
+                'Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                '    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
+                '    'Dim Table As DataTable = XLconn.getTable(TableName)
+                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, XLconn.TableContainsField(TableName, Field)))
+                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+                '    
+                '    'Dim SQL = "SELECT * FROM " & TableName
+                '    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+                '    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
+                '    
+                '    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                '    'Dim yes = Table.containsField(Field)
+                '    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
+                '    
+                '    For Each row As System.Data.DataRow In Table.AsEnumerable()
+                '        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+                '    Next 
+                'End Using
                 
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
-                Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
-                Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
+                'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
+                'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
                 
             Catch e As System.Exception
                 Logger.logError(e, "test_1(): Unerwarteter Fehler.")
+                'Throw New RemarkException("test_1(): Unerwarteter Fehler.", e)
             End Try
         End Sub
+        
+        ''' <summary> Checks if test_1 could be started. </summary>
+         ''' <returns> Boolean </returns>
+        Private Function CanStartTestTask() As Boolean
+            Dim RetValue  As Boolean = False
+            Try
+                'Throw New RemarkException("AAAAAAAAAAA")
+                RetValue = True
+            Catch ex As System.Exception
+                Logger.logError(ex, "CanStartTest_1(): unerwateter Fehler.")
+            End Try
+            Return RetValue
+        End Function
         
         Public Sub test_0()
             'Dim s As String

@@ -14,25 +14,32 @@ Class MainWindow
     
     
     Private Sub MainWindow_Initialized(sender As Object, e As System.EventArgs) Handles Me.Initialized
-        '
-        ViewModel = New MainViewModel()
-        Me.DataContext = ViewModel
-        '
-        'Logger.logInfo("MainWindow_Activated")
-        'FileChoser1.InputFilePath = "debug.lo"
-        'FileChoser1.ChangesWorkingDir = True 
-        '
-        'FileChoser2.FileFilter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
-        'FileChoser2.DefaultDirectory = "deh"
-        'FileChoser2.InputFilePath = "dd"
+        Try
+            ViewModel = New MainViewModel()
+            Me.DataContext = ViewModel
+            '
+            'Logger.logInfo("MainWindow_Activated")
+            'FileChoser1.InputFilePath = "debug.lo"
+            'FileChoser1.ChangesWorkingDir = True 
+            '
+            'FileChoser2.FileFilter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
+            'FileChoser2.DefaultDirectory = "deh"
+            'FileChoser2.InputFilePath = "dd"
+        Catch ex As System.Exception
+            System.Diagnostics.Debug.Fail("MainWindow_Initialized() failed!")
+        End Try
     End Sub
     
     Private Sub Button1_Click(sender As System.Object , e As System.Windows.RoutedEventArgs) Handles Button1.Click
-        'ViewModel.test()
-        
-        'TestToggle.IsChecked = (Not TestToggle.IsChecked)
-        
-        'FileChoser2.InputFilePath = "per code festgelegt"
+        Try
+            'ViewModel.test()
+            
+            'TestToggle.IsChecked = (Not TestToggle.IsChecked)
+            
+            'FileChoser2.InputFilePath = "per code festgelegt"
+        Catch ex As System.Exception
+            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+        End Try
     End Sub
     
 End Class

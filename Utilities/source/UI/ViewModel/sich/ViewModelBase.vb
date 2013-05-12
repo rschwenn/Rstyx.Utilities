@@ -351,18 +351,19 @@ Namespace UI.ViewModel
             ''' <summary>  Raised when a property on this object has a new value. </summary>
             Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
             
-            ''' <summary> Raises this object's PropertyChanged event. </summary>
+            ''' <summary> Raises this object's <c>PropertyChanged</c> event. </summary>
              ''' <param name="propertyName"> The property that has a new value. </param>
             Protected Overridable Sub OnPropertyChanged(ByVal propertyName As String)
                 Me.VerifyPropertyName(propertyName)
-                
-                'Dim handler As PropertyChangedEventHandler = Me.PropertyChangedEvent
-                'If handler IsNot Nothing Then
-                '    handler.Invoke(Me, New PropertyChangedEventArgs(propertyName))
-                'End If
-                If (Me.PropertyChangedEvent IsNot Nothing) Then
+                Try
+                    'Dim handler As PropertyChangedEventHandler = Me.PropertyChangedEvent
+                    'If handler IsNot Nothing Then
+                    '    handler.Invoke(Me, New PropertyChangedEventArgs(propertyName))
+                    'End If
                     RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
-                End If
+                Catch ex As System.Exception
+                    Logger.logError(ex, "OnPropertyChanged(): Fehler in einem Ereignis-Handler.")
+                End Try
             End Sub
             
         #End Region
@@ -436,7 +437,11 @@ Namespace UI.ViewModel
             Public Event RequestClose As EventHandler
             
             Private Sub OnRequestClose()
-                RaiseEvent RequestClose(Me, System.EventArgs.Empty)
+                Try
+                    RaiseEvent RequestClose(Me, System.EventArgs.Empty)
+                Catch ex As System.Exception
+                    Logger.logError(ex, "OnRequestClose(): Fehler in einem Ereignis-Handler.")
+                End Try
             End Sub
             
         #End Region

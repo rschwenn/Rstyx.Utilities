@@ -207,15 +207,15 @@ Namespace UI.ViewModel
             ''' <summary>  Raised when a property on this object has a new value. </summary>
             Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
             
-            ''' <summary> Raises this object's PropertyChanged event. </summary>
+            ''' <summary> Raises this object's <c>PropertyChanged</c> event. </summary>
              ''' <param name="propertyName"> The property that has a new value. </param>
-            Private Sub OnPropertyChanged(ByVal propertyName As String)
+            Protected Overridable Sub OnPropertyChanged(ByVal propertyName As String)
                 Me.VerifyPropertyName(propertyName)
-                
-                Dim handler As PropertyChangedEventHandler = Me.PropertyChangedEvent
-                If handler IsNot Nothing Then
-                    handler.Invoke(Me, New PropertyChangedEventArgs(propertyName))
-                End If
+                Try
+                    RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+                Catch ex As System.Exception
+                    Logger.logError(ex, "OnPropertyChanged(): Fehler in einem Ereignis-Handler.")
+                End Try
             End Sub
             
         #End Region

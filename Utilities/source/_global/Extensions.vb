@@ -13,7 +13,7 @@ Imports System
         <System.Runtime.CompilerServices.Extension()> 
         Public Function IsImplementing(Value As Type, TheInterface As Type) As Boolean
             Dim RetValue  As Boolean = False
-            Try
+            'Try
                 'If (Not Value.IsAbstract) Then
                 If (Not (Value.IsInterface Or Value.IsAbstract)) Then
                     For Each CurrentInterface As Type In Value.GetInterfaces()
@@ -23,9 +23,9 @@ Imports System
                         End If
                     Next
                 End If
-            Catch ex As System.Exception
-                'Logger.logError(ex, "IsImplementing(): unerwateter Fehler.")
-            End Try
+            'Catch ex As System.Exception
+            '    '''Logger.logError(ex, "IsImplementing(): unerwateter Fehler.")
+            'End Try
             Return RetValue
         End Function
         

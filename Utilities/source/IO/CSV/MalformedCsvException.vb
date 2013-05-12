@@ -85,8 +85,8 @@ Namespace IO.CSV
             ''' <param name="message">The message that describes the error.</param>
             ''' <param name="innerException">The exception that is the cause of the current exception.</param>
             Public Sub New(message As String, innerException As Exception)
-                MyBase.New([String].Empty, innerException)
-                _message = (If(message Is Nothing, String.Empty, message))
+                MyBase.New(String.Empty, innerException)
+                _message = If(message Is Nothing, String.Empty, message)
                 
                 _rawData = String.Empty
                 _currentPosition = -1
@@ -114,13 +114,13 @@ Namespace IO.CSV
             ''' <param name="currentFieldIndex">The current field index.</param>
             ''' <param name="innerException">The exception that is the cause of the current exception.</param>
             Public Sub New(rawData As String, currentPosition As Integer, currentRecordIndex As Long, currentFieldIndex As Integer, innerException As Exception)
-                MyBase.New([String].Empty, innerException)
+                MyBase.New(String.Empty, innerException)
                 _rawData = (If(rawData Is Nothing, String.Empty, rawData))
                 _currentPosition = currentPosition
                 _currentRecordIndex = currentRecordIndex
                 _currentFieldIndex = currentFieldIndex
-            
-                _message = [String].Format(CultureInfo.InvariantCulture, ExceptionMessage.MalformedCsvException, _currentRecordIndex, _currentFieldIndex, _currentPosition, _rawData)
+                
+                _message = String.Format(CultureInfo.InvariantCulture, CsvExceptionMessage.MalformedCsvException, _currentRecordIndex, _currentFieldIndex, _currentPosition, _rawData)
             End Sub
             
             ''' <summary>
