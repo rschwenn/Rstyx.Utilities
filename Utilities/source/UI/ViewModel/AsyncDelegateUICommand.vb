@@ -210,7 +210,7 @@ Namespace UI.ViewModel
                         RetValue = TargetCommandInfo.CanExecutePredicate.Invoke(Nothing)
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 Return RetValue
             End Function
@@ -276,7 +276,7 @@ Namespace UI.ViewModel
                     If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
             End Sub
             
@@ -390,7 +390,7 @@ Namespace UI.ViewModel
                     End If
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 Return RetValue
             End Function

@@ -51,7 +51,7 @@ Namespace UI.Controls
                     Dim WeakPropertyChangedListener As Cinch.WeakEventProxy(Of PropertyChangedEventArgs) = New Cinch.WeakEventProxy(Of PropertyChangedEventArgs)(AddressOf OnUserSettingsChanged)
                     AddHandler My.Settings.PropertyChanged, AddressOf WeakPropertyChangedListener.Handler
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
             End Sub
             
@@ -60,7 +60,7 @@ Namespace UI.Controls
                 Try
                     RemoveHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
             End Sub
             

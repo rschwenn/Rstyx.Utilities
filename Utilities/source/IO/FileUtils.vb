@@ -395,7 +395,7 @@ Namespace IO
                     Logger.logDebug("getFilePart(): Der gegebene Pfad ist ungültig")
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 
                 Logger.logDebug(StringUtils.sprintf("getFilePart(): Ergebnis: %s.", extractedFilePart))

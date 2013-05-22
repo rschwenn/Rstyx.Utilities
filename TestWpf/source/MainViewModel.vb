@@ -86,16 +86,34 @@ Public Class MainViewModel
             
         End Sub
         
+        Private Function NewInvalidDataException() As System.IO.InvalidDataException
+            'Dim RetValue  As Boolean = False
+            'Try
+            '    'Throw New RemarkException("AAAAAAAAAAA")
+            '    RetValue = True
+            'Catch ex As System.Exception
+            '    Logger.logError(ex, "CanStartTest_1(): unerwateter Fehler.")
+            'End Try
+            Return New System.IO.InvalidDataException("##################")
+        End Function
+        
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             Try
                 'Apps.AppUtils.startEditor(5, "")
                 'Logger.logInfo(Rstyx.Utilities.IO.FileUtils.FilePart.Dir.ToDisplayString())
-                'Dim success As Boolean = TrySetProperty("Textbox", "teschtttt", New String() {"hh", "teschtttyy"})
+                
+                'Me.showHelpFile()
+                
+                'Dim success As Boolean = TrySetProperty("Textbo", "teschtttt", New String() {"hh", "teschtttyy"})
+                
+                'Throw New InvalidDataException("+++++++++++++++++++++++++++")
+                'Throw NewInvalidDataException()
+                Logger.logInfo(StringUtils.sprintf("tescht = %s", 2))
                 
                 'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
-                Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Dateiy", Nothing, Nothing)
+                Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, Nothing)
                 Logger.logInfo(fi.FullName)
-
+                
                 'Dim Field = "UserDomaiN"
                 'Dim TableName = "Standorte$y"
                 'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsy"
@@ -124,12 +142,16 @@ Public Class MainViewModel
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
                 
-            Catch e As System.Exception
-                Logger.logError(e, "test_1(): Unerwarteter Fehler.")
-                'Throw New RemarkException("test_1(): Unerwarteter Fehler.", e)
+            Catch ex As System.Exception
+                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                'Throw New RemarkException("test_1(): Unerwarteter Fehler.", ex)
             End Try
         End Sub
         
+        Protected Overrides Sub showHelpFile()
+            Throw New InvalidDataException("showHelpFile()  +++++++++++++++++++++++++++")
+        End Sub
+
         ''' <summary> Checks if test_1 could be started. </summary>
          ''' <returns> Boolean </returns>
         Private Function CanStartTestTask() As Boolean

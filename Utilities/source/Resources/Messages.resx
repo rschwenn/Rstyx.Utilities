@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppUtils_EditorNotAvailable" xml:space="preserve">
+    <value>Editor '%s' ist nicht verfügbar.</value>
+    <comment>Editor: String (SupportedEditors.ToDisplayString())</comment>
+  </data>
   <data name="AppUtils_ErrorInvokingXlGeoToolsImport" xml:space="preserve">
     <value>Fehler beim Start des Excel-GeoTools-Import der Datei '%s' ...</value>
     <comment>CSV Path:String</comment>
@@ -125,12 +129,20 @@
     <value>CSV-Datei für Excel-GeoTools-Import nicht gefunden.</value>
     <comment>(FileNotFoundException)</comment>
   </data>
+  <data name="AppUtils_InvalidEditor" xml:space="preserve">
+    <value>'%s' ist kein gültiger Editor.</value>
+    <comment>Editor: String (SupportedEditors.ToDisplayString())</comment>
+  </data>
   <data name="AppUtils_InvokeGeoToolsCsvImport" xml:space="preserve">
     <value>Starte Excel-GeoTools-CSV-Import der Datei '%s' ...</value>
     <comment>CSV Path:String</comment>
   </data>
   <data name="AppUtils_NoEditorAvailable" xml:space="preserve">
     <value>Es ist kein Editor verfügbar.</value>
+  </data>
+  <data name="AppUtils_NotSupportedEditor" xml:space="preserve">
+    <value>Der angeforderte Editor '%s' wird nicht unterstützt.</value>
+    <comment>Editor: String (SupportedEditors.ToDisplayString())</comment>
   </data>
   <data name="AppUtils_XlmVBScriptNotFound" xml:space="preserve">
     <value>Import nach Excel nicht möglich, da extrahiertes VB-Skript nicht existiert.</value>
@@ -264,10 +276,14 @@
   </data>
   <data name="Global_ResourceNotFound" xml:space="preserve">
     <value>Resource konnte nicht gelesen werden: '%s'.</value>
-    <comment>Resource Name</comment>
+    <comment>Resource Name: String</comment>
   </data>
   <data name="Global_UnexpectedError" xml:space="preserve">
     <value>Unerwarteter Fehler.</value>
+  </data>
+  <data name="Global_UnexpectedErrorIn" xml:space="preserve">
+    <value>=&gt; Unerwarteter Fehler in %s().</value>
+    <comment>Source Method Name: String</comment>
   </data>
   <data name="Sprintf_InvalidEscapeSequence" xml:space="preserve">
     <value>Nicht erkannte Escape Sequenz: \{0}</value>
@@ -276,6 +292,10 @@
   <data name="Sprintf_InvalidParameterSequence" xml:space="preserve">
     <value>Nicht erkannte Parameter Sequenz: %{0}{1}{2}{3}</value>
     <comment>Flags, Width, prec, OneChar</comment>
+  </data>
+  <data name="Sprintf_UnexpectedError" xml:space="preserve">
+    <value>sprintf(): unerwarteter Fehler (FormatString = '{0}')</value>
+    <comment>FormatString: String</comment>
   </data>
   <data name="UIResources_ErrorCreatingIconDrawingBrush" xml:space="preserve">
     <value>Fehler beim Erstellen des Icon-DrawingBrush '%s'.</value>

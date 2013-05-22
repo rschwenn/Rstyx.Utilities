@@ -329,15 +329,15 @@ Namespace Apps
                 Dim ErrMessage  As String = Nothing
                 If (TargetEditor = SupportedEditors.None) Then
                     If (AvailableEditors.Count = 0) Then
-                        ErrMessage = "Es ist kein Editor verfügbar."
+                        ErrMessage = Rstyx.Utilities.Resources.Messages.AppUtils_NoEditorAvailable
                     Else 
-                        ErrMessage = StringUtils.sprintf("Programmfehler: '%s' ist kein gültiger Editor.", TargetEditor.ToDisplayString())
+                        ErrMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_InvalidEditor, TargetEditor.ToDisplayString())
                     End If
                 ElseIf (Not AvailableEditors.ContainsKey(TargetEditor)) Then
                     If ([Enum].IsDefined(GetType(SupportedEditors), TargetEditor)) Then
-                        ErrMessage = StringUtils.sprintf("'%s' ist nicht verfügbar.", TargetEditor.ToDisplayString())
+                        ErrMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_EditorNotAvailable, TargetEditor.ToDisplayString())
                     Else 
-                        ErrMessage = StringUtils.sprintf("Programmfehler: Der angeforderte Editor '%s' wird nicht unterstützt.", TargetEditor.ToDisplayString())
+                        ErrMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_NotSupportedEditor, TargetEditor.ToDisplayString())
                     End If
                 End If
                 If (ErrMessage IsNot Nothing) Then Throw New System.ArgumentException(ErrMessage, "TargetEditor")

@@ -385,7 +385,7 @@ Imports PGK.Extensions
                         Throw
                     Else
                         Ret = String.Empty
-                        Logger.logError(ex, String.Format("sprintf(): Fehler (FormatString = '{0}')", FormatSave))
+                        Logger.logError(ex, String.Format(Rstyx.Utilities.Resources.Messages.Sprintf_UnexpectedError, FormatSave))
                     End If
                 End Try
                 

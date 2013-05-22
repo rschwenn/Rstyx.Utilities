@@ -65,6 +65,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Editor &apos;%s&apos; ist nicht verfügbar. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property AppUtils_EditorNotAvailable() As String
+            Get
+                Return ResourceManager.GetString("AppUtils_EditorNotAvailable", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Start des Excel-GeoTools-Import der Datei &apos;%s&apos; ... ähnelt.
         '''</summary>
         Public Shared ReadOnly Property AppUtils_ErrorInvokingXlGeoToolsImport() As String
@@ -83,6 +92,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die &apos;%s&apos; ist kein gültiger Editor. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property AppUtils_InvalidEditor() As String
+            Get
+                Return ResourceManager.GetString("AppUtils_InvalidEditor", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Starte Excel-GeoTools-CSV-Import der Datei &apos;%s&apos; ... ähnelt.
         '''</summary>
         Public Shared ReadOnly Property AppUtils_InvokeGeoToolsCsvImport() As String
@@ -97,6 +115,15 @@ Namespace Resources
         Public Shared ReadOnly Property AppUtils_NoEditorAvailable() As String
             Get
                 Return ResourceManager.GetString("AppUtils_NoEditorAvailable", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Der angeforderte Editor &apos;%s&apos; wird nicht unterstützt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property AppUtils_NotSupportedEditor() As String
+            Get
+                Return ResourceManager.GetString("AppUtils_NotSupportedEditor", resourceCulture)
             End Get
         End Property
         
@@ -434,6 +461,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; Unerwarteter Fehler in %s(). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_UnexpectedErrorIn() As String
+            Get
+                Return ResourceManager.GetString("Global_UnexpectedErrorIn", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Nicht erkannte Escape Sequenz: \{0} ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Sprintf_InvalidEscapeSequence() As String
@@ -448,6 +484,15 @@ Namespace Resources
         Public Shared ReadOnly Property Sprintf_InvalidParameterSequence() As String
             Get
                 Return ResourceManager.GetString("Sprintf_InvalidParameterSequence", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die sprintf(): unerwarteter Fehler (FormatString = &apos;{0}&apos;) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Sprintf_UnexpectedError() As String
+            Get
+                Return ResourceManager.GetString("Sprintf_UnexpectedError", resourceCulture)
             End Get
         End Property
         

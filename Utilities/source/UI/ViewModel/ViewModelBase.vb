@@ -115,11 +115,12 @@ Namespace UI.ViewModel
                                 
                             Catch ex As Exception
                                 ' Gets here if CommandRaiseMethod is ambiguous.
-                                Debug.Print("RaiseCanExecuteChangedForAll(): 'CommandRaiseMethod' ist nicht eindeutig, oder Fehler bei der Ereignisbehandlung.")
+                                System.Diagnostics.Trace.WriteLine(ex)
+                                System.Diagnostics.Trace.WriteLine("RaiseCanExecuteChangedForAll(): 'CommandRaiseMethod' isn't uniqe, or error in event handling.")
                             End Try
                         Next
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_UnexpectedError)
+                        Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                     End Try
                 End Sub
                 
@@ -135,8 +136,8 @@ Namespace UI.ViewModel
                         If (_CloseViewCommand Is Nothing) Then
                             
                             Dim Decoration As New UICommandDecoration()
-                            Decoration.Caption     = "Schlie�en" 
-                            Decoration.Description = "Fenster schlie�en"
+                            Decoration.Caption     = "Schließen"
+                            Decoration.Description = "Fenster schließen"
                             Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Handmade_Power4")
                             
                             _CloseViewCommand = New DelegateUICommand(AddressOf Me.closeView, Decoration)
@@ -181,7 +182,7 @@ Namespace UI.ViewModel
                 ''' <summary> Shows the help file if overridden in a derived class. </summary>
                 ''' <remarks> i.e.:  Rstyx.Microstation.Utilities.FileUtils.showHelpFile(HelpFileName) </remarks>
                 Protected Overridable Sub showHelpFile()
-                    Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_NotImplemented, "showHelpFile"))
+                    Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_NotImplemented, Me.GetType().FullName & "/showHelpFile"))
                 End Sub
                 
             #End Region
