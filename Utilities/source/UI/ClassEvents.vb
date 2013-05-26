@@ -12,7 +12,7 @@ Namespace UI
             
             Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.ClassEvents")
             
-            Private Shared ReadOnly SyncHandle   As New Object
+            Private Shared ReadOnly SyncHandle As New Object()
             
         #End Region
         

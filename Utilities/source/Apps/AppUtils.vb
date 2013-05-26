@@ -13,8 +13,8 @@ Namespace Apps
         #Region "Private Fields"
             
             Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Apps.AppUtils")
-                                                    
-            Private Shared ReadOnly SyncHandle      As New Object
+            
+            Private Shared ReadOnly SyncHandle      As New Object()
             Private Shared _Instance                As AppUtils = Nothing
             
             Private Shared _AppPathUltraEdit        As String = Nothing
@@ -78,8 +78,8 @@ Namespace Apps
                             _Instance = New AppUtils
                             Logger.logDebug("Instance [Get]: AppUtils instantiated.")
                         End If
+                        Return _Instance
                     End SyncLock
-                    Return _Instance
                 End Get
             End Property
             
@@ -115,8 +115,8 @@ Namespace Apps
                         If (_AppPathCrimsonEditor Is Nothing) Then
                             _AppPathCrimsonEditor = getAppPathCrimsonEditor()
                         End If
+                        Return _AppPathCrimsonEditor
                     End SyncLock
-                    Return _AppPathCrimsonEditor
                 End Get
             End Property
             
@@ -149,8 +149,8 @@ Namespace Apps
                         If (_AppPathUltraEdit Is Nothing) Then
                             _AppPathUltraEdit = getAppPathUltraEdit()
                         End If
+                        Return _AppPathUltraEdit
                     End SyncLock
-                    Return _AppPathUltraEdit
                 End Get
             End Property
             
@@ -180,8 +180,8 @@ Namespace Apps
                         If (_AppPathJava Is Nothing) Then
                             getJavaEnvironment()
                         End If
+                        Return _AppPathJava
                     End SyncLock
-                    Return _AppPathJava
                 End Get
             End Property
             
@@ -217,8 +217,8 @@ Namespace Apps
                         If (_AppPathJEdit Is Nothing) Then
                             getJeditEnvironment()
                         End If
+                        Return _AppPathJEdit
                     End SyncLock
-                    Return _AppPathJEdit
                 End Get
             End Property
             
@@ -229,8 +229,8 @@ Namespace Apps
                         If (_AvailableEditors Is Nothing) Then
                             _AvailableEditors = getAvailableEditors()
                         End If
+                        Return _AvailableEditors
                     End SyncLock
-                    Return _AvailableEditors
                 End Get
             End Property
             
@@ -242,8 +242,8 @@ Namespace Apps
                         If (_JAVA_HOME Is Nothing) Then
                             getJavaEnvironment()
                         End If
+                        Return _JAVA_HOME
                     End SyncLock
-                    Return _JAVA_HOME
                 End Get
             End Property
             
@@ -254,8 +254,8 @@ Namespace Apps
                         If (_JEDIT_HOME Is Nothing) Then
                             getJEditEnvironment()
                         End If
+                        Return _JEDIT_HOME
                     End SyncLock
-                    Return _JEDIT_HOME
                 End Get
             End Property
             
@@ -266,8 +266,8 @@ Namespace Apps
                         If (_JEDIT_SETTINGS Is Nothing) Then
                             getJEditEnvironment()
                         End If
+                        Return _JEDIT_SETTINGS
                     End SyncLock
-                    Return _JEDIT_SETTINGS
                 End Get
             End Property
             
@@ -385,24 +385,25 @@ Namespace Apps
              ''' </para>
              ''' </remarks>
             Public Shared Sub startExcelGeoToolsCSVImport(byVal FilePath As String)
-                
-                Logger.logInfo(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_InvokeGeoToolsCsvImport, FilePath))
-                If (Not File.Exists(FilePath)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.AppUtils_GeoToolsCsvNotFound, FilePath)
-                
-                ' Exctract resource VBscript to temporary file.
-                Dim XlmVbsFile  As String = System.IO.Path.GetTempFileName()
-                Logger.logDebug(StringUtils.sprintf("startExcelGeoToolsCSVImport(): Exctract shell vb script form dll to: '%s'", XlmVbsFile))
-                System.IO.File.WriteAllText(XlmVbsFile, My.Resources.StartExcelAndXLMacro)
-                If (Not File.Exists(XlmVbsFile)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.AppUtils_XlmVBScriptNotFound, XlmVbsFile)
-                
-                Try
-                    ' Invoke temporary file via wscript.exe.
-                    Dim ShellCommand  As String = StringUtils.sprintf("%%comspec%% /c wscript /E:vbscript ""%s"" /M:Import_CSV ""/D:%s"" /silent:true", XlmVbsFile, FilePath)
-                    Logger.logDebug(StringUtils.sprintf("startExcelGeoToolsCSVImport(): Invoke shell command = '%s'", ShellCommand))
-                    Microsoft.VisualBasic.Interaction.Shell(System.Environment.ExpandEnvironmentVariables(ShellCommand), AppWinStyle.Hide, Wait:=False)
-                Catch ex as System.Exception
-                    Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_ErrorInvokingXlGeoToolsImport, FilePath), ex)
-                End Try
+                SyncLock (SyncHandle)
+                    Logger.logInfo(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_InvokeGeoToolsCsvImport, FilePath))
+                    If (Not File.Exists(FilePath)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.AppUtils_GeoToolsCsvNotFound, FilePath)
+                    
+                    ' Exctract resource VBscript to temporary file.
+                    Dim XlmVbsFile  As String = System.IO.Path.GetTempFileName()
+                    Logger.logDebug(StringUtils.sprintf("startExcelGeoToolsCSVImport(): Exctract shell vb script form dll to: '%s'", XlmVbsFile))
+                    System.IO.File.WriteAllText(XlmVbsFile, My.Resources.StartExcelAndXLMacro)
+                    If (Not File.Exists(XlmVbsFile)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.AppUtils_XlmVBScriptNotFound, XlmVbsFile)
+                    
+                    Try
+                        ' Invoke temporary file via wscript.exe.
+                        Dim ShellCommand  As String = StringUtils.sprintf("%%comspec%% /c wscript /E:vbscript ""%s"" /M:Import_CSV ""/D:%s"" /silent:true", XlmVbsFile, FilePath)
+                        Logger.logDebug(StringUtils.sprintf("startExcelGeoToolsCSVImport(): Invoke shell command = '%s'", ShellCommand))
+                        Microsoft.VisualBasic.Interaction.Shell(System.Environment.ExpandEnvironmentVariables(ShellCommand), AppWinStyle.Hide, Wait:=False)
+                    Catch ex as System.Exception
+                        Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_ErrorInvokingXlGeoToolsImport, FilePath), ex)
+                    End Try
+                End SyncLock
             End Sub
             
         #End Region

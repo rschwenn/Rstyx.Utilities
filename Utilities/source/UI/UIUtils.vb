@@ -8,7 +8,7 @@ Namespace UI
             
             Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UIUtils")
             
-            Private Shared ReadOnly SyncHandle   As New Object
+            Private Shared ReadOnly SyncHandle As New Object()
             
         #End Region
         
@@ -29,21 +29,21 @@ Namespace UI
              ''' <param name="path"> File path, i.e. for a project resource: "/ProjectName;component/Resources/save.png"</param>
              ''' <returns> The BitmapImage generated from the given file. </returns>
             Public Shared Function getImageFromPath(path As String) As System.Windows.Media.Imaging.BitmapImage
-                Dim bi As New System.Windows.Media.Imaging.BitmapImage()
                 SyncLock (SyncHandle)
+                    Dim bi As New System.Windows.Media.Imaging.BitmapImage()
                     bi.BeginInit()
                     bi.UriSource = New System.Uri(path, System.UriKind.RelativeOrAbsolute)
                     bi.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.None
                     bi.EndInit()
+                    Return bi
                 End SyncLock
-                Return bi
             End Function
             
             ''' <summary> Returns the current WFP application's main window. Returns "Nothing", if it's not a standalone WPF application. </summary>
              ''' <returns> The current WFP application's main window, or Null. </returns>
             Public Shared Function getMainWindow() As System.Windows.Window
-                Dim AppMainWindow  As System.Windows.Window = Nothing
                 SyncLock (SyncHandle)
+                    Dim AppMainWindow  As System.Windows.Window = Nothing
                     Dim AppType  As String = String.Empty
                     
                     If (System.Windows.Application.Current isNot Nothing) then
@@ -63,8 +63,8 @@ Namespace UI
                         ''Windows Forms Application" (hopefully since there is at least one Windows Form)
                         'AppType = "WinForm"
                     End If
+                    Return AppMainWindow
                 End SyncLock
-                Return AppMainWindow
             End Function
             
         #End Region

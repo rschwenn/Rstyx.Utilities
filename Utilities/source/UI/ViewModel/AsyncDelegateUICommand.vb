@@ -37,7 +37,7 @@ Namespace UI.ViewModel
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
+            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
             
             Private CancelTaskCommandInfo           As DelegateUICommandInfo = Nothing
             Private CmdTask                         As Task = Nothing

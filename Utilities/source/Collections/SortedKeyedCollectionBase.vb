@@ -30,7 +30,7 @@ Namespace Collections
         Implements System.Collections.Specialized.INotifyCollectionChanged
         Implements System.ComponentModel.INotifyPropertyChanged
         
-        Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.SortedKeyedCollectionBase")
+        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.SortedKeyedCollectionBase")
         
         Private _KeyComparer  As IComparer(Of TKey) = Nothing
         

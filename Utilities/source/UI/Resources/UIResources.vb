@@ -13,7 +13,7 @@ Namespace UI.Resources
             
             Private Shared Logger                   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(My.Settings.UIResources_LoggerName)
             
-            Private Shared ReadOnly SyncHandle      As New Object
+            Private Shared ReadOnly SyncHandle      As New Object()
             
             Private Shared _Icons                   As ResourceDictionary = Nothing
             Private Shared _IconRectangles          As Dictionary(Of String, System.Windows.Shapes.Rectangle) = Nothing
@@ -48,8 +48,8 @@ Namespace UI.Resources
                                 Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ResourceNotFound, My.Settings.UIResources_IconResourcesUri))
                             End Try 
                         End If
+                        Return _Icons
                     End SyncLock
-                    Return _Icons
                 End Get
             End Property
             
@@ -75,8 +75,8 @@ Namespace UI.Resources
                                 Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                             End Try 
                         End If
+                        Return _IconRectangles
                     End SyncLock
-                    Return _IconRectangles
                 End Get
             End Property
             
@@ -106,8 +106,8 @@ Namespace UI.Resources
              ''' <param name="ResourceName"> Resource name of the DrawingBrush resource in <see cref="Icons"/> (The "_IconBrush" suffix can be omitted). </param>
              ''' <returns>                   A rectangle with an icon of the given name, or Null. </returns>
             Private Shared Function getIconBrush(byVal ResourceName As String) As System.Windows.Media.DrawingBrush
-                Dim RetBrush As System.Windows.Media.DrawingBrush = Nothing
                 SyncLock (SyncHandle)
+                    Dim RetBrush As System.Windows.Media.DrawingBrush = Nothing
                     Try
                         If (Not ResourceName.EndsWith(IconBrushSuffix)) Then ResourceName &= IconBrushSuffix
                         
@@ -122,16 +122,16 @@ Namespace UI.Resources
                     Catch ex As Exception 
                         Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconDrawingBrush, ResourceName))
                     End Try 
+                    Return RetBrush
                 End SyncLock
-                Return RetBrush
             End Function
             
             ''' <summary> Creates a rectangle filled with an icon of the given resource name from <see cref="Icons"/>. </summary>
              ''' <param name="ResourceName"> Resource name of the DrawingBrush resource in <see cref="Icons"/> (The "_IconBrush" suffix can be omitted). </param>
              ''' <returns>                   A rectangle with an icon of the given name, or Null. </returns>
             Private Shared Function getIconRectangle(byVal ResourceName As String) As System.Windows.Shapes.Rectangle
-                Dim RetRectangle As System.Windows.Shapes.Rectangle = Nothing
                 SyncLock (SyncHandle)
+                    Dim RetRectangle As System.Windows.Shapes.Rectangle = Nothing
                     Try
                         If (Not ResourceName.EndsWith(IconBrushSuffix)) Then ResourceName &= IconBrushSuffix
                         
@@ -147,8 +147,8 @@ Namespace UI.Resources
                     Catch ex As Exception 
                         Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconRectangle, ResourceName))
                     End Try 
+                    Return RetRectangle
                 End SyncLock
-                Return RetRectangle
             End Function
             
         #End Region

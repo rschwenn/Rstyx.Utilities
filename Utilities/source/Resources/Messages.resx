@@ -282,7 +282,7 @@
     <value>Unerwarteter Fehler.</value>
   </data>
   <data name="Global_UnexpectedErrorIn" xml:space="preserve">
-    <value>=&gt; Unerwarteter Fehler in %s().</value>
+    <value>=Unerwarteter Fehler in %s().</value>
     <comment>Source Method Name: String</comment>
   </data>
   <data name="Sprintf_InvalidEscapeSequence" xml:space="preserve">

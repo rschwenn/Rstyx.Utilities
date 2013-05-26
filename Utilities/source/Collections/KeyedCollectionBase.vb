@@ -22,7 +22,7 @@ Namespace Collections
         Inherits   KeyedCollection(Of TKey, TItem)
         Implements System.Collections.Specialized.INotifyCollectionChanged
         
-        Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.KeyedCollectionBase")
+        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.KeyedCollectionBase")
         
         Private _KeyComparer  As IComparer(Of TKey) = Nothing
         

@@ -25,7 +25,7 @@ Namespace Collections
         Implements System.Collections.Specialized.INotifyCollectionChanged
         Implements System.ComponentModel.INotifyPropertyChanged
         
-        Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.DictionaryBase")
+        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.DictionaryBase")
         
         #Region "Properties"
             

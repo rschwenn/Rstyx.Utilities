@@ -8,7 +8,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            Private Shared Logger    As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Files.FileInfoCollection")
+            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Files.FileInfoCollection")
             
         #End Region
         
