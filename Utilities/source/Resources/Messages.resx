@@ -254,6 +254,10 @@
   <data name="Global_DoEventsFailed" xml:space="preserve">
     <value>Fehler bei Ausführung von Cinch.ApplicationHelper.DoEvents().</value>
   </data>
+  <data name="Global_ErrorCreatingCommandIn" xml:space="preserve">
+    <value>Fehler beim Erzeugen eines Befehls in %s().</value>
+    <comment>Source Method Name: String</comment>
+  </data>
   <data name="Global_ErrorFromCalledEventHandler" xml:space="preserve">
     <value>Fehler in einem aufgerufenen Ereignishandler.</value>
     <comment>(Message from outside a handler)</comment>
@@ -265,6 +269,9 @@
   <data name="Global_NotImplemented" xml:space="preserve">
     <value>'%s()' wurde noch nicht implementiert!</value>
     <comment>Method Name</comment>
+  </data>
+  <data name="Global_NoWork_EmptyFileList" xml:space="preserve">
+    <value>Dateiliste ist leer =&gt; nichts zu tun.</value>
   </data>
   <data name="Global_PropertyIsReadOnly" xml:space="preserve">
     <value>Eigenschaft '%s' ist schreibgeschützt.</value>
@@ -282,7 +289,7 @@
     <value>Unerwarteter Fehler.</value>
   </data>
   <data name="Global_UnexpectedErrorIn" xml:space="preserve">
-    <value>=Unerwarteter Fehler in %s().</value>
+    <value>Unerwarteter Fehler in %s().</value>
     <comment>Source Method Name: String</comment>
   </data>
   <data name="Sprintf_InvalidEscapeSequence" xml:space="preserve">

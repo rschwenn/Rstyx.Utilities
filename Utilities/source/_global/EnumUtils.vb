@@ -85,8 +85,8 @@ Imports PGK.Extensions
          ''' <para>
          ''' The class has to provide a property whose name matches the enum value:
          ''' <list type="bullet">
-         ''' <item><description> <b>{Enum_Full_Name}_Display</b> (where "." and "+" are replaced by "_") </description></item>
-         ''' <item><description> If the class name ends with ".My.Resources.Resources", the property name has to be <b>Display_Enum_</b>{Enum_Full_Name}_Display </description></item>
+         ''' <item><description> <b>{Enum_Full_Name}</b> (where "." and "+" are replaced by "_") </description></item>
+         ''' <item><description> If the class name ends with ".My.Resources.Resources", the property name has to be <b>Display_Enum_</b>{Enum_Full_Name} </description></item>
          ''' </list>
          ''' </para>
          ''' </remarks>
@@ -94,65 +94,64 @@ Imports PGK.Extensions
         Public Function ToDisplayString(Value As System.Enum) As String
             Dim RetValue As String = "{Invalid Enum value}"
             Try
-                If (Value IsNot Nothing) Then
-                    ' Fallback.
-                    RetValue = Value.ToString()
-                    
-                    Dim EnumType            As System.Type = Value.GetType()
-                    Dim ShortResourceKey    As String = EnumType.FullName.Replace("."c, "_"c).Replace("+"c, "_"c) & "_" & Value.ToString()
-                    Dim LongResourceKey     As String = "Display_Enum_" & ShortResourceKey
-                    Dim CultureName         As String = System.Threading.Thread.CurrentThread.CurrentUICulture.Name
-                    
-                    ' Create cache for the current UI culture.
-                    If (Not DisplayStringCache.ContainsKey(CultureName)) Then
-                        DisplayStringCache.Add(CultureName, New System.Collections.Specialized.StringDictionary())
-                    End If
-                    
-                    ' Retrieve the display name from resource and add it to the cache.
-                    If (Not DisplayStringCache.Item(CultureName).ContainsKey(ShortResourceKey)) Then
-                        
-                        ' Add default string (enum's name) to avoid repeated exceptions.
-                        DisplayStringCache.Item(CultureName).Add(ShortResourceKey, Value.ToString())
-                        
-                        ' Assembly that defines the Enum: Find Classes (Modules) whose full name is ending to ".My.Resources.Resources" or ".EnumDisplayStrings".
-                        Dim EnumAssemblyResourceProviders As IEnumerable(Of Type) = From ty As System.Type In EnumType.Assembly.GetTypes() 
-                                                                                    Where ty.FullName.IsMatchingTo("\.My\.Resources\.Resources$|\.EnumDisplayStrings$")
-                        '
-                        ' This Assembly: Find Classes (Modules) whose full name is ending to ".My.Resources.Resources" or ".EnumDisplayStrings".
-                        If (ThisAssemblyResourceProviders Is Nothing) Then
-                            ThisAssemblyResourceProviders = From ty As System.Type In Assembly.GetExecutingAssembly().GetTypes() 
-                                                            Where ty.FullName.IsMatchingTo("\.My\.Resources\.Resources$|\.EnumDisplayStrings$")
-                        End If
-                        
-                        ' Collect all found classes from the two assemblies.
-                        Dim ResourceProviders  As List(Of Type) = EnumAssemblyResourceProviders.ToList()
-                        ResourceProviders.AddRange(ThisAssemblyResourceProviders)
-                        '
-                        ' Get property whose name is the matching resource key (see above).
-                        For Each ResourceProvider As Type In ResourceProviders
-                            
-                            ' Choose ResourceKey.
-                            Dim ResourceKey As String = LongResourceKey
-                            If (ResourceProvider.FullName.IsMatchingTo("\.EnumDisplayStrings$")) Then ResourceKey = ShortResourceKey
-                            
-                            Dim EnumResourceKeyProperty As PropertyInfo = ResourceProvider.GetProperty(ResourceKey, BindingFlags.NonPublic Or BindingFlags.Static)
-                            
-                            If (EnumResourceKeyProperty IsNot Nothing) Then
-                                Dim DisplayString  As String = CStr(EnumResourceKeyProperty.GetValue(Nothing, Nothing))
-                                If (DisplayString.IsNotEmptyOrWhiteSpace()) Then
-                                    DisplayStringCache.Item(CultureName).Item(ShortResourceKey) = DisplayString
-                                    Exit For
-                                End If
-                            End If
-                        Next
-                    End If
-                    
-                    ' This enum value should be in the cache now...
-                    RetValue = DisplayStringCache.Item(CultureName).Item(ShortResourceKey)
+                ' Fallback.
+                RetValue = Value.ToString()
+                
+                Dim EnumType            As System.Type = Value.GetType()
+                Dim ShortResourceKey    As String = EnumType.FullName.Replace("."c, "_"c).Replace("+"c, "_"c) & "_" & Value.ToString()
+                Dim LongResourceKey     As String = "Display_Enum_" & ShortResourceKey
+                Dim CultureName         As String = System.Threading.Thread.CurrentThread.CurrentUICulture.Name
+                
+                ' Create cache for the current UI culture.
+                If (Not DisplayStringCache.ContainsKey(CultureName)) Then
+                    DisplayStringCache.Add(CultureName, New System.Collections.Specialized.StringDictionary())
                 End If
+                
+                ' Retrieve the display name from resource and add it to the cache.
+                If (Not DisplayStringCache.Item(CultureName).ContainsKey(ShortResourceKey)) Then
+                    
+                    ' Add default string (enum's name) to avoid repeated exceptions.
+                    DisplayStringCache.Item(CultureName).Add(ShortResourceKey, Value.ToString())
+                    
+                    ' Assembly that defines the Enum: Find Classes (Modules) whose full name is ending to ".My.Resources.Resources" or ".EnumDisplayStrings".
+                    Dim EnumAssemblyResourceProviders As IEnumerable(Of Type) = From ty As System.Type In EnumType.Assembly.GetTypes() 
+                                                                                Where ty.FullName.IsMatchingTo("\.My\.Resources\.Resources$|\.EnumDisplayStrings$")
+                    '
+                    ' This Assembly: Find Classes (Modules) whose full name is ending to ".My.Resources.Resources" or ".EnumDisplayStrings".
+                    If (ThisAssemblyResourceProviders Is Nothing) Then
+                        ThisAssemblyResourceProviders = From ty As System.Type In Assembly.GetExecutingAssembly().GetTypes() 
+                                                        Where ty.FullName.IsMatchingTo("\.My\.Resources\.Resources$|\.EnumDisplayStrings$")
+                    End If
+                    
+                    ' Collect all found classes from the two assemblies.
+                    Dim ResourceProviders  As List(Of Type) = EnumAssemblyResourceProviders.ToList()
+                    ResourceProviders.AddRange(ThisAssemblyResourceProviders)
+                    '
+                    ' Get property whose name is the matching resource key (see above).
+                    For Each ResourceProvider As Type In ResourceProviders
+                        
+                        ' Choose ResourceKey.
+                        Dim ResourceKey As String = LongResourceKey
+                        If (ResourceProvider.FullName.IsMatchingTo("\.EnumDisplayStrings$")) Then ResourceKey = ShortResourceKey
+                        
+                        Dim EnumResourceKeyProperty As PropertyInfo = ResourceProvider.GetProperty(ResourceKey, BindingFlags.NonPublic Or BindingFlags.Public Or BindingFlags.Static)
+                        
+                        If (EnumResourceKeyProperty IsNot Nothing) Then
+                            Dim DisplayString  As String = CStr(EnumResourceKeyProperty.GetValue(Nothing, Nothing))
+                            If (DisplayString.IsNotEmptyOrWhiteSpace()) Then
+                                DisplayStringCache.Item(CultureName).Item(ShortResourceKey) = DisplayString
+                                Exit For
+                            End If
+                        End If
+                    Next
+                End If
+                
+                ' This enum value should be in the cache now...
+                RetValue = DisplayStringCache.Item(CultureName).Item(ShortResourceKey)
                 
             Catch ex as System.Exception
                 'Logger.logError(ex, StringUtils.sprintf("ToDisplayString(): Fehler bei Suche nach DisplayString .", FolderName))
+                System.Diagnostics.Trace.WriteLine(ex)
             End Try
             Return RetValue
         End Function

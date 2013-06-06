@@ -398,6 +398,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Erzeugen eines Befehls in %s(). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_ErrorCreatingCommandIn() As String
+            Get
+                Return ResourceManager.GetString("Global_ErrorCreatingCommandIn", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler in einem aufgerufenen Ereignishandler. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_ErrorFromCalledEventHandler() As String
@@ -421,6 +430,15 @@ Namespace Resources
         Public Shared ReadOnly Property Global_NotImplemented() As String
             Get
                 Return ResourceManager.GetString("Global_NotImplemented", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Dateiliste ist leer =&gt; nichts zu tun. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_NoWork_EmptyFileList() As String
+            Get
+                Return ResourceManager.GetString("Global_NoWork_EmptyFileList", resourceCulture)
             End Get
         End Property
         
@@ -461,7 +479,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; Unerwarteter Fehler in %s(). ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler in %s(). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_UnexpectedErrorIn() As String
             Get

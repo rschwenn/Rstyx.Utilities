@@ -133,15 +133,19 @@ Namespace UI.ViewModel
                 ''' <summary> Provides an UI Command which raises the <c>Cinch.ViewModelBase.CloseRequest</c> event. </summary>
                 Public ReadOnly Property CloseViewCommand() As DelegateUICommand
                     Get
-                        If (_CloseViewCommand Is Nothing) Then
-                            
-                            Dim Decoration As New UICommandDecoration()
-                            Decoration.Caption     = "Schließen"
-                            Decoration.Description = "Fenster schließen"
-                            Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Handmade_Power4")
-                            
-                            _CloseViewCommand = New DelegateUICommand(AddressOf Me.closeView, Decoration)
-                        End If
+                        Try
+                            If (_CloseViewCommand Is Nothing) Then
+                                
+                                Dim Decoration As New UICommandDecoration()
+                                Decoration.Caption     = "Schließen"
+                                Decoration.Description = "Fenster schließen"
+                                Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Handmade_Power4")
+                                
+                                _CloseViewCommand = New DelegateUICommand(AddressOf Me.closeView, Decoration)
+                            End If
+                        Catch ex As System.Exception
+                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                        End Try
                         
                         Return _CloseViewCommand
                     End Get
@@ -165,15 +169,19 @@ Namespace UI.ViewModel
                 ''' <summary> Provides an UI Command that calls <c>showHelpFile()</c> which has to be overridden to show the help file. </summary>
                 Public ReadOnly Property ShowHelpFileCommand() As DelegateUICommand
                     Get
-                        If (_ShowHelpFileCommand Is Nothing) Then
-                            
-                            Dim Decoration As New UICommandDecoration()
-                            Decoration.Caption     = "Hilfe"
-                            Decoration.Description = "Hilfedatei anzeigen"
-                            Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Tango_Help1")
-                            
-                            _ShowHelpFileCommand = New DelegateUICommand(AddressOf Me.showHelpFile, Decoration)
-                        End If
+                        Try
+                            If (_ShowHelpFileCommand Is Nothing) Then
+                                
+                                Dim Decoration As New UICommandDecoration()
+                                Decoration.Caption     = "Hilfe"
+                                Decoration.Description = "Hilfedatei anzeigen"
+                                Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Tango_Help1")
+                                
+                                _ShowHelpFileCommand = New DelegateUICommand(AddressOf Me.showHelpFile, Decoration)
+                            End If
+                        Catch ex As System.Exception
+                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                        End Try
                         
                         Return _ShowHelpFileCommand
                     End Get

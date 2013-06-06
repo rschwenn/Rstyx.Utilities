@@ -418,13 +418,15 @@ Imports PGK.Extensions
          ''' <param name="Value">            Input String. </param>
          ''' <param name="Delimiter">        String to stop at. </param>
          ''' <param name="IncludeDelimiter"> If <see langword="true"/>, the returned string containes the <paramref name="Delimiter"/>, otherwise it doesn't. </param>
-         ''' <returns> Truncated string. </returns>
+         ''' <returns> Truncated string, or <see langword="null"/> if <paramref name="Value"/> is <see langword="null"/>. </returns>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Left(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
-            Dim idx  As Integer = Value.IndexOf(Delimiter)
-            If (idx >= 0) Then
-                If (IncludeDelimiter) Then idx = idx + Delimiter.Length
-                Value = Value.Substring(0, idx)
+            If (Value IsNot Nothing) Then
+                Dim idx  As Integer = Value.IndexOf(Delimiter)
+                If (idx >= 0) Then
+                    If (IncludeDelimiter) Then idx = idx + Delimiter.Length
+                    Value = Value.Substring(0, idx)
+                End If
             End If
             Return Value
         End Function
@@ -436,13 +438,15 @@ Imports PGK.Extensions
          ''' <param name="Value">            Input String. </param>
          ''' <param name="Delimiter">        String to stop at. </param>
          ''' <param name="IncludeDelimiter"> If <see langword="true"/>, the returned string containes the <paramref name="Delimiter"/>, otherwise it doesn't. </param>
-         ''' <returns> Truncated string. </returns>
+         ''' <returns> Truncated string, or <see langword="null"/> if <paramref name="Value"/> is <see langword="null"/>. </returns>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Right(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
-            Dim idx  As Integer = Value.LastIndexOf(Delimiter)
-            If (idx >= 0) Then
-                If (Not IncludeDelimiter) Then idx = idx + Delimiter.Length
-                Value = Value.Substring(idx)
+            If (Value IsNot Nothing) Then
+                Dim idx  As Integer = Value.LastIndexOf(Delimiter)
+                If (idx >= 0) Then
+                    If (Not IncludeDelimiter) Then idx = idx + Delimiter.Length
+                    Value = Value.Substring(idx)
+                End If
             End If
             Return Value
         End Function
@@ -452,7 +456,7 @@ Imports PGK.Extensions
          ''' <param name="LeftDelimiter">     String to start. </param>
          ''' <param name="RightDelimiter">    String to stop at. </param>
          ''' <param name="IncludeDelimiters"> If <see langword="true"/>, the returned string containes the Delimiters, otherwise it doesn't. </param>
-         ''' <returns> Truncated string. </returns>
+         ''' <returns> Truncated string, or <see langword="null"/> if <paramref name="Value"/> is <see langword="null"/>. </returns>
          ''' <remarks>
          ''' Returns the substring between the first occurrence of the <paramref name="LeftDelimiter"/> string
          ''' and the following first occurrence of the <paramref name="RightDelimiter"/> string.
@@ -461,17 +465,19 @@ Imports PGK.Extensions
          ''' </remarks>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Substring(ByVal Value As String, LeftDelimiter As String, RightDelimiter As String, Optional IncludeDelimiters As Boolean = False) As String
-            Dim idx  As Integer = Value.IndexOf(LeftDelimiter)
-            ' Cut left
-            If (idx >= 0) Then
-                If (Not IncludeDelimiters) Then idx = idx + LeftDelimiter.Length
-                Value = Value.Substring(idx)
-            End If
-            ' Cut right
-            If (IncludeDelimiters) Then
-                Value = LeftDelimiter & Value.Substring(LeftDelimiter.Length).Left(RightDelimiter, IncludeDelimiters)
-            Else
-                Value = Value.Left(RightDelimiter, IncludeDelimiters)
+            If (Value IsNot Nothing) Then
+                Dim idx  As Integer = Value.IndexOf(LeftDelimiter)
+                ' Cut left
+                If (idx >= 0) Then
+                    If (Not IncludeDelimiters) Then idx = idx + LeftDelimiter.Length
+                    Value = Value.Substring(idx)
+                End If
+                ' Cut right
+                If (IncludeDelimiters) Then
+                    Value = LeftDelimiter & Value.Substring(LeftDelimiter.Length).Left(RightDelimiter, IncludeDelimiters)
+                Else
+                    Value = Value.Left(RightDelimiter, IncludeDelimiters)
+                End If
             End If
             
             Return Value
@@ -481,8 +487,14 @@ Imports PGK.Extensions
          ''' <param name="Value">    One text line meant as head line. </param>
          ''' <param name="LineChar"> The character that builds the lines. </param>
          ''' <returns>               The Headline string. </returns>
+         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/> or empty. </exception>
+         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="LineChar"/> is <see langword="null"/> or empty. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function ToHeadLine(Value As String, LineChar As String) As String
+            
+            If (Value.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Value")
+            If (LineChar.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("LineChar")
+            
             Dim Line As String = LineChar.Repeat(Value.Length + 2)
             Return vbNewLine & Line & vbNewLine & " " & Value & vbNewLine & Line & vbNewLine
         End Function

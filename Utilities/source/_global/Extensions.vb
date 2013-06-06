@@ -9,23 +9,23 @@ Imports System
         ''' <summary> Checks wether or not the given type isn't abstrcat and implements a certain interface. </summary>
          ''' <param name="Value">        The input type. </param>
          ''' <param name="TheInterface"> The interface to check for. </param>
-         ''' <returns>                   <c>True</c> if value isn't an abstrcat class and implements the Interface. </returns>
+         ''' <returns>                   <see langword="true"/> if value isn't an abstrcat class and implements the Interface. </returns>
+         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function IsImplementing(Value As Type, TheInterface As Type) As Boolean
+            
+            If (Value Is Nothing) Then Throw New System.ArgumentNullException("Value")
+            
             Dim RetValue  As Boolean = False
-            'Try
-                'If (Not Value.IsAbstract) Then
-                If (Not (Value.IsInterface Or Value.IsAbstract)) Then
-                    For Each CurrentInterface As Type In Value.GetInterfaces()
-                        If (CurrentInterface Is TheInterface) Then
-                            RetValue = True
-                            Exit For
-                        End If
-                    Next
-                End If
-            'Catch ex As System.Exception
-            '    '''Logger.logError(ex, "IsImplementing(): unerwateter Fehler.")
-            'End Try
+            
+            If (Not (Value.IsInterface Or Value.IsAbstract)) Then
+                For Each CurrentInterface As Type In Value.GetInterfaces()
+                    If (CurrentInterface Is TheInterface) Then
+                        RetValue = True
+                        Exit For
+                    End If
+                Next
+            End If
             Return RetValue
         End Function
         

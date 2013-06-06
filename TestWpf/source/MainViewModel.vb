@@ -34,7 +34,7 @@ Public Class MainViewModel
         
         Public Property FilePath1 As String
         Public Property Textbox   As String
-
+        
         Private _TextField  As String
         Public ReadOnly Property TextField  As String
             Get
@@ -61,7 +61,7 @@ Public Class MainViewModel
                         _TestTaskAsyncCommand = New AsyncDelegateUICommand(CmdInfo, CancelCallback:=Nothing, SupportsCancellation:=False, runAsync:=True)
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, "TestTaskAsyncCommand[Get]: Fehler beim Erzeugen des Test-Befehls.")
+                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 
                 Return _TestTaskAsyncCommand
@@ -86,33 +86,21 @@ Public Class MainViewModel
             
         End Sub
         
-        Private Function NewInvalidDataException() As System.IO.InvalidDataException
-            'Dim RetValue  As Boolean = False
-            'Try
-            '    'Throw New RemarkException("AAAAAAAAAAA")
-            '    RetValue = True
-            'Catch ex As System.Exception
-            '    Logger.logError(ex, "CanStartTest_1(): unerwateter Fehler.")
-            'End Try
-            Return New System.IO.InvalidDataException("##################")
-        End Function
-        
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             Try
                 'Apps.AppUtils.startEditor(5, "")
                 'Logger.logInfo(Rstyx.Utilities.IO.FileUtils.FilePart.Dir.ToDisplayString())
+                'Logger.logInfo(EnumExtensions.ToDisplayString(Rstyx.Utilities.IO.FileUtils.FilePart.Dir))
                 
                 'Me.showHelpFile()
                 
                 'Dim success As Boolean = TrySetProperty("Textbo", "teschtttt", New String() {"hh", "teschtttyy"})
                 
                 'Throw New InvalidDataException("+++++++++++++++++++++++++++")
-                'Throw NewInvalidDataException()
-                Logger.logInfo(StringUtils.sprintf("tescht = %s", 2))
                 
                 'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
-                Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, Nothing)
-                Logger.logInfo(fi.FullName)
+                'Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, Nothing)
+                'Logger.logInfo(fi.FullName)
                 
                 'Dim Field = "UserDomaiN"
                 'Dim TableName = "Standorte$y"
@@ -151,7 +139,7 @@ Public Class MainViewModel
         Protected Overrides Sub showHelpFile()
             Throw New InvalidDataException("showHelpFile()  +++++++++++++++++++++++++++")
         End Sub
-
+        
         ''' <summary> Checks if test_1 could be started. </summary>
          ''' <returns> Boolean </returns>
         Private Function CanStartTestTask() As Boolean
@@ -160,7 +148,7 @@ Public Class MainViewModel
                 'Throw New RemarkException("AAAAAAAAAAA")
                 RetValue = True
             Catch ex As System.Exception
-                Logger.logError(ex, "CanStartTest_1(): unerwateter Fehler.")
+                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
             End Try
             Return RetValue
         End Function
