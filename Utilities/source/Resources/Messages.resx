@@ -271,7 +271,7 @@
     <comment>Method Name</comment>
   </data>
   <data name="Global_NoWork_EmptyFileList" xml:space="preserve">
-    <value>Dateiliste ist leer =&gt; nichts zu tun.</value>
+    <value>Dateiliste ist leer =&gt; Nichts zu tun.</value>
   </data>
   <data name="Global_PropertyIsReadOnly" xml:space="preserve">
     <value>Eigenschaft '%s' ist schreibgeschützt.</value>
@@ -311,5 +311,8 @@
   <data name="UIResources_ErrorCreatingIconRectangle" xml:space="preserve">
     <value>Fehler beim Erstellen des Icon-Rechtecks '%s'.</value>
     <comment>Resource Name</comment>
+  </data>
+  <data name="Global_NoWork_NoElementsFound" xml:space="preserve">
+    <value>Keine Elemente gefunden =&gt; Nichts zu tun.</value>
   </data>
 </root>

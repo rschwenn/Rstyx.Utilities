@@ -434,11 +434,20 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Dateiliste ist leer =&gt; nichts zu tun. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Dateiliste ist leer =&gt; Nichts zu tun. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_NoWork_EmptyFileList() As String
             Get
                 Return ResourceManager.GetString("Global_NoWork_EmptyFileList", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Keine Elemente gefunden =&gt; Nichts zu tun. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_NoWork_NoElementsFound() As String
+            Get
+                Return ResourceManager.GetString("Global_NoWork_NoElementsFound", resourceCulture)
             End Get
         End Property
         
