@@ -315,4 +315,8 @@
   <data name="Global_NoWork_NoElementsFound" xml:space="preserve">
     <value>Keine Elemente gefunden =&gt; Nichts zu tun.</value>
   </data>
+  <data name="Global_FileIsReadOnly" xml:space="preserve">
+    <value>Datei ist schreibgeschützt: '%s'.</value>
+    <comment>File Path: String</comment>
+  </data>
 </root>

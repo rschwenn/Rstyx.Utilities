@@ -137,6 +137,15 @@
         End Class
     End Namespace
     
+    Namespace Validation
+        ''' <summary>
+        ''' Validation related stuff.
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
 'End Namespace
 
 ' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

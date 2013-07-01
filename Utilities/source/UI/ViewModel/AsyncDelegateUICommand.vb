@@ -190,11 +190,13 @@ Namespace UI.ViewModel
             
             ''' <summary> Raises the CanExecuteChanged event. </summary>
             Public Sub RaiseCanExecuteChanged()
+                RaiseEvent CanExecuteChanged(Me, System.EventArgs.Empty)
                 Try
-                    RaiseEvent CanExecuteChanged(Me, System.EventArgs.Empty)
                     If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                    'Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                    Logger.logDebug(ex.ToString())
+                    Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
                 End Try
             End Sub
             
@@ -260,7 +262,7 @@ Namespace UI.ViewModel
                                 ' Start ExecuteAction in current thread.
                                 ' Nevertheless pass the cancellation token in order to enable the action to get cancellation requests.
                                 RaiseCanExecuteChanged()
-                                Cinch.ApplicationHelper.DoEvents()
+                                'Cinch.ApplicationHelper.DoEvents()
                                 Try
                                     TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
                                 Catch ex As System.Exception
@@ -273,7 +275,7 @@ Namespace UI.ViewModel
                     End If
                     
                     RaiseCanExecuteChanged()
-                    If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
+                    'If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
                     
                 Catch ex As System.Exception
                     Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))

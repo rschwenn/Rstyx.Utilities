@@ -138,31 +138,14 @@ Imports System.IO
         
         #Region "DataTable Extensions"
             
-            ''' <summary> Checks, if a certain field name exists (case sensitive) in a given table. </summary>
-             ''' <param name="Table">      The table to check. </param>
-             ''' <param name="FieldName">  The field name of interest. </param>
-             ''' <returns>                 True, if the field has been found in the table. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Table"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
-             <System.Runtime.CompilerServices.Extension()> 
-            Public Function containsField(Table As DataTable,
-                                          byVal FieldName As String
-                                          ) As Boolean
-                Return containsField(Table, FieldName, LogError:=False)
-            End Function
-            
             ''' <summary> Checks, if a certain field name exists in a given table. </summary>
              ''' <param name="Table">      The table to check. </param>
              ''' <param name="FieldName">  The field name of interest. </param>
-             ''' <param name="LogError">   If <see langword="true"/>, an error message is logged, if the field doesn't exist. </param>
              ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Table"/> is <see langword="null"/>. </exception>
              ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
              ''' <returns>                 <see langword="true"/>, if the field has been found in the table, otherwise <see langword="false"/>. </returns>
              <System.Runtime.CompilerServices.Extension()> 
-            Public Function containsField(Table As DataTable,
-                                          byVal FieldName As String,
-                                          byVal LogError As Boolean
-                                          ) As Boolean
+            Public Function containsField(Table As DataTable, byVal FieldName As String) As Boolean
                 
                 If (Table Is Nothing) Then Throw New System.ArgumentNullException("Table")
                 If (FieldName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FieldName")
@@ -173,10 +156,26 @@ Imports System.IO
                 success = Table.Columns.Contains(FieldName)
                 
                 Logger.logDebug(StringUtils.sprintf("containsField(): Found field '%s' in table '%s'.", FieldName, Table.TableName))
-                If (LogError And (Not success)) Then Logger.LogError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_FieldNotFoundInTable, FieldName, Table.TableName))
                 
                 Return success
             End Function
+            
+            ''' <summary> Verifies that a certain field name exists in a given table. </summary>
+             ''' <param name="Table">      The table to check. </param>
+             ''' <param name="FieldName">  The field name of interest. </param>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Table"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="T:RemarkException"> Thrown if the field name hasn't been found in the table. </exception>
+             <System.Runtime.CompilerServices.Extension()> 
+            Public Sub VerifyField(Table As DataTable, byVal FieldName As String)
+                
+                If (Table Is Nothing) Then Throw New System.ArgumentNullException("Table")
+                If (FieldName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FieldName")
+                
+                If (Not Table.containsField(FieldName)) Then
+                    Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_FieldNotFoundInTable, FieldName, Table.TableName))
+                End If
+            End Sub
             
         #End Region
         

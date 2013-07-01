@@ -425,6 +425,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Datei ist schreibgeschützt: &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_FileIsReadOnly() As String
+            Get
+                Return ResourceManager.GetString("Global_FileIsReadOnly", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die &apos;%s()&apos; wurde noch nicht implementiert! ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_NotImplemented() As String
