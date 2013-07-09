@@ -286,8 +286,6 @@ Imports System.Text.RegularExpressions
                     LineInfo.ShortDescription = LineInfo.LongTitle
                     LineInfo.LongDescription  = LineInfo.LongTitle
                 Else
-                  ' Open File in default ANSII encoding ("Windows-1252" alias "iso-8859-1") and read until LineNo found.
-                    'oSR = New StreamReader(LineInfo.SourceFile, System.Text.Encoding.GetEncoding("Windows-1252"))
                     oSR = New StreamReader(LineInfo.SourceFile, System.Text.Encoding.Default)
                     Do While (not (oSR.EndOfStream or LineNoFound))
                         WorkLine = oSR.ReadLine
@@ -302,8 +300,8 @@ Imports System.Text.RegularExpressions
                     Loop
                     If (LineNoFound) Then LineFromFile = WorkLine.Trim()
                     oSR.Close
-                  
-                  ' Determine output text.
+                    
+                    ' Determine output text.
                     If (LineFromFile.IsEmptyOrWhiteSpace()) Then
                         LineInfo.LongTitle = "Strecke '" & LineNo & "' nicht gefunden! "
                         LineInfo.ShortTitle = LineInfo.LongTitle

@@ -502,13 +502,13 @@ Namespace UI.ViewModel
                 Return success
             End Function
             
-            ''' <summary> Sets a view model's property to a given value's associated display string, if this is a supported value. </summary>
+            ''' <summary> Tries to set a view model's property indirect by passing the value's associated display string. </summary>
              ''' <typeparam name="TProperty">           Type of the target property designated by <paramref name="PropertyName"/>. </typeparam>
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredDisplayValue">  Display string, whose corresponding dictionary key should become the new property value. </param>
              ''' <param name="SupportedValues">         IDictionary where the keys are the supported property values and the items the display strings (of an ItemsControl). </param>
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
-             ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
+             ''' <returns> <see langword="true"/> if <paramref name="NewDesiredDisplayValue"/> is supported (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
              ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
@@ -537,6 +537,57 @@ Namespace UI.ViewModel
                 ' Look up for the display string and get the corresponding property value
                 Dim NewPropertyValue  As TProperty = Nothing
                 success = SupportedValues.findKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
+                
+                If (success) Then
+                    Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
+                    Dim IsDifferentValue As Boolean   = (Not EqualityComparer(Of TProperty).Default.Equals(OldPropertyValue, NewPropertyValue))
+                    
+                    If (IsDifferentValue) Then
+                        TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                            MyBase.NotifyPropertyChanged(PropertyName)
+                        End If
+                    End If
+                End If
+                
+                Return success
+            End Function
+            
+            ''' <summary> Tries to set a view model's property indirect by passing the value's string representation (of .ToString() method). </summary>
+             ''' <typeparam name="TProperty">           Type of the target property designated by <paramref name="PropertyName"/>. </typeparam>
+             ''' <param name="PropertyName">            Name of the target property. </param>
+             ''' <param name="NewDesiredToStringValue"> String, whose corresponding List Item should become the new property value. </param>
+             ''' <param name="SupportedValues">         IList with supported property values. </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="NewDesiredToStringValue"/> is a string representation of a supported property value (and the property may have changed). </returns>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
+             ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
+            Protected Function TrySetPropertyByString(Of TProperty) _
+                                                     (PropertyName As String,
+                                                      NewDesiredToStringValue As String,
+                                                      SupportedValues As ICollection(Of TProperty),
+                                                      Optional NotifyOnPropertyChanged As Boolean = False
+                                                      ) As Boolean
+                Dim success As Boolean = False
+                
+                ' Check arguments.
+                If (String.IsNullOrWhiteSpace(PropertyName)) Then Throw New System.ArgumentNullException("PropertyName")
+                If (SupportedValues Is Nothing) Then Throw New System.ArgumentNullException("SupportedValues")
+                
+                Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
+                If (TargetProperty Is Nothing) Then
+                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                End If
+                If (Not TargetProperty.CanWrite) Then
+                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                End If
+                
+                ' Look up for the string and get the corresponding property value
+                Dim NewPropertyValue  As TProperty = Nothing
+                success = SupportedValues.findItemByString(NewDesiredToStringValue, NewPropertyValue)
                 
                 If (success) Then
                     Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
