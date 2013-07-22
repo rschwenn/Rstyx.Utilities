@@ -27,6 +27,15 @@
         End Class
     End Namespace
     
+    Namespace Domain
+        ''' <summary>
+        ''' Business objects etc (domain layer).
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
     Namespace IO
         ''' <summary>
         ''' General-purpose development utilities for input/output.

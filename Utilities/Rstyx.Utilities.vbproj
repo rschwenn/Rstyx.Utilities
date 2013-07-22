@@ -102,6 +102,7 @@
     <Compile Include="My Project\Settings.vb" />
     <Compile Include="source\Apps\AppInfo.vb" />
     <Compile Include="source\Apps\AppUtils.vb" />
+    <Compile Include="source\IO\DataTextFileReader.vb" />
     <Compile Include="source\IO\CSV\CsvReader.vb" />
     <Compile Include="source\IO\CSV\Enums.vb" />
     <Compile Include="source\IO\CSV\MalformedCsvException.vb" />
@@ -112,6 +113,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CsvExceptionMessage.resx</DependentUpon>
     </Compile>
+    <Compile Include="source\IO\PreSplittedTextLine.vb" />
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -250,7 +252,9 @@
   <ItemGroup>
     <None Include="source\Resources\StartExcelAndXLMacro.vbs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="source\Domain\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -267,7 +267,7 @@ Imports System.Text.RegularExpressions
                 Dim tmp()            As String
                 Dim NR               As Long    = 0
                 Dim LineNoFound      As Boolean = false
-                Dim oSR              As StreamReader = Nothing
+                'Dim oSR              As StreamReader = Nothing
                 Dim LineInfo         As New DBAGLineInfo With {.Number = LineNo}
                 
               ' Path of File with DB lines list
@@ -286,9 +286,9 @@ Imports System.Text.RegularExpressions
                     LineInfo.ShortDescription = LineInfo.LongTitle
                     LineInfo.LongDescription  = LineInfo.LongTitle
                 Else
-                    oSR = New StreamReader(LineInfo.SourceFile, System.Text.Encoding.Default)
-                    Do While (not (oSR.EndOfStream or LineNoFound))
-                        WorkLine = oSR.ReadLine
+                    Dim oSR As New StreamReader(LineInfo.SourceFile, System.Text.Encoding.Default)
+                    Do While (Not (oSR.EndOfStream Or LineNoFound))
+                        WorkLine = oSR.ReadLine()
                         NR = NR + 1
                         If (WorkLine.IsNotEmptyOrWhiteSpace) Then
                             FirstString = WorkLine.Trim().Left(4)
@@ -299,7 +299,7 @@ Imports System.Text.RegularExpressions
                         End If
                     Loop
                     If (LineNoFound) Then LineFromFile = WorkLine.Trim()
-                    oSR.Close
+                    oSR.Close()
                     
                     ' Determine output text.
                     If (LineFromFile.IsEmptyOrWhiteSpace()) Then

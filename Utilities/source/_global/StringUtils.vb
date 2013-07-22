@@ -422,7 +422,7 @@ Imports PGK.Extensions
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Left(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
             If (Value IsNot Nothing) Then
-                Dim idx  As Integer = Value.IndexOf(Delimiter)
+                Dim idx As Integer = Value.IndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
                 If (idx >= 0) Then
                     If (IncludeDelimiter) Then idx = idx + Delimiter.Length
                     Value = Value.Substring(0, idx)
@@ -442,7 +442,7 @@ Imports PGK.Extensions
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Right(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
             If (Value IsNot Nothing) Then
-                Dim idx  As Integer = Value.LastIndexOf(Delimiter)
+                Dim idx  As Integer = Value.LastIndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
                 If (idx >= 0) Then
                     If (Not IncludeDelimiter) Then idx = idx + Delimiter.Length
                     Value = Value.Substring(idx)
@@ -466,7 +466,7 @@ Imports PGK.Extensions
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Substring(ByVal Value As String, LeftDelimiter As String, RightDelimiter As String, Optional IncludeDelimiters As Boolean = False) As String
             If (Value IsNot Nothing) Then
-                Dim idx  As Integer = Value.IndexOf(LeftDelimiter)
+                Dim idx  As Integer = Value.IndexOf(LeftDelimiter, comparisonType:=System.StringComparison.Ordinal)
                 ' Cut left
                 If (idx >= 0) Then
                     If (Not IncludeDelimiters) Then idx = idx + LeftDelimiter.Length

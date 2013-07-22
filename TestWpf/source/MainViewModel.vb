@@ -88,6 +88,11 @@ Public Class MainViewModel
         
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             Try
+                'Dim Path As String = "T:\Debug.log"
+                Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
+                fdk.Load(Me.FilePath1)
+                Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
+
                 'Apps.AppUtils.startEditor(5, "")
                 'Logger.logInfo(Rstyx.Utilities.IO.FileUtils.FilePart.Dir.ToDisplayString())
                 'Logger.logInfo(EnumExtensions.ToDisplayString(Rstyx.Utilities.IO.FileUtils.FilePart.Dir))
