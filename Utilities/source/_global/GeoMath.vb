@@ -268,7 +268,7 @@ Imports System.Text.RegularExpressions
                 Dim NR               As Long    = 0
                 Dim LineNoFound      As Boolean = false
                 'Dim oSR              As StreamReader = Nothing
-                Dim LineInfo         As New DBAGLineInfo With {.Number = LineNo}
+                Dim LineInfo         As New DBAGLineInfo() With {.Number = LineNo}
                 
               ' Path of File with DB lines list
                 LineInfo.SourceFile = Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFile)

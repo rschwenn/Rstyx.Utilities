@@ -27,7 +27,7 @@ Imports System.Security.Permissions
 Namespace IO.CSV
     
     ''' <summary>
-    ''' Represents the exception that is thrown when a there is a missing field in a record of the CSV file.
+    ''' Represents the exception that is thrown when there is a missing field in a record of the CSV file.
     ''' </summary>
     ''' <remarks>
     ''' MissingFieldException would have been a better name, but there is already a <see cref="T:System.MissingFieldException"/>.

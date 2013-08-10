@@ -462,4 +462,10 @@
   <data name="Bentley_Interop_MicroStationDGN_MsdMeasurementSystem_Undefined" xml:space="preserve">
     <value>unbestimmt</value>
   </data>
+  <data name="Rstyx_Utilities_IO_ParseErrorLevel_Error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_ParseErrorLevel_Warning" xml:space="preserve">
+    <value>Warnung</value>
+  </data>
 </root>

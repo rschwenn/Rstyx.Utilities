@@ -40,6 +40,7 @@ Namespace IO.CSV
         ''' Replaces by a null value (<see langword="null"/>).
         ''' </summary>
         ReplaceByNull = 2
+        
     End Enum
     
     ''' <summary>
@@ -60,6 +61,7 @@ Namespace IO.CSV
         ''' Throws an exception.
         ''' </summary>
         ThrowException = 2
+        
     End Enum
     
     ''' <summary>
@@ -87,6 +89,7 @@ Namespace IO.CSV
         ''' All values are trimmed.
         ''' </summary>
         All = (UnquotedOnly Or QuotedOnly)
+        
     End Enum
     
 End Namespace

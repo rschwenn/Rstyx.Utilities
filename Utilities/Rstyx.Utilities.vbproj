@@ -102,6 +102,11 @@
     <Compile Include="My Project\Settings.vb" />
     <Compile Include="source\Apps\AppInfo.vb" />
     <Compile Include="source\Apps\AppUtils.vb" />
+    <Compile Include="source\Domain\GeoPoint.vb" />
+    <Compile Include="source\Domain\GeoTcPoint.vb" />
+    <Compile Include="source\Domain\IDCollection.vb" />
+    <Compile Include="source\Domain\PointInterfaces.vb" />
+    <Compile Include="source\Domain\TrackGeometryInfo.vb" />
     <Compile Include="source\IO\DataTextFileReader.vb" />
     <Compile Include="source\IO\CSV\CsvReader.vb" />
     <Compile Include="source\IO\CSV\Enums.vb" />
@@ -113,7 +118,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CsvExceptionMessage.resx</DependentUpon>
     </Compile>
+    <Compile Include="source\IO\ParseError.vb" />
+    <Compile Include="source\IO\ParseErrorCollection.vb" />
     <Compile Include="source\IO\PreSplittedTextLine.vb" />
+    <Compile Include="source\Domain\TcFileReader.vb" />
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -252,9 +260,7 @@
   <ItemGroup>
     <None Include="source\Resources\StartExcelAndXLMacro.vbs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="source\Domain\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

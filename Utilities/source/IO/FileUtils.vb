@@ -336,7 +336,7 @@ Namespace IO
                     If (givenFilename.IsNotEmptyOrWhiteSpace()) Then
                         
                       'Einzelteile normal
-                        AbsolutePath = iif(not Absolute, givenFilename, System.IO.Path.GetFullPath(givenFilename))
+                        AbsolutePath = If(Not Absolute, givenFilename, System.IO.Path.GetFullPath(givenFilename))
                         
                         Drive        = System.IO.Path.GetPathRoot(AbsolutePath).TrimEnd(Path.DirectorySeparatorChar)
                         ParentFolder = System.IO.Path.GetDirectoryName(AbsolutePath)

@@ -319,4 +319,44 @@
     <value>Datei ist schreibgeschützt: '%s'.</value>
     <comment>File Path: String</comment>
   </data>
+  <data name="Global_ValueNotGreaterThanZero" xml:space="preserve">
+    <value>Der Wert muss größer als Null sein.</value>
+  </data>
+  <data name="TcBlockType_FormatMismatch" xml:space="preserve">
+    <value>Block-Format '%s' passt nicht zum Herkunfts-Programm '%s'.</value>
+    <comment>TcBlockType.Format: String; TcBlockType.Program: String</comment>
+  </data>
+  <data name="TcBlockType_MissingFormat" xml:space="preserve">
+    <value>Block-Format ist unbekannt.</value>
+  </data>
+  <data name="TcBlockType_MissingProgram" xml:space="preserve">
+    <value>Herkunfts-Programm ist unbekannt.</value>
+  </data>
+  <data name="TcBlockType_MissingSubFormat" xml:space="preserve">
+    <value>Block-Unterformat ist unbekannt.</value>
+  </data>
+  <data name="TcBlockType_MissingVersion" xml:space="preserve">
+    <value>Programmversion ist unbekannt.</value>
+  </data>
+  <data name="TcBlock_InvalidBlockType_Fallback" xml:space="preserve">
+    <value>Blocktyp ist ungültig (evtl. nicht vollständig bekannt).</value>
+  </data>
+  <data name="TcBlock_InvalidTrackRef_Fallback" xml:space="preserve">
+    <value>Trassenbezug ist ungültig (zu wenig bekannte Werte).</value>
+  </data>
+  <data name="TrackGeometryInfo_MissingNameOfAlignment" xml:space="preserve">
+    <value>Achsname ist unbekannt.</value>
+  </data>
+  <data name="TcFileReader_InvalidTcBlock2" xml:space="preserve">
+    <value>Ungültiger Block mit Trassenkoordinaten:\n  Datei: %s\n  Zeilen %d bis %d.\n  Details:\n%s</value>
+    <comment>File Name: String; Block Start Line: Long; Block End Line: Long; Full Error Message: String</comment>
+  </data>
+  <data name="TcFileReader_InvalidTcBlock" xml:space="preserve">
+    <value>Ungültiger Block mit Trassenkoordinaten (Zeilen %d bis %d):\n%s</value>
+    <comment>Block Start Line: Long; Block End Line: Long; TcBlock.Eror: String</comment>
+  </data>
+  <data name="ParseError_ErrorLevelInLineNo" xml:space="preserve">
+    <value>%s in Zeile %d:</value>
+    <comment>ErrorLevelI: String; Line Number: Integer</comment>
+  </data>
 </root>

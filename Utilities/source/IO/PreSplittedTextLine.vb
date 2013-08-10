@@ -1,7 +1,4 @@
 ﻿
-Imports System.IO
-Imports System.Collections.ObjectModel
-
 Namespace IO
     
     ''' <summary> Represents a line of a data text file, pre-splitted into data and comment. </summary>
@@ -37,27 +34,65 @@ Namespace IO
             
             ''' <summary> The comment part of this line. Defaults to <c>String.Empty</c>. </summary>
              ''' <remarks> This won't be trimmed, but it's <c>String.Empty</c> if the comment part of this line only consists of whitespaces. </remarks>
-            Public ReadOnly Comment          As String
+            Public ReadOnly Comment         As String
             
             ''' <summary> The data part of this line. Defaults to <c>String.Empty</c>. </summary>
              ''' <remarks> This won't be trimmed, but it's <c>String.Empty</c> if the data part of this line only consists of whitespaces. </remarks>
-            Public ReadOnly Data             As String
+            Public ReadOnly Data            As String
             
             ''' <summary> If <see langword="true"/>, the <see cref="P:PreSplittedTextLine.Data"/> property isn't <c>String.Empty</c>. </summary>
-            Public ReadOnly HasData          As Boolean
+            Public ReadOnly HasData         As Boolean
             
             ''' <summary> If <see langword="true"/>, the <see cref="P:PreSplittedTextLine.Comment"/> property isn't <c>String.Empty</c>. </summary>
-            Public ReadOnly HasComment       As Boolean
+            Public ReadOnly HasComment      As Boolean
             
             ''' <summary> If <see langword="true"/>, this line starts whith an comment token. </summary>
-            Public ReadOnly IsCommentLine    As Boolean
+            Public ReadOnly IsCommentLine   As Boolean
             
             ''' <summary> If <see langword="true"/>, this line consists of not more than whitespaces. </summary>
-            Public ReadOnly IsEmpty          As Boolean
+            Public ReadOnly IsEmpty         As Boolean
+            
+            ''' <summary> The line number in the source file. </summary>
+            Public SourceLineNo             As Long
+            
+            ''' <summary> A string preluding a comment line. May be <see langword="null"/>. </summary>
+            Public LineStartCommentToken    As String
+            
+            ''' <summary> A string preluding a comment at line end. May be <see langword="null"/>. </summary>
+            Public LineEndCommentToken      As String
+            
+            ''' <summary> An index into a list of source files (which may be mmaintained in a parent object). </summary>
+            Public SourceFileIndex          As Long
             
         #End Region
         
-        #Region "Private Members"
+        #Region "Public Methods"
+            
+            ''' <summary> Re-creates and returns the full (nearly original) line. </summary>
+            Public Function getFullLine() As String
+                Dim RetValue As String = String.Empty
+                
+                If (Not Me.IsEmpty) Then
+                    If (Me.IsCommentLine) Then
+                        RetValue = Me.LineStartCommentToken & Me.Comment
+                    Else
+                        If (Me.HasData) Then
+                            RetValue = Me.Data
+                            If (Me.HasComment) Then
+                                RetValue &= Me.LineEndCommentToken & Me.Comment
+                            End If
+                        Else
+                            RetValue = " " & Me.LineEndCommentToken & Me.Comment
+                        End If
+                    End If
+                End If
+                
+                Return RetValue
+            End Function
+            
+        #End Region
+        
+        #Region "Private Methods"
             
             ''' <summary> Splits the given <paramref name="TextLine"/> and provides the result via output parameters. </summary>
              ''' <param name="TextLine">              The text line to parse / split </param>

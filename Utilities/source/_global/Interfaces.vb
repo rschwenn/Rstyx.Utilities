@@ -1,7 +1,7 @@
 ﻿
 'Namespace System
     
-    ''' <summary> A provoider of properties to indicate program state (i.e. for binding to status bar). </summary>
+    ''' <summary> A provider of properties to indicate program state (i.e. for binding to status bar). </summary>
     Public Interface IStatusIndicator
         
         ''' <summary> A status text (i.e for displaying in status bar). </summary>

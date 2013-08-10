@@ -5,8 +5,8 @@ Imports System.Text
 
 Namespace IO
     
-    ''' <summary>  Represents a reader that can read and cache a whole data text file. </summary>
-     ''' <remarks> Each source line will be pre-splitted into data and comment. </remarks>
+    ''' <summary>  Represents a reader that can read and cache one or more whole data text files. </summary>
+     ''' <remarks> The file(s) could be separated into header and data. Each source line will be pre-splitted into data and comment. </remarks>
     Public Class DataTextFileReader
         
         #Region "Private Fields"
@@ -15,6 +15,7 @@ Namespace IO
             
             Private _Header     As New Collection(Of String)
             Private _DataCache  As New Collection(Of PreSplittedTextLine)
+            Private _FilePaths  As New Collection(Of String)
             
             Private _CommentLinesCount  As Long
             Private _DataLinesCount     As Long
@@ -33,7 +34,6 @@ Namespace IO
              ''' <param name="LineStartCommentToken"> A string preluding a comment line. May be <see langword="null"/>. </param>
              ''' <param name="LineEndCommentToken">   A string preluding a comment at line end. May be <see langword="null"/>. </param>
              ''' <param name="SeparateHeader">        If <see langword="true"/>, leading comment lines will be separated from the data. </param>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Reader"/> is <see langword="null"/>. </exception>
             Public Sub New(LineStartCommentToken As String, LineEndCommentToken As String, SeparateHeader As Boolean)
                 
                 Me.LineStartCommentToken = LineStartCommentToken
@@ -43,74 +43,85 @@ Namespace IO
             
         #End Region
         
-        #Region "Settings"
+        #Region "Properties"
             
-            ''' <summary> If this string is found at line start, the whole line will be treated as comment line. Defaults to "#". </summary>
-             ''' <remarks> If <see langword="null"/> or empty, comment lines won't be recognized. </remarks>
-            Public Property LineStartCommentToken() As String = "#"
+            #Region "Settings"
+                
+                ''' <summary> If this string is found at line start, the whole line will be treated as comment line. Defaults to "#". </summary>
+                 ''' <remarks> If <see langword="null"/> or empty, comment lines won't be recognized. </remarks>
+                Public Property LineStartCommentToken() As String = "#"
+                
+                ''' <summary> If this string is found anywhere in the line, all following characters will be treated as line end comment. Defaults to "#". </summary>
+                 ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
+                Public Property LineEndCommentToken() As String = "#"
+                
+                ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="P:DataTextFileReader.Header"/>. Defaults to <see langword="true"/>. </summary>
+                Public Property SeparateHeader() As Boolean = True
+                
+            #End Region
             
-            ''' <summary> If this string is found anywhere in the line, all following characters will be treated as line end comment. Defaults to "#". </summary>
-             ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
-            Public Property LineEndCommentToken() As String = "#"
+            #Region "Results"
+                
+                ''' <summary> Returns the chached data of the whole text file. </summary>
+                Public ReadOnly Property DataCache() As Collection(Of PreSplittedTextLine)
+                    Get
+                        Return _DataCache
+                    End Get
+                End Property
+                
+                ''' <summary> Returns the Header lines of the text file. </summary>
+                Public ReadOnly Property Header() As Collection(Of String)
+                    Get
+                        Return _Header
+                    End Get
+                End Property
+                
+                ''' <summary> Returns the list of read file paths. </summary>
+                Public ReadOnly Property FilePaths() As Collection(Of String)
+                    Get
+                        Return _FilePaths
+                    End Get
+                End Property
+                
+            #End Region
             
-            ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="P:DataTextFileReader.Header"/>. Defaults to <see langword="true"/>. </summary>
-            Public Property SeparateHeader() As Boolean = True
-            
-        #End Region
-        
-        #Region "Result Providing Properties"
-            
-            ''' <summary> Returns the chached data of the whole text file. </summary>
-            Public ReadOnly Property DataCache() As Collection(Of PreSplittedTextLine)
-                Get
-                    Return _DataCache
-                End Get
-            End Property
-            
-            ''' <summary> Returns the Header lines of the text file. </summary>
-            Public ReadOnly Property Header() As Collection(Of String)
-                Get
-                    Return _Header
-                End Get
-            End Property
-            
-        #End Region
-        
-        #Region "Statistics Properties"
-            
-            ''' <summary> Returns the count of comment lines. </summary>
-            Public ReadOnly Property CommentLinesCount() As Long
-                Get
-                    Return _CommentLinesCount
-                End Get
-            End Property
-            
-            ''' <summary> Returns the count of lines containing data. </summary>
-            Public ReadOnly Property DataLinesCount() As Long
-                Get
-                    Return _DataLinesCount
-                End Get
-            End Property
-            
-            ''' <summary> Returns the count of empty lines. </summary>
-            Public ReadOnly Property EmptyLinesCount() As Long
-                Get
-                    Return _EmptyLinesCount
-                End Get
-            End Property
-            
-            ''' <summary> Returns the total count of read lines. </summary>
-            Public ReadOnly Property TotalLinesCount() As Long
-                Get
-                    Return _TotalLinesCount
-                End Get
-            End Property
+            #Region "Statistics"
+                
+                ''' <summary> Returns the count of comment lines. </summary>
+                Public ReadOnly Property CommentLinesCount() As Long
+                    Get
+                        Return _CommentLinesCount
+                    End Get
+                End Property
+                
+                ''' <summary> Returns the count of lines containing data. </summary>
+                Public ReadOnly Property DataLinesCount() As Long
+                    Get
+                        Return _DataLinesCount
+                    End Get
+                End Property
+                
+                ''' <summary> Returns the count of empty lines. </summary>
+                Public ReadOnly Property EmptyLinesCount() As Long
+                    Get
+                        Return _EmptyLinesCount
+                    End Get
+                End Property
+                
+                ''' <summary> Returns the total count of read lines. </summary>
+                Public ReadOnly Property TotalLinesCount() As Long
+                    Get
+                        Return _TotalLinesCount
+                    End Get
+                End Property
+                
+            #End Region
             
         #End Region
         
         #Region "Public Members"
             
-            ''' <summary> Loads the file using default settings for <see cref="StreamReader"/>.. </summary>
+            ''' <summary> Loads the file using default settings for <see cref="StreamReader"/>. </summary>
              ''' <param name="Path"> The complete path of to the data text file to be read (for <see cref="StreamReader"/>). </param>
              ''' <remarks>
              ''' <para>
@@ -153,16 +164,23 @@ Namespace IO
                            )
                 Using oSR As New System.IO.StreamReader(Path, Encoding, DetectEncodingFromByteOrderMarks, BufferSize)
                     
-                    Dim CurrentLine  As String
-                    Dim SplittedLine As PreSplittedTextLine
+                    Dim CurrentLine     As String
+                    Dim SplittedLine    As PreSplittedTextLine
                     Dim CheckHeaderLine As Boolean = Me.SeparateHeader
-                    Dim IsHeaderLine As Boolean = False
+                    Dim IsHeaderLine    As Boolean = False
+                    Dim FileIndex       As Long = Me.FilePaths.Count
                     
+                    ' Register file.
+                    Me.FilePaths.Add(Path)
+                    
+                    ' Read file.
                     Do While (Not oSR.EndOfStream)
                         CurrentLine = oSR.ReadLine()
                         
                         _TotalLinesCount += 1
                         SplittedLine = New PreSplittedTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
+                        SplittedLine.SourceLineNo = _TotalLinesCount
+                        SplittedLine.SourceFileIndex = FileIndex
                         
                         ' Process header.
                         If (CheckHeaderLine) Then

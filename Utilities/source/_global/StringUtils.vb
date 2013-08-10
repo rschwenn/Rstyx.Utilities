@@ -411,6 +411,28 @@ Imports PGK.Extensions
     ''' <summary> Extension methods for strings or other types dealing with strings. </summary>
     Public Module StringExtensions
         
+        ''' <summary> Check whether or not the string containes any of given test strings. </summary>
+         ''' <param name="Value">       Input String. </param>
+         ''' <param name="TestStrings"> Array with test strings. </param>
+         ''' <returns> <see langword="true"/>, if <paramref name="Value"/> containes any of the test strings. </returns>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="Value"/> or <paramref name="TestStrings"/> is <see langword="null"/>. </exception>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function ContainsAny(ByVal Value As String, TestStrings() As String) As Boolean
+            
+            If (Value Is Nothing) Then Throw New System.ArgumentNullException("Value")
+            If (TestStrings Is Nothing) Then Throw New System.ArgumentNullException("TestStrings")
+            
+            Dim RetValue As Boolean = False
+            
+            For Each TestString As String In TestStrings
+                If ((TestString IsNot Nothing) AndAlso (Value.Contains(TestString))) Then
+                    RetValue = True
+                    Exit For
+                End If
+            Next
+            Return RetValue
+        End Function
+        
         ''' <summary>
         ''' Returns the left part of the string up to the first occurrence of the Delimiter character.
         ''' If Delimiter isn't found the whole string is returned.
@@ -512,6 +534,15 @@ Imports PGK.Extensions
             End If
         End Function
         
+        ''' <summary> Awk like splitting: Delimiter is whole whitespace. Words are trimmed. </summary>
+         ''' <param name="Value"> The string to split. </param>
+         ''' <returns>            A String array containing all data words. </returns>
+         ''' <remarks>            If the trimmed input string is empty, the returned array will be of zero length. </remarks>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function splitWords(Value As String) As String()
+            Return Value.Trim().Split("\s+")
+        End Function
+
     End Module
     
 'End Namespace

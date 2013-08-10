@@ -8,7 +8,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Files.FileInfoCollection")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Files.FileInfoCollection")
             
         #End Region
         
@@ -17,7 +17,7 @@ Namespace IO
             ''' <summary> Creates a new, empty FileInfoCollection. </summary>
             Public Sub New
                 MyBase.New()
-                Logger.logDebug("New(): Initialize empty FileInfoCollection.")
+                'Logger.logDebug("New(): Initialize empty FileInfoCollection.")
             End Sub
             
         #End Region
