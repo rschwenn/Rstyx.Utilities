@@ -32,7 +32,7 @@ Namespace Domain
         #Region "IIdentifiable Members"
             
             ''' <inheritdoc/>
-            Public Property ID()            As TPointID = Nothing Implements IIdentifiable(Of TPointID).ID
+            Public Property ID()    As TPointID = Nothing Implements IIdentifiable(Of TPointID).ID
             
         #End Region
         
@@ -90,33 +90,6 @@ Namespace Domain
             
             ''' <inheritdoc/>
             Public Property SourceLineNo()      As Long = 0 Implements IFileSource.SourceLineNo
-            
-        #End Region
-        
-        #Region "Private members"
-            
-            ' <summary> Collects all information. </summary>
-            'Private Sub initGeoPoint()
-                'Try
-                    '' Preliminaries
-                    '_AssemblyName = New System.Reflection.AssemblyName(_Assembly.FullName)
-                    '
-                    '' Assembly title
-                    'Dim Attributes As Object() = _Assembly.GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)
-                    'If (Attributes.Length > 0) Then
-                    '    _Title = CType(Attributes(0), System.Reflection.AssemblyTitleAttribute).Title
-                    'End If
-                    'If (String.IsNullOrWhiteSpace(_Title)) Then
-                    '    _Title = System.IO.Path.GetFileNameWithoutExtension(_Assembly.Location)
-                    'End If
-                    '
-                    '' Assembly version
-                    '_Version = _AssemblyName.Version
-                    
-                'Catch ex As System.Exception
-                '    Logger.logError(ex, "initGeoPoint(): Fehler beim Bestimmen der Anwendungsinformationen.")
-                'End Try
-            'End Sub
             
         #End Region
         

@@ -1,6 +1,7 @@
 ﻿
 Imports System
 Imports System.IO
+Imports System.Runtime.InteropServices
 Imports System.Text.RegularExpressions
 
 'Namespace GeoMath
@@ -146,82 +147,72 @@ Imports System.Text.RegularExpressions
             
             ''' <summary> Converts a usual DBAG Kilometer notation into the corresponding numerical value (i.e "123.4+56.789" => 123456.789). </summary>
              ''' <param name="KilometerString"> A usual DBAG Kilometer notation or a numerical String. </param>
-             ''' <returns> The corresponding numerical value if possible or <see langword="null"/>. </returns>
-            Public Shared Function getKilometer(ByVal KilometerString As String) As Nullable(Of Double)
-                Dim Kilometer     As String
-                Dim Meter         As String
-                Dim MiddleSign    As String
-                Dim Pattern       As String
-                Dim SignKm        As Integer
-                Dim SignM         As Integer
-                Dim SignTotal     As Integer
-                Dim KmReal        As Nullable(Of Double) = Nothing
-                Dim oMatch        As Match
+             ''' <param name="KilometerValue">  If successfull, the resulting numerical Kilometer value in [Meter]. </param>
+             ''' <returns> <see langword="true"/> if a value has been parsed successfull, otherwise <see langword="false"/>. </returns>
+            Public Shared Function TryParseKilometer(ByVal KilometerString As String, <Out> ByRef KilometerValue As Double) As Boolean
+                Dim success As Boolean = False
                 
-                Pattern = "^ *([+\-]? *[0-9]*[.]*[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *$"
-                oMatch = Regex.Match(KilometerString, Pattern, RegexOptions.IgnoreCase)
+                KilometerValue = Double.NaN
+                
+                Dim Pattern As String = "^ *([+\-]? *[0-9]*[.]*[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *$"
+                Dim oMatch  As Match  = Regex.Match(KilometerString, Pattern, RegexOptions.IgnoreCase)
                 
                 If (Not oMatch.Success) Then
                     ' No valid Kilometer notation => maybe numeric?
-                    If (IsNumeric(KilometerString)) Then KmReal = CDbl(KilometerString)
+                    Dim tmp As Double
+                    If (Double.TryParse(KilometerString, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, tmp)) Then
+                        success = True
+                        KilometerValue = tmp
+                    End If
                 Else
-                    Kilometer = oMatch.Groups(1).Value
-                    MiddleSign = oMatch.Groups(2).Value
-                    Meter = oMatch.Groups(3).Value   ' without Sign
-                    Kilometer = Replace(Kilometer, " ", "")
-                    SignKm = System.Math.Sign(Kilometer.ConvertTo(Of Double))
-                    If (InStr(MiddleSign, "-") > 0) Then SignM = -1 Else SignM = 1
-                    If ((SignM = -1) Or (SignKm = -1)) Then SignTotal = -1 Else SignTotal = 1
-                    KmReal = SignTotal * (System.Math.Abs(Kilometer.ConvertTo(Of Double)) * 1000 + CDbl(Meter))
+                    Dim Kilometer  As String  = oMatch.Groups(1).Value.Replace(" ", "")
+                    Dim MiddleSign As String  = oMatch.Groups(2).Value
+                    Dim Meter      As String  = oMatch.Groups(3).Value   ' without Sign
+                    Dim SignKm     As Integer = System.Math.Sign(Kilometer.ConvertTo(Of Double))
+                    Dim SignM      As Integer = If(InStr(MiddleSign, "-") > 0, SignM = -1, SignM = 1)
+                    Dim SignTotal  As Integer = If(((SignM = -1) Or (SignKm = -1)), -1, 1)
+                    KilometerValue = SignTotal * (System.Math.Abs(Kilometer.ConvertTo(Of Double)) * 1000 + CDbl(Meter))
+                    success = True
                 End If
                 
-                Return KmReal
+                Return success
             End Function
             
-            ''' <summary> Gets Cant value from a Pointinfo string. </summary>
+            ''' <summary> Parses Cant value from a Pointinfo string. </summary>
              ''' <param name="Pointinfo">     [Input and Output] The Pointinfo string to parse. </param>
-             ''' <param name="Cant">          [Output] parsed Cant value. </param>
-             ''' <param name="strict">        If True, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first number is used. </param>
-             ''' <param name="absolute">      If True, the returned Cant value is always positive. </param>
-             ''' <param name="editPointInfo"> If True, the Cant pattern substring is removed from Pointinfo. </param>
-             ''' <returns> The found Cant value or <see langword="null"/> </returns>
+             ''' <param name="strict">        If <see langword="true"/>, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first integer number is used. </param>
+             ''' <param name="absolute">      If <see langword="true"/>, the returned Cant value is always positive. </param>
+             ''' <param name="editPointInfo"> If <see langword="true"/>, the Cant pattern substring is removed from Pointinfo. </param>
+             ''' <returns> The found Cant value or <c>Double.NaN</c>. </returns>
              ''' <remarks> 
              ''' <para>
-             ''' Es wird versucht, der Punktinfo die gemessene Ist-Überhöhung nach folgenden Regeln zu entnehmen:
+             ''' The measured cant will be parsed from <paramref name="Pointinfo"/> following these rules:
              ''' </para>
              ''' <para>
-             ''' Falls die Zeichenkette "u= xxx" (an irgendeiner Stelle) enthalten
-             ''' ist, so wird "xxx" als Ist-Überhöhung angesehen.
+             ''' Case 1: If the string "u= xxx" is found anywhere then "xxx" will be treated as measured cant.
              ''' </para>
              ''' <para>
-             ''' Falls Variante 1 nicht zum Erfolg führt und in den Einstellungen
-             ''' nicht nur die strenge Variante erlaubt ist, wird
-             ''' die erste Zahl als Ist-Überhöhung verwendet.
+             ''' If case 1 didn't succeeded and <paramref name="strict"/> is <see langword="false"/>,
+             ''' then the first integer number will be used, if any.
              ''' </para>
              ''' </remarks>
-            Public Shared Function getCantFromPointinfo(byRef Pointinfo As String, _
-                                                        byRef Cant As Nullable(Of Double), _
-                                                        Optional byVal strict As Boolean = true, _
-                                                        Optional byVal absolute As Boolean = false, _
-                                                        Optional byVal editPointInfo As Boolean = false) As Boolean
-                Dim Success       As Boolean
-                Dim ui            As String = String.Empty
-                Dim Pattern       As String
-                Dim oMatch        As Match
-                
-                Pointinfo = Pointinfo.Trim()
+            Public Shared Function parseCant(<[In]><Out> ByRef Pointinfo As String, _
+                                             Optional byVal strict As Boolean = true, _
+                                             Optional byVal absolute As Boolean = false, _
+                                             Optional byVal editPointInfo As Boolean = false) As Double
+                Dim Cant As Double = Double.NaN
+                Dim ui   As String = String.Empty
                 
                 ' 1. search for "u=..."
-                Pattern = "u *= *([-|+]? *[0-9]+)"
-                oMatch = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
-                
+                Dim Pattern As String = "u *= *([-|+]? *[0-9]+)"
+                Dim oMatch  As Match = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
                 If (oMatch.Success) Then
                     ui = oMatch.Groups(1).Value
                     ui = ui.Replace(" ", String.Empty)
                 End If
                 
-                If (ui.IsEmptyOrWhiteSpace() and (not strict)) Then
-                    ' 2. "u=..." not found, look for first number
+                ' 2. "u=..." not found, look for first integer number.
+                If (ui.IsEmptyOrWhiteSpace() AndAlso (Not strict)) Then
                     Pattern = "[-|+]? *[0-9]+"
                     oMatch = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
                     If (oMatch.Success) Then
@@ -230,18 +221,15 @@ Imports System.Text.RegularExpressions
                     End If
                 End If
                 
+                ' Result.
                 If (ui.IsNotEmpty()) Then
                     ' 3. Cant value found.
                     Cant = cdbl(ui)
                     If (absolute) Then Cant = System.Math.Abs(Cant.ConvertTo(Of Double))
-                    If (editPointInfo) Then Pointinfo = Pointinfo.replace(oMatch.Groups(1).Value, String.Empty)
-                    Success = true
-                Else
-                    Success = false
-                    Cant = Nothing
+                    If (editPointInfo) Then Pointinfo = Pointinfo.replace(oMatch.Groups(0).Value, String.Empty)
                 End If
                 
-                Return Success
+                Return Cant
             End Function
             
             ''' <summary> Determines the title of a DBAG rail line according to the line number. </summary>
@@ -277,7 +265,7 @@ Imports System.Text.RegularExpressions
                 End If 
                 
               ' Process LineInfo.SourceFile
-                If (not File.Exists(LineInfo.SourceFile)) Then
+                If (Not File.Exists(LineInfo.SourceFile)) Then
                     Logger.logError(StringUtils.sprintf("getDBAGLineTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGLinesFile, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFile)))
                     Logger.logError(StringUtils.sprintf("getDBAGLineTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGLinesFileFallback, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFileFallback)))
                     

@@ -217,6 +217,7 @@ Imports PGK.Extensions
                                   
                                   Case "d"c, "i"c 'signed decimal
                                     Value = CLng(ParmX)
+                                    'Value = System.Convert.ChangeType(ParmX, GetType(Long))
                                     AddStr = CStr(System.Math.Abs(Value))
                                     If (Not Precision.IsEmpty()) Then
                                       If CDbl(Precision) > AddStr.Length Then
@@ -505,20 +506,20 @@ Imports PGK.Extensions
             Return Value
         End Function
         
-        ''' <summary> Encloses the string in extra 2 lines that consist of "line characters" and adds an empty line above and below. </summary>
+        ''' <summary> Encloses the string in extra 2 lines that consist of "line characters" and optionally adds an empty line above and below. </summary>
          ''' <param name="Value">    One text line meant as head line. </param>
          ''' <param name="LineChar"> The character that builds the lines. </param>
+         ''' <param name="Padding">  If <see langword="true"/> an empty line is added above and below the header. </param>
          ''' <returns>               The Headline string. </returns>
          ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/> or empty. </exception>
-         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="LineChar"/> is <see langword="null"/> or empty. </exception>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function ToHeadLine(Value As String, LineChar As String) As String
+        Public Function ToHeadLine(Value As String, LineChar As Char, Optional Padding As Boolean = True) As String
             
             If (Value.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Value")
-            If (LineChar.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("LineChar")
             
-            Dim Line As String = LineChar.Repeat(Value.Length + 2)
-            Return vbNewLine & Line & vbNewLine & " " & Value & vbNewLine & Line & vbNewLine
+            Dim Pad  As String = If(Padding, vbNewLine, "")
+            Dim Line As String = LineChar.ToString().Repeat(Value.Length + 2)
+            Return Pad & Line & vbNewLine & " " & Value & vbNewLine & Line & Pad
         End Function
         
         ''' <summary> Converts this Boolean value to "Ja" / "Nein" instead of "True" / "False". </summary>

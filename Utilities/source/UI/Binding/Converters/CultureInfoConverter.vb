@@ -51,12 +51,12 @@ Namespace UI.Binding.Converters
                     
                     If (valueType.IsGenericType) Then
                         Dim retList As New List(Of String)
-                        For Each ci As CultureInfo In value
+                        For Each ci As CultureInfo In DirectCast(value, List(Of CultureInfo))
                             retList.add(CultureInfo2Name(ci))
                         Next
                         ret = retList
                     Else
-                        ret = CultureInfo2Name(value)
+                        ret = CultureInfo2Name(DirectCast(value, CultureInfo))
                     End if
                 End if
                 Return ret
@@ -78,10 +78,10 @@ Namespace UI.Binding.Converters
             Try
                 Dim ret As Object = Nothing
                 
-                If (Not NativeName2CultureInfo.ContainsKey(value)) then
+                If (Not NativeName2CultureInfo.ContainsKey(CStr(value))) then
                     Trace.WriteLine(String.Format("CultureInfoConverter[ConvertBack]: Can't get CultureInfo for NativeName {0}", value))
                 Else
-                    ret = NativeName2CultureInfo(value)
+                    ret = NativeName2CultureInfo(CStr(value))
                 End if
                 
                 Return ret

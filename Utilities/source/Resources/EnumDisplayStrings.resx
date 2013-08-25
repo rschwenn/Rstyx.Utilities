@@ -468,4 +468,73 @@
   <data name="Rstyx_Utilities_IO_ParseErrorLevel_Warning" xml:space="preserve">
     <value>Warnung</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A1" xml:space="preserve">
+    <value>iGeo/iTrassePC Ausgabe A1</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A5" xml:space="preserve">
+    <value>iGeo/iTrassePC Ausgabe A5</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_D3" xml:space="preserve">
+    <value>Verm.esn/D3 (7-Linien)</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_None" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_THW" xml:space="preserve">
+    <value>Verm.esn/THW (klassisch)</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_iGeo" xml:space="preserve">
+    <value>iGeo</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_iTrassePC" xml:space="preserve">
+    <value>iTrassePC</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_None" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_VermEsn" xml:space="preserve">
+    <value>Verm.esn</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_None" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_OneLine" xml:space="preserve">
+    <value>einzeilig</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_TwoLine" xml:space="preserve">
+    <value>zweizeilig</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_Current" xml:space="preserve">
+    <value>aktuell</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_None" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_Outdated" xml:space="preserve">
+    <value>veraltet</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldPositionType_ColumnAndLength" xml:space="preserve">
+    <value>Spalte und Länge</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldPositionType_WordNumber" xml:space="preserve">
+    <value>Wortnummer</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_AllowKilometerNotation" xml:space="preserve">
+    <value>Kilometerschreibweise akzeptieren</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_IgnoreLeadingAsterisks" xml:space="preserve">
+    <value>Führende Sternchen ("*") ignorieren</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_NotRequired" xml:space="preserve">
+    <value>Feld ist nicht erforderlich</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_None" xml:space="preserve">
+    <value>keine</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_Trim" xml:space="preserve">
+    <value>Zeichenkette trimmen</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_ZeroAsNaN" xml:space="preserve">
+    <value>Zahl 0.0 als nicht definiert ansehen</value>
+  </data>
 </root>

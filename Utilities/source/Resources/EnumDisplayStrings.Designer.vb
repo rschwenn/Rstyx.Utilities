@@ -979,6 +979,213 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die iGeo/iTrassePC Ausgabe A1 ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A1() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die iGeo/iTrassePC Ausgabe A5 ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A5() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A5", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Verm.esn/D3 (7-Linien) ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_D3() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_D3", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Verm.esn/THW (klassisch) ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_THW() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_THW", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die iGeo ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_iGeo() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_iGeo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die iTrassePC ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_iTrassePC() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_iTrassePC", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Verm.esn ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_VermEsn() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_VermEsn", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die einzeilig ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_OneLine() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_OneLine", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die zweizeilig ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_TwoLine() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_TwoLine", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die aktuell ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_Current() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_Current", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die veraltet ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_Outdated() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcBlockVersion_Outdated", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Kilometerschreibweise akzeptieren ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_AllowKilometerNotation() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_AllowKilometerNotation", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Führende Sternchen (&quot;*&quot;) ignorieren ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_IgnoreLeadingAsterisks() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_IgnoreLeadingAsterisks", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Feld ist nicht erforderlich ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_NotRequired() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_NotRequired", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zeichenkette trimmen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_Trim() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_Trim", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zahl 0.0 als nicht definiert ansehen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_ZeroAsNaN() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_ZeroAsNaN", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Spalte und Länge ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldPositionType_ColumnAndLength() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldPositionType_ColumnAndLength", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Wortnummer ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldPositionType_WordNumber() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldPositionType_WordNumber", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Basisname ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Base() As String

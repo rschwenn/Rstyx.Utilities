@@ -371,7 +371,7 @@ Namespace Apps
              ''' <param name="FilePath"> The csv file to import in Excel. </param>
              ''' <exception cref="T:System.IO.FileNotFoundException"> <paramref name="FilePath"/> hasn't been found. </exception>
              ''' <exception cref="T:System.IO.FileNotFoundException"> <paramref name="XlmVbsFile"/> hasn't been found after extracting from resources. </exception>
-             ''' <exception cref="T:Rstyx.Utilities.RemarkException"> Wraps any exception occured while invoking the system command with a clear message. </exception>
+             ''' <exception cref="T:Rstyx.Utilities.RemarkException"> Wraps any exception occurred while invoking the system command with a clear message. </exception>
              ''' <remarks>
              ''' <para>
              ''' Excel will be started up if no running instance is found.
@@ -380,7 +380,7 @@ Namespace Apps
              ''' The GeoTools VBA Add-In for Excel has to be installed (www.rstyx.de). 
              ''' </para>
              ''' <para>
-             ''' This method extracts a VBscript file from the dll to a temporary file, wich in turn is invoked via wscript.exe.
+             ''' This method extracts a VBscript file from dll resource to a temporary file, wich in turn is invoked via wscript.exe.
              ''' The VBscript does the work.
              ''' </para>
              ''' </remarks>
@@ -421,7 +421,7 @@ Namespace Apps
                  ''' <param name="DisplayName"> Editor name for displaying </param>
                  ''' <param name="AppPath">     Full path of the application file </param>
                  ''' <param name="Arguments">   Fixed arguments that will be provided at the command line </param>
-                Public Sub New(DisplayName, AppPath, Arguments)
+                Public Sub New(DisplayName As String, AppPath As String, Arguments As String)
                     Me.DisplayName = DisplayName
                     Me.AppPath     = AppPath
                     Me.Arguments   = Arguments
@@ -750,8 +750,10 @@ Namespace Apps
             Private Shared Function initCurrentEditor() As SupportedEditors
                 Logger.logDebug("initCurrentEditor(): Aktuellen Editor ermitteln.")
                 
-                'Dim initialEditor As SupportedEditors = SupportedEditors.None
-                Dim initialEditor As SupportedEditors = My.Settings.AppUtils_CurrentEditor
+                Dim initialEditor As SupportedEditors = SupportedEditors.None
+                If ([Enum].IsDefined(GetType(SupportedEditors), My.Settings.AppUtils_CurrentEditor)) Then
+                    initialEditor = CType(My.Settings.AppUtils_CurrentEditor, SupportedEditors)
+                End If
                 Logger.logDebug(StringUtils.sprintf("initCurrentEditor(): Aktueller Editor war zuletzt '%s'.", initialEditor.ToDisplayString()))
                 
                 ' If editor restored from settings is not available, then use the first available if there is one.

@@ -5,6 +5,8 @@ Imports System.IO
 Imports System.Threading.Tasks
 
 Imports Rstyx.Utilities
+Imports Rstyx.Utilities.Domain
+Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.UI.ViewModel
 
 Public Class MainViewModel
@@ -89,10 +91,47 @@ Public Class MainViewModel
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             Try
                 'Dim Path As String = "T:\Debug.log"
-                Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
-                fdk.Load(Me.FilePath1)
-                Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
-
+                'Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
+                'fdk.Load(Me.FilePath1)
+                'Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
+                
+                Dim Info As String = Me.Textbox
+                Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
+                Logger.logInfo(StringUtils.sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
+                
+                'Dim Zahl        As DataField(Of Double) = Nothing
+                'Dim Text        As DataField(Of String) = Nothing
+                'Dim PError      As ParseError = Nothing
+                'Dim Errors      As New ParseErrorCollection()
+                'Dim SplitLine   As New PreSplittedTextLine(Me.Textbox, Nothing, Nothing)
+                '
+                'Dim FieldDefS As New DataFieldDefinition(Of String)("texxxt",
+                '                                                    DataFieldPositionType.WordNumber,
+                '                                                    2, -1,
+                '                                                    DataFieldOptions.NotRequired
+                '                                                   )
+                'Dim FieldDefD As New DataFieldDefinition(Of Double)("Zahl",
+                '                                                    DataFieldPositionType.ColumnAndLength,
+                '                                                    4, 15,
+                '                                                    DataFieldOptions.AllowKilometerNotation Or DataFieldOptions.NotRequired 
+                '                                                   )
+                ''
+                'If (SplitLine.HasData) Then
+                '    If (SplitLine.TryParseField(FieldDefD, Zahl)) Then
+                '        Logger.logInfo(StringUtils.sprintf("Feld '%s' = %.3f", Zahl.Definition.Caption, Zahl.Value))
+                '    Else
+                '        Errors.Add(Zahl.ParseError)
+                '    End If
+                '    
+                '    If (SplitLine.TryParseField(FieldDefS, Text)) Then
+                '        Logger.logInfo(StringUtils.sprintf("Feld '%s' = %s", Text.Definition.Caption, Text.Value))
+                '    Else
+                '        Errors.Add(Text.ParseError)
+                '    End If
+                '    
+                '    Errors.ToLoggingConsole()
+                'End If
+                
                 'Apps.AppUtils.startEditor(5, "")
                 'Logger.logInfo(Rstyx.Utilities.IO.FileUtils.FilePart.Dir.ToDisplayString())
                 'Logger.logInfo(EnumExtensions.ToDisplayString(Rstyx.Utilities.IO.FileUtils.FilePart.Dir))

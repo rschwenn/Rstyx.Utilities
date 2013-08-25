@@ -4,7 +4,7 @@ Imports System.Windows.Media.Imaging
 Namespace UI.ViewModel
     
     ''' <summary> Decoration for a Command used in UI elements. </summary>
-    Public Structure UICommandDecoration
+    Public Class UICommandDecoration
         
         Private _Caption        As String
         Private _Description    As String
@@ -57,7 +57,7 @@ Namespace UI.ViewModel
             End Set
         End Property
         
-    End Structure
+    End Class
     
 End Namespace
 

@@ -1,4 +1,6 @@
 ﻿
+Imports System
+
 Namespace Domain
     
     ''' <summary> Shortcut for a <see cref="GeoTcPoint(Of String)"/>, representing the most usual case: a string identifier. </summary>
@@ -98,36 +100,75 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property ZSOK()          As Double = Double.NaN Implements IPointAtTrackGeometry.ZSOK
             
+                
+            ''' <inheritdoc/>
+            ''' <remarks> This value defaults to 1.500. </remarks>
+            Property CantBase()             As Double = 1.500 Implements IPointAtTrackGeometry.CantBase
+            
             
             ''' <inheritdoc/>
             Public Property TrackRef()      As TrackGeometryInfo = Nothing Implements IPointAtTrackGeometry.TrackRef
             
         #End Region
         
-        #Region "Private members"
+        #Region "Public members"
             
-            ' <summary> Collects all information. </summary>
-            'Private Sub initGeoTcPoint()
-                'Try
-                    '' Preliminaries
-                    '_AssemblyName = New System.Reflection.AssemblyName(_Assembly.FullName)
-                    '
-                    '' Assembly title
-                    'Dim Attributes As Object() = _Assembly.GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)
-                    'If (Attributes.Length > 0) Then
-                    '    _Title = CType(Attributes(0), System.Reflection.AssemblyTitleAttribute).Title
-                    'End If
-                    'If (String.IsNullOrWhiteSpace(_Title)) Then
-                    '    _Title = System.IO.Path.GetFileNameWithoutExtension(_Assembly.Location)
-                    'End If
-                    '
-                    '' Assembly version
-                    '_Version = _AssemblyName.Version
+            ''' <summary> Transforms <see cref="P:Q"/> and <see cref="P:HSOK"/> to <see cref="P:QG"/> and <see cref="P:HG"/> if possible. </summary>
+             ''' <remarks> If this transformation isn't possible, the target values will be <c>Double.NaN</c>. </remarks>
+            Public Sub transformHorizontalToCanted()
+                
+                If ((Me.Ueb > -0.0005) And (Me.Ueb < -0.0005)) Then
+                    Me.QG = Me.Q
+                    Me.HG = Me.HSOK
                     
-                'Catch ex As System.Exception
-                '    Logger.logError(ex, "initGeoTcPoint(): Fehler beim Bestimmen der Anwendungsinformationen.")
-                'End Try
-            'End Sub
+                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
+                    Dim sf  As Integer = Math.Sign(Me.Ra)
+                    Dim phi As Double = sf * Math.Atan(Me.Ueb / Me.CantBase) * (-1)
+                    Dim X0  As Double = Math.Abs(Me.CantBase / 2 * Math.Sin(phi))
+                    Dim Y0  As Double = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Math.Cos(phi)))
+                    
+                    Me.QG = (Me.Q - Y0) * Math.Cos(phi) + (Me.HSOK - X0) * Math.Sin(phi)
+                    Me.HG = (Me.HSOK - X0) * Math.Cos(phi) - (Me.Q - Y0) * Math.Sin(phi)
+                Else
+                    Me.QG = Double.NaN
+                    Me.HG = Double.NaN
+                End If
+            End Sub
+            
+            ''' <summary> Transforms <see cref="P:QG"/> and <see cref="P:HG"/> to <see cref="P:Q"/> and <see cref="P:HSOK"/> if possible. </summary>
+             ''' <remarks> If this transformation isn't possible, the target values will be <c>Double.NaN</c>. </remarks>
+            Public Sub transformCantedToHorizontal()
+                
+                If ((Me.Ueb > -0.0005) And (Me.Ueb < -0.0005)) Then
+                    Me.Q    = Me.QG
+                    Me.HSOK = Me.HG
+                    
+                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
+                    Dim sf  As Integer = Math.Sign(Me.Ra)
+                    Dim phi     As Double = sf * Math.Atan(Me.Ueb / Me.CantBase) * (-1)
+                    Dim CosPhi  As Double = Math.Cos(phi)
+                    Dim SinPhi  As Double = Math.Sin(phi)
+                    Dim X0      As Double = Math.Abs(Me.CantBase / 2 * Math.Sin(phi))
+                    Dim Y0      As Double = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Math.Cos(phi)))
+                    
+                    Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)
+                    Me.Q = Y0 + Me.QG / CosPhi - (Me.HSOK - X0) * SinPhi
+                Else
+                    Me.Q    = Double.NaN
+                    Me.HSOK = Double.NaN
+                End If
+            End Sub
+            
+        #End Region
+        
+        #Region "Overrides"
+            
+            ''' <summary> Returns a formatted output of most fields of this GeoTcPoint. </summary>
+             ''' <returns> Formatted output. </returns>
+            Public Overrides Function ToString() As String
+                Return StringUtils.sprintf("%+15s %10.3f %10.3f %8.3f %8.3f   %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f   %-13s  %12.3f %12.3f%9.3f",
+                                           Me.ID, Me.Km, Me.St, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.Ra, Me.Ueb, Me.ActualCant, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
+            End Function
             
         #End Region
         

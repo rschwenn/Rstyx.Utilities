@@ -1,4 +1,5 @@
 ﻿
+Imports System
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 
@@ -11,7 +12,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseErrorCollection")
+            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseErrorCollection")
             
             Protected _HasErrors    As Boolean
             Protected _HasWarnings  As Boolean
@@ -52,13 +53,13 @@ Namespace IO
              ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is not greater than <paramref name="StartColumn"/>. </exception>
-            Public Shadows Sub AddError(LineNo      As Long,
-                                        StartColumn As Long,
-                                        EndColumn   As Long,
-                                        Message     As String,
-                                        Optional Hints    As String = Nothing,
-                                        Optional FilePath As String = Nothing
-                                       )
+            Public Sub AddError(LineNo      As Long,
+                                StartColumn As Long,
+                                EndColumn   As Long,
+                                Message     As String,
+                                Optional Hints    As String = Nothing,
+                                Optional FilePath As String = Nothing
+                               )
                 MyBase.Add(New ParseError(ParseErrorLevel.[Error], LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
@@ -74,13 +75,13 @@ Namespace IO
              ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is not greater than <paramref name="StartColumn"/>. </exception>
-            Public Shadows Sub AddWarning(LineNo      As Long,
-                                          StartColumn As Long,
-                                          EndColumn   As Long,
-                                          Message     As String,
-                                          Optional Hints    As String = Nothing,
-                                          Optional FilePath As String = Nothing
-                                         )
+            Public Sub AddWarning(LineNo      As Long,
+                                  StartColumn As Long,
+                                  EndColumn   As Long,
+                                  Message     As String,
+                                  Optional Hints    As String = Nothing,
+                                  Optional FilePath As String = Nothing
+                                 )
                 MyBase.Add(New ParseError(ParseErrorLevel.Warning, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
@@ -108,8 +109,9 @@ Namespace IO
                 MyBase.Add(New ParseError(Level, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
-            ''' <inheritdoc/>
-            Public Shadows Sub Add(Item As Rstyx.Utilities.IO.ParseError)
+            ''' <summary> Adds a new error to the collection. </summary>
+             ''' <param name="Item"> The <see cref="ParseError"/> to add. </param>
+            Public Shadows Sub Add(Item As ParseError)
                 'If (Item Is Nothing) Then Then Throw New System.ArgumentNullException("Item")
                 
                 ' Track Error Level.
@@ -130,7 +132,7 @@ Namespace IO
                 MyBase.Add(Item)
             End Sub
             
-            ''' <inheritdoc/>
+            ''' <summary> Removes all errors and warnings and also clears status information. </summary>
             Public Shadows Sub Clear()
                 MyBase.Clear()
                 
@@ -143,12 +145,14 @@ Namespace IO
                 IndexOfLineNo.Clear()
             End Sub
             
-            ''' <inheritdoc/>
+            ''' <summary> Hides the inherited method. </summary>
+             ''' <param name="Item"> The <see cref="ParseError"/> to insert. </param>
             Protected Shadows Sub Insert(Index As Integer, Item As Rstyx.Utilities.IO.ParseError)
                 MyBase.Insert(Index, Item)
             End Sub
             
-            ''' <inheritdoc/>
+            ''' <summary> Hides the inherited method. </summary>
+             ''' <param name="Item"> The <see cref="ParseError"/> to remove. </param>
             Protected Shadows Function Remove(Item As Rstyx.Utilities.IO.ParseError) As Boolean
                 Return MyBase.Remove(Item)
             End Function
@@ -158,35 +162,178 @@ Namespace IO
         #Region "Properties"
             
             ''' <summary> Full path to the file, the errors are related to. </summary>
-            Public Property FilePath   As String
+            ''' <remarks> This will be treated as the error's source file, if the <b>FilePath</b> field of a particular error is <see langword="null"/>. </remarks>
+            Public Property FilePath() As String
             
             ''' <summary> Gets the info whether or not there is at least one error. </summary>
-            Public ReadOnly Property HasErrors  As Boolean
+            Public ReadOnly Property HasErrors() As Boolean
                 Get
                     Return _HasErrors
                 End Get
             End Property
             
             ''' <summary> Gets the info whether or not there is at least one warning. </summary>
-            Public ReadOnly Property HasWarnings  As Boolean
+            Public ReadOnly Property HasWarnings() As Boolean
                 Get
                     Return _HasWarnings
                 End Get
             End Property
             
             ''' <summary> Gets the number of Errors. </summary>
-            Public ReadOnly Property ErrorCount  As Long
+            Public ReadOnly Property ErrorCount() As Long
                 Get
                     Return _ErrorCount
                 End Get
             End Property
             
             ''' <summary> Gets the number of Warnings. </summary>
-            Public ReadOnly Property WarningCount  As Long
+            Public ReadOnly Property WarningCount() As Long
                 Get
                     Return _WarningCount
                 End Get
             End Property
+            
+        #End Region
+        
+        #Region "Public Methods"
+            
+            ''' <summary> Logs all messages to LoggingConsole considering the error level (without column values and hints). </summary>
+            Public Sub ToLoggingConsole()
+                For i As Integer = 0 to Me.Count - 1
+                    If (Me.Item(i).Level = ParseErrorLevel.Error) Then
+                        Logger.logError(Me.Item(i).ToString())
+                    Else
+                        Logger.logWarning(Me.Item(i).ToString())
+                    End If
+                Next
+            End Sub
+            
+            ''' <summary> Returns a list of formatted error messages (without column values and hints). </summary>
+            Public Overrides Function ToString() As String
+                Dim Builder  As New System.Text.StringBuilder()
+                
+                For i As Integer = 0 to Me.Count - 1
+                    Builder.AppendLine(Me.Item(i).ToString())
+                Next
+                
+                Return Builder.ToString()
+            End Function
+            
+            ''' <summary> Shows all errors and warnings in jEdit's error list (if possible). </summary>
+             ''' <exception cref="System.NotSupportedException"> jEdit is actually not available. </exception>
+            Public Sub ShowInJEdit()
+                
+                If (Not Apps.AppUtils.AvailableEditors.ContainsKey(Apps.AppUtils.SupportedEditors.jEdit)) Then
+                    Throw New NotSupportedException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_EditorNotAvailable, Apps.AppUtils.SupportedEditors.jEdit.ToDisplayString()))
+                End If
+                
+                ' Create Beanshell script.
+                Dim BshPath As String = Me.ToJeditBeanshell()
+                
+                ' Start jEdit and run Beanshell script.
+                Apps.AppUtils.startEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=" & BshPath)
+            End Sub
+            
+        #End Region
+        
+        #Region "Private Members"
+            
+            ''' <summary> Creates a beanshell script for jEdit that shows all errors and warnings in jEdit's error list. </summary>
+             ''' <returns> Full path to the created beanshell script. </returns>
+            Private Function ToJeditBeanshell() As String
+                
+                Dim oErr        As ParseError
+                Dim Msg()       As String
+                Dim Level       As String
+                Dim SourcePath  As String
+                Dim SourceText  As String
+                Dim ScriptPath  As String = System.IO.Path.GetTempFileName()
+                
+                Using oBsh As New System.IO.StreamWriter(ScriptPath, append:=False, encoding:=System.Text.Encoding.Default)
+                    
+                    ' Header.
+                    oBsh.WriteLine("// :mode=beanshell:")
+                    oBsh.WriteLine("import errorlist.*;")
+                    oBsh.WriteLine("")
+                    oBsh.WriteLine("void addErrorToList() {")
+                    oBsh.WriteLine("  ")
+                    oBsh.WriteLine("  void run() {")
+                    oBsh.WriteLine("    // get a valid view at jedit's startup")
+                    oBsh.WriteLine("    view = jEdit.getLastView();")
+                    oBsh.WriteLine("    ")
+                    oBsh.WriteLine("    // clear list of errors via the action, that also can be invoked by keyed-in")
+                    oBsh.WriteLine("    // in the actionbar or by clicking the appropriate button.")
+                    oBsh.WriteLine("    jEdit.getAction(""error-list-clear"").invoke(view);")
+                    oBsh.WriteLine("    ")
+                    oBsh.WriteLine("    // Create and register DefaultErrorSource")
+                    oBsh.WriteLine("    DefaultErrorSource errsrc = new DefaultErrorSource(""Rstyx.Utilities.IO.ParseErrorCollection.ToJeditBeanshell"");")
+                    oBsh.WriteLine("    ErrorSource.registerErrorSource(errsrc);")
+                    oBsh.WriteLine("    ")
+                    oBsh.WriteLine("    ")
+                    oBsh.WriteLine("    // *********************************************************************************************")
+                    
+                    ' Body (variable).
+                    For i As Integer = 1 To Me.Count
+                        
+                        oErr = Me.Item(i)
+                        
+                        ' Error details.
+                        Level      = If(oErr.Level = ParseErrorLevel.Error, "ErrorSource.ERROR", "ErrorSource.WARNING")
+                        SourcePath = If(oErr.FilePath IsNot Nothing, oErr.FilePath, Me.FilePath)
+                        Msg        = oErr.Message.Split("\n")
+                        
+                        ' Create new error with main message.
+                        SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%d"");",
+                                     Level, SourcePath, oErr.LineNo, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)))
+                        oBsh.WriteLine(SourceText)
+                      
+                        ' Extra message lines.
+                        For k As Integer = 1 To Msg.Length - 1
+                            oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(i))))
+                        Next
+                        If (oErr.Hints IsNot Nothing) Then
+                            Msg = oErr.Hints.Split("\n")
+                            For k As Integer = 0 To Msg.Length - 1
+                                oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(i))))
+                            Next
+                        End If
+                        
+                        ' Commit newly created error to list.
+                        oBsh.WriteLine("    errsrc.addError(err);" & Environment.NewLine)
+                    Next
+                    
+                    ' Footer.
+                    oBsh.WriteLine("    //*********************************************************************************************")
+                    oBsh.WriteLine("    ")
+                    oBsh.WriteLine("    ")
+                    oBsh.WriteLine("    // Do not unregister - so the errors stay deleteable by the errorlist plugin itself (see above)")
+                    oBsh.WriteLine("    // ErrorSource.unregisterErrorSource(errsrc);")
+                    oBsh.WriteLine("    errsrc = null;")
+                    oBsh.WriteLine("  }")
+                    oBsh.WriteLine("  ")
+                    oBsh.WriteLine("  // manage startup/nonstartup script")
+                    oBsh.WriteLine("  if (jEdit.getLastView() == null) {")
+                    oBsh.WriteLine("    VFSManager.runInAWTThread(this);")
+                    oBsh.WriteLine("  } else {")
+                    oBsh.WriteLine("    run();")
+                    oBsh.WriteLine("  }")
+                    oBsh.WriteLine("}")
+                    oBsh.WriteLine("")
+                    oBsh.WriteLine("addErrorToList();")
+                    
+                    oBsh.Close()
+                End Using
+                
+                Return ScriptPath
+            End Function
+            
+            ''' <summary> Converts a String for use in Java source. </summary>
+             ''' <param name="Text"> Input String. </param>
+             ''' <returns>           Converted String for use in Java source. </returns>
+             ''' <remarks> Replaces backslash by double backslash <b>\\"</b> and double quote by <b>\"</b>. </remarks>
+            Private Function String2Java(Text As String) As String
+                Return Text.Replace("\", "\\").Replace("""", "\""")
+            End Function
             
         #End Region
         

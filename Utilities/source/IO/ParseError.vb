@@ -19,7 +19,7 @@ Namespace IO
     #End Region
     
     ''' <summary> Represents an error that has been occurred while parsing a text file. </summary>
-    Public Structure ParseError
+    Public Class ParseError
         
         #Region "Private Fields"
             
@@ -29,13 +29,16 @@ Namespace IO
         
         #Region "Constructors"
             
+            Private Sub New()
+            End Sub
+            
             ''' <summary> Creates a new instance of ParseError. </summary>
              ''' <param name="Level">       The degree of severity of the error. </param>
              ''' <param name="LineNo">      The line number in the source file, starting at 1. </param>
              ''' <param name="StartColumn"> The colulmn number in the source line determining the start of faulty string. </param>
              ''' <param name="EndColumn">   The colulmn number in the source line determining the end of faulty string. </param>
              ''' <param name="Message">     The error Message. </param>
-             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <param name="FilePath">    Full path of the source file. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
@@ -58,7 +61,7 @@ Namespace IO
              ''' <param name="EndColumn">   The colulmn number in the source line determining the end of faulty string. </param>
              ''' <param name="Message">     The error Message. </param>
              ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
-             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <param name="FilePath">    Full path of the source file. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
@@ -120,7 +123,7 @@ Namespace IO
             Public ReadOnly Hints           As String
             
             ''' <summary> Full path of the file this error is related to. </summary>
-             ''' <remarks> Maybe <see langword="null"/>. In this case the consumer has to know the file path by itself. </remarks>
+             ''' <remarks> May be <see langword="null"/>. In this case the consumer has to know the file path by itself. </remarks>
             Public ReadOnly FilePath        As String
             
         #End Region
@@ -143,7 +146,7 @@ Namespace IO
             
         #End Region
         
-    End Structure
+    End Class
     
 End Namespace
 

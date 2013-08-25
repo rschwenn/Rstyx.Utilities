@@ -17,10 +17,10 @@ Namespace IO
             Private _DataCache  As New Collection(Of PreSplittedTextLine)
             Private _FilePaths  As New Collection(Of String)
             
-            Private _CommentLinesCount  As Long
-            Private _DataLinesCount     As Long
-            Private _EmptyLinesCount    As Long
-            Private _TotalLinesCount    As Long
+            Private _CommentLinesCount  As Integer
+            Private _DataLinesCount     As Integer
+            Private _EmptyLinesCount    As Integer
+            Private _TotalLinesCount    As Integer
             
         #End Region
         
@@ -88,28 +88,28 @@ Namespace IO
             #Region "Statistics"
                 
                 ''' <summary> Returns the count of comment lines. </summary>
-                Public ReadOnly Property CommentLinesCount() As Long
+                Public ReadOnly Property CommentLinesCount() As Integer
                     Get
                         Return _CommentLinesCount
                     End Get
                 End Property
                 
                 ''' <summary> Returns the count of lines containing data. </summary>
-                Public ReadOnly Property DataLinesCount() As Long
+                Public ReadOnly Property DataLinesCount() As Integer
                     Get
                         Return _DataLinesCount
                     End Get
                 End Property
                 
                 ''' <summary> Returns the count of empty lines. </summary>
-                Public ReadOnly Property EmptyLinesCount() As Long
+                Public ReadOnly Property EmptyLinesCount() As Integer
                     Get
                         Return _EmptyLinesCount
                     End Get
                 End Property
                 
                 ''' <summary> Returns the total count of read lines. </summary>
-                Public ReadOnly Property TotalLinesCount() As Long
+                Public ReadOnly Property TotalLinesCount() As Integer
                     Get
                         Return _TotalLinesCount
                     End Get
@@ -168,7 +168,7 @@ Namespace IO
                     Dim SplittedLine    As PreSplittedTextLine
                     Dim CheckHeaderLine As Boolean = Me.SeparateHeader
                     Dim IsHeaderLine    As Boolean = False
-                    Dim FileIndex       As Long = Me.FilePaths.Count
+                    Dim FileIndex       As Integer = Me.FilePaths.Count
                     
                     ' Register file.
                     Me.FilePaths.Add(Path)

@@ -347,16 +347,152 @@
   <data name="TrackGeometryInfo_MissingNameOfAlignment" xml:space="preserve">
     <value>Achsname ist unbekannt.</value>
   </data>
-  <data name="TcFileReader_InvalidTcBlock2" xml:space="preserve">
-    <value>Ungültiger Block mit Trassenkoordinaten:\n  Datei: %s\n  Zeilen %d bis %d.\n  Details:\n%s</value>
-    <comment>File Name: String; Block Start Line: Long; Block End Line: Long; Full Error Message: String</comment>
-  </data>
   <data name="TcFileReader_InvalidTcBlock" xml:space="preserve">
     <value>Ungültiger Block mit Trassenkoordinaten (Zeilen %d bis %d):\n%s</value>
     <comment>Block Start Line: Long; Block End Line: Long; TcBlock.Eror: String</comment>
   </data>
   <data name="ParseError_ErrorLevelInLineNo" xml:space="preserve">
-    <value>%s in Zeile %d:</value>
-    <comment>ErrorLevelI: String; Line Number: Integer</comment>
+    <value>%s in Zeile %d: %s</value>
+    <comment>ErrorLevel: String; Line Number: Integer; Error Message: String</comment>
+  </data>
+  <data name="TcFileReader_EmptyTcBlock" xml:space="preserve">
+    <value>Block mit Trassenkoordinaten enthält keine gültigen Punkte (Zeilen %d bis %d).</value>
+  </data>
+  <data name="TcFileReader_LoadFailed" xml:space="preserve">
+    <value>=&gt; Datei mit Trassenkoordinaten konnte nicht erfolgreich gelesen werden (%s).</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="TcFileReader_NoPoints" xml:space="preserve">
+    <value>=&gt; Datei mit Trassenkoordinaten enthält keine Punkte (%s).</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="TcFileReader_ParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Analysieren der Trassenkoordinaten (%s).</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="PreSplittedTextLine_EmptyDataLine" xml:space="preserve">
+    <value>Zeile %d enthält keine Daten.</value>
+    <comment>Line Number: Integer</comment>
+  </data>
+  <data name="PreSplittedTextLine_InvalidFieldNotNumeric" xml:space="preserve">
+    <value>Das Feld '%s' ist nicht numerisch (%s).</value>
+    <comment>Field Caption: String; Field String: String</comment>
+  </data>
+  <data name="PreSplittedTextLine_MissingField" xml:space="preserve">
+    <value>Das Feld '%s' existiert nicht (Spalte %d, Länge %d).</value>
+    <comment>Field Caption: String; Start Column: Integer; End Column: Integer</comment>
+  </data>
+  <data name="PreSplittedTextLine_MissingWord" xml:space="preserve">
+    <value>Das Feld '%s' existiert nicht (Wortnummer %d).</value>
+    <comment>Field Caption: String; Word Number: Integer</comment>
+  </data>
+  <data name="Domain_Label_Com" xml:space="preserve">
+    <value>Kommentar</value>
+  </data>
+  <data name="Domain_Label_Com2" xml:space="preserve">
+    <value>Kommentar 2</value>
+  </data>
+  <data name="Domain_Label_HSOK" xml:space="preserve">
+    <value>Höhe über SOK</value>
+  </data>
+  <data name="Domain_Label_Km" xml:space="preserve">
+    <value>Kilometer</value>
+  </data>
+  <data name="Domain_Label_PointID" xml:space="preserve">
+    <value>Punkt-ID</value>
+  </data>
+  <data name="Domain_Label_Q" xml:space="preserve">
+    <value>Abstand zur Achse</value>
+  </data>
+  <data name="Domain_Label_QKm" xml:space="preserve">
+    <value>Abstand zur Km-Linie</value>
+  </data>
+  <data name="Domain_Label_Ra" xml:space="preserve">
+    <value>Radius</value>
+  </data>
+  <data name="Domain_Label_Ri" xml:space="preserve">
+    <value>Richtung</value>
+  </data>
+  <data name="Domain_Label_St" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="Domain_Label_Ueb" xml:space="preserve">
+    <value>Überhöhung</value>
+  </data>
+  <data name="Domain_Label_X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Domain_Label_Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="Domain_Label_Z" xml:space="preserve">
+    <value>Punkthöhe</value>
+  </data>
+  <data name="Domain_Label_ZSOK" xml:space="preserve">
+    <value>SOK-Höhe</value>
+  </data>
+  <data name="PreSplittedTextLine_InvalidFieldNotKilometer" xml:space="preserve">
+    <value>Das Feld '%s' ist keine gültige Kilometer-Angabe (%s).</value>
+    <comment>Field Caption: String; Field String: String</comment>
+  </data>
+  <data name="DataBlockFileSourceInfo_ToString" xml:space="preserve">
+    <value>%s, Zeilen %d bis %d.</value>
+    <comment>File Name: String; Block Start Line: Long; Block End Line: Long</comment>
+  </data>
+  <data name="TcBlock_TableHeader" xml:space="preserve">
+    <value> lfd  PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       Radius Usoll  U_ist  SO-Höhe   Info             Rechtswert     Hochwert    Hoehe  </value>
+  </data>
+  <data name="TcBlock_ToString_Description" xml:space="preserve">
+    <value> Beschreibung: %s</value>
+  </data>
+  <data name="TcBlock_ToString_Points" xml:space="preserve">
+    <value> Punkte:       %d</value>
+  </data>
+  <data name="TcBlock_ToString_Source" xml:space="preserve">
+    <value> Quelle:       %s</value>
+  </data>
+  <data name="TcBlock_ToString_TrackRef" xml:space="preserve">
+    <value> Trassenbezug: \n%s</value>
+  </data>
+  <data name="TcBlock_ToString_Type" xml:space="preserve">
+    <value> Typ:          %s</value>
+  </data>
+  <data name="TcFileReader_IDdoubled" xml:space="preserve">
+    <value>Punkt-ID (%s) existiert bereits in diesem Block.</value>
+    <comment>Point ID: String</comment>
+  </data>
+  <data name="TcFileReader_IDMismatch" xml:space="preserve">
+    <value>Zweite Zeile des Datensatzes enthält nicht die gleiche Punkt-ID wie die erste Zeile (%s statt %s).</value>
+    <comment>Point ID Line 2: String; Point ID Line 1: String</comment>
+  </data>
+  <data name="TcFileReader_MissingSecondLine" xml:space="preserve">
+    <value>Zweite Zeile des Datensatzes fehlt (diese muss unmittelbar auf die erste Zeile folgen).</value>
+  </data>
+  <data name="TcFileReader_ToString_Blocks" xml:space="preserve">
+    <value>Blöcke:  %d</value>
+  </data>
+  <data name="TcFileReader_ToString_Errors" xml:space="preserve">
+    <value>Fehler:  %d</value>
+  </data>
+  <data name="TcFileReader_ToString_File" xml:space="preserve">
+    <value>Datei:   %s</value>
+  </data>
+  <data name="TrackGeometryInfo_NameOfAlignment" xml:space="preserve">
+    <value>  Achse:           %s</value>
+  </data>
+  <data name="TrackGeometryInfo_NameOfCantLine" xml:space="preserve">
+    <value>  Km-Linie:        %s</value>
+  </data>
+  <data name="TrackGeometryInfo_NameOfGradientLine" xml:space="preserve">
+    <value>  Gradiente:       %s</value>
+  </data>
+  <data name="TrackGeometryInfo_NameOfKmAlignment" xml:space="preserve">
+    <value>  Überhöhung:      %s</value>
+  </data>
+  <data name="TrackGeometryInfo_NameOfRoadSections" xml:space="preserve">
+    <value>  Straßenprofile:  %s</value>
+  </data>
+  <data name="TrackGeometryInfo_NameOfTunnelSections" xml:space="preserve">
+    <value>  Tunnelprofile:   %s</value>
   </data>
 </root>

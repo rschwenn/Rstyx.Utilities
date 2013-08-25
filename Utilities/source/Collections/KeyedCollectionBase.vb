@@ -77,7 +77,7 @@ Namespace Collections
                     If (Me.Dictionary Is Nothing) Then
                         InternalSearchDictionary = New Dictionary(Of TKey, TItem)
                     Else
-                        InternalSearchDictionary = Me.Dictionary
+                        InternalSearchDictionary = DirectCast(Me.Dictionary, Dictionary(Of TKey, TItem))
                     End If
                     Return New Dictionary(Of TKey, TItem).KeyCollection(InternalSearchDictionary)
                  End Get

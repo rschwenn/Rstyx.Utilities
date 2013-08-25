@@ -118,8 +118,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CsvExceptionMessage.resx</DependentUpon>
     </Compile>
+    <Compile Include="source\IO\DataField.vb" />
     <Compile Include="source\IO\ParseError.vb" />
     <Compile Include="source\IO\ParseErrorCollection.vb" />
+    <Compile Include="source\IO\ParseException.vb" />
     <Compile Include="source\IO\PreSplittedTextLine.vb" />
     <Compile Include="source\Domain\TcFileReader.vb" />
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">

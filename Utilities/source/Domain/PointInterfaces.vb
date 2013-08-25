@@ -115,10 +115,10 @@ Namespace Domain
         Property L()            As Double
         
         
-        ''' <summary> Twisted track coordinate system: Perpendicular distance in XY-plane to the alignment. </summary>
+        ''' <summary> Canted track coordinate system: Perpendicular distance in running surface of rail plane to the alignment. </summary>
         Property QG()           As Double
         
-        ''' <summary> Twisted track coordinate system: Height above running surface of rail. </summary>
+        ''' <summary> Canted track coordinate system: Height above running surface of rail. </summary>
         Property HG()           As Double
         
         
@@ -138,6 +138,10 @@ Namespace Domain
         Property ZSOK()         As Double
         
         
+        ''' <summary> The distance between rails for determining cant (used for calculations). </summary>
+        Property CantBase()     As Double
+        
+        
         ''' <summary> Determines the reference frame of the track geometry. </summary>
         Property TrackRef()     As TrackGeometryInfo
         
@@ -148,7 +152,7 @@ Namespace Domain
     Public Interface IFileSource
             
         ''' <summary> An index into a list of source files (which may be mmaintained in a parent object). </summary>
-        Property SourceFileIndex    As Long
+        Property SourceFileIndex()  As Long
         
         ''' <summary> Line number in source file, where the data has been read from. </summary>
          ''' <remarks> When the source record is multi-line, then this points to the first line. </remarks>
