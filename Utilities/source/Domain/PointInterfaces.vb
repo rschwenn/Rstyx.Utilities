@@ -67,12 +67,12 @@ Namespace Domain
     ''' <summary> Digital terrain model values at a given point. </summary>
     Public Interface IDTMatPoint
         
-        ''' <summary> Height of the model surface. </summary>
-        Property ModelZ()       As Double
+        ''' <summary> Height of the model surface (Z coordinate). </summary>
+        Property ZDGM()         As Double
         
         ''' <summary> Height of the point above the model surface. </summary>
          ''' <remarks> This is the difference between Z coordinates of model and point. </remarks>
-        Property dZ()           As Double
+        Property HDGM()         As Double
         
         ''' <summary> Model name. </summary>
         Property NameOfDTM()    As String
@@ -95,24 +95,21 @@ Namespace Domain
         ''' <summary> Perpendicular distance in XY-plane to the kilometer leading alignment. </summary>
         Property QKm()          As Double
         
+        
         ''' <summary> Height above running surface of rail. </summary>
         Property HSOK()         As Double
         
         ''' <summary> Height above gradient design (vertical curve set). </summary>
         Property H()            As Double
         
-        ''' <summary> Actual cant. </summary>
-        Property ActualCant()   As Double
+        ''' <summary> Slope angle of gradient design (vertical curve set). </summary>
+        Property G()            As Double
         
+        ''' <summary> Height coordinate of running surface of rail. </summary>
+        Property ZSOK()         As Double
         
-        ''' <summary> Height above road cross section shape. </summary>
-        Property V()            As Double
-        
-        ''' <summary> Radial distance to the tunnel cross section shape. </summary>
-        Property R()            As Double
-        
-        ''' <summary> Lenght along the tunnel cross section shape. </summary>
-        Property L()            As Double
+        ''' <summary> Height coordinate of gradient design (vertical curve set). </summary>
+        Property ZLGS()         As Double
         
         
         ''' <summary> Canted track coordinate system: Perpendicular distance in running surface of rail plane to the alignment. </summary>
@@ -122,21 +119,37 @@ Namespace Domain
         Property HG()           As Double
         
         
+        ''' <summary> Height above road cross section shape. </summary>
+        Property V()            As Double
+        
+        ''' <summary> Radial distance to the tunnel cross section shape. </summary>
+        Property R()            As Double
+        
+        ''' <summary> Length along the tunnel cross section shape. </summary>
+        Property L()            As Double
+        
+        ''' <summary> Tunnel Meters (Station inside a tunnel). </summary>
+        Property TM()            As Double
+        
+        ''' <summary> Perpendicular distance in XY-plane to the alignment in direction of tunnel excavation. </summary>
+        Property QT()            As Double
+        
+        
         ''' <summary> Radius. </summary>
         Property Ra()           As Double
         
         ''' <summary> Azimuth of alignment tangent. </summary>
         Property Ri()           As Double
         
+        
+        ''' <summary> Actual cant. </summary>
+        Property ActualCant()   As Double
+        
         ''' <summary> Cant (Superelevation). </summary>
         Property Ueb()          As Double
         
         ''' <summary> Height difference between gradient design (vertical curve set) and running surface of rail (at special geometry). </summary>
-        Property Heb()          As Double     'Hebewert in der Schere [mm]
-        
-        ''' <summary> Height coordinate of running surface of rail. </summary>
-        Property ZSOK()         As Double
-        
+        Property Heb()          As Double     'Hebewert in der Schere [m]
         
         ''' <summary> The distance between rails for determining cant (used for calculations). </summary>
         Property CantBase()     As Double

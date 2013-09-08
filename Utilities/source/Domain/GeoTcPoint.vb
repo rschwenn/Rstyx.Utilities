@@ -34,10 +34,10 @@ Namespace Domain
         #Region "IDTMatPoint Members"
             
             ''' <inheritdoc/>
-            Public Property ModelZ()        As Double = Double.NaN   Implements IDTMatPoint.ModelZ
+            Public Property ZDGM()          As Double = Double.NaN   Implements IDTMatPoint.ZDGM
             
             ''' <inheritdoc/>
-            Public Property dZ()            As Double = Double.NaN   Implements IDTMatPoint.dZ
+            Public Property HDGM()          As Double = Double.NaN   Implements IDTMatPoint.HDGM
             
             ''' <inheritdoc/>
             Public Property NameOfDTM()     As String = String.Empty Implements IDTMatPoint.NameOfDTM
@@ -58,6 +58,7 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property QKm()           As Double = Double.NaN Implements IPointAtTrackGeometry.QKm
             
+            
             ''' <inheritdoc/>
             Public Property HSOK()          As Double = Double.NaN Implements IPointAtTrackGeometry.HSOK
             
@@ -65,7 +66,20 @@ Namespace Domain
             Public Property H()             As Double = Double.NaN Implements IPointAtTrackGeometry.H
             
             ''' <inheritdoc/>
-            Public Property ActualCant()    As Double = Double.NaN Implements IPointAtTrackGeometry.ActualCant
+            Public Property G()             As Double = Double.NaN Implements IPointAtTrackGeometry.G
+            
+            ''' <inheritdoc/>
+            Public Property ZSOK()          As Double = Double.NaN Implements IPointAtTrackGeometry.ZSOK
+            
+            ''' <inheritdoc/>
+            Public Property ZLGS()          As Double = Double.NaN Implements IPointAtTrackGeometry.ZLGS
+            
+            
+            ''' <inheritdoc/>
+            Public Property QG()            As Double = Double.NaN Implements IPointAtTrackGeometry.QG
+            
+            ''' <inheritdoc/>
+            Public Property HG()            As Double = Double.NaN Implements IPointAtTrackGeometry.HG
             
             
             ''' <inheritdoc/>
@@ -77,12 +91,11 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property L()             As Double = Double.NaN Implements IPointAtTrackGeometry.L
             
+            ''' <inheritdoc/>
+            Public Property TM()            As Double = Double.NaN Implements IPointAtTrackGeometry.Tm
             
             ''' <inheritdoc/>
-            Public Property QG()            As Double = Double.NaN Implements IPointAtTrackGeometry.QG
-            
-            ''' <inheritdoc/>
-            Public Property HG()            As Double = Double.NaN Implements IPointAtTrackGeometry.HG
+            Public Property QT()            As Double = Double.NaN Implements IPointAtTrackGeometry.QT
             
             
             ''' <inheritdoc/>
@@ -91,16 +104,16 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property Ri()            As Double = Double.NaN Implements IPointAtTrackGeometry.Ri
             
+            
+            ''' <inheritdoc/>
+            Public Property ActualCant()    As Double = Double.NaN Implements IPointAtTrackGeometry.ActualCant
+            
             ''' <inheritdoc/>
             Public Property Ueb()           As Double = Double.NaN Implements IPointAtTrackGeometry.Ueb
             
             ''' <inheritdoc/>
             Public Property Heb()           As Double = Double.NaN Implements IPointAtTrackGeometry.Heb
             
-            ''' <inheritdoc/>
-            Public Property ZSOK()          As Double = Double.NaN Implements IPointAtTrackGeometry.ZSOK
-            
-                
             ''' <inheritdoc/>
             ''' <remarks> This value defaults to 1.500. </remarks>
             Property CantBase()             As Double = 1.500 Implements IPointAtTrackGeometry.CantBase
@@ -114,18 +127,18 @@ Namespace Domain
         #Region "Public members"
             
             ''' <summary> Transforms <see cref="P:Q"/> and <see cref="P:HSOK"/> to <see cref="P:QG"/> and <see cref="P:HG"/> if possible. </summary>
-             ''' <remarks> If this transformation isn't possible, the target values will be <c>Double.NaN</c>. </remarks>
+             ''' <remarks> If this transformation isn't possible, the target values will become <c>Double.NaN</c>. </remarks>
             Public Sub transformHorizontalToCanted()
                 
-                If ((Me.Ueb > -0.0005) And (Me.Ueb < -0.0005)) Then
+                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
                     Me.QG = Me.Q
                     Me.HG = Me.HSOK
                     
                 ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
                     Dim sf  As Integer = Math.Sign(Me.Ra)
-                    Dim phi As Double = sf * Math.Atan(Me.Ueb / Me.CantBase) * (-1)
-                    Dim X0  As Double = Math.Abs(Me.CantBase / 2 * Math.Sin(phi))
-                    Dim Y0  As Double = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Math.Cos(phi)))
+                    Dim phi As Double  = sf * Math.Atan(Me.Ueb / Me.CantBase) * (-1)
+                    Dim X0  As Double  = Math.Abs(Me.CantBase / 2 * Math.Sin(phi))
+                    Dim Y0  As Double  = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Math.Cos(phi)))
                     
                     Me.QG = (Me.Q - Y0) * Math.Cos(phi) + (Me.HSOK - X0) * Math.Sin(phi)
                     Me.HG = (Me.HSOK - X0) * Math.Cos(phi) - (Me.Q - Y0) * Math.Sin(phi)
@@ -166,8 +179,8 @@ Namespace Domain
             ''' <summary> Returns a formatted output of most fields of this GeoTcPoint. </summary>
              ''' <returns> Formatted output. </returns>
             Public Overrides Function ToString() As String
-                Return StringUtils.sprintf("%+15s %10.3f %10.3f %8.3f %8.3f   %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f   %-13s  %12.3f %12.3f%9.3f",
-                                           Me.ID, Me.Km, Me.St, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.Ra, Me.Ueb, Me.ActualCant, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
+                Return StringUtils.sprintf("%+20s %10.3f %10.3f %8.3f %8.3f   %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f   %-16s %12.3f %12.3f%9.3f",
+                                           Me.ID, Me.Km, Me.St, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.Ra, Me.Ueb * 1000, Me.ActualCant * 1000, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
             End Function
             
         #End Region

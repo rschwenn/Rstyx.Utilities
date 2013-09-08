@@ -158,7 +158,7 @@ Namespace IO
                     If ((Field IsNot Nothing) AndAlso (Field.ParseError IsNot Nothing)) Then
                         Throw New Rstyx.Utilities.IO.ParseException(Field.ParseError)
                     Else
-                        Throw New Rstyx.Utilities.IO.ParseException("parsing data field crashed...")
+                        Throw New Rstyx.Utilities.IO.ParseException("!!!  parsing data field crashed...")
                     End If
                 End If
                 
@@ -221,13 +221,15 @@ Namespace IO
                 Dim TargetTypeCode  As TypeCode = Type.GetTypeCode(GetType(TFieldValue))
                 
                 ' Extract options.
-                Dim OptionNotRequired               As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.NotRequired)
                 Dim OptionAllowKilometerNotation    As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.AllowKilometerNotation)
                 Dim OptionIgnoreLeadingAsterisks    As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.IgnoreLeadingAsterisks)
+                Dim OptionMissingAsZero             As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.MissingAsZero)
+                Dim OptionNonNumericAsNaN           As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.NonNumericAsNaN)
+                Dim OptionNotRequired               As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.NotRequired)
                 Dim OptionTrim                      As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.Trim)
                 Dim OptionZeroAsNaN                 As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.ZeroAsNaN)
                 
-                ' Assign default field value. This will be returned if parsing failed or the field is missing.
+                ' Assign default field value. This will be returned if parsing failes or the field is missing.
                 Select Case TargetTypeCode
                     Case TypeCode.String:   FieldValue = Convert.ChangeType(DefaultString, TypeCode.String)
                     Case TypeCode.Double:   FieldValue = Convert.ChangeType(DefaultDouble, TypeCode.Double)
@@ -263,11 +265,21 @@ Namespace IO
                         If (FieldSource.Value.IsEmptyOrWhiteSpace()) Then
                             If (Not OptionNotRequired) Then
                                 success = False
-                                ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord, FieldDef.Length), Nothing)
+                                ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord + 1, FieldDef.Length), Nothing)
                             End If
                         Else
                             FieldHasValue = True
                         End If
+                    End If
+                End If
+                
+                ' Default value for missing field.
+                If (Not FieldHasValue) Then
+                    If (OptionMissingAsZero) Then
+                        FieldSource   = New DataFieldSource(0, 1, "0")
+                        ParseError    = Nothing
+                        FieldHasValue = True
+                        success       = True
                     End If
                 End If
                 
@@ -285,11 +297,11 @@ Namespace IO
                             
                         Case TypeCode.Double
                             
-                            Dim MessageFmt  As String
-                            Dim FieldDouble As Double
+                            Dim MessageFmt    As String
+                            Dim FieldDouble   As Double
                             Dim AllowedStyles As NumberStyles = NumberStyles.Float
                             
-                            ' remove asterisks.
+                            ' Remove asterisks.
                             If (OptionIgnoreLeadingAsterisks) Then
                                 FieldString = FieldString.Trim().ReplaceWith("^\*+", String.Empty)
                             End If
@@ -303,7 +315,7 @@ Namespace IO
                                 MessageFmt = Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_InvalidFieldNotNumeric
                             End If
                             
-                            If (Not success) Then
+                            If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
                                 ParseError = New ParseError(ParseErrorLevel.Error, 
                                                             Me.SourceLineNo,
                                                             FieldSource.Column,
@@ -312,7 +324,13 @@ Namespace IO
                                                             Nothing
                                                            )
                             Else
+                                If ((Not success) AndAlso OptionNonNumericAsNaN) Then
+                                    FieldDouble = Double.NaN
+                                    ParseError  = Nothing
+                                    success     = True
+                                End If
                                 If (OptionZeroAsNaN AndAlso (FieldDouble = 0.0)) Then FieldDouble = Double.NaN
+                                
                                 FieldValue = Convert.ChangeType(FieldDouble, TypeCode.Double)
                             End If
                             

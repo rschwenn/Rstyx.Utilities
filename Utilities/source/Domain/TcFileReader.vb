@@ -17,11 +17,11 @@ Namespace Domain
     ''' <summary>  Represents a reader that can read and cache points with track geometry coordinates (TC) of a text file using <see cref="DataTextFileReader"/>. </summary>
      ''' <remarks>
      ''' <list type="bullet">
-     ''' <listheader> <description> <b>General Features:</b> </description></listheader>
+     ''' <listheader> <b>General Features :</b> </listheader>
      ''' <item> The <see cref="M:Load"/> method clears all results before loading the given file. </item>
      ''' <item> File header lines will be provided by the <see cref="P:Header"/> property. </item>
-     ''' <item> Found TC blocks will be provided by the <see cref="P:Blocks"/> property. </item>
-     ''' <item> Parsing errors will be provided by the <see cref="P:ParseErrors"/> property. </item>
+     ''' <item> Found TC blocks will be provided by the <see cref="P:Blocks"/> property. It contains all points that has been read without errors. </item>
+     ''' <item> Parsing errors will be catched and provided by the <see cref="P:ParseErrors"/> property. </item>
      ''' </list>
      ''' <para>
      ''' The track geometry coordinates will be expected as output blocks of following programs and types:
@@ -34,7 +34,7 @@ Namespace Domain
      ''' <item> <term> iGeo (Version 1.1)      </term>  <description> "A1", "A5" </description></item>
      ''' </list>
      ''' <list type="bullet">
-     ''' <listheader> <description> <b>Restrictions to the input file</b> </description></listheader>
+     ''' <listheader> <b>Restrictions to the input file :</b> </listheader>
      ''' <item> All supported block types (and only such!) may appear mixed in one file in arbitrary order. </item>
      ''' <item> All comment lines, immediately before the programs original output, will be associated to this block. </item>
      ''' <item> Comment lines at file start, that has not been associated to a block, will be treated as file header. </item>
@@ -48,18 +48,21 @@ Namespace Domain
             
             Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.TCFileReader")
             
-            Private SourceBlocks            As New Collection(Of TcSourceBlockInfo)
-            Private VermEsnRecordDefinitions As New Dictionary(Of String, TcRecordDefinitionVermEsn)  ' Key = getKeyForRecordDefinition(TcBlockType)
+            Private SourceBlocks                As New Collection(Of TcSourceBlockInfo)
+            Private VermEsnRecordDefinitions    As New Dictionary(Of String, TcRecordDefinitionVermEsn)  ' Key = getKeyForRecordDefinition(TcBlockType)
+            Private iGeoRecordDefinitions       As New Dictionary(Of String, TcRecordDefinitionIGeo)     ' Key = getKeyForRecordDefinition(TcBlockType)
             
-            Private _Blocks                 As New Collection(Of TcBlock)
-            Private _Header                 As New Collection(Of String)
-            Private _FilePath               As String
-            Private _ParseErrors            As New ParseErrorCollection()
+            Private _Blocks                     As New Collection(Of TcBlock)
+            Private _Header                     As New Collection(Of String)
+            Private _FilePath                   As String
+            Private _ParseErrors                As New ParseErrorCollection()
             
-            Private _CommentLinesCount      As Long
-            Private _DataLinesCount         As Long
-            Private _EmptyLinesCount        As Long
-            Private _TotalLinesCount        As Long
+            Private RHO                         As Double = 200 / Math.PI
+            
+            Private _CommentLinesCount          As Long
+            Private _DataLinesCount             As Long
+            Private _EmptyLinesCount            As Long
+            Private _TotalLinesCount            As Long
             
         #End Region
         
@@ -67,6 +70,8 @@ Namespace Domain
             
             ''' <summary> Creates a new instance of TCFileReader with default settings. </summary>
             Public Sub New()
+                setRecordDefinitionsVermEsn()
+                setRecordDefinitionsIGeo()
             End Sub
             
             ''' <summary> Creates a new instance of TCFileReader with specified settings. </summary>
@@ -79,8 +84,6 @@ Namespace Domain
                 
                 Me.CantBase = CantBase
                 Me.StationAsKilometer = StationAsKilometer
-                
-                setRecordDefinitionsVermEsn()
             End Sub
             
         #End Region
@@ -170,15 +173,6 @@ Namespace Domain
         
         #Region "Public Members"
             
-            ' Wrapped exceptions:
-             ' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
-             ' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
-             ' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>
-             ' <exception cref="System.IO.DirectoryNotFoundException"> The specified path is invalid, such as being on an unmapped drive. </exception>
-             ' <exception cref="System.NotSupportedException">         <paramref name="Path"/> includes an incorrect or invalid syntax for file name, directory name, or volume label. </exception>
-             ' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero. </exception>
-             ' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
-             ' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
             ''' <summary> Loads the file using default settings for <see cref="StreamReader"/>. </summary>
              ''' <param name="Path"> The complete path of to the TC file to be read (for <see cref="StreamReader"/>). </param>
              ''' <remarks>
@@ -190,20 +184,20 @@ Namespace Domain
              ''' which are cleared before.
              ''' </para>
              ''' </remarks>
-             ''' <exception cref="RemarkException"> Wraps any exception. </exception>
+             ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
+             ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>
+             ''' <exception cref="System.IO.DirectoryNotFoundException"> The specified path is invalid, such as being on an unmapped drive. </exception>
+             ''' <exception cref="System.NotSupportedException">         <paramref name="Path"/> includes an incorrect or invalid syntax for file name, directory name, or volume label. </exception>
+             ''' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero. </exception>
+             ''' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
+             ''' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
+             ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="P:TcFileReader.ParseErrors"/> isn't empty. </exception>
             Public Sub Load(Path As String)
-                Me.Load(Path, Encoding.UTF8, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
+                'Me.Load(Path, Encoding.UTF8, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
+                Me.Load(Path, Encoding.Default, DetectEncodingFromByteOrderMarks:=True, BufferSize:=1024)
             End Sub
             
-            ' Wrapped exceptions:
-             ' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
-             ' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
-             ' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>
-             ' <exception cref="System.IO.DirectoryNotFoundException"> The specified path is invalid, such as being on an unmapped drive. </exception>
-             ' <exception cref="System.NotSupportedException">         <paramref name="Path"/> includes an incorrect or invalid syntax for file name, directory name, or volume label. </exception>
-             ' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero. </exception>
-             ' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
-             ' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
             ''' <summary> Loads the file using specified settings for the used <see cref="StreamReader"/>. </summary>
              ''' <param name="Path">                             The complete path to the data text file to be read. </param>
              ''' <param name="Encoding">                         The character encoding to use. </param>
@@ -211,115 +205,122 @@ Namespace Domain
              ''' <param name="BufferSize">                       The minimum buffer size, in number of 16-bit characters. </param>
              ''' <remarks>
              ''' The loaded data will be provided by the <see cref="P:TcFileReader.Blocks"/> and <see cref="P:TcFileReader.Header"/> properties,
-             ''' which are cleared before. Same for  <see cref="P:TcFileReader.ParseErrors"/>.
+             ''' which are cleared before. Same for <see cref="P:TcFileReader.ParseErrors"/>.
              ''' </remarks>
-             ''' <exception cref="RemarkException"> Wraps any exception. </exception>
+             ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
+             ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>
+             ''' <exception cref="System.IO.DirectoryNotFoundException"> The specified path is invalid, such as being on an unmapped drive. </exception>
+             ''' <exception cref="System.NotSupportedException">         <paramref name="Path"/> includes an incorrect or invalid syntax for file name, directory name, or volume label. </exception>
+             ''' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero. </exception>
+             ''' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
+             ''' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
+             ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="P:TcFileReader.ParseErrors"/> isn't empty. </exception>
             Public Sub Load(Path As String,
                             Encoding As Encoding,
                             DetectEncodingFromByteOrderMarks As Boolean,
                             BufferSize As Integer
                            )
-                Try
-                    Dim SplittedLine    As PreSplittedTextLine
-                    Dim kvp             As KeyValuePair(Of String, String)
-                    Dim SourceBlock     As TcSourceBlockInfo
-                    Dim TcBlock         As TcBlock
-                    Dim BlockCount      As Integer = 0
+                Dim SplittedLine    As PreSplittedTextLine
+                Dim kvp             As KeyValuePair(Of String, String)
+                Dim SourceBlock     As TcSourceBlockInfo
+                Dim TcBlock         As TcBlock
+                Dim BlockCount      As Integer = 0
+                
+                ' Read the file and cache pre-split lines. Don't recognize a header because the general logic doesn't match to TC file.
+                Logger.logDebug(StringUtils.sprintf("Load TC file '%s'", Path))
+                Dim FileReader As New DataTextFileReader()
+                FileReader.SeparateHeader = False
+                FileReader.Load(Path, Encoding, DetectEncodingFromByteOrderMarks, BufferSize)
+                
+                ' Reset results and settings.
+                Me.Reset(Path)
+                
+                Logger.logDebug(" Looking for block beginnings...")
+                ' Find and store source block beginnings (still without EndIndex, Version and Format).
+                For i As Integer = 0 To FileReader.DataCache.Count - 1
                     
-                    ' Read the file and cache pre-split lines. Don't recognize a header because the general logic doesn't match to TC file.
-                    Logger.logDebug(StringUtils.sprintf("Load TC file '%s'", Path))
-                    Dim FileReader As New DataTextFileReader()
-                    FileReader.SeparateHeader = False
-                    FileReader.Load(Path, Encoding, DetectEncodingFromByteOrderMarks, BufferSize)
+                    SplittedLine = FileReader.DataCache(i)
                     
-                    ' Reset results and settings.
-                    Me.Reset(Path)
-                    
-                    Logger.logDebug(" Looking for block beginnings...")
-                    ' Find and store source block beginnings (still without EndIndex, Version and Format).
-                    For i As Integer = 0 To FileReader.DataCache.Count - 1
-                        
-                        SplittedLine = FileReader.DataCache(i)
-                        
-                        If (SplittedLine.IsCommentLine) Then
-                            ' Comment line: Look for output header of iGeo and iTrassePC.
-                            If (SplittedLine.HasComment) Then
-                                kvp = splitHeaderLineIGeo(SplittedLine.Comment)
-                                If (kvp.Key IsNot Nothing) Then
-                                    If ((kvp.Key = "Programm") AndAlso ((kvp.Value = "iTrassePC") Or (kvp.Value = "iGeo"))) Then
-                                        ' Create and store source block info.
-                                        SourceBlock = New TcSourceBlockInfo()
-                                        SourceBlock.BlockType.Version = TcBlockVersion.Current
-                                        SourceBlock.BlockType.Program = If((kvp.Value = "iGeo"), TcBlockProgram.iGeo, TcBlockProgram.iTrassePC)
-                                        SourceBlock.StartIndex = findStartOfBlock(FileReader.DataCache, i)
-                                        SourceBlocks.Add(SourceBlock)
-                                        BlockCount += 1
-                                        Logger.logDebug(StringUtils.sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program, SourceBlock.StartIndex, i))
-                                    End If
+                    If (SplittedLine.IsCommentLine) Then
+                        ' Comment line: Look for output header of iGeo and iTrassePC.
+                        If (SplittedLine.HasComment) Then
+                            kvp = splitHeaderLineIGeo(SplittedLine.Comment)
+                            If (kvp.Key IsNot Nothing) Then
+                                If ((kvp.Key = "Programm") AndAlso ((kvp.Value = "iTrassePC") Or (kvp.Value = "iGeo"))) Then
+                                    ' Create and store source block info.
+                                    SourceBlock = New TcSourceBlockInfo()
+                                    SourceBlock.BlockType.Version = TcBlockVersion.Current
+                                    SourceBlock.BlockType.Program = If((kvp.Value = "iGeo"), TcBlockProgram.iGeo, TcBlockProgram.iTrassePC)
+                                    SourceBlock.StartIndex = findStartOfBlock(FileReader.DataCache, i)
+                                    SourceBlocks.Add(SourceBlock)
+                                    BlockCount += 1
+                                    Logger.logDebug(StringUtils.sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
                                 End If
                             End If
-                        ElseIf (SplittedLine.HasData) Then
-                            ' Line contains data and maybe line end comment.
-                            If (SplittedLine.Data.IsMatchingTo("^(Trassenumformung|Umformung")) Then
-                                SourceBlock = New TcSourceBlockInfo()
-                                SourceBlock.BlockType.Program = TcBlockProgram.VermEsn
-                                SourceBlock.StartIndex = findStartOfBlock(FileReader.DataCache, i)
-                                SourceBlocks.Add(SourceBlock)
-                                BlockCount += 1
-                                Logger.logDebug(StringUtils.sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program, SourceBlock.StartIndex, i))
-                            End If
                         End If
-                    Next
-                    
-                    ' Store block end lines (the line before the next block start).
-                    For i As Integer = 0 To SourceBlocks.Count - 1
-                        If (i = (SourceBlocks.Count - 1)) Then
-                            SourceBlocks(i).EndIndex = FileReader.DataCache.Count - 1
-                        Else
-                            SourceBlocks(i).EndIndex = SourceBlocks(i + 1).StartIndex - 1
+                    ElseIf (SplittedLine.HasData) Then
+                        ' Line contains data and maybe line end comment.
+                        If (SplittedLine.Data.IsMatchingTo("^Trassenumformung\s+|^Umformung\s+")) Then
+                            SourceBlock = New TcSourceBlockInfo()
+                            SourceBlock.BlockType.Program = TcBlockProgram.VermEsn
+                            SourceBlock.StartIndex = findStartOfBlock(FileReader.DataCache, i)
+                            SourceBlocks.Add(SourceBlock)
+                            BlockCount += 1
+                            Logger.logDebug(StringUtils.sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
                         End If
-                    Next
-                    
-                    Logger.logDebug(" Looking for file header...")
-                    ' Find and store file header lines (all comment lines from file start until the first non comment line or block start).
-                    Dim MaxIndexToLook As Integer = If((SourceBlocks.Count > 0), SourceBlocks(0).StartIndex - 1, FileReader.DataCache.Count - 1)
-                    For i As Integer = 0 To MaxIndexToLook
-                        If (Not FileReader.DataCache(i).IsCommentLine) Then
-                            Exit For
-                        Else
-                            Me.Header.Add(FileReader.DataCache(i).Comment)
-                        End If
-                    Next
-                    
-                    Logger.logDebug(" Read blocks...")
-                    ' Read every block with all it's data and, if successfull, store it to Me.Blocks.
-                    For i As Integer = 0 To SourceBlocks.Count - 1
-                        
-                        Select Case SourceBlocks(i).BlockType.Program
-                            
-                            Case TcBlockProgram.VermEsn
-                                TcBlock = readBlockVermEsn(FileReader.DataCache, SourceBlocks(i))
-                                If (TcBlock.IsValid) Then Me.Blocks.Add(TcBlock)
-                                
-                            'Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC 
-                            '    Me.Blocks.Add(ReadBlockIGeo(SourceBlocks(i)))
-                        End Select
-                    Next
-                    
-                    ' Log parsing errors and warnings.
-                    If (Me.ParseErrors.HasErrors OrElse Me.ParseErrors.HasWarnings) Then Me.ParseErrors.ToLoggingConsole()
-                    
-                    ' Throw exception if parsing errors has occurred.
-                    If (Me.ParseErrors.HasErrors) Then
-                        Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
-                    ElseIf (Me.TotalPointCount = 0) Then
-                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_NoPoints, Me.FilePath))
                     End If
+                Next
+                
+                ' Store block end lines (the line before the next block start).
+                For i As Integer = 0 To SourceBlocks.Count - 1
+                    If (i = (SourceBlocks.Count - 1)) Then
+                        SourceBlocks(i).EndIndex = FileReader.DataCache.Count - 1
+                    Else
+                        SourceBlocks(i).EndIndex = SourceBlocks(i + 1).StartIndex - 1
+                    End If
+                Next
+                
+                Logger.logDebug(" Looking for file header...")
+                ' Find and store file header lines (all comment lines from file start until the first non comment line or block start).
+                Dim MaxIndexToLook As Integer = If((SourceBlocks.Count > 0), SourceBlocks(0).StartIndex - 1, FileReader.DataCache.Count - 1)
+                For i As Integer = 0 To MaxIndexToLook
+                    If (Not FileReader.DataCache(i).IsCommentLine) Then
+                        Exit For
+                    Else
+                        Me.Header.Add(FileReader.DataCache(i).Comment)
+                    End If
+                Next
+                
+                Logger.logDebug(" Read blocks...")
+                ' Read every block with all it's data and, if successfull, store it to Me.Blocks.
+                For i As Integer = 0 To SourceBlocks.Count - 1
                     
-                Catch ex As System.Exception
-                    Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, Me.FilePath), ex)
-                End Try
-                    
+                    Select Case SourceBlocks(i).BlockType.Program
+                        
+                        Case TcBlockProgram.VermEsn
+                            TcBlock = readBlockVermEsn(FileReader.DataCache, SourceBlocks(i))
+                            If (TcBlock.IsValid) Then Me.Blocks.Add(TcBlock)
+                            
+                        Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
+                            TcBlock = readBlockIGeo(FileReader.DataCache, SourceBlocks(i))
+                            If (TcBlock.IsValid) Then Me.Blocks.Add(TcBlock)
+                    End Select
+                Next
+                
+                ' Log parsing errors and warnings.
+                If (Me.ParseErrors.HasErrors OrElse Me.ParseErrors.HasWarnings) Then Me.ParseErrors.ToLoggingConsole()
+                
+                ' Debug all read data.
+                Logger.logDebug(Me.ToReport(OnlySummary:=False))
+                
+                ' Throw exception if parsing errors has occurred.
+                If (Me.ParseErrors.HasErrors) Then
+                    'Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                ElseIf (Me.TotalPointCount = 0) Then
+                    Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_NoPoints, Me.FilePath))
+                End If
             End Sub
             
             ''' <summary> Resets this <see cref="TcFileReader"/>. </summary>
@@ -327,24 +328,34 @@ Namespace Domain
                 Me.Reset(Nothing)
             End Sub
             
+            ''' <summary> Creates a report of all blocks of this TcFileReader. </summary>
+             ''' <param name="OnlySummary"> If <see langword="true"/>, the point lists won't be reported. </param>
+             ''' <returns> The report of all blocks of this TcFileReader. </returns>
+            Public Function ToReport(OnlySummary As Boolean) As String
+                Dim List As New StringBuilder()
+                
+                List.AppendLine()
+                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToReport_File  , Me.FilePath))
+                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToReport_Blocks, Me.Blocks.Count))
+                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToReport_Points, Me.TotalPointCount))
+                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToReport_Errors, Me.ParseErrors.Count))
+                
+                For i As Integer = 0 To Me.Blocks.Count - 1
+                    List.AppendLine()
+                    List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToReport_BlockNo, i + 1))
+                    List.AppendLine(Me.Blocks(i).ToReport(OnlySummary))
+                Next
+                
+                Return List.ToString()
+            End Function
+            
         #End Region
         
         #Region "Overrides"
             
             ''' <inheritdoc/>
             Public Overrides Function ToString() As String
-                Dim List As New StringBuilder()
-                
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToString_File  , Me.FilePath))
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToString_Errors, Me.ParseErrors.Count))
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToString_Blocks, Me.Blocks.Count))
-                
-                For i As Integer = 0 To Me.Blocks.Count - 1
-                    List.AppendLine()
-                    List.AppendLine(Me.Blocks(i).ToString())
-                Next
-                
-                Return List.ToString()
+                Return StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToString, Me.FilePath, Me.Blocks.Count, Me.TotalPointCount, Me.ParseErrors.Count)
             End Function
             
         #End Region
@@ -481,26 +492,29 @@ Namespace Domain
                                                                   Dim IsValidRule As Boolean = True
                                                                   Dim BlockType   As TcBlockType = DirectCast(oValidatingObject, TcBlockType)
                                                                   
-                                                                  Select Case BlockType.Program
+                                                                  If (Not (BlockType.Format = TcBlockFormat.None)) Then
                                                                       
-                                                                      Case TcBlockProgram.VermEsn
-                                                                          Select Case BlockType.Format
-                                                                              Case TcBlockFormat.D3, TcBlockFormat.THW
-                                                                                  'o.k.
-                                                                              Case Else
-                                                                                  IsValidRule = False
-                                                                                  BrokenMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format, BlockType.Program)
-                                                                          End Select
+                                                                      Select Case BlockType.Program
                                                                           
-                                                                      Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
-                                                                          Select Case BlockType.Format
-                                                                              Case TcBlockFormat.A1, TcBlockFormat.A5
-                                                                                  'o.k.
-                                                                              Case Else
-                                                                                  IsValidRule = False
-                                                                                  BrokenMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format, BlockType.Program)
-                                                                          End Select
-                                                                  End Select
+                                                                          Case TcBlockProgram.VermEsn
+                                                                              Select Case BlockType.Format
+                                                                                  Case TcBlockFormat.D3, TcBlockFormat.THW
+                                                                                      'o.k.
+                                                                                  Case Else
+                                                                                      IsValidRule = False
+                                                                                      BrokenMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format.ToDisplayString(), BlockType.Program.ToDisplayString())
+                                                                              End Select
+                                                                              
+                                                                          Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
+                                                                              Select Case BlockType.Format
+                                                                                  Case TcBlockFormat.A1, TcBlockFormat.A5
+                                                                                      'o.k.
+                                                                                  Case Else
+                                                                                      IsValidRule = False
+                                                                                      BrokenMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format.ToDisplayString(), BlockType.Program.ToDisplayString())
+                                                                              End Select
+                                                                      End Select
+                                                                  End If
                                                                   
                                                                   Return Not IsValidRule
                                                               End Function
@@ -582,16 +596,16 @@ Namespace Domain
                         End If
                         
                         If (Me.Format = TcBlockFormat.D3) Then
-                            RetValue &= " (Format D3 / "
+                            RetValue &= " (Format D3 /"
                         ElseIf (Me.Format = TcBlockFormat.THW) Then
-                            RetValue &= " (Format THW / "
+                            RetValue &= " (Format THW /"
                         Else
-                            RetValue &= " (Format ?? / "
+                            RetValue &= " (Format ?? /"
                         End If
                         
-                        If (Me.Format = TcBlockSubFormat.OneLine) Then
+                        If (Me.SubFormat = TcBlockSubFormat.OneLine) Then
                             RetValue &= " einzeilig)"
-                        ElseIf (Me.Format = TcBlockSubFormat.TwoLine) Then
+                        ElseIf (Me.SubFormat = TcBlockSubFormat.TwoLine) Then
                             RetValue &= " zweizeilig)"
                         Else
                             RetValue &= " ??-zeilig)"
@@ -667,8 +681,8 @@ Namespace Domain
                     ''' <summary> Type of TC block determining it's origin and format. </summary>
                     Public Property BlockType()         As New TcBlockType()
                     
-                    ''' <summary> A description of this block. </summary>
-                    Public Property Description()       As String = String.Empty
+                    ''' <summary> A comment for this block. </summary>
+                    Public Property Comment()           As String = String.Empty
                     
                     ''' <summary> The point list of this block. </summary>
                     Public Property Points()            As New IDCollection(Of GeoTcPoint)
@@ -681,24 +695,45 @@ Namespace Domain
                     
                 #End Region
                 
+                #Region "Public Methods"
+                    
+                    ''' <summary> Creates a report of this TcBlock. </summary>
+                     ''' <param name="OnlySummary"> If <see langword="true"/>, the point list won't be reported. </param>
+                     ''' <returns> The report of this TcBlock. </returns>
+                    Public Function ToReport(OnlySummary As Boolean) As String
+                        Dim List           As New StringBuilder()
+                        Dim IndentComment  As Integer = Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Comment.IndexOf("%s")
+                        Dim IndentTrackRef As Integer = Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef.IndexOf("%s")
+                        
+                        If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
+                            List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Comment, Me.Comment.indent(IndentComment, IncludeFirstline:=False, PrependNewlineIfMultiline:=False)))
+                        End If
+                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Type, Me.BlockType.ToString()))
+                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Source, Me.Source.ToString()))
+                        If (Not OnlySummary) Then
+                            List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef, Me.TrackRef.ToString().indent(IndentTrackRef, IncludeFirstline:=True, PrependNewlineIfMultiline:=True)))
+                        Else
+                            List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef, Me.TrackRef.ToString().indent(IndentTrackRef, IncludeFirstline:=False, PrependNewlineIfMultiline:=False)))
+                        End If
+                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Points, Me.Points.Count))
+                        
+                        If (Not OnlySummary) Then
+                            List.AppendLine(Rstyx.Utilities.Resources.Messages.TcBlock_TableHeader.ToHeadLine("-", Padding:=False))
+                            For i As Integer = 0 To Me.Points.Count - 1
+                                List.AppendLine(StringUtils.sprintf("%5d %s", i + 1, Me.Points(i).ToString()))
+                            Next
+                        End If
+                        
+                        Return List.ToString()
+                    End Function
+                    
+                #End Region
+                
                 #Region "Overrides"
                     
                     ''' <inheritdoc/>
                     Public Overrides Function ToString() As String
-                        Dim List As New StringBuilder()
-                        
-                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString_Description, Me.Description))
-                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString_Type       , Me.BlockType.ToString()))
-                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString_Source     , Me.Source.ToString()))
-                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString_TrackRef   , Me.TrackRef.ToString()))
-                        List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString_Points     , Me.Points.Count))
-                        
-                        List.AppendLine(Rstyx.Utilities.Resources.Messages.TcBlock_TableHeader.ToHeadLine("-", Padding:=False))
-                        For i As Integer = 0 To Me.Points.Count - 1
-                            List.AppendLine(StringUtils.sprintf("%5d %s", i + 1, Me.Points(i).ToString()))
-                        Next
-                        
-                        Return List.ToString()
+                        Return StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString, Me.TrackRef.NameOfAlignment, Me.Points.Count, Me.BlockType.ToString())
                     End Function
                     
                 #End Region
@@ -722,7 +757,7 @@ Namespace Domain
                     
                 ''' <inheritdoc/>
                 Public Overrides Function ToString() As String
-                    Return StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataBlockFileSourceInfo_ToString, Me.FilePath, Me.StartLineNo, Me, EndLineNo)
+                    Return StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataBlockFileSourceInfo_ToString, Me.FilePath, Me.StartLineNo, Me.EndLineNo)
                 End Function
                 
             End Class
@@ -745,10 +780,43 @@ Namespace Domain
                 
             End Class
             
+            ''' <summary> Definition of a iGeo TC source record. </summary>
+            Private Class TcRecordDefinitionIGeo
+                
+                Public ID   As DataFieldDefinition(Of String)
+                Public Y    As DataFieldDefinition(Of Double)
+                Public X    As DataFieldDefinition(Of Double)
+                Public Z    As DataFieldDefinition(Of Double)
+                Public St   As DataFieldDefinition(Of Double)
+                Public Km   As DataFieldDefinition(Of Double)
+                Public Q    As DataFieldDefinition(Of Double)
+                Public H    As DataFieldDefinition(Of Double)
+                Public HSOK As DataFieldDefinition(Of Double)
+                Public QG   As DataFieldDefinition(Of Double)
+                Public HG   As DataFieldDefinition(Of Double)
+                Public UebL As DataFieldDefinition(Of Double)
+                Public UebR As DataFieldDefinition(Of Double)
+                Public Ueb  As DataFieldDefinition(Of Double)
+                Public Heb  As DataFieldDefinition(Of Double)
+                Public G    As DataFieldDefinition(Of Double)
+                Public Ri   As DataFieldDefinition(Of Double)
+                Public Ra   As DataFieldDefinition(Of Double)
+                Public V    As DataFieldDefinition(Of Double)
+                Public R    As DataFieldDefinition(Of Double)
+                Public L    As DataFieldDefinition(Of Double)
+                Public HDGM As DataFieldDefinition(Of Double)
+                Public ZDGM As DataFieldDefinition(Of Double)
+                Public Tm   As DataFieldDefinition(Of Double)
+                Public QT   As DataFieldDefinition(Of Double)
+                Public ZSOK As DataFieldDefinition(Of Double)
+                Public ZLGS As DataFieldDefinition(Of Double)
+                Public Text As DataFieldDefinition(Of String)
+            End Class
+            
             ''' <summary> Definition of a Verm.esn TC source record. </summary>
             Private Class TcRecordDefinitionVermEsn
                 
-                Public ID_Factor   As Integer
+                Public ID_Factor As Integer
                 
                 Public ID   As DataFieldDefinition(Of Double)
                 Public Y    As DataFieldDefinition(Of Double)
@@ -765,7 +833,6 @@ Namespace Domain
                 Public Ri   As DataFieldDefinition(Of Double)
                 Public Ueb  As DataFieldDefinition(Of Double)
                 Public ZSOK As DataFieldDefinition(Of Double)
-                
             End Class
             
         #End Region
@@ -820,7 +887,7 @@ Namespace Domain
                         RetValue = k + 1
                     ElseIf (PrevSplitLine.HasComment) Then
                         ' Comment line which isn't empty.
-                        If (PrevSplitLine.Comment.Trim().IsMatchingTo("^-+|PktNr")) Then
+                        If (PrevSplitLine.Comment.Trim().IsMatchingTo("^-+|^PktNr")) Then
                             FoundStart = True
                             RetValue = k + 1
                         End If
@@ -844,20 +911,19 @@ Namespace Domain
             
             ''' <summary> Tries to treat a string as a key/value header line of iGeo or iTrassePC output. </summary>
              ''' <param name="Comment"> The string without leading comment token. </param>
-             ''' <returns> The found key/value pair. If not found, key and value are <see langword="null"/>. </returns>
+             ''' <returns> The found key/value pair, both strings trimmed. If not found, key and value are <see langword="null"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Comment"/> is <see langword="null"/>. </exception>
             Private Function splitHeaderLineIGeo(Comment As String) As KeyValuePair(Of String, String)
                 
                 If (Comment Is Nothing) Then Throw New System.ArgumentNullException("Comment")
                 
-                Dim RetValue As KeyValuePair(Of String, String) = Nothing
+                Dim   RetValue  As KeyValuePair(Of String, String) = Nothing
+                Const Delimiter As String = ":"
                 
-                Dim KeyValue() As String = Comment.Trim().Split(":"c)
-                
-                If (KeyValue.Length = 2) Then
-                    RetValue = New KeyValuePair(Of String, String)(KeyValue(0).Trim(), KeyValue(1).Trim())
-                'Else
-                '    RetValue = New KeyValuePair(Of String, String)(Nothing, Nothing)
+                If (Comment.Contains(Delimiter)) Then
+                    Dim Key   As String = Comment.Left(Delimiter).Trim()
+                    Dim Value As String = Comment.Right(Delimiter, IncludeDelimiter:=False, GetMaximumMatch:=True).Trim()
+                    RetValue = New KeyValuePair(Of String, String)(Key, Value)
                 End If
                 
                 Return RetValue
@@ -915,16 +981,27 @@ Namespace Domain
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
-                    Me.ParseErrors.AddError(SourceBlock.StartIndex, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, SourceBlock.StartIndex, SourceBlock.EndIndex, Block.Error))
+                    Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     Dim RecDef As TcRecordDefinitionVermEsn = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
-                    Dim i      As Integer = SourceBlock.DataStartIndex
+                    Dim RecLen As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
+                    Dim RecIdx As Integer = SourceBlock.DataStartIndex - RecLen
+                    Dim LastRecEmpty As Boolean = False
                     
-                    Do While (i <= SourceBlock.EndIndex)
+                    Do While (RecIdx <= SourceBlock.EndIndex - RecLen)
                         Try
-                            Dim SplitLine As PreSplittedTextLine = SplitLines(i)
+                            ' Switch to next record.
+                            If (LastRecEmpty) Then
+                                RecIdx += 1
+                            Else
+                                RecIdx += RecLen
+                            End If
+                            Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
                             
-                            If (SplitLine.HasData) Then
+                            If (Not SplitLine.HasData) Then
+                                LastRecEmpty = True
+                            Else
+                                LastRecEmpty = False
                                 
                                 Dim Com2 As String = Nothing
                                 Dim ID2  As String = Nothing
@@ -937,62 +1014,232 @@ Namespace Domain
                                     p.Y  = SplitLine.ParseField(RecDef.Y).Value
                                     p.X  = SplitLine.ParseField(RecDef.X).Value
                                     p.Z  = SplitLine.ParseField(RecDef.Z).Value
-                                    Com2 = SplitLine.ParseField(RecDef.Com2).Value
+                                    Com2 = SplitLine.ParseField(RecDef.Com2).Value.Trim()
                                     If (RecDef.St IsNot Nothing) Then p.St = SplitLine.ParseField(RecDef.St).Value
                                     
-                                    ' Switch to second line of this record.
-                                    i += 1
-                                    SplitLine = SplitLines(i)
+                                    ' Get second line of this record.
+                                    SplitLine = SplitLines(RecIdx + 1)
                                     If (Not SplitLine.HasData) Then Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingSecondLine, Nothing))
                                 End If
                                 
                                 ' Track coordinates line.
                                 ' Point-ID.
-                                p.ID = StringUtils.sprintf("%d", SplitLine.ParseField(RecDef.ID).Value * RecDef.ID_Factor)
+                                Dim DoubleField As DataField(Of Double) = SplitLine.ParseField(RecDef.ID)
+                                p.ID = StringUtils.sprintf("%d", DoubleField.Value * RecDef.ID_Factor)
                                 If ((Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) AndAlso (Not (p.ID = ID2))) Then
-                                    Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, ID2, p.ID), Nothing))
+                                    Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
                                 ElseIf (Block.Points.Contains(p.ID)) Then
-                                    Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
+                                    Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
                                 End If
                                 
                                 ' Track values.
-                                p.Km   = SplitLine.ParseField(RecDef.Km).Value
                                 p.Q    = SplitLine.ParseField(RecDef.Q).Value
                                 p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
-                                p.Ri   = SplitLine.ParseField(RecDef.Ri).Value
-                                p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value
+                                p.Ri   = SplitLine.ParseField(RecDef.Ri).Value / RHO
+                                p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value / 1000
                                 p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
-                                p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value
+                                p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value * (-1)
                                 p.QKm  = SplitLine.ParseField(RecDef.QKm).Value
                                 
+                                If (Not Double.IsNaN(p.QKm)) Then
+                                    p.Km = SplitLine.ParseField(RecDef.Km).Value
+                                Else
+                                    p.St = SplitLine.ParseField(RecDef.Km).Value
+                                End If
+                                
                                 ' Point info and comment.
-                                p.Info = SplitLine.ParseField(RecDef.Com).Value
+                                p.Info = SplitLine.ParseField(RecDef.Com).Value.Trim()
                                 If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = Com2
                                 If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
                                 
                                 ' Other info.
-                                p.ActualCant   = GeoMath.parseCant(p.Info)
+                                p.ActualCant   = GeoMath.parseCant(p.Info) / 1000
                                 p.CantBase     = Me.CantBase
                                 p.SourceLineNo = SplitLine.SourceLineNo
                                 p.TrackRef     = Block.TrackRef
                                 
                                 ' Calculate values not having read.
                                 p.transformHorizontalToCanted()
+                                If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
                                 
                                 ' Add Point to the block.
                                 Block.Points.Add(p)
-                                
-                                ' Switch to next record.
-                                i += 1
                             End If
                         Catch ex As ParseException
+                            If (ex.ParseError Is Nothing) Then Throw
                             Me.ParseErrors.Add(ex.ParseError)
                         End Try
                     Loop
                     
                     ' Warning for empty block.
                     If (Block.Points.Count = 0) Then
-                        Me.ParseErrors.AddWarning(SourceBlock.StartIndex, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_EmptyTcBlock, SourceBlock.StartIndex, SourceBlock.EndIndex))
+                        Me.ParseErrors.AddWarning(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_EmptyTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo))
+                    End If
+                End If
+                
+                Return Block
+            End Function
+            
+            ''' <summary> Reads a block of iGeo/iTrassePC output (A1, A5). </summary>
+             ''' <param name="SplitLines">  The data cache holding the block of interest. </param>
+             ''' <param name="SourceBlock"> Determines the block type and it's position in <paramref name="SplitLines"/>. </param>
+             ''' <returns> The complete <see cref="TcBlock"/> read from <paramref name="SplitLines"/>. </returns>
+             ''' <remarks>
+             ''' <list type="bullet">
+             ''' <listheader> <description> <b>Hints:</b> </description></listheader>
+             ''' <item> The returned block <b>may be invalid!</b> (check for .IsValid!). </item>
+             ''' <item> All parsing errors will be added to <see cref="P:ParseErrors"/> property. </item>
+             ''' <item> The Points collection (<see cref="P:Points"/>) may be empty. </item>
+             ''' </list>
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
+            Private Function readBlockIGeo(SplitLines As Collection(Of PreSplittedTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
+                
+                If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
+                If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
+                
+                Logger.logDebug(StringUtils.sprintf(" Reading iGeo/iTrassePC TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
+                
+                ' Create the block.
+                Dim Block As New TcBlock()
+                
+                ' Parse header.
+                findBlockMetaDataIGeo(SplitLines, SourceBlock, Block)
+                
+                ' Read points.
+                If (Not Block.IsValid) Then
+                    Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
+                Else
+                    Dim RecDef As TcRecordDefinitionIGeo = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                    Dim RecIdx As Integer = SourceBlock.DataStartIndex - 1
+                    
+                    Do While (RecIdx <= SourceBlock.EndIndex - 1)
+                        Try
+                            ' Switch to next record.
+                            RecIdx += 1
+                            Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
+                            
+                            If (SplitLine.HasData) Then
+                                
+                                Dim UebL As Double = Double.NaN
+                                Dim UebR As Double = Double.NaN
+                                
+                                Dim p    As New GeoTcPoint()
+                                
+                                ' Cartesian coordinates.
+                                p.ID = SplitLine.ParseField(RecDef.ID).Value
+                                p.Y  = SplitLine.ParseField(RecDef.Y).Value
+                                p.X  = SplitLine.ParseField(RecDef.X).Value
+                                p.Z  = SplitLine.ParseField(RecDef.Z).Value
+                                
+                                ' Track values.
+                                p.St   = SplitLine.ParseField(RecDef.St).Value
+                                p.Q    = SplitLine.ParseField(RecDef.Q).Value
+                                p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value
+                                
+                                ' Only A5.
+                                If (Block.BlockType.Format = TcBlockFormat.A5) Then
+                                    p.Km   = SplitLine.ParseField(RecDef.Km).Value
+                                    p.H    = SplitLine.ParseField(RecDef.H).Value
+                                    p.QG   = SplitLine.ParseField(RecDef.QG).Value
+                                    p.HG   = SplitLine.ParseField(RecDef.HG).Value
+                                    
+                                    UebL   = SplitLine.ParseField(RecDef.UebL).Value
+                                    UebR   = SplitLine.ParseField(RecDef.UebR).Value
+                                    p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value
+                                    p.Heb  = SplitLine.ParseField(RecDef.Heb).Value
+                                    
+                                    p.G    = SplitLine.ParseField(RecDef.G).Value
+                                    p.Ri   = SplitLine.ParseField(RecDef.Ri).Value
+                                    p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
+                                    
+                                    p.V    = SplitLine.ParseField(RecDef.V).Value
+                                    p.R    = SplitLine.ParseField(RecDef.R).Value
+                                    p.L    = SplitLine.ParseField(RecDef.L).Value
+                                    
+                                    p.HDGM = SplitLine.ParseField(RecDef.HDGM).Value
+                                    p.ZDGM = SplitLine.ParseField(RecDef.ZDGM).Value
+                                    
+                                    If (Block.BlockType.Program = TcBlockProgram.iGeo) Then
+                                        p.Tm   = SplitLine.ParseField(RecDef.Tm).Value
+                                        p.QT   = SplitLine.ParseField(RecDef.QT).Value
+                                        p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
+                                        p.ZLGS = SplitLine.ParseField(RecDef.ZLGS).Value
+                                    End If
+                                End If
+                                
+                                ' Point info and comment.
+                                p.Info = SplitLine.ParseField(RecDef.Text).Value
+                                If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
+                                If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
+                                
+                                ' Other info.
+                                p.ActualCant = GeoMath.parseCant(p.Info) / 1000
+                                If (Double.IsNaN(p.ActualCant)) Then
+                                    p.ActualCant = GeoMath.parseCant(p.Comment) / 1000
+                                End If
+                                p.CantBase     = Me.CantBase
+                                p.SourceLineNo = SplitLine.SourceLineNo
+                                p.TrackRef     = Block.TrackRef
+                                
+                                ' Resolve Ambiguities.
+                                If (Block.BlockType.Format = TcBlockFormat.A1) Then
+                                    If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
+                                        p.H    = p.HSOK
+                                        p.HSOK = Double.NaN
+                                    End If
+                                End If
+                                
+                                ' Change Zero to NaN.
+                                If (Block.BlockType.Program = TcBlockProgram.iTrassePC) Then
+                                    If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
+                                        p.HSOK = Double.NaN
+                                        p.ZSOK = Double.NaN
+                                        p.QG   = Double.NaN
+                                        p.HG   = Double.NaN
+                                        p.Heb  = Double.NaN
+                                        p.Ueb  = Double.NaN
+                                        UebL   = Double.NaN
+                                        UebR   = Double.NaN
+                                    End If
+                                    If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace()) Then
+                                        p.ZLGS = Double.NaN
+                                        p.H    = Double.NaN
+                                        p.G    = Double.NaN
+                                    End If
+                                    If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace() OrElse Block.TrackRef.NameOfRoadSections.IsEmptyOrWhiteSpace()) Then
+                                        p.V    = Double.NaN
+                                    End If
+                                    If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace() OrElse Block.TrackRef.NameOfTunnelSections.IsEmptyOrWhiteSpace()) Then
+                                        p.R    = Double.NaN
+                                        p.L    = Double.NaN
+                                    End If
+                                    If (Block.TrackRef.NameOfDTM.IsEmptyOrWhiteSpace()) Then
+                                        p.HDGM = Double.NaN
+                                        p.ZDGM = Double.NaN
+                                    End If
+                                End If
+                                
+                                ' Calculate values not having read.
+                                p.transformHorizontalToCanted()
+                                If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
+                                If (Double.IsNaN(p.ZSOK)) Then p.ZSOK = p.Z - p.HSOK
+                                
+                                ' Add Point to the block.
+                                Block.Points.Add(p)
+                            End If
+                        Catch ex As ParseException
+                            If (ex.ParseError Is Nothing) Then Throw
+                            Me.ParseErrors.Add(ex.ParseError)
+                        End Try
+                    Loop
+                    
+                    ' Warning for empty block.
+                    If (Block.Points.Count = 0) Then
+                        Me.ParseErrors.AddWarning(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_EmptyTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo))
                     End If
                 End If
                 
@@ -1006,7 +1253,7 @@ Namespace Domain
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
-            Private Sub findBlockMetaDataVermEsn(SplitLines As Collection(Of PreSplittedTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+            Private Sub findBlockMetaDataVermEsn(ByRef SplitLines As Collection(Of PreSplittedTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
                 If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
@@ -1016,6 +1263,7 @@ Namespace Domain
                 Dim FullLine        As String
                 Dim Pattern         As String
                 Dim PathName        As String
+                Dim Comment     As New StringBuilder()
                 Dim oMatch          As Match
                 Dim DataFound       As Boolean = False
                 Dim FormatFound     As Boolean = False
@@ -1031,91 +1279,101 @@ Namespace Domain
                 
                 Do
                     SplittedLine = SplitLines(i)
-                    FullLine = SplittedLine.getFullLine()
                     
-                    If (Not FullLine.IsMatchingTo("^[0-9]")) Then
-                        ' Header line.
+                    If (SplittedLine.IsCommentLine) Then
+                        If (SplittedLine.HasComment) Then
+                            If (Comment.Length > 0) Then Comment.AppendLine()
+                            Comment.Append(SplittedLine.Comment)
+                        End If
+                    Else
                         
-                        ' Check for: Format, Version and Alignement name.
-                        If (Block.BlockType.Format = TcBlockFormat.None) Then
-                            ' Try: THW, current version (alignment full path)
-                            Pattern = "^\s*Trassenumformung\s+(.+?\.tra)\s+\("
-                            oMatch = Regex.Match(FullLine, Pattern)
-                            
-                            If (oMatch.Success) Then
-                                FormatFound = True
-                                Block.BlockType.Version = TcBlockVersion.Current
-                                Block.BlockType.Format  = TcBlockFormat.THW
-                                PathName = oMatch.Groups(1).Value
-                                Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, False)
-                            End If
-                        End If
-                        If (Block.BlockType.Format = TcBlockFormat.None) Then
-                            ' Try: THW, outdated version (DOS, alignment name without path and without spaces!)
-                            Pattern = "^\s*Trassenumformung\s+(.+?)\s+\("
-                            oMatch = Regex.Match(FullLine, Pattern)
-                            
-                            If (oMatch.Success) Then
-                                FormatFound = True
-                                Block.BlockType.Version = TcBlockVersion.Outdated
-                                Block.BlockType.Format  = TcBlockFormat.THW
-                                Block.TrackRef.NameOfAlignment = oMatch.Groups(1).Value
-                            End If
-                        End If
-                        If (Block.BlockType.Format = TcBlockFormat.None) Then
-                            ' Try: D3, both versions.
-                            Pattern = "^\s*Umformung\s+(.+)\s+\("
-                            oMatch = Regex.Match(FullLine, Pattern)
-                            
-                            If (oMatch.Success) Then
-                                FormatFound = True
-                                Block.BlockType.Format = TcBlockFormat.D3
-                                PathName = oMatch.Groups(1).Value
-                                
-                                ' Version.
-                                If (PathName.Contains(Path.PathSeparator)) Then
-                                    ' Current version (D3 project full path).
-                                    Block.BlockType.Version = TcBlockVersion.Current
-                                Else
-                                    ' Outdated version (No D3 project name/path, only internal line name).
-                                    Block.BlockType.Version = TcBlockVersion.Outdated
+                        FullLine = SplittedLine.getFullLine()
+                        
+                        If (Not FullLine.IsMatchingTo("^ ?[0-9]")) Then
+                            ' Header line.
+                            If (FullLine.IsNotEmptyOrWhiteSpace()) Then
+                                ' Check for: Format, Version and Alignement name.
+                                If (Block.BlockType.Format = TcBlockFormat.None) Then
+                                    ' Try: THW, current version (alignment full path)
+                                    Pattern = "^Trassenumformung\s+(.+?\.tra)\s+\("
+                                    oMatch = Regex.Match(FullLine, Pattern, RegexOptions.IgnoreCase)
+                                    
+                                    If (oMatch.Success) Then
+                                        FormatFound = True
+                                        Block.BlockType.Version = TcBlockVersion.Current
+                                        Block.BlockType.Format  = TcBlockFormat.THW
+                                        PathName = oMatch.Groups(1).Value
+                                        Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, False)
+                                    End If
+                                End If
+                                If (Block.BlockType.Format = TcBlockFormat.None) Then
+                                    ' Try: THW, outdated version (DOS, alignment name without path and without spaces!)
+                                    Pattern = "^Trassenumformung\s+(.+?)\s+\("
+                                    oMatch = Regex.Match(FullLine, Pattern, RegexOptions.IgnoreCase)
+                                    
+                                    If (oMatch.Success) Then
+                                        FormatFound = True
+                                        Block.BlockType.Version = TcBlockVersion.Outdated
+                                        Block.BlockType.Format  = TcBlockFormat.THW
+                                        Block.TrackRef.NameOfAlignment = oMatch.Groups(1).Value
+                                    End If
+                                End If
+                                If (Block.BlockType.Format = TcBlockFormat.None) Then
+                                    ' Try: D3, both versions.
+                                    Pattern = "^Umformung\s+(.+)\s+\("
+                                    oMatch = Regex.Match(FullLine, Pattern, RegexOptions.IgnoreCase)
+                                    
+                                    If (oMatch.Success) Then
+                                        FormatFound = True
+                                        Block.BlockType.Format = TcBlockFormat.D3
+                                        PathName = oMatch.Groups(1).Value
+                                        
+                                        ' Version.
+                                        If (PathName.Contains(Path.DirectorySeparatorChar)) Then
+                                            ' Current version (D3 project full path).
+                                            Block.BlockType.Version = TcBlockVersion.Current
+                                        Else
+                                            ' Outdated version (No D3 project name/path, only internal line name).
+                                            Block.BlockType.Version = TcBlockVersion.Outdated
+                                        End If
+                                        
+                                        ' Alignment name.
+                                        Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, True)
+                                        
+                                    End If
                                 End If
                                 
-                                ' Alignment name.
-                                Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, True)
-                                
+                                ' Check for: Gradient and Km name.
+                                If (Block.BlockType.Format = TcBlockFormat.THW) Then
+                                    
+                                    Pattern = "^\s*(.*?)\s*:\s*(\S*.*\S+)\s*"
+                                    oMatch = Regex.Match(FullLine, Pattern)
+                                    
+                                    If (oMatch.Success) Then
+                                        Dim Key   As String  = oMatch.Groups(1).Value
+                                        Dim Value As String  = oMatch.Groups(2).Value
+                                        Select Case Key
+                                            Case "Gradiente":            Block.TrackRef.NameOfGradientLine = getNameFromMatch(Value, False)
+                                            Case "Reduktion auf Trasse": Block.TrackRef.NameOfKmAlignment  = getNameFromMatch(Value, False)
+                                        End Select
+                                    End If
+                                End If
                             End If
-                        End If
-                        
-                        ' Check for: Gradient and Km name.
-                        If (Block.BlockType.Format = TcBlockFormat.THW) Then
                             
-                            Pattern = "^\s*(.*?)\s*:\s*(\S*.*\S+)\s*"
-                            oMatch = Regex.Match(FullLine, Pattern)
+                        Else
+                            ' First Data Line => Check for sub format.
+                            DataFound = True
+                            SourceBlock.DataStartIndex = i
                             
-                            If (oMatch.Success) Then
-                                Dim Key   As String  = oMatch.Groups(1).Value
-                                Dim Value As String  = oMatch.Groups(2).Value
-                                Select Case Key
-                                    Case "Gradiente":            Block.TrackRef.NameOfGradientLine = getNameFromMatch(oMatch.Groups(1).Value, False)
-                                    Case "Reduktion auf Trasse": Block.TrackRef.NameOfKmAlignment  = getNameFromMatch(oMatch.Groups(1).Value, False)
-                                End Select
-                            End If
-                        End If
-                        
-                    Else
-                        ' First Data Line => Check for sub format.
-                        DataFound = True
-                        SourceBlock.DataStartIndex = i
-                        
-                        ' Determine sub format.
-                        Block.BlockType.SubFormat = TcBlockSubFormat.OneLine
-                        If ((i < SourceBlock.EndIndex) AndAlso (SplitLines(i + 1).HasData)) Then
-                            Dim IDLength As Integer = VermEsnRecordDefinitions(getKeyForRecordDefinition(Block.BlockType)).ID.Length
-                            Dim ID1      As String  = SplittedLine.Data.Left(IDLength)
-                            Dim ID2      As String  = SplitLines(i + 1).Data.Left(IDLength)
-                            If (ID1 = ID2) Then
-                                Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine
+                            ' Determine sub format.
+                            Block.BlockType.SubFormat = TcBlockSubFormat.OneLine
+                            If ((i < SourceBlock.EndIndex) AndAlso (SplitLines(i + 1).HasData)) Then
+                                Dim IDLength As Integer = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType)).ID.Length
+                                Dim ID1      As String  = SplittedLine.Data.Left(IDLength)
+                                Dim ID2      As String  = SplitLines(i + 1).Data.Left(IDLength)
+                                If (ID1 = ID2) Then
+                                    Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine
+                                End If
                             End If
                         End If
                     End If
@@ -1123,10 +1381,101 @@ Namespace Domain
                     i += 1
                 Loop Until (DataFound OrElse (i > SourceBlock.EndIndex))
                 
+                Block.Comment = Comment.ToString()
+                
                 Logger.logDebug(StringUtils.sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(StringUtils.sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
                 Logger.logDebug(StringUtils.sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
-                Logger.logDebug(StringUtils.sprintf("  First Data Line      : %s", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
+                If (DataFound) Then Logger.logDebug(StringUtils.sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
+            End Sub
+            
+            ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A1, A5), especially block type and geometry reference info and first data line. </summary>
+             ''' <param name="SplitLines">     [In]  The data cache holding the block of interest. </param>
+             ''' <param name="SourceBlock">    [In/Out] Info about block source in <paramref name="SplitLines"/>. </param>
+             ''' <param name="Block">          [Out] The TcBlock to fill with info. </param>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
+            Private Sub findBlockMetaDataIGeo(ByRef SplitLines As Collection(Of PreSplittedTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+                
+                If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
+                If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
+                If (Block Is Nothing) Then Throw New System.ArgumentNullException("Block")
+                
+                Dim SplittedLine    As PreSplittedTextLine
+                Dim Comment     As New StringBuilder()
+                Dim DataFound       As Boolean = False
+                Dim FormatFound     As Boolean = False
+                Dim CommentEnd  As Boolean = False
+                Dim kvp             As KeyValuePair(Of String, String)
+                Dim i               As Integer = SourceBlock.StartIndex
+                
+                ' Supported Format strings.
+                Const Fmt_A1 = "A1 : PktNr  Y  X  Z  St/Km  Q  H/HSOK  Code"
+                Const Fmt_A5 = "A5 : Alles"
+                
+                Block.BlockType.Program  = SourceBlock.BlockType.Program
+                Block.BlockType.Version  = TcBlockVersion.Current
+                
+                Block.Source.FilePath    = Me.FilePath
+                Block.Source.StartLineNo = SplitLines(SourceBlock.StartIndex).SourceLineNo
+                Block.Source.EndLineNo   = SplitLines(SourceBlock.EndIndex).SourceLineNo
+                
+                Logger.logDebug(" Find meta data of iGeo TC output block:")
+                
+                Do
+                    SplittedLine = SplitLines(i)
+                    
+                    If (SplittedLine.IsCommentLine) Then
+                        ' Comment line: Look for Comment and output header of iGeo and iTrassePC.
+                        If (SplittedLine.HasComment) Then
+                            kvp = splitHeaderLineIGeo(SplittedLine.Comment)
+                            If (kvp.Key IsNot Nothing) Then
+                                Select Case kvp.Key
+                                    
+                                    Case "Format"
+                                        Select Case kvp.Value
+                                            Case Fmt_A1
+                                                FormatFound = True
+                                                Block.BlockType.Format = TcBlockFormat.A1
+                                            Case Fmt_A5
+                                                FormatFound = True
+                                                Block.BlockType.Format = TcBlockFormat.A5
+                                        End Select
+                                    
+                                    Case "Datei":               CommentEnd = True
+                                    
+                                    Case "Achse":               Block.TrackRef.NameOfAlignment      = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Stationierungsachse": Block.TrackRef.NameOfKmAlignment    = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Ueberhöhungsband":    Block.TrackRef.NameOfCantLine       = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "DGM":                 Block.TrackRef.NameOfDTM            = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    
+                                End Select
+                            End If
+                            
+                            If (Not CommentEnd) Then
+                                If (Comment.Length > 0) Then Comment.AppendLine()
+                                Comment.Append(SplittedLine.Comment)
+                            End If
+                        End If
+                    Else
+                        ' First Data Line.
+                        DataFound = True
+                        SourceBlock.DataStartIndex = i
+                    End If
+                    
+                    i += 1
+                Loop Until (DataFound OrElse (i > SourceBlock.EndIndex))
+                
+                Block.Comment = Comment.ToString()
+                
+                Logger.logDebug(StringUtils.sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
+                Logger.logDebug(StringUtils.sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
+                Logger.logDebug(StringUtils.sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
+                If (DataFound) Then Logger.logDebug(StringUtils.sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
             ''' <summary> Sets the definitions for Verm.esn source records. </summary>
@@ -1175,7 +1524,7 @@ Namespace Domain
                     _
                     .QKm  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QKm,
                                                                DataFieldPositionType.ColumnAndLength, 72, 7,
-                                                               DataFieldOptions.NotRequired),
+                                                               DataFieldOptions.NonNumericAsNaN Or DataFieldOptions.NotRequired),
                     _
                     .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
                                                                DataFieldPositionType.ColumnAndLength, 63, 8,
@@ -1188,7 +1537,8 @@ Namespace Domain
                                                                DataFieldPositionType.ColumnAndLength, 28, 10),
                     _
                     .Ueb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,
-                                                               DataFieldPositionType.ColumnAndLength, 49, 6),
+                                                               DataFieldPositionType.ColumnAndLength, 49, 6,
+                                                               DataFieldOptions.NotRequired Or DataFieldOptions.MissingAsZero),
                     _
                     .ZSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,
                                                                DataFieldPositionType.ColumnAndLength, 55, 8,
@@ -1234,7 +1584,7 @@ Namespace Domain
                     _
                     .QKm  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QKm,
                                                                DataFieldPositionType.ColumnAndLength, 74, 7,
-                                                               DataFieldOptions.NotRequired),
+                                                               DataFieldOptions.NonNumericAsNaN Or DataFieldOptions.NotRequired),
                     _
                     .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
                                                                DataFieldPositionType.ColumnAndLength, 65, 8,
@@ -1283,11 +1633,11 @@ Namespace Domain
                                                                DataFieldOptions.NotRequired),
                     _
                     .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.ColumnAndLength, 33, 16,
-                                                               DataFieldOptions.AllowKilometerNotation),
+                                                               DataFieldPositionType.ColumnAndLength, 33, 16),
                     _
                     .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.ColumnAndLength, 7, 17),
+                                                               DataFieldPositionType.ColumnAndLength, 7, 15,
+                                                               DataFieldOptions.AllowKilometerNotation),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.ColumnAndLength, 22, 9,
@@ -1295,7 +1645,7 @@ Namespace Domain
                     _
                     .QKm  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QKm,
                                                                DataFieldPositionType.ColumnAndLength, 74, 6,
-                                                               DataFieldOptions.NotRequired),
+                                                               DataFieldOptions.NonNumericAsNaN Or DataFieldOptions.NotRequired),
                     _
                     .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
                                                                DataFieldPositionType.ColumnAndLength, 65, 8,
@@ -1344,11 +1694,11 @@ Namespace Domain
                                                                DataFieldOptions.NotRequired),
                     _
                     .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.ColumnAndLength, 36, 16,
-                                                               DataFieldOptions.AllowKilometerNotation),
+                                                               DataFieldPositionType.ColumnAndLength, 36, 16),
                     _
                     .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.ColumnAndLength, 8, 15),
+                                                               DataFieldPositionType.ColumnAndLength, 8, 15,
+                                                               DataFieldOptions.AllowKilometerNotation),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.ColumnAndLength, 23, 9,
@@ -1356,7 +1706,7 @@ Namespace Domain
                     _
                     .QKm  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QKm,
                                                                DataFieldPositionType.ColumnAndLength, 78, 7,
-                                                               DataFieldOptions.NotRequired),
+                                                               DataFieldOptions.NonNumericAsNaN Or DataFieldOptions.NotRequired),
                     _
                     .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
                                                                DataFieldPositionType.ColumnAndLength, 69, 8,
@@ -1377,23 +1727,221 @@ Namespace Domain
                     })
             End Sub
             
-            ' ''' <summary> Calls <paramref name="SplitLine"/>.<c>TryParseField()</c> and does related actions. </summary>
-             '  ''' <typeparam name="TFieldValue"> The type to parse the field into. </typeparam>
-             '  ''' <param name="SplitLine">       The <see cref="PreSplittedTextLine"/> to parse the field from. </param>
-             '  ''' <param name="FieldDef">        The parsing instructions. </param>
-             '  ''' <param name="Result">          The resulting DataField object. </param>
-             '  ''' <returns>                      <see langword="true"/> on success, otherwise <see langword="false"/>. </returns>
-             ' ''' <remarks> If a parsing error has occurred it will be added to <c>Me.ParseErrors</c>. </remarks>
-             ' Private Function TryParseField(Of TFieldValue As IConvertible)(SplitLine As PreSplittedTextLine,
-             '                                                                FieldDef As DataFieldDefinition(Of TFieldValue),
-             '                                                                <Out> ByRef Result As DataField(Of TFieldValue)
-             '                                                               ) As Boolean
-             '     Dim success As Boolean = SplitLine.TryParseField(FieldDef, Result)
-             '     If (Not success) Then
-             '         Me.ParseErrors.Add(Result.ParseError)
-             '     End If
-             '     Return success
-            ' End Function
+            ''' <summary> Sets the definitions for iGeo/iTrassePC source records. </summary>
+            Private Sub setRecordDefinitionsIGeo()
+                Dim BlockType As New TcBlockType()
+                
+                ' Column definitions are zero-ased!
+                
+                ' iGeo + iTrassePC, A1
+                BlockType.Format  = TcBlockFormat.A1
+                BlockType.Version = TcBlockVersion.Current
+                Dim A1RecordDef As New TcRecordDefinitionIGeo With {
+                    _
+                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
+                                                               DataFieldPositionType.WordNumber, 1, 0),
+                    _
+                    .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
+                                                               DataFieldPositionType.WordNumber, 2, 0),
+                    _
+                    .X    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,
+                                                               DataFieldPositionType.WordNumber, 3, 0),
+                    _
+                    .Z    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,
+                                                               DataFieldPositionType.WordNumber, 4, 0,
+                                                               DataFieldOptions.ZeroAsNaN),
+                    _
+                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                               DataFieldPositionType.WordNumber, 5, 0),
+                    _
+                    .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
+                                                               DataFieldPositionType.WordNumber, 6, 0),
+                    _
+                    .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
+                                                               DataFieldPositionType.WordNumber, 7, 0),
+                    _
+                    .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
+                                                               DataFieldPositionType.WordNumber, 8, 0,
+                                                               DataFieldOptions.NotRequired)
+                    }
+                BlockType.Program = TcBlockProgram.iGeo
+                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), A1RecordDef)
+                BlockType.Program = TcBlockProgram.iTrassePC
+                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), A1RecordDef)
+                
+                ' iGeo, A5
+                BlockType.Program = TcBlockProgram.iGeo
+                BlockType.Format  = TcBlockFormat.A5
+                BlockType.Version = TcBlockVersion.Current
+                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionIGeo With {
+                    _
+                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
+                                                               DataFieldPositionType.WordNumber, 1, 0),
+                    _
+                    .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
+                                                               DataFieldPositionType.WordNumber, 2, 0),
+                    _
+                    .X    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,
+                                                               DataFieldPositionType.WordNumber, 3, 0),
+                    _
+                    .Z    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,
+                                                               DataFieldPositionType.WordNumber, 4, 0,
+                                                               DataFieldOptions.ZeroAsNaN),
+                    _
+                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                               DataFieldPositionType.WordNumber, 5, 0),
+                    _
+                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                               DataFieldPositionType.WordNumber, 6, 0),
+                    _
+                    .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
+                                                               DataFieldPositionType.WordNumber, 7, 0),
+                    _
+                    .H    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,
+                                                               DataFieldPositionType.WordNumber, 8, 0),
+                    _
+                    .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
+                                                               DataFieldPositionType.WordNumber, 9, 0),
+                    _
+                    .QG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,
+                                                               DataFieldPositionType.WordNumber, 10, 0),
+                    _
+                    .HG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,
+                                                               DataFieldPositionType.WordNumber, 11, 0),
+                    _
+                    .UebL = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,
+                                                               DataFieldPositionType.WordNumber, 12, 0),
+                    _
+                    .UebR = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,
+                                                               DataFieldPositionType.WordNumber, 13, 0),
+                    _
+                    .Ueb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,
+                                                               DataFieldPositionType.WordNumber, 14, 0),
+                    _
+                    .Heb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,
+                                                               DataFieldPositionType.WordNumber, 15, 0),
+                    _
+                    .G    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,
+                                                               DataFieldPositionType.WordNumber, 16, 0),
+                    _
+                    .Ri   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,
+                                                               DataFieldPositionType.WordNumber, 17, 0),
+                    _
+                    .Ra   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,
+                                                               DataFieldPositionType.WordNumber, 18, 0),
+                    _
+                    .V    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,
+                                                               DataFieldPositionType.WordNumber, 19, 0),
+                    _
+                    .R    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,
+                                                               DataFieldPositionType.WordNumber, 20, 0),
+                    _
+                    .L    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,
+                                                               DataFieldPositionType.WordNumber, 21, 0),
+                    _
+                    .HDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,
+                                                               DataFieldPositionType.WordNumber, 22, 0),
+                    _
+                    .ZDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,
+                                                               DataFieldPositionType.WordNumber, 23, 0),
+                    _
+                    .Tm   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,
+                                                               DataFieldPositionType.WordNumber, 24, 0),
+                    _
+                    .QT   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,
+                                                               DataFieldPositionType.WordNumber, 25, 0),
+                    _
+                    .ZSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,
+                                                               DataFieldPositionType.WordNumber, 26, 0),
+                    _
+                    .ZLGS = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,
+                                                               DataFieldPositionType.WordNumber, 27, 0),
+                    _
+                    .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
+                                                               DataFieldPositionType.WordNumber, 28, 0,
+                                                               DataFieldOptions.NotRequired)
+                    })
+                '
+                ' iTrassePC, A5
+                BlockType.Program = TcBlockProgram.iTrassePC
+                BlockType.Format  = TcBlockFormat.A5
+                BlockType.Version = TcBlockVersion.Current
+                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionIGeo With {
+                    _
+                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
+                                                               DataFieldPositionType.WordNumber, 1, 0),
+                    _
+                    .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
+                                                               DataFieldPositionType.WordNumber, 2, 0),
+                    _
+                    .X    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,
+                                                               DataFieldPositionType.WordNumber, 3, 0),
+                    _
+                    .Z    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,
+                                                               DataFieldPositionType.WordNumber, 4, 0),
+                    _
+                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                               DataFieldPositionType.WordNumber, 5, 0),
+                    _
+                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                               DataFieldPositionType.WordNumber, 6, 0),
+                    _
+                    .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
+                                                               DataFieldPositionType.WordNumber, 7, 0),
+                    _
+                    .H    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,
+                                                               DataFieldPositionType.WordNumber, 8, 0),
+                    _
+                    .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
+                                                               DataFieldPositionType.WordNumber, 9, 0),
+                    _
+                    .QG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,
+                                                               DataFieldPositionType.WordNumber, 10, 0),
+                    _
+                    .HG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,
+                                                               DataFieldPositionType.WordNumber, 11, 0),
+                    _
+                    .UebL = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,
+                                                               DataFieldPositionType.WordNumber, 12, 0),
+                    _
+                    .UebR = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,
+                                                               DataFieldPositionType.WordNumber, 13, 0),
+                    _
+                    .Ueb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,
+                                                               DataFieldPositionType.WordNumber, 14, 0),
+                    _
+                    .Heb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,
+                                                               DataFieldPositionType.WordNumber, 15, 0),
+                    _
+                    .G    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,
+                                                               DataFieldPositionType.WordNumber, 16, 0),
+                    _
+                    .Ri   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,
+                                                               DataFieldPositionType.WordNumber, 17, 0),
+                    _
+                    .Ra   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,
+                                                               DataFieldPositionType.WordNumber, 18, 0),
+                    _
+                    .V    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,
+                                                               DataFieldPositionType.WordNumber, 19, 0),
+                    _
+                    .R    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,
+                                                               DataFieldPositionType.WordNumber, 20, 0),
+                    _
+                    .L    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,
+                                                               DataFieldPositionType.WordNumber, 21, 0),
+                    _
+                    .HDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,
+                                                               DataFieldPositionType.WordNumber, 22, 0),
+                    _
+                    .ZDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,
+                                                               DataFieldPositionType.WordNumber, 23, 0),
+                    _
+                    .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
+                                                               DataFieldPositionType.WordNumber, 24, 0,
+                                                               DataFieldOptions.NotRequired)
+                    })
+            End Sub
             
         #End Region
         

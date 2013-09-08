@@ -89,15 +89,23 @@ Public Class MainViewModel
         End Sub
         
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
+            
+            Dim TcReader As New TcFileReader()
+            
             Try
                 'Dim Path As String = "T:\Debug.log"
                 'Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
                 'fdk.Load(Me.FilePath1)
                 'Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
                 
-                Dim Info As String = Me.Textbox
-                Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
-                Logger.logInfo(StringUtils.sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
+                TcReader = New TcFileReader()
+                TcReader.Load(Me.FilePath1)
+                Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
+                Logger.logInfo(TcReader.ToString())
+                
+                'Dim Info As String = Me.Textbox
+                'Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
+                'Logger.logInfo(StringUtils.sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
                 
                 'Dim Zahl        As DataField(Of Double) = Nothing
                 'Dim Text        As DataField(Of String) = Nothing
@@ -173,6 +181,10 @@ Public Class MainViewModel
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
+                
+            Catch ex As ParseException
+                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
+                TcReader.ParseErrors.ShowInJEdit()
                 
             Catch ex As System.Exception
                 Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))

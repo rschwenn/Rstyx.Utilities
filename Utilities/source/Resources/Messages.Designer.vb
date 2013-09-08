@@ -254,6 +254,51 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Steigungswinkel ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_G() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_G", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe über der Gradiente ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_H() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_H", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe über DGM ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_HDGM() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_HDGM", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Anhebung der unteren Schiene zur Gradiente ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Heb() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Heb", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe über SOK im gedrehten Gleissystem ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_HG() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_HG", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Höhe über SOK ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_HSOK() As String
@@ -268,6 +313,15 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_Km() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_Km", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Abwicklungsmass (Tunnelprofil) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_L() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_L", resourceCulture)
             End Get
         End Property
         
@@ -290,11 +344,38 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Querabstand im gedrehten Gleissystem ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_QG() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_QG", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Abstand zur Km-Linie ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_QKm() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_QKm", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Abstand zur Achse in Tunnelvortriebsrichtung ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_QT() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_QT", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Radialer Abstand zum Tunnelprofil ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_R() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_R", resourceCulture)
             End Get
         End Property
         
@@ -326,6 +407,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punktinformation ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Text() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Text", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Tunnelmeter ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Tm() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Tm", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Überhöhung ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Ueb() As String
@@ -335,7 +434,34 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die X ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Überhöhung linke Schiene ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_UebL() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_UebL", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Überhöhung reche  Schiene ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_UebR() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_UebR", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe über Strassenprofil ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_V() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_V", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die X (Hochwert) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_X() As String
             Get
@@ -344,7 +470,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Y ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Y (Rechtswert) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Y() As String
             Get
@@ -358,6 +484,24 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_Z() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_Z", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die DGM-Modellhöhe ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_ZDGM() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_ZDGM", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe der Gradiente ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_ZLGS() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_ZLGS", resourceCulture)
             End Get
         End Property
         
@@ -758,7 +902,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd  PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       Radius Usoll  U_ist  SO-Höhe   Info             Rechtswert     Hochwert    Hoehe   ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd              PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       Radius Usoll  U_ist  SO-Höhe   Info              Rechtswert     Hochwert    Hoehe ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcBlock_TableHeader() As String
             Get
@@ -767,47 +911,56 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  Beschreibung: %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Beschreibung:  %s ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcBlock_ToString_Description() As String
+        Public Shared ReadOnly Property TcBlock_ToReport_Comment() As String
             Get
-                Return ResourceManager.GetString("TcBlock_ToString_Description", resourceCulture)
+                Return ResourceManager.GetString("TcBlock_ToReport_Comment", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  Punkte:       %d ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkte:        %d ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcBlock_ToString_Points() As String
+        Public Shared ReadOnly Property TcBlock_ToReport_Points() As String
             Get
-                Return ResourceManager.GetString("TcBlock_ToString_Points", resourceCulture)
+                Return ResourceManager.GetString("TcBlock_ToReport_Points", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  Quelle:       %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Quelle:        %s ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcBlock_ToString_Source() As String
+        Public Shared ReadOnly Property TcBlock_ToReport_Source() As String
             Get
-                Return ResourceManager.GetString("TcBlock_ToString_Source", resourceCulture)
+                Return ResourceManager.GetString("TcBlock_ToReport_Source", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  Trassenbezug: \n%s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Trassenbezug:  %s ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcBlock_ToString_TrackRef() As String
+        Public Shared ReadOnly Property TcBlock_ToReport_TrackRef() As String
             Get
-                Return ResourceManager.GetString("TcBlock_ToString_TrackRef", resourceCulture)
+                Return ResourceManager.GetString("TcBlock_ToReport_TrackRef", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  Typ:          %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Typ:           %s ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcBlock_ToString_Type() As String
+        Public Shared ReadOnly Property TcBlock_ToReport_Type() As String
             Get
-                Return ResourceManager.GetString("TcBlock_ToString_Type", resourceCulture)
+                Return ResourceManager.GetString("TcBlock_ToReport_Type", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %s [%d Punkte, %s] ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcBlock_ToString() As String
+            Get
+                Return ResourceManager.GetString("TcBlock_ToString", resourceCulture)
             End Get
         End Property
         
@@ -839,7 +992,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Block-Unterformat ist unbekannt. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Block-Unterformat (ein-/zweizeilig) ist unbekannt. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcBlockType_MissingSubFormat() As String
             Get
@@ -929,29 +1082,56 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Block-Nr:      %d ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_ToReport_BlockNo() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_ToReport_BlockNo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Blöcke:  %d ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcFileReader_ToString_Blocks() As String
+        Public Shared ReadOnly Property TcFileReader_ToReport_Blocks() As String
             Get
-                Return ResourceManager.GetString("TcFileReader_ToString_Blocks", resourceCulture)
+                Return ResourceManager.GetString("TcFileReader_ToReport_Blocks", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler:  %d ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcFileReader_ToString_Errors() As String
+        Public Shared ReadOnly Property TcFileReader_ToReport_Errors() As String
             Get
-                Return ResourceManager.GetString("TcFileReader_ToString_Errors", resourceCulture)
+                Return ResourceManager.GetString("TcFileReader_ToReport_Errors", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Datei:   %s ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TcFileReader_ToString_File() As String
+        Public Shared ReadOnly Property TcFileReader_ToReport_File() As String
             Get
-                Return ResourceManager.GetString("TcFileReader_ToString_File", resourceCulture)
+                Return ResourceManager.GetString("TcFileReader_ToReport_File", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkte:  %d ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_ToReport_Points() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_ToReport_Points", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %s (%s Blöcke, %s Punkte, %s Fehler) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_ToString() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_ToString", resourceCulture)
             End Get
         End Property
         
@@ -965,7 +1145,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Achse:           %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Achse:           %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfAlignment() As String
             Get
@@ -974,7 +1154,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Km-Linie:        %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Überhöhung:      %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfCantLine() As String
             Get
@@ -983,7 +1163,16 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Gradiente:       %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Geländemodell:   %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TrackGeometryInfo_NameOfDTM() As String
+            Get
+                Return ResourceManager.GetString("TrackGeometryInfo_NameOfDTM", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gradiente:       %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfGradientLine() As String
             Get
@@ -992,7 +1181,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Überhöhung:      %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Km-Linie:        %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfKmAlignment() As String
             Get
@@ -1001,7 +1190,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Straßenprofile:  %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Straßenprofile:  %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfRoadSections() As String
             Get
@@ -1010,7 +1199,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Tunnelprofile:   %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Tunnelprofile:   %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfTunnelSections() As String
             Get

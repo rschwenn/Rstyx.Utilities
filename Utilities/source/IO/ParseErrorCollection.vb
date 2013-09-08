@@ -60,7 +60,7 @@ Namespace IO
                                 Optional Hints    As String = Nothing,
                                 Optional FilePath As String = Nothing
                                )
-                MyBase.Add(New ParseError(ParseErrorLevel.[Error], LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
+                Me.Add(New ParseError(ParseErrorLevel.[Error], LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
             ''' <summary> Adds a new warning to the collection. </summary>
@@ -82,7 +82,7 @@ Namespace IO
                                   Optional Hints    As String = Nothing,
                                   Optional FilePath As String = Nothing
                                  )
-                MyBase.Add(New ParseError(ParseErrorLevel.Warning, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
+                Me.Add(New ParseError(ParseErrorLevel.Warning, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
             ''' <summary> Adds a new Item to the collection. </summary>
@@ -106,7 +106,7 @@ Namespace IO
                                    Optional Hints    As String = Nothing,
                                    Optional FilePath As String = Nothing
                                   )
-                MyBase.Add(New ParseError(Level, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
+                Me.Add(New ParseError(Level, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
             ''' <summary> Adds a new error to the collection. </summary>
@@ -227,11 +227,13 @@ Namespace IO
                     Throw New NotSupportedException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_EditorNotAvailable, Apps.AppUtils.SupportedEditors.jEdit.ToDisplayString()))
                 End If
                 
-                ' Create Beanshell script.
-                Dim BshPath As String = Me.ToJeditBeanshell()
-                
-                ' Start jEdit and run Beanshell script.
-                Apps.AppUtils.startEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=" & BshPath)
+                If (Me.Count > 0) Then
+                    ' Create Beanshell script.
+                    Dim BshPath As String = Me.ToJeditBeanshell()
+                    
+                    ' Start jEdit and run Beanshell script.
+                    Apps.AppUtils.startEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
+                End If
             End Sub
             
         #End Region
@@ -273,23 +275,23 @@ Namespace IO
                     oBsh.WriteLine("    // *********************************************************************************************")
                     
                     ' Body (variable).
-                    For i As Integer = 1 To Me.Count
+                    For i As Integer = 0 To Me.Count - 1
                         
                         oErr = Me.Item(i)
                         
                         ' Error details.
                         Level      = If(oErr.Level = ParseErrorLevel.Error, "ErrorSource.ERROR", "ErrorSource.WARNING")
-                        SourcePath = If(oErr.FilePath IsNot Nothing, oErr.FilePath, Me.FilePath)
-                        Msg        = oErr.Message.Split("\n")
+                        SourcePath = String2Java(If(oErr.FilePath IsNot Nothing, oErr.FilePath, Me.FilePath))
+                        Msg        = oErr.Message.splitLines()
                         
                         ' Create new error with main message.
-                        SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%d"");",
-                                     Level, SourcePath, oErr.LineNo, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)))
+                        SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s"");",
+                                     Level, SourcePath, oErr.LineNo - 1, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)))
                         oBsh.WriteLine(SourceText)
-                      
+                        
                         ' Extra message lines.
                         For k As Integer = 1 To Msg.Length - 1
-                            oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(i))))
+                            oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                         Next
                         If (oErr.Hints IsNot Nothing) Then
                             Msg = oErr.Hints.Split("\n")

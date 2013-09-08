@@ -22,20 +22,26 @@ Namespace IO
         ''' <summary> No options. </summary>
         None = 0
         
-        ''' <summary> Determines that the field isn't required to be found in the source string. This way a missing field won't lead parsing to fail. </summary>
-        NotRequired = 1
-        
-        ''' <summary> Determines that a string field will be trimmed. </summary>
-        Trim = 2
-        
-        ''' <summary> Determines that, for a target type of <c>Double</c>, a value of zero will be treated as <c>Double.NAN</c>. </summary>
-        ZeroAsNaN = 4
+        ''' <summary> Determines that, for a target type of <c>Double</c>, the source string may be a kilometer notation, i.e. <c>12.3 + 45.68</c>. </summary>
+        AllowKilometerNotation = 1
         
         ''' <summary> Determines that leading asterisks ("*") will be ignored while numeric parsing. </summary>
-        IgnoreLeadingAsterisks = 8
+        IgnoreLeadingAsterisks = 2
         
-        ''' <summary> Determines that, for a target type of <c>Double</c>, the source string may be a kilometer notation, i.e. <c>12.3 + 45.68</c>. </summary>
-        AllowKilometerNotation = 16
+        ''' <summary> Determines that, for a target type of <c>Double</c>, a missing value will be treated as <c>Zero</c>. </summary>
+        MissingAsZero = 4
+        
+        ''' <summary> Determines that, for a target type of <c>Double</c>, a non-numeric value will be treated as <c>Double.NAN</c>. </summary>
+        NonNumericAsNaN = 8
+        
+        ''' <summary> Determines that the field isn't required to be found in the source string. This way a missing field won't lead parsing to fail. </summary>
+        NotRequired = 16
+        
+        ''' <summary> Determines that a string field will be trimmed. </summary>
+        Trim = 32
+        
+        ''' <summary> Determines that, for a target type of <c>Double</c>, a value of zero will be treated as <c>Double.NAN</c>. </summary>
+        ZeroAsNaN = 64
         
     End Enum
     

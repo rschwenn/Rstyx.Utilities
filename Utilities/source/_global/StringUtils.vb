@@ -93,6 +93,9 @@ Imports PGK.Extensions
               ''' <b>Hints:</b>
               ''' </para>
               ''' <para>
+              ''' Values of <see langword="false"/> or <c>Double.NaN</c> will result in an empty string.
+              ''' </para>
+              ''' <para>
               ''' So e.g. %-6.3d is a number with a minimum of 3 digits left justified in a field a minimum of 6 characters wide.
               ''' </para>
               ''' <para>
@@ -210,7 +213,7 @@ Imports PGK.Extensions
                             End If
                             
                             ParmX = FlatParms(CInt(ParamUpTo))
-                            if ((ParmX is Nothing) OrElse ParmX.ToString.IsEmpty()) then
+                            if ((ParmX Is Nothing) OrElse ParmX.ToString().IsEmpty()) then
                               AddStr = ""
                             else
                                 Select Case OneChar
@@ -266,15 +269,20 @@ Imports PGK.Extensions
                                   
                                   Case "f"c 'float w/o exponent
                                     Value = CDbl(ParmX)
-                                    If Precision = "" Then Precision = "6"
-                                    'AddStr = Format(Abs(Value), "0." & String(Precision, "0"))
-                                    AddStr = FormatNumber(System.Math.Abs(Value), CInt(Precision), TriState.True, TriState.False, TriState.False)
-                                            'FormatNumber(Ausdruck[, AnzDezimalstellen[, FührendeNull[, KlammernFürNegativeWerte[, ZiffernGruppieren]]]])
-                                            'Die letzten 3 Parameter akzeptieren folgende Werte:
-                                            '-1 = true
-                                            ' 0 = false
-                                            '-2 = Ländereinstellungen des Computers verwenden
-                                    If Value < 0 Then
+                                    If (Double.IsNaN(Value)) Then
+                                        'AddStr = "NaN"
+                                        AddStr = ""
+                                    Else
+                                        If (Precision = "") Then Precision = "6"
+                                        'AddStr = Format(Abs(Value), "0." & String(Precision, "0"))
+                                        AddStr = FormatNumber(System.Math.Abs(Value), CInt(Precision), TriState.True, TriState.False, TriState.False)
+                                                'FormatNumber(Ausdruck[, AnzDezimalstellen[, FührendeNull[, KlammernFürNegativeWerte[, ZiffernGruppieren]]]])
+                                                'Die letzten 3 Parameter akzeptieren folgende Werte:
+                                                '-1 = true
+                                                ' 0 = false
+                                                '-2 = Ländereinstellungen des Computers verwenden
+                                    End If
+                                    If (Value < 0) Then
                                       AddStr = "-" & AddStr
                                     ElseIf (InStr(Flags, "+") > 0) Then
                                       AddStr = "+" & AddStr
@@ -441,11 +449,17 @@ Imports PGK.Extensions
          ''' <param name="Value">            Input String. </param>
          ''' <param name="Delimiter">        String to stop at. </param>
          ''' <param name="IncludeDelimiter"> If <see langword="true"/>, the returned string containes the <paramref name="Delimiter"/>, otherwise it doesn't. </param>
+         ''' <param name="GetMaximumMatch">  If <see langword="true"/>, the last occurrence of <paramref name="Delimiter"/> will be used, otherwise the first. </param>
          ''' <returns> Truncated string, or <see langword="null"/> if <paramref name="Value"/> is <see langword="null"/>. </returns>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function Left(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
+        Public Function Left(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False, Optional GetMaximumMatch As Boolean = False) As String
             If (Value IsNot Nothing) Then
-                Dim idx As Integer = Value.IndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
+                Dim idx As Integer = 0
+                If (GetMaximumMatch) Then
+                    idx = Value.LastIndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
+                Else
+                    idx = Value.IndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
+                End If
                 If (idx >= 0) Then
                     If (IncludeDelimiter) Then idx = idx + Delimiter.Length
                     Value = Value.Substring(0, idx)
@@ -461,11 +475,17 @@ Imports PGK.Extensions
          ''' <param name="Value">            Input String. </param>
          ''' <param name="Delimiter">        String to stop at. </param>
          ''' <param name="IncludeDelimiter"> If <see langword="true"/>, the returned string containes the <paramref name="Delimiter"/>, otherwise it doesn't. </param>
+         ''' <param name="GetMaximumMatch">  If <see langword="true"/>, the first occurrence of <paramref name="Delimiter"/> will be used, otherwise the last. </param>
          ''' <returns> Truncated string, or <see langword="null"/> if <paramref name="Value"/> is <see langword="null"/>. </returns>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function Right(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False) As String
+        Public Function Right(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False, Optional GetMaximumMatch As Boolean = False) As String
             If (Value IsNot Nothing) Then
-                Dim idx  As Integer = Value.LastIndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
+                Dim idx As Integer = 0
+                If (GetMaximumMatch) Then
+                    idx = Value.IndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
+                Else
+                    idx = Value.LastIndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
+                End If
                 If (idx >= 0) Then
                     If (Not IncludeDelimiter) Then idx = idx + Delimiter.Length
                     Value = Value.Substring(idx)
@@ -535,6 +555,15 @@ Imports PGK.Extensions
             End If
         End Function
         
+        ''' <summary> Splits the string into lines. Delimiters are <c>vbCrLf</c>, <c>vbLf</c> and <c>vbCr</c> - in this order. </summary>
+         ''' <param name="Value"> The string to split. </param>
+         ''' <returns>            A String array containing all lines. </returns>
+         ''' <remarks>            If the trimmed input string is empty, the returned array will contain one empty line. </remarks>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function splitLines(Value As String) As String()
+            Return Value.Split({vbCrLf, vbLf, vbCr}, System.StringSplitOptions.None)
+        End Function
+        
         ''' <summary> Awk like splitting: Delimiter is whole whitespace. Words are trimmed. </summary>
          ''' <param name="Value"> The string to split. </param>
          ''' <returns>            A String array containing all data words. </returns>
@@ -543,7 +572,31 @@ Imports PGK.Extensions
         Public Function splitWords(Value As String) As String()
             Return Value.Trim().Split("\s+")
         End Function
-
+        
+        ''' <summary> Indents the single lines of the string. </summary>
+         ''' <param name="Value">                     The string to split. </param>
+         ''' <param name="Width">                     The width or count of spaces to prepend every line with. </param>
+         ''' <param name="IncludeFirstline">          If <see langword="true"/>, the first line will be indented too. </param>
+         ''' <param name="PrependNewlineIfMultiline"> If <see langword="true"/> and <paramref name="Value"/> is multi-line, then <paramref name="Value"/> will be prepended by a new line. </param>
+         ''' <returns>                                A String with  indented lines. </returns>
+         ''' <remarks> </remarks>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function indent(Value As String, Width As Integer, IncludeFirstline As Boolean, PrependNewlineIfMultiline As Boolean) As String
+            Dim RetValue As String = Value
+            Dim Prepend  As String = " ".Repeat(Width)
+            
+            If (IncludeFirstline) Then RetValue = Prepend & RetValue
+            
+            If (RetValue.Contains(vbNewLine)) Then
+                RetValue = RetValue.Replace(vbNewLine, vbNewLine & Prepend)
+                If (PrependNewlineIfMultiline) Then
+                    RetValue = vbNewLine & RetValue
+                End If
+            End If
+            
+            Return RetValue
+        End Function
+        
     End Module
     
 'End Namespace

@@ -333,7 +333,7 @@
     <value>Herkunfts-Programm ist unbekannt.</value>
   </data>
   <data name="TcBlockType_MissingSubFormat" xml:space="preserve">
-    <value>Block-Unterformat ist unbekannt.</value>
+    <value>Block-Unterformat (ein-/zweizeilig) ist unbekannt.</value>
   </data>
   <data name="TcBlockType_MissingVersion" xml:space="preserve">
     <value>Programmversion ist unbekannt.</value>
@@ -349,7 +349,7 @@
   </data>
   <data name="TcFileReader_InvalidTcBlock" xml:space="preserve">
     <value>Ungültiger Block mit Trassenkoordinaten (Zeilen %d bis %d):\n%s</value>
-    <comment>Block Start Line: Long; Block End Line: Long; TcBlock.Eror: String</comment>
+    <comment>Block Start Line: Long; Block End Line: Long; TcBlock.Error: String</comment>
   </data>
   <data name="ParseError_ErrorLevelInLineNo" xml:space="preserve">
     <value>%s in Zeile %d: %s</value>
@@ -420,10 +420,10 @@
     <value>Überhöhung</value>
   </data>
   <data name="Domain_Label_X" xml:space="preserve">
-    <value>X</value>
+    <value>X (Hochwert)</value>
   </data>
   <data name="Domain_Label_Y" xml:space="preserve">
-    <value>Y</value>
+    <value>Y (Rechtswert)</value>
   </data>
   <data name="Domain_Label_Z" xml:space="preserve">
     <value>Punkthöhe</value>
@@ -440,22 +440,27 @@
     <comment>File Name: String; Block Start Line: Long; Block End Line: Long</comment>
   </data>
   <data name="TcBlock_TableHeader" xml:space="preserve">
-    <value> lfd  PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       Radius Usoll  U_ist  SO-Höhe   Info             Rechtswert     Hochwert    Hoehe  </value>
+    <value> lfd              PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       Radius Usoll  U_ist  SO-Höhe   Info              Rechtswert     Hochwert    Hoehe</value>
   </data>
-  <data name="TcBlock_ToString_Description" xml:space="preserve">
-    <value> Beschreibung: %s</value>
+  <data name="TcBlock_ToReport_Comment" xml:space="preserve">
+    <value>Beschreibung:  %s</value>
+    <comment>Block Description: String</comment>
   </data>
-  <data name="TcBlock_ToString_Points" xml:space="preserve">
-    <value> Punkte:       %d</value>
+  <data name="TcBlock_ToReport_Points" xml:space="preserve">
+    <value>Punkte:        %d</value>
+    <comment>Point Count: Integer</comment>
   </data>
-  <data name="TcBlock_ToString_Source" xml:space="preserve">
-    <value> Quelle:       %s</value>
+  <data name="TcBlock_ToReport_Source" xml:space="preserve">
+    <value>Quelle:        %s</value>
+    <comment>Block Source: String</comment>
   </data>
-  <data name="TcBlock_ToString_TrackRef" xml:space="preserve">
-    <value> Trassenbezug: \n%s</value>
+  <data name="TcBlock_ToReport_TrackRef" xml:space="preserve">
+    <value>Trassenbezug:  %s</value>
+    <comment>Block Track Reference: String</comment>
   </data>
-  <data name="TcBlock_ToString_Type" xml:space="preserve">
-    <value> Typ:          %s</value>
+  <data name="TcBlock_ToReport_Type" xml:space="preserve">
+    <value>Typ:           %s</value>
+    <comment>Block Type: String</comment>
   </data>
   <data name="TcFileReader_IDdoubled" xml:space="preserve">
     <value>Punkt-ID (%s) existiert bereits in diesem Block.</value>
@@ -468,31 +473,108 @@
   <data name="TcFileReader_MissingSecondLine" xml:space="preserve">
     <value>Zweite Zeile des Datensatzes fehlt (diese muss unmittelbar auf die erste Zeile folgen).</value>
   </data>
-  <data name="TcFileReader_ToString_Blocks" xml:space="preserve">
+  <data name="TcFileReader_ToReport_Blocks" xml:space="preserve">
     <value>Blöcke:  %d</value>
+    <comment>Block Count: Integer</comment>
   </data>
-  <data name="TcFileReader_ToString_Errors" xml:space="preserve">
+  <data name="TcFileReader_ToReport_Errors" xml:space="preserve">
     <value>Fehler:  %d</value>
+    <comment>Error Count: Integer</comment>
   </data>
-  <data name="TcFileReader_ToString_File" xml:space="preserve">
+  <data name="TcFileReader_ToReport_File" xml:space="preserve">
     <value>Datei:   %s</value>
+    <comment>File Name: String</comment>
   </data>
   <data name="TrackGeometryInfo_NameOfAlignment" xml:space="preserve">
-    <value>  Achse:           %s</value>
+    <value>Achse:           %s</value>
+    <comment>Alignment Name: String</comment>
   </data>
   <data name="TrackGeometryInfo_NameOfCantLine" xml:space="preserve">
-    <value>  Km-Linie:        %s</value>
+    <value>Überhöhung:      %s</value>
+    <comment>Cant Line Name: String</comment>
   </data>
   <data name="TrackGeometryInfo_NameOfGradientLine" xml:space="preserve">
-    <value>  Gradiente:       %s</value>
+    <value>Gradiente:       %s</value>
+    <comment>Gradient Line Name: String</comment>
   </data>
   <data name="TrackGeometryInfo_NameOfKmAlignment" xml:space="preserve">
-    <value>  Überhöhung:      %s</value>
+    <value>Km-Linie:        %s</value>
+    <comment>Km-Alignment Name: String</comment>
   </data>
   <data name="TrackGeometryInfo_NameOfRoadSections" xml:space="preserve">
-    <value>  Straßenprofile:  %s</value>
+    <value>Straßenprofile:  %s</value>
+    <comment>Road Sections Name: String</comment>
   </data>
   <data name="TrackGeometryInfo_NameOfTunnelSections" xml:space="preserve">
-    <value>  Tunnelprofile:   %s</value>
+    <value>Tunnelprofile:   %s</value>
+    <comment>Tunnel Sections Name: String</comment>
+  </data>
+  <data name="TcFileReader_ToReport_BlockNo" xml:space="preserve">
+    <value>Block-Nr:      %d</value>
+    <comment>Error Number: Integer</comment>
+  </data>
+  <data name="TcBlock_ToString" xml:space="preserve">
+    <value>%s [%d Punkte, %s]</value>
+    <comment>Alignment Name: String; Point Count: Integer; Block Type: String</comment>
+  </data>
+  <data name="TcFileReader_ToString" xml:space="preserve">
+    <value>%s (%s Blöcke, %s Punkte, %s Fehler)</value>
+    <comment>File Name: String; Block Count: Integer; Point Count: Integer; Error Count: Integer</comment>
+  </data>
+  <data name="Domain_Label_G" xml:space="preserve">
+    <value>Steigungswinkel</value>
+  </data>
+  <data name="Domain_Label_H" xml:space="preserve">
+    <value>Höhe über der Gradiente</value>
+  </data>
+  <data name="Domain_Label_HDGM" xml:space="preserve">
+    <value>Höhe über DGM</value>
+  </data>
+  <data name="Domain_Label_Heb" xml:space="preserve">
+    <value>Anhebung der unteren Schiene zur Gradiente</value>
+  </data>
+  <data name="Domain_Label_HG" xml:space="preserve">
+    <value>Höhe über SOK im gedrehten Gleissystem</value>
+  </data>
+  <data name="Domain_Label_L" xml:space="preserve">
+    <value>Abwicklungsmass (Tunnelprofil)</value>
+  </data>
+  <data name="Domain_Label_QG" xml:space="preserve">
+    <value>Querabstand im gedrehten Gleissystem</value>
+  </data>
+  <data name="Domain_Label_QT" xml:space="preserve">
+    <value>Abstand zur Achse in Tunnelvortriebsrichtung</value>
+  </data>
+  <data name="Domain_Label_R" xml:space="preserve">
+    <value>Radialer Abstand zum Tunnelprofil</value>
+  </data>
+  <data name="Domain_Label_Text" xml:space="preserve">
+    <value>Punktinformation</value>
+  </data>
+  <data name="Domain_Label_Tm" xml:space="preserve">
+    <value>Tunnelmeter</value>
+  </data>
+  <data name="Domain_Label_UebL" xml:space="preserve">
+    <value>Überhöhung linke Schiene</value>
+  </data>
+  <data name="Domain_Label_UebR" xml:space="preserve">
+    <value>Überhöhung reche  Schiene</value>
+  </data>
+  <data name="Domain_Label_V" xml:space="preserve">
+    <value>Höhe über Strassenprofil</value>
+  </data>
+  <data name="Domain_Label_ZDGM" xml:space="preserve">
+    <value>DGM-Modellhöhe</value>
+  </data>
+  <data name="Domain_Label_ZLGS" xml:space="preserve">
+    <value>Höhe der Gradiente</value>
+  </data>
+  <data name="TcFileReader_ToReport_Points" xml:space="preserve">
+    <value>Punkte:  %d</value>
+    <comment>Point Count: Integer</comment>
+  </data>
+  <data name="TrackGeometryInfo_NameOfDTM" xml:space="preserve">
+    <value>Geländemodell:   %s</value>
+    <comment>Digital Terrain Model Name: String</comment>
   </data>
 </root>

@@ -4,6 +4,8 @@ Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Text.RegularExpressions
 
+Imports PGK.Extensions
+
 'Namespace GeoMath
     
     ''' <summary> Static utility methods for mathematic or geodetic needs. </summary>
@@ -203,30 +205,32 @@ Imports System.Text.RegularExpressions
                 Dim Cant As Double = Double.NaN
                 Dim ui   As String = String.Empty
                 
-                ' 1. search for "u=..."
-                Dim Pattern As String = "u *= *([-|+]? *[0-9]+)"
-                Dim oMatch  As Match = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
-                If (oMatch.Success) Then
-                    ui = oMatch.Groups(1).Value
-                    ui = ui.Replace(" ", String.Empty)
-                End If
-                
-                ' 2. "u=..." not found, look for first integer number.
-                If (ui.IsEmptyOrWhiteSpace() AndAlso (Not strict)) Then
-                    Pattern = "[-|+]? *[0-9]+"
-                    oMatch = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
+                If (Pointinfo.IsNotEmptyOrWhiteSpace()) Then
+                    ' 1. search for "u=..."
+                    Dim Pattern As String = "u *= *([-|+]? *[0-9]+)"
+                    Dim oMatch  As Match = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
                     If (oMatch.Success) Then
-                      ui = oMatch.Value
-                      ui = ui.Replace(" ", String.Empty)
+                        ui = oMatch.Groups(1).Value
+                        ui = ui.Replace(" ", String.Empty)
                     End If
-                End If
-                
-                ' Result.
-                If (ui.IsNotEmpty()) Then
-                    ' 3. Cant value found.
-                    Cant = cdbl(ui)
-                    If (absolute) Then Cant = System.Math.Abs(Cant.ConvertTo(Of Double))
-                    If (editPointInfo) Then Pointinfo = Pointinfo.replace(oMatch.Groups(0).Value, String.Empty)
+                    
+                    ' 2. "u=..." not found, look for first integer number.
+                    If (ui.IsEmptyOrWhiteSpace() AndAlso (Not strict)) Then
+                        Pattern = "[-|+]? *[0-9]+"
+                        oMatch = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
+                        If (oMatch.Success) Then
+                          ui = oMatch.Value
+                          ui = ui.Replace(" ", String.Empty)
+                        End If
+                    End If
+                    
+                    ' Result.
+                    If (ui.IsNotEmpty()) Then
+                        ' 3. Cant value found.
+                        Cant = cdbl(ui)
+                        If (absolute) Then Cant = System.Math.Abs(Cant.ConvertTo(Of Double))
+                        If (editPointInfo) Then Pointinfo = Pointinfo.replace(oMatch.Groups(0).Value, String.Empty)
+                    End If
                 End If
                 
                 Return Cant

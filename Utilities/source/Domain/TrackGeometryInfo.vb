@@ -53,6 +53,9 @@ Namespace Domain
             ''' <summary> Name of line defining names and scopes of tunnel scross sections. </summary>
             Public Property NameOfTunnelSections()  As String = String.Empty
             
+            ''' <summary> Name of Digital Terrain Model. </summary>
+            Public Property NameOfDTM()             As String = String.Empty
+            
         #End Region
         
         #Region "Overrides"
@@ -60,15 +63,26 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Overrides Function ToString() As String
                 Dim List As New System.Text.StringBuilder()
+                Dim RetValue As String
                 
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfAlignment     , Me.NameOfAlignment))
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfKmAlignment   , Me.NameOfKmAlignment))
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfGradientLine  , Me.NameOfGradientLine))
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfCantLine      , Me.NameOfCantLine))
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRoadSections  , Me.NameOfRoadSections))
-                List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfTunnelSections, Me.NameOfTunnelSections))
+                If (Me.NameOfAlignment.IsEmptyOrWhiteSpace()) Then 
+                    RetValue = MyBase.ToString()
+                Else
+                    List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfAlignment, Me.NameOfAlignment))
+                    If (Me.NameOfKmAlignment.IsNotEmptyOrWhiteSpace())    Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfKmAlignment   , Me.NameOfKmAlignment))
+                    If (Me.NameOfGradientLine.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfGradientLine  , Me.NameOfGradientLine))
+                    If (Me.NameOfCantLine.IsNotEmptyOrWhiteSpace())       Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfCantLine      , Me.NameOfCantLine))
+                    If (Me.NameOfRoadSections.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRoadSections  , Me.NameOfRoadSections))
+                    If (Me.NameOfTunnelSections.IsNotEmptyOrWhiteSpace()) Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfTunnelSections, Me.NameOfTunnelSections))
+                    If (Me.NameOfDTM.IsNotEmptyOrWhiteSpace())            Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfDTM           , Me.NameOfDTM))
+                    
+                    RetValue = List.ToString()
+                    If (RetValue.EndsWith(vbNewLine)) Then
+                        RetValue = RetValue.Left(RetValue.Length - vbNewLine.Length)
+                    End If
+                End If
                 
-                Return List.ToString()
+                Return RetValue
             End Function
             
         #End Region
