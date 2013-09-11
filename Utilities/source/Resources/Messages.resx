@@ -327,7 +327,7 @@
     <comment>TcBlockType.Format: String; TcBlockType.Program: String</comment>
   </data>
   <data name="TcBlockType_MissingFormat" xml:space="preserve">
-    <value>Block-Format ist unbekannt.</value>
+    <value>Block-Format ist unbekannt (Unterstützte Formate für %s: %s und %s).</value>
   </data>
   <data name="TcBlockType_MissingProgram" xml:space="preserve">
     <value>Herkunfts-Programm ist unbekannt.</value>
@@ -383,7 +383,7 @@
     <comment>Field Caption: String; Start Column: Integer; End Column: Integer</comment>
   </data>
   <data name="PreSplittedTextLine_MissingWord" xml:space="preserve">
-    <value>Das Feld '%s' existiert nicht (Wortnummer %d).</value>
+    <value>Das Feld '%s' existiert nicht (%d. Feld).</value>
     <comment>Field Caption: String; Word Number: Integer</comment>
   </data>
   <data name="Domain_Label_Com" xml:space="preserve">

@@ -848,7 +848,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (Wortnummer %d). ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (%d. Feld). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property PreSplittedTextLine_MissingWord() As String
             Get
@@ -974,7 +974,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Block-Format ist unbekannt. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Block-Format ist unbekannt (Unterstützte Formate für %s: %s und %s). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcBlockType_MissingFormat() As String
             Get

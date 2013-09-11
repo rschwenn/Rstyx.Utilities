@@ -437,7 +437,7 @@ Namespace Domain
                     
                     Private Shared MissingProgramRule   As Cinch.SimpleRule
                     Private Shared MissingVersionRule   As Cinch.SimpleRule
-                    Private Shared MissingFormatRule    As Cinch.SimpleRule
+                    Private Shared MissingFormatRule    As DelegateRule
                     Private Shared MissingSubFormatRule As Cinch.SimpleRule
                     Private Shared FormatMismatchRule   As DelegateRule
                     
@@ -468,15 +468,33 @@ Namespace Domain
                                                                  )
                         
                         '
-                        MissingFormatRule = New Cinch.SimpleRule("Format",
-                                                                 Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat,
-                                                                 Function (oValidatingObject As Object) (DirectCast(oValidatingObject, TcBlockType).Format = TcBlockFormat.None))
+                        MissingFormatRule = New DelegateRule("Format",
+                                                             Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat,
+                                                             Function (oValidatingObject As Object, ByRef BrokenMessage As String) As Boolean
+                                                                 Dim IsValidRule As Boolean = True
+                                                                 Dim BlockType   As TcBlockType = DirectCast(oValidatingObject, TcBlockType)
+                                                                 
+                                                                 If (BlockType.Format = TcBlockFormat.None) Then
+                                                                     IsValidRule = False
+                                                                      Select Case BlockType.Program
+                                                                          
+                                                                          Case TcBlockProgram.VermEsn
+                                                                              BrokenMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.THW.ToDisplayString(), TcBlockFormat.D3.ToDisplayString())
+                                                                              
+                                                                          Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
+                                                                              BrokenMessage = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.A1.ToDisplayString(), TcBlockFormat.A5.ToDisplayString())
+                                                                      End Select
+                                                                 End If
+                                                                 
+                                                                 Return Not IsValidRule
+                                                             End Function
+                                                            )
                         '
                         MissingSubFormatRule = New Cinch.SimpleRule("SubFormat",
                                                                     Rstyx.Utilities.Resources.Messages.TcBlockType_MissingSubFormat,
                                                                     Function (oValidatingObject As Object) As Boolean
-                                                                        Dim IsValidRule  As Boolean = True
-                                                                        Dim BlockType  As TcBlockType = DirectCast(oValidatingObject, TcBlockType)
+                                                                        Dim IsValidRule As Boolean = True
+                                                                        Dim BlockType   As TcBlockType = DirectCast(oValidatingObject, TcBlockType)
                                                                         
                                                                         If (BlockType.Program = TcBlockProgram.VermEsn) Then
                                                                             If (BlockType.SubFormat = TcBlockSubFormat.None) Then IsValidRule = False
@@ -1207,6 +1225,7 @@ Namespace Domain
                                     If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace()) Then
                                         p.ZLGS = Double.NaN
                                         p.H    = Double.NaN
+                                        p.HSOK = Double.NaN
                                         p.G    = Double.NaN
                                     End If
                                     If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace() OrElse Block.TrackRef.NameOfRoadSections.IsEmptyOrWhiteSpace()) Then
@@ -1449,6 +1468,7 @@ Namespace Domain
                                     Case "Stationierungsachse": Block.TrackRef.NameOfKmAlignment    = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "Ueberhöhungsband":    Block.TrackRef.NameOfCantLine       = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Überhöhungsband":     Block.TrackRef.NameOfCantLine       = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "DGM":                 Block.TrackRef.NameOfDTM            = getNameFromMatch(kvp.Value, False) : CommentEnd = True

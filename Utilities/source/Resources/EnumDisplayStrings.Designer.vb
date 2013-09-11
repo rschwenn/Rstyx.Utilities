@@ -979,7 +979,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die iGeo/iTrassePC Ausgabe A1 ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ausgabe A1 ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A1() As String
             Get
@@ -988,7 +988,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die iGeo/iTrassePC Ausgabe A5 ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ausgabe A5 ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A5() As String
             Get
@@ -997,7 +997,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Verm.esn/D3 (7-Linien) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die D3 (7-Linien) ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_D3() As String
             Get
@@ -1015,7 +1015,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Verm.esn/THW (klassisch) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die THW (klassisch) ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_THW() As String
             Get

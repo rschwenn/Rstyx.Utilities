@@ -469,19 +469,19 @@
     <value>Warnung</value>
   </data>
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A1" xml:space="preserve">
-    <value>iGeo/iTrassePC Ausgabe A1</value>
+    <value>Ausgabe A1</value>
   </data>
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A5" xml:space="preserve">
-    <value>iGeo/iTrassePC Ausgabe A5</value>
+    <value>Ausgabe A5</value>
   </data>
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_D3" xml:space="preserve">
-    <value>Verm.esn/D3 (7-Linien)</value>
+    <value>D3 (7-Linien)</value>
   </data>
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_None" xml:space="preserve">
     <value>unbekannt</value>
   </data>
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_THW" xml:space="preserve">
-    <value>Verm.esn/THW (klassisch)</value>
+    <value>THW (klassisch)</value>
   </data>
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockProgram_iGeo" xml:space="preserve">
     <value>iGeo</value>
