@@ -564,7 +564,7 @@ Imports PGK.Extensions
             Return Value.Split({vbCrLf, vbLf, vbCr}, System.StringSplitOptions.None)
         End Function
         
-        ''' <summary> Awk like splitting: Delimiter is whole whitespace. Words are trimmed. </summary>
+        ''' <summary> Awk like splitting: Delimiter is whole whitespace. A word cannot contain white space. Words are trimmed. </summary>
          ''' <param name="Value"> The string to split. </param>
          ''' <returns>            A String array containing all data words. </returns>
          ''' <remarks>            If the trimmed input string is empty, the returned array will be of zero length. </remarks>

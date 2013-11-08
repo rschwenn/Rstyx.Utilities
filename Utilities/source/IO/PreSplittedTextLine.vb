@@ -81,9 +81,9 @@ Namespace IO
         
         #Region "Properties"
             
-            ''' <summary> Returns all data fields delimited by whitespace. </summary>
+            ''' <summary> Returns all data fields of <c>Me.Data</c> delimited by whitespace. </summary>
              ''' <returns> All data fields delimited by whitespace. </returns>
-             ''' <remarks> The collection will be created at firrst access to this property. </remarks>
+             ''' <remarks> The collection will be created at first access to this property. </remarks>
             Public ReadOnly Property Words() As Collection(Of DataFieldSource)
                 Get
                     If (_Words Is Nothing) Then _Words = getWords()

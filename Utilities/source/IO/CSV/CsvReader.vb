@@ -1244,7 +1244,7 @@ Namespace IO.CSV
             ''' <summary>
             ''' Reads the next record.
             ''' </summary>
-            ''' <returns><see langword="true"/> if a record has been successfully reads, otherwise <see langword="false"/>.</returns>
+            ''' <returns><see langword="true"/> if a record has been successfully read, otherwise <see langword="false"/>.</returns>
             ''' <exception cref="T:System.ComponentModel.ObjectDisposedException"> The instance has been disposed of. </exception>
             Public Function ReadNextRecord() As Boolean
                 Return ReadNextRecord(False, False)
@@ -1277,7 +1277,7 @@ Namespace IO.CSV
                 
                 CheckDisposed()
                 
-                If Not _initialized Then
+                If (Not _initialized) Then
                     _buffer = New Char(_bufferSize - 1) {}
                     
                     ' will be replaced if and when headers are read
