@@ -81,6 +81,12 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property HG()            As Double = Double.NaN Implements IPointAtTrackGeometry.HG
             
+            ''' <inheritdoc/>
+            Public Property LG()            As Double = Double.NaN Implements IPointAtTrackGeometry.LG
+            
+            ''' <inheritdoc/>
+            Public Property RG()            As Double = Double.NaN Implements IPointAtTrackGeometry.RG
+            
             
             ''' <inheritdoc/>
             Public Property V()             As Double = Double.NaN Implements IPointAtTrackGeometry.V
@@ -179,8 +185,8 @@ Namespace Domain
             ''' <summary> Returns a formatted output of most fields of this GeoTcPoint. </summary>
              ''' <returns> Formatted output. </returns>
             Public Overrides Function ToString() As String
-                Return StringUtils.sprintf("%+20s %10.3f %10.3f %8.3f %8.3f   %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f   %-16s %12.3f %12.3f%9.3f",
-                                           Me.ID, Me.Km, Me.St, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.Ra, Me.Ueb * 1000, Me.ActualCant * 1000, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
+                Return StringUtils.sprintf("%+20s %10.3f %10.3f %8.3f %8.3f   %8.3f %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f   %-16s %12.3f %12.3f%9.3f",
+                                           Me.ID, Me.Km, Me.St, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.RG, Me.Ra, Me.Ueb * 1000, Me.ActualCant * 1000, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
             End Function
             
         #End Region

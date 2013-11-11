@@ -118,6 +118,12 @@ Namespace Domain
         ''' <summary> Canted track coordinate system: Height above running surface of rail. </summary>
         Property HG()           As Double
         
+        ''' <summary> Length along the (canted) rail cross section shape. </summary>
+        Property LG()            As Double
+        
+        ''' <summary> Radial distance to the (canted) rail cross section shape. </summary>
+        Property RG()            As Double
+        
         
         ''' <summary> Height above road cross section shape. </summary>
         Property V()            As Double

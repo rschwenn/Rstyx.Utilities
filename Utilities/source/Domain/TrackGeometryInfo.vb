@@ -47,11 +47,18 @@ Namespace Domain
             ''' <summary> Name of cant line (Cant model for the whole alignment). </summary>
             Public Property NameOfCantLine()        As String = String.Empty
             
-            ''' <summary> Name of line defining names and scopes of road scross sections. </summary>
+            ''' <summary> Name of line defining names and scopes of road cross sections. </summary>
             Public Property NameOfRoadSections()    As String = String.Empty
             
-            ''' <summary> Name of line defining names and scopes of tunnel scross sections. </summary>
+            ''' <summary> Name of line defining names and scopes of tunnel cross sections. </summary>
             Public Property NameOfTunnelSections()  As String = String.Empty
+            
+            ''' <summary> Name of line defining names and scopes of rail cross sections. </summary>
+             ''' <remarks> A rail cross section is defined in canted track coordinate system. </remarks>
+            Public Property NameOfRailSections()  As String = String.Empty
+            
+            ''' <summary> Name of line defining names and scopes of section related points. </summary>
+            Public Property NameOfSectionPoints()  As String = String.Empty
             
             ''' <summary> Name of Digital Terrain Model. </summary>
             Public Property NameOfDTM()             As String = String.Empty
@@ -74,6 +81,8 @@ Namespace Domain
                     If (Me.NameOfCantLine.IsNotEmptyOrWhiteSpace())       Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfCantLine      , Me.NameOfCantLine))
                     If (Me.NameOfRoadSections.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRoadSections  , Me.NameOfRoadSections))
                     If (Me.NameOfTunnelSections.IsNotEmptyOrWhiteSpace()) Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfTunnelSections, Me.NameOfTunnelSections))
+                    If (Me.NameOfRailSections.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRaillSections , Me.NameOfRailSections))
+                    If (Me.NameOfSectionPoints.IsNotEmptyOrWhiteSpace())  Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfSectionPoints , Me.NameOfSectionPoints))
                     If (Me.NameOfDTM.IsNotEmptyOrWhiteSpace())            Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfDTM           , Me.NameOfDTM))
                     
                     RetValue = List.ToString()

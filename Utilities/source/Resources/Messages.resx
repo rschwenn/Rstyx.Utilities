@@ -440,7 +440,7 @@
     <comment>File Name: String; Block Start Line: Long; Block End Line: Long</comment>
   </data>
   <data name="TcBlock_TableHeader" xml:space="preserve">
-    <value> lfd              PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       Radius Usoll  U_ist  SO-Höhe   Info              Rechtswert     Hochwert    Hoehe</value>
+    <value> lfd              PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe   Info              Rechtswert     Hochwert    Hoehe</value>
   </data>
   <data name="TcBlock_ToReport_Comment" xml:space="preserve">
     <value>Beschreibung:  %s</value>
@@ -576,5 +576,19 @@
   <data name="TrackGeometryInfo_NameOfDTM" xml:space="preserve">
     <value>Geländemodell:   %s</value>
     <comment>Digital Terrain Model Name: String</comment>
+  </data>
+  <data name="Domain_Label_LG" xml:space="preserve">
+    <value>Abwicklungsmass (Gleisprofil)</value>
+  </data>
+  <data name="Domain_Label_RG" xml:space="preserve">
+    <value>Radialer Abstand zum Gleisprofil</value>
+  </data>
+  <data name="TrackGeometryInfo_NameOfRaillSections" xml:space="preserve">
+    <value>Gleisprofile:    %s</value>
+    <comment>Rail Sections Name: String</comment>
+  </data>
+  <data name="TrackGeometryInfo_NameOfSectionPoints" xml:space="preserve">
+    <value>Profilpunkte:    %s</value>
+    <comment>Section related Points Name: String</comment>
   </data>
 </root>

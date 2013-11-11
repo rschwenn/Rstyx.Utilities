@@ -15,7 +15,7 @@ Imports System.Windows
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("Test")> 
-<Assembly: AssemblyCopyright("Copyright @  2011")> 
+<Assembly: AssemblyCopyright("Copyright @  2011-2013")> 
 <Assembly: AssemblyTrademark("")> 
 <Assembly: ComVisible(false)>
 

@@ -31,7 +31,7 @@ Namespace Domain
      ''' <item> <term> Verm.esn (Version 6.22) </term>  <description> "Umformung", from THW or D3 module (one-line or two-line records) </description></item>
      ''' <item> <term> Verm.esn (Version 8.40) </term>  <description> "Umformung", from THW or D3 module (one-line or two-line records) </description></item>
      ''' <item> <term> iTrassePC (Version 2.0) </term>  <description> "A1", "A5" </description></item>
-     ''' <item> <term> iGeo (Version 1.1)      </term>  <description> "A1", "A5" </description></item>
+     ''' <item> <term> iGeo (Version 11/2013)  </term>  <description> "A1", "A5" </description></item>
      ''' </list>
      ''' <list type="bullet">
      ''' <listheader> <b>Restrictions to the input file :</b> </listheader>
@@ -589,7 +589,7 @@ Namespace Domain
                         RetValue = "iGeo"
                         
                         If (Me.Version = TcBlockVersion.Current) Then
-                            RetValue &= " 1.1"
+                            RetValue &= " 11/2013"
                         Else
                             RetValue &= " v??" 
                         End If
@@ -793,6 +793,9 @@ Namespace Domain
                 ''' <summary> Index into <see cref="P:DataTextFileReader.DataCache"/> representing the first DATA line of this block. </summary>
                 Public DataStartIndex   As Integer = -1
                 
+                ''' <summary> Tells if the first DATA line of this block has been found. </summary>
+                Public HasData          As Boolean = False
+                
                 ''' <summary> Index into <see cref="P:DataTextFileReader.DataCache"/> representing the last line of this block. </summary>
                 Public EndIndex         As Integer = -1
                 
@@ -826,6 +829,8 @@ Namespace Domain
                 Public ZDGM As DataFieldDefinition(Of Double)
                 Public Tm   As DataFieldDefinition(Of Double)
                 Public QT   As DataFieldDefinition(Of Double)
+                Public LG   As DataFieldDefinition(Of Double)
+                Public RG   As DataFieldDefinition(Of Double)
                 Public ZSOK As DataFieldDefinition(Of Double)
                 Public ZLGS As DataFieldDefinition(Of Double)
                 Public Text As DataFieldDefinition(Of String)
@@ -1001,94 +1006,96 @@ Namespace Domain
                 If (Not Block.IsValid) Then
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
-                    Dim RecDef As TcRecordDefinitionVermEsn = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
-                    Dim RecLen As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
-                    Dim RecIdx As Integer = SourceBlock.DataStartIndex - RecLen
-                    Dim LastRecEmpty As Boolean = False
-                    
-                    Do While (RecIdx <= SourceBlock.EndIndex - RecLen)
-                        Try
-                            ' Switch to next record.
-                            If (LastRecEmpty) Then
-                                RecIdx += 1
-                            Else
-                                RecIdx += RecLen
-                            End If
-                            Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
-                            
-                            If (Not SplitLine.HasData) Then
-                                LastRecEmpty = True
-                            Else
-                                LastRecEmpty = False
-                                
-                                Dim Com2 As String = Nothing
-                                Dim ID2  As String = Nothing
-                                
-                                Dim p    As New GeoTcPoint()
-                                
-                                ' Cartesian coordinates line.
-                                If (Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) Then
-                                    ID2  = StringUtils.sprintf("%d", SplitLine.ParseField(RecDef.ID).Value * RecDef.ID_Factor)
-                                    p.Y  = SplitLine.ParseField(RecDef.Y).Value
-                                    p.X  = SplitLine.ParseField(RecDef.X).Value
-                                    p.Z  = SplitLine.ParseField(RecDef.Z).Value
-                                    Com2 = SplitLine.ParseField(RecDef.Com2).Value.Trim()
-                                    If (RecDef.St IsNot Nothing) Then p.St = SplitLine.ParseField(RecDef.St).Value
-                                    
-                                    ' Get second line of this record.
-                                    SplitLine = SplitLines(RecIdx + 1)
-                                    If (Not SplitLine.HasData) Then Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingSecondLine, Nothing))
-                                End If
-                                
-                                ' Track coordinates line.
-                                ' Point-ID.
-                                Dim DoubleField As DataField(Of Double) = SplitLine.ParseField(RecDef.ID)
-                                p.ID = StringUtils.sprintf("%d", DoubleField.Value * RecDef.ID_Factor)
-                                If ((Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) AndAlso (Not (p.ID = ID2))) Then
-                                    Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
-                                ElseIf (Block.Points.Contains(p.ID)) Then
-                                    Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
-                                End If
-                                
-                                ' Track values.
-                                p.Q    = SplitLine.ParseField(RecDef.Q).Value
-                                p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
-                                p.Ri   = SplitLine.ParseField(RecDef.Ri).Value / RHO
-                                p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value / 1000
-                                p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
-                                p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value * (-1)
-                                p.QKm  = SplitLine.ParseField(RecDef.QKm).Value
-                                
-                                If (Not Double.IsNaN(p.QKm)) Then
-                                    p.Km = SplitLine.ParseField(RecDef.Km).Value
+                    If (SourceBlock.HasData) Then
+                        Dim RecDef As TcRecordDefinitionVermEsn = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                        Dim RecLen As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
+                        Dim RecIdx As Integer = SourceBlock.DataStartIndex - RecLen
+                        Dim LastRecEmpty As Boolean = False
+                        
+                        Do While (RecIdx <= SourceBlock.EndIndex - RecLen)
+                            Try
+                                ' Switch to next record.
+                                If (LastRecEmpty) Then
+                                    RecIdx += 1
                                 Else
-                                    p.St = SplitLine.ParseField(RecDef.Km).Value
+                                    RecIdx += RecLen
                                 End If
+                                Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
                                 
-                                ' Point info and comment.
-                                p.Info = SplitLine.ParseField(RecDef.Com).Value.Trim()
-                                If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = Com2
-                                If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
-                                
-                                ' Other info.
-                                p.ActualCant   = GeoMath.parseCant(p.Info) / 1000
-                                p.CantBase     = Me.CantBase
-                                p.SourceLineNo = SplitLine.SourceLineNo
-                                p.TrackRef     = Block.TrackRef
-                                
-                                ' Calculate values not having read.
-                                p.transformHorizontalToCanted()
-                                If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
-                                If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
-                                
-                                ' Add Point to the block.
-                                Block.Points.Add(p)
-                            End If
-                        Catch ex As ParseException
-                            If (ex.ParseError Is Nothing) Then Throw
-                            Me.ParseErrors.Add(ex.ParseError)
-                        End Try
-                    Loop
+                                If (Not SplitLine.HasData) Then
+                                    LastRecEmpty = True
+                                Else
+                                    LastRecEmpty = False
+                                    
+                                    Dim Com2 As String = Nothing
+                                    Dim ID2  As String = Nothing
+                                    
+                                    Dim p    As New GeoTcPoint()
+                                    
+                                    ' Cartesian coordinates line.
+                                    If (Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) Then
+                                        ID2  = StringUtils.sprintf("%d", SplitLine.ParseField(RecDef.ID).Value * RecDef.ID_Factor)
+                                        p.Y  = SplitLine.ParseField(RecDef.Y).Value
+                                        p.X  = SplitLine.ParseField(RecDef.X).Value
+                                        p.Z  = SplitLine.ParseField(RecDef.Z).Value
+                                        Com2 = SplitLine.ParseField(RecDef.Com2).Value.Trim()
+                                        If (RecDef.St IsNot Nothing) Then p.St = SplitLine.ParseField(RecDef.St).Value
+                                        
+                                        ' Get second line of this record.
+                                        SplitLine = SplitLines(RecIdx + 1)
+                                        If (Not SplitLine.HasData) Then Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingSecondLine, Nothing))
+                                    End If
+                                    
+                                    ' Track coordinates line.
+                                    ' Point-ID.
+                                    Dim DoubleField As DataField(Of Double) = SplitLine.ParseField(RecDef.ID)
+                                    p.ID = StringUtils.sprintf("%d", DoubleField.Value * RecDef.ID_Factor)
+                                    If ((Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) AndAlso (Not (p.ID = ID2))) Then
+                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
+                                    ElseIf (Block.Points.Contains(p.ID)) Then
+                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
+                                    End If
+                                    
+                                    ' Track values.
+                                    p.Q    = SplitLine.ParseField(RecDef.Q).Value
+                                    p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
+                                    p.Ri   = SplitLine.ParseField(RecDef.Ri).Value / RHO
+                                    p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value / 1000
+                                    p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
+                                    p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value * (-1)
+                                    p.QKm  = SplitLine.ParseField(RecDef.QKm).Value
+                                    
+                                    If (Not Double.IsNaN(p.QKm)) Then
+                                        p.Km = SplitLine.ParseField(RecDef.Km).Value
+                                    Else
+                                        p.St = SplitLine.ParseField(RecDef.Km).Value
+                                    End If
+                                    
+                                    ' Point info and comment.
+                                    p.Info = SplitLine.ParseField(RecDef.Com).Value.Trim()
+                                    If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = Com2
+                                    If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
+                                    
+                                    ' Other info.
+                                    p.ActualCant   = GeoMath.parseCant(p.Info) / 1000
+                                    p.CantBase     = Me.CantBase
+                                    p.SourceLineNo = SplitLine.SourceLineNo
+                                    p.TrackRef     = Block.TrackRef
+                                    
+                                    ' Calculate values not having read.
+                                    p.transformHorizontalToCanted()
+                                    If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                    If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
+                                    
+                                    ' Add Point to the block.
+                                    Block.Points.Add(p)
+                                End If
+                            Catch ex As ParseException
+                                If (ex.ParseError Is Nothing) Then Throw
+                                Me.ParseErrors.Add(ex.ParseError)
+                            End Try
+                        Loop
+                    End If
                     
                     ' Warning for empty block.
                     If (Block.Points.Count = 0) Then
@@ -1130,131 +1137,135 @@ Namespace Domain
                 If (Not Block.IsValid) Then
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
-                    Dim RecDef As TcRecordDefinitionIGeo = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
-                    Dim RecIdx As Integer = SourceBlock.DataStartIndex - 1
-                    
-                    Do While (RecIdx <= SourceBlock.EndIndex - 1)
-                        Try
-                            ' Switch to next record.
-                            RecIdx += 1
-                            Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
-                            
-                            If (SplitLine.HasData) Then
+                    If (SourceBlock.HasData) Then
+                        Dim RecDef As TcRecordDefinitionIGeo = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                        Dim RecIdx As Integer = SourceBlock.DataStartIndex - 1
+                        
+                        Do While (RecIdx <= SourceBlock.EndIndex - 1)
+                            Try
+                                ' Switch to next record.
+                                RecIdx += 1
+                                Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
                                 
-                                Dim UebL As Double = Double.NaN
-                                Dim UebR As Double = Double.NaN
-                                
-                                Dim p    As New GeoTcPoint()
-                                
-                                ' Cartesian coordinates.
-                                p.ID = SplitLine.ParseField(RecDef.ID).Value
-                                p.Y  = SplitLine.ParseField(RecDef.Y).Value
-                                p.X  = SplitLine.ParseField(RecDef.X).Value
-                                p.Z  = SplitLine.ParseField(RecDef.Z).Value
-                                
-                                ' Track values.
-                                p.St   = SplitLine.ParseField(RecDef.St).Value
-                                p.Q    = SplitLine.ParseField(RecDef.Q).Value
-                                p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value
-                                
-                                ' Only A5.
-                                If (Block.BlockType.Format = TcBlockFormat.A5) Then
-                                    p.Km   = SplitLine.ParseField(RecDef.Km).Value
-                                    p.H    = SplitLine.ParseField(RecDef.H).Value
-                                    p.QG   = SplitLine.ParseField(RecDef.QG).Value
-                                    p.HG   = SplitLine.ParseField(RecDef.HG).Value
+                                If (SplitLine.HasData) Then
                                     
-                                    UebL   = SplitLine.ParseField(RecDef.UebL).Value
-                                    UebR   = SplitLine.ParseField(RecDef.UebR).Value
-                                    p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value
-                                    p.Heb  = SplitLine.ParseField(RecDef.Heb).Value
+                                    Dim UebL As Double = Double.NaN
+                                    Dim UebR As Double = Double.NaN
                                     
-                                    p.G    = SplitLine.ParseField(RecDef.G).Value
-                                    p.Ri   = SplitLine.ParseField(RecDef.Ri).Value
-                                    p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
+                                    Dim p    As New GeoTcPoint()
                                     
-                                    p.V    = SplitLine.ParseField(RecDef.V).Value
-                                    p.R    = SplitLine.ParseField(RecDef.R).Value
-                                    p.L    = SplitLine.ParseField(RecDef.L).Value
+                                    ' Cartesian coordinates.
+                                    p.ID = SplitLine.ParseField(RecDef.ID).Value
+                                    p.Y  = SplitLine.ParseField(RecDef.Y).Value
+                                    p.X  = SplitLine.ParseField(RecDef.X).Value
+                                    p.Z  = SplitLine.ParseField(RecDef.Z).Value
                                     
-                                    p.HDGM = SplitLine.ParseField(RecDef.HDGM).Value
-                                    p.ZDGM = SplitLine.ParseField(RecDef.ZDGM).Value
+                                    ' Track values.
+                                    p.St   = SplitLine.ParseField(RecDef.St).Value
+                                    p.Q    = SplitLine.ParseField(RecDef.Q).Value
+                                    p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value
                                     
-                                    If (Block.BlockType.Program = TcBlockProgram.iGeo) Then
-                                        p.Tm   = SplitLine.ParseField(RecDef.Tm).Value
-                                        p.QT   = SplitLine.ParseField(RecDef.QT).Value
-                                        p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
-                                        p.ZLGS = SplitLine.ParseField(RecDef.ZLGS).Value
+                                    ' Only A5.
+                                    If (Block.BlockType.Format = TcBlockFormat.A5) Then
+                                        p.Km   = SplitLine.ParseField(RecDef.Km).Value
+                                        p.H    = SplitLine.ParseField(RecDef.H).Value
+                                        p.QG   = SplitLine.ParseField(RecDef.QG).Value
+                                        p.HG   = SplitLine.ParseField(RecDef.HG).Value
+                                        
+                                        UebL   = SplitLine.ParseField(RecDef.UebL).Value
+                                        UebR   = SplitLine.ParseField(RecDef.UebR).Value
+                                        p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value
+                                        p.Heb  = SplitLine.ParseField(RecDef.Heb).Value
+                                        
+                                        p.G    = SplitLine.ParseField(RecDef.G).Value
+                                        p.Ri   = SplitLine.ParseField(RecDef.Ri).Value
+                                        p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
+                                        
+                                        p.V    = SplitLine.ParseField(RecDef.V).Value
+                                        p.R    = SplitLine.ParseField(RecDef.R).Value
+                                        p.L    = SplitLine.ParseField(RecDef.L).Value
+                                        
+                                        p.HDGM = SplitLine.ParseField(RecDef.HDGM).Value
+                                        p.ZDGM = SplitLine.ParseField(RecDef.ZDGM).Value
+                                        
+                                        If (Block.BlockType.Program = TcBlockProgram.iGeo) Then
+                                            p.Tm   = SplitLine.ParseField(RecDef.Tm).Value
+                                            p.QT   = SplitLine.ParseField(RecDef.QT).Value
+                                            p.LG   = SplitLine.ParseField(RecDef.LG).Value
+                                            p.RG   = SplitLine.ParseField(RecDef.RG).Value
+                                            p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
+                                            p.ZLGS = SplitLine.ParseField(RecDef.ZLGS).Value
+                                        End If
                                     End If
+                                    
+                                    ' Point info and comment.
+                                    p.Info = SplitLine.ParseField(RecDef.Text).Value
+                                    If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
+                                    If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
+                                    
+                                    ' Other info.
+                                    p.ActualCant = GeoMath.parseCant(p.Info) / 1000
+                                    If (Double.IsNaN(p.ActualCant)) Then
+                                        p.ActualCant = GeoMath.parseCant(p.Comment) / 1000
+                                    End If
+                                    p.CantBase     = Me.CantBase
+                                    p.SourceLineNo = SplitLine.SourceLineNo
+                                    p.TrackRef     = Block.TrackRef
+                                    
+                                    ' Resolve Ambiguities.
+                                    If (Block.BlockType.Format = TcBlockFormat.A1) Then
+                                        If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
+                                            p.H    = p.HSOK
+                                            p.HSOK = Double.NaN
+                                        End If
+                                    End If
+                                    
+                                    ' Change Zero to NaN.
+                                    If (Block.BlockType.Program = TcBlockProgram.iTrassePC) Then
+                                        If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
+                                            p.HSOK = Double.NaN
+                                            p.ZSOK = Double.NaN
+                                            p.QG   = Double.NaN
+                                            p.HG   = Double.NaN
+                                            p.Heb  = Double.NaN
+                                            p.Ueb  = Double.NaN
+                                            UebL   = Double.NaN
+                                            UebR   = Double.NaN
+                                        End If
+                                        If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace()) Then
+                                            p.ZLGS = Double.NaN
+                                            p.H    = Double.NaN
+                                            p.HSOK = Double.NaN
+                                            p.G    = Double.NaN
+                                        End If
+                                        If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace() OrElse Block.TrackRef.NameOfRoadSections.IsEmptyOrWhiteSpace()) Then
+                                            p.V    = Double.NaN
+                                        End If
+                                        If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace() OrElse Block.TrackRef.NameOfTunnelSections.IsEmptyOrWhiteSpace()) Then
+                                            p.R    = Double.NaN
+                                            p.L    = Double.NaN
+                                        End If
+                                        If (Block.TrackRef.NameOfDTM.IsEmptyOrWhiteSpace()) Then
+                                            p.HDGM = Double.NaN
+                                            p.ZDGM = Double.NaN
+                                        End If
+                                    End If
+                                    
+                                    ' Calculate values not having read.
+                                    p.transformHorizontalToCanted()
+                                    If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                    If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
+                                    If (Double.IsNaN(p.ZSOK)) Then p.ZSOK = p.Z - p.HSOK
+                                    
+                                    ' Add Point to the block.
+                                    Block.Points.Add(p)
                                 End If
-                                
-                                ' Point info and comment.
-                                p.Info = SplitLine.ParseField(RecDef.Text).Value
-                                If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
-                                If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
-                                
-                                ' Other info.
-                                p.ActualCant = GeoMath.parseCant(p.Info) / 1000
-                                If (Double.IsNaN(p.ActualCant)) Then
-                                    p.ActualCant = GeoMath.parseCant(p.Comment) / 1000
-                                End If
-                                p.CantBase     = Me.CantBase
-                                p.SourceLineNo = SplitLine.SourceLineNo
-                                p.TrackRef     = Block.TrackRef
-                                
-                                ' Resolve Ambiguities.
-                                If (Block.BlockType.Format = TcBlockFormat.A1) Then
-                                    If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
-                                        p.H    = p.HSOK
-                                        p.HSOK = Double.NaN
-                                    End If
-                                End If
-                                
-                                ' Change Zero to NaN.
-                                If (Block.BlockType.Program = TcBlockProgram.iTrassePC) Then
-                                    If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
-                                        p.HSOK = Double.NaN
-                                        p.ZSOK = Double.NaN
-                                        p.QG   = Double.NaN
-                                        p.HG   = Double.NaN
-                                        p.Heb  = Double.NaN
-                                        p.Ueb  = Double.NaN
-                                        UebL   = Double.NaN
-                                        UebR   = Double.NaN
-                                    End If
-                                    If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace()) Then
-                                        p.ZLGS = Double.NaN
-                                        p.H    = Double.NaN
-                                        p.HSOK = Double.NaN
-                                        p.G    = Double.NaN
-                                    End If
-                                    If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace() OrElse Block.TrackRef.NameOfRoadSections.IsEmptyOrWhiteSpace()) Then
-                                        p.V    = Double.NaN
-                                    End If
-                                    If (Block.TrackRef.NameOfGradientLine.IsEmptyOrWhiteSpace() OrElse Block.TrackRef.NameOfTunnelSections.IsEmptyOrWhiteSpace()) Then
-                                        p.R    = Double.NaN
-                                        p.L    = Double.NaN
-                                    End If
-                                    If (Block.TrackRef.NameOfDTM.IsEmptyOrWhiteSpace()) Then
-                                        p.HDGM = Double.NaN
-                                        p.ZDGM = Double.NaN
-                                    End If
-                                End If
-                                
-                                ' Calculate values not having read.
-                                p.transformHorizontalToCanted()
-                                If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
-                                If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
-                                If (Double.IsNaN(p.ZSOK)) Then p.ZSOK = p.Z - p.HSOK
-                                
-                                ' Add Point to the block.
-                                Block.Points.Add(p)
-                            End If
-                        Catch ex As ParseException
-                            If (ex.ParseError Is Nothing) Then Throw
-                            Me.ParseErrors.Add(ex.ParseError)
-                        End Try
-                    Loop
+                            Catch ex As ParseException
+                                If (ex.ParseError Is Nothing) Then Throw
+                                Me.ParseErrors.Add(ex.ParseError)
+                            End Try
+                        Loop
+                    End If
                     
                     ' Warning for empty block.
                     If (Block.Points.Count = 0) Then
@@ -1282,9 +1293,9 @@ Namespace Domain
                 Dim FullLine        As String
                 Dim Pattern         As String
                 Dim PathName        As String
-                Dim Comment     As New StringBuilder()
+                Dim Comment         As New StringBuilder()
                 Dim oMatch          As Match
-                Dim DataFound       As Boolean = False
+                'Dim DataFound       As Boolean = False
                 Dim FormatFound     As Boolean = False
                 Dim i               As Integer = SourceBlock.StartIndex
                 
@@ -1381,7 +1392,7 @@ Namespace Domain
                             
                         Else
                             ' First Data Line => Check for sub format.
-                            DataFound = True
+                            SourceBlock.HasData = True
                             SourceBlock.DataStartIndex = i
                             
                             ' Determine sub format.
@@ -1398,14 +1409,14 @@ Namespace Domain
                     End If
                     
                     i += 1
-                Loop Until (DataFound OrElse (i > SourceBlock.EndIndex))
+                Loop Until (SourceBlock.HasData OrElse (i > SourceBlock.EndIndex))
                 
                 Block.Comment = Comment.ToString()
                 
                 Logger.logDebug(StringUtils.sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(StringUtils.sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
                 Logger.logDebug(StringUtils.sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
-                If (DataFound) Then Logger.logDebug(StringUtils.sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
+                If (SourceBlock.HasData) Then Logger.logDebug(StringUtils.sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
             ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A1, A5), especially block type and geometry reference info and first data line. </summary>
@@ -1422,10 +1433,10 @@ Namespace Domain
                 If (Block Is Nothing) Then Throw New System.ArgumentNullException("Block")
                 
                 Dim SplittedLine    As PreSplittedTextLine
-                Dim Comment     As New StringBuilder()
-                Dim DataFound       As Boolean = False
+                Dim Comment         As New StringBuilder()
+                'Dim DataFound       As Boolean = False
                 Dim FormatFound     As Boolean = False
-                Dim CommentEnd  As Boolean = False
+                Dim CommentEnd      As Boolean = False
                 Dim kvp             As KeyValuePair(Of String, String)
                 Dim i               As Integer = SourceBlock.StartIndex
                 
@@ -1472,6 +1483,8 @@ Namespace Domain
                                     Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Profilpunktbereich":  Block.TrackRef.NameOfSectionPoints  = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Gleisprofilbereich":  Block.TrackRef.NameOfRailSections   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "DGM":                 Block.TrackRef.NameOfDTM            = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     
                                 End Select
@@ -1484,19 +1497,19 @@ Namespace Domain
                         End If
                     Else
                         ' First Data Line.
-                        DataFound = True
+                        SourceBlock.HasData = True
                         SourceBlock.DataStartIndex = i
                     End If
                     
                     i += 1
-                Loop Until (DataFound OrElse (i > SourceBlock.EndIndex))
+                Loop Until (SourceBlock.HasData OrElse (i > SourceBlock.EndIndex))
                 
                 Block.Comment = Comment.ToString()
                 
                 Logger.logDebug(StringUtils.sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(StringUtils.sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
                 Logger.logDebug(StringUtils.sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
-                If (DataFound) Then Logger.logDebug(StringUtils.sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
+                If (SourceBlock.HasData) Then Logger.logDebug(StringUtils.sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
             ''' <summary> Sets the definitions for Verm.esn source records. </summary>
@@ -1878,8 +1891,14 @@ Namespace Domain
                     .ZLGS = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,
                                                                DataFieldPositionType.WordNumber, 27, 0),
                     _
+                    .LG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,
+                                                               DataFieldPositionType.WordNumber, 28, 0),
+                    _
+                    .RG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,
+                                                               DataFieldPositionType.WordNumber, 29, 0),
+                    _
                     .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
-                                                               DataFieldPositionType.WordNumber, 28, 0,
+                                                               DataFieldPositionType.WordNumber, 30, 0,
                                                                DataFieldOptions.NotRequired)
                     })
                 '
