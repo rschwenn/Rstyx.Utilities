@@ -93,15 +93,20 @@ Public Class MainViewModel
             Dim TcReader As New TcFileReader()
             
             Try
+                'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
+                'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
+                Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFileName(Me.Textbox)))
+                Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFileNameSpelling(Me.Textbox)))
+                
                 'Dim Path As String = "T:\Debug.log"
                 'Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
                 'fdk.Load(Me.FilePath1)
                 'Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
                 
-                TcReader = New TcFileReader()
-                TcReader.Load(Me.FilePath1)
-                Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
-                Logger.logInfo(TcReader.ToString())
+                'TcReader = New TcFileReader()
+                'TcReader.Load(Me.FilePath1)
+                'Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
+                'Logger.logInfo(TcReader.ToString())
                 
                 'Dim Info As String = Me.Textbox
                 'Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
