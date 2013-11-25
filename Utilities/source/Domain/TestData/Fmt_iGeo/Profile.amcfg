@@ -1,0 +1,30 @@
+
+[ALLGEMEIN]
+TRAKONF                        = .\Bearbeitung\iGeo\Config\211\3600_165_R.acfg
+VERSION                        = 1
+
+[TRASSENBERECHNUNG]
+AUSGABE_DATEI                  = .\Bearbeitung\iGeo\iTrasse\2013_06_27_Umformung_Verbautraeger\Profile_umf.A5
+AUSGABE_FORMAT                 = 5
+AUSGABE_SORTIERUNG             = Keine
+EINGABE_DATEI                  = .\Bearbeitung\iGeo\iTrasse\2013_06_27_Umformung_Verbautraeger\Profile.kor
+EINGABE_FORMAT                 = 1
+GHP_AKTIV                      = false
+GHP_BEREICH_BIS                = 1000000.0
+GHP_BEREICH_VON                = -1000000.0
+GHP_HOEHE                      = true
+GHP_LAGE                       = true
+GHP_LFD_PKTNR                  = false
+GHP_LFD_PKTNR_INKR             = 1
+GHP_LFD_PKTNR_START            = GHP0001
+GHP_NUR_BEREICH                = false
+GHP_PROFILE                    = true
+GHP_UEBER                      = true
+KP_AKTIV                       = false
+KP_BIS                         = 0.0
+KP_INTERVALL                   = 1.0
+KP_PKTNR_INKR                  = 1
+KP_PKTNR_START                 = 1
+KP_PUNKTLISTE                  = 
+KP_VON                         = 0.0
+VERSION                        = 1
