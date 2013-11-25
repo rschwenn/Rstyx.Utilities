@@ -11,11 +11,11 @@
     xmlns:Logging="clr-namespace:Rstyx.LoggingConsole;assembly=Rstyx.LoggingConsole"
     xmlns:RstyxPush="clr-namespace:Rstyx.Utilities.UI.Binding.PushBinding;assembly=Rstyx.Utilities"
     xmlns:RstyxUtils="clr-namespace:Rstyx.Utilities;assembly=Rstyx.Utilities"
+    xmlns:RstyxUtilsApps="clr-namespace:Rstyx.Utilities.Apps;assembly=Rstyx.Utilities"
     xmlns:RstyxControls="clr-namespace:Rstyx.Utilities.UI.Controls;assembly=Rstyx.Utilities"
     xmlns:RstyxConverters="clr-namespace:Rstyx.Utilities.UI.Binding.Converters;assembly=Rstyx.Utilities"
     xmlns:RstyxResources="clr-namespace:Rstyx.Utilities.UI.Resources;assembly=Rstyx.Utilities"
     xmlns:global="clr-namespace:Rstyx.Utilities.TestWpf;assembly="
-    xmlns:Ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"
     
     mc:Ignorable="d"
     d:DesignHeight="500" d:DesignWidth="500"
@@ -354,7 +354,7 @@
             <RstyxControls:EditorSelector Name="EditorCombo2" />
             
             <RstyxControls:RadioButtonList
-                Name="TestRadioButtonList" ItemsSource="{Binding Source={x:Static RstyxUtils:Apps.AppUtils.AvailableEditors}, Mode=OneWay}"
+                Name="TestRadioButtonList" ItemsSource="{Binding Source={x:Static RstyxUtilsApps:AppUtils.AvailableEditors}, Mode=OneWay}"
                 DisplayMemberPath="Value.DisplayName"
                 SelectedValuePath="Key" 
                 DockPanel.Dock="Left" Margin="5" >
@@ -400,6 +400,7 @@
                         <ToggleButton Content="TB"/>
                     </ToolBar>
                 
+                <!--xmlns:Ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"-->
                 <!--<Ribbon:RibbonToggleButton Height="28" Name="RibbonToggleButton1" Width="38" Content="RTB" IsChecked="True" />-->
             </DockPanel>
         </DockPanel>

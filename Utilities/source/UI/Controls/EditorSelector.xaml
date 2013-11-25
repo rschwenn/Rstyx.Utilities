@@ -15,6 +15,7 @@ EditorSelector
     mc:Ignorable="d" d:DesignHeight="30" d:DesignWidth="90"
     
     xmlns:RstyxUtils="clr-namespace:Rstyx.Utilities;assembly="
+    xmlns:RstyxUtilsApps="clr-namespace:Rstyx.Utilities.Apps;assembly=Rstyx.Utilities"
     >
     
     <UserControl.Resources>
@@ -22,7 +23,7 @@ EditorSelector
         <Style x:Key="EditorComboBoxDisabler" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}">
             <Setter Property="IsEnabled" Value="True" />
             <Style.Triggers>
-                <DataTrigger Value="0" Binding="{Binding Path=Count, Source={x:Static RstyxUtils:Apps.AppUtils.AvailableEditors}}">
+                <DataTrigger Value="0" Binding="{Binding Path=Count, Source={x:Static RstyxUtilsApps:AppUtils.AvailableEditors}}">
                     <Setter Property="IsEnabled" Value="False" />
                     <Setter Property="Width" Value="90" />
                 </DataTrigger>
@@ -31,8 +32,8 @@ EditorSelector
     </UserControl.Resources>
     
     <ComboBox Name="EditorComboBox"
-        ItemsSource="{Binding Source={x:Static RstyxUtils:Apps.AppUtils.AvailableEditors}}"
-        SelectedValue="{Binding Path=CurrentEditor, Source={x:Static RstyxUtils:Apps.AppUtils.Instance}, Mode=TwoWay}"
+        ItemsSource="{Binding Source={x:Static RstyxUtilsApps:AppUtils.AvailableEditors}}"
+        SelectedValue="{Binding Path=CurrentEditor, Source={x:Static RstyxUtilsApps:AppUtils.Instance}, Mode=TwoWay}"
         SelectedValuePath="Key"
         DisplayMemberPath="Value.DisplayName"
         Style="{StaticResource EditorComboBoxDisabler}"
