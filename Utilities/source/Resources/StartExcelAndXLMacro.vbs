@@ -1,15 +1,13 @@
 ' StartExcelAndXLMacro.vbs.vbs  Start Excel and an Excel macro.
 '
 '
-'
-'
- '                                                                  Für jEdit:  :collapseFolds=1:
+' for jEdit:  :collapseFolds=1:
 '
 
 Option explicit
 on error goto 0
 
-const Version     = "v2.5a"
+const Version     = "v2.7a"
 
 ' --- Klassen einbinden ----------------------------------------------
   dim oSkript, oXLTools, oTools_1
@@ -708,7 +706,7 @@ class Skript
     'Ermittelt Informationen zur Version des Betriebssystems.
     'Es werden folgende Variablen belegt:
     '  OS_Typ          ... Betriebssystem Typ ("Windows_9x", "Windows_NT")
-    '  OS_Name         ... Betriebssystem Name ("W95", "W98", "WME", "WNT", "W2K", "WXP")
+    '  OS_Name         ... Betriebssystem Name ("W95", "W98", "WME", "WNT", "W2K", "WXP", "WVista", "W7", "W8", "W8.1")
     '  OS_VersionsNr   ... Betriebssystem Versionsnummer komplett 
     '
     'Ursprüngliche Routinen: Torgeir Bakken (M. Harris' Favorit.)
@@ -754,6 +752,10 @@ class Skript
         Case InStr(sResults, "Windows NT") > 1         : OS_Name = "WNT"
         Case InStr(sResults, "Windows 2000") > 1       : OS_Name = "W2k"
         Case InStr(sResults, "Windows XP") > 1         : OS_Name = "WXP"
+        Case InStr(sResults, "Version 6.0") > 1        : OS_Name = "WVista"
+        Case InStr(sResults, "Version 6.1") > 1        : OS_Name = "W7"
+        Case InStr(sResults, "Version 6.2") > 1        : OS_Name = "W8"
+        Case InStr(sResults, "Version 6.3") > 1        : OS_Name = "W8.1"
       End Select
   
     end if
@@ -1559,7 +1561,7 @@ class Tools_1
   
   Function RegGetSubKeys(byVal Key, byRef oSubKeys)
     'Ermittelt alle direkten Unterschlüssel eines Registry-Keys (nur 1 Ebene)
-    '(Export mit Regedit.exe in TmpDatei, daraus Schlüssel lesen).
+    '(Export mit Reg.exe in TmpDatei, daraus Schlüssel lesen).
     
     'Parameter: Key        = RegistryKey, dessen SubKey-Namen ermittelt werden sollen
     '                      = -> keine Abkürzung des Stammschlüssels erlaubt, muß mit "\" enden!
@@ -1581,10 +1583,11 @@ class Tools_1
       TmpDateiPfadName = GetTmpDateiPfadName()
       Key  = lcase(Key)
       Key1 = """" & left(Key, len(Key)-1) & """"   ' Backslash entfernen, Anführungszeichen..
-      Kommando = "regedit /e " & TmpDateiPfadName & " " & Key1
+      'Kommando = "regedit /e " & TmpDateiPfadName & " " & Key1
+      Kommando = "reg export " & Key1 & " " & TmpDateiPfadName
       errCode  = WshShell.Run(Kommando, WindowStyle_hidden, WaitOnReturn_yes)
       
-      if fs.FileExists(TmpDateiPfadName) then
+      if ((errCode = 0) And fs.FileExists(TmpDateiPfadName)) then
         oSkript.debugecho "Lese temporäre Datei '" & TmpDateiPfadName & "'"
         Set oRegDatei = fs.OpenTextFile(TmpDateiPfadName, ForReading, false, TristateUseDefault)
         'RegDateiInhalt = oRegDatei.ReadAll
@@ -2673,6 +2676,8 @@ class XlTools
 
     oAddInFilter.Add oAddInFilter.count, xlApp.StartupPath & "\*.xla"
     oAddInFilter.Add oAddInFilter.count, xlApp.AltStartupPath & "\*.xla"
+    oAddInFilter.Add oAddInFilter.count, xlApp.StartupPath & "\*.xlam"
+    oAddInFilter.Add oAddInFilter.count, xlApp.AltStartupPath & "\*.xlam"
 
     if (oTools_1.FindeDateien_xMasken(oAddInFilter, oAddins, "", false) = 0) then
       oSkript.echo "Keine Addins in den Startverzeichnissen gefunden."
