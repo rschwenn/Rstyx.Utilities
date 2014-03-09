@@ -1,4 +1,6 @@
 ﻿
+Imports System.Data
+Imports System.Data.OleDb
 Imports System.Data.DataTableExtensions
 'Imports System.Linq
 Imports System.IO
@@ -95,8 +97,8 @@ Public Class MainViewModel
             Try
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
-                Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFileName(Me.Textbox)))
-                Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFileNameSpelling(Me.Textbox)))
+                'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFileName(Me.Textbox)))
+                'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFileNameSpelling(Me.Textbox)))
                 
                 'Dim Path As String = "T:\Debug.log"
                 'Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
@@ -159,11 +161,22 @@ Public Class MainViewModel
                 'Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, Nothing)
                 'Logger.logInfo(fi.FullName)
                 
-                'Dim Field = "UserDomaiN"
-                'Dim TableName = "Standorte$y"
-                'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsy"
-                ''
-                ''Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
+                Dim Field = "UserDomaiN"
+                Dim TableName = "Standorte$y"
+                Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
+                
+                Dim DBconn  As OleDbConnection = Nothing
+                Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
+                CSB.DataSource = Workbook
+                'CSB.Provider   = "Microsoft.Jet.OLEDB.4.0"
+                'CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
+                CSB.Provider   = "yyMicrosoft.ACE.OLEDB.12.0"
+                CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
+                DBconn = New OleDbConnection(CSB.ConnectionString)
+                DBconn.Open()
+                DBconn.Close()
+                
+                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
                 'Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
                 '    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
                 '    'Dim Table As DataTable = XLconn.getTable(TableName)

@@ -48,10 +48,13 @@ Imports System.IO
              ''' The first row of every Excel table must contain field names.
              ''' </para>
              ''' <para>
-             ''' The Excel worksheet's format is guessed as "97 - 2003".
+             ''' The Excel worksheet's format is guessed to be "97 - 2003".
              ''' </para>
              ''' <para>
              ''' If a column has values of mixed data type, all values are read as "text".
+             ''' </para>
+             ''' <para>
+             ''' The connection uses Microsoft Jet which comes with Windows but is <b>not available in a 64 bit process</b>!
              ''' </para>
              ''' </remarks>
             Public Shared Function connectToExcelWorkbook(byVal XlFilePath As String) As OleDbConnection
@@ -62,8 +65,7 @@ Imports System.IO
                 
                 Dim DBconn  As OleDbConnection = Nothing
                 Try
-                    ' Jet/Excel setting: Check all lines to determine the column's data type.
-                    RegUtils.setValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Jet\4.0\Engines\Excel\TypeGuessRows", 0, Microsoft.Win32.RegistryValueKind.DWord)
+                    configureJetForExcel()
                     
                     ' Init DB connection. (Jet/Excel setting "IMEX=1": If a column has mixed data type, all values are read as "text").
                     Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
@@ -122,6 +124,38 @@ Imports System.IO
                     Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_OpenExcelWorksheetFailed, TableName, XlFilePath), ex)
                 End Try
             End Function
+            
+        #End Region
+        
+        #Region "Private Methods"
+            
+            ''' <summary> Checks Jet settings for Excel in the Registry and changes them if needed. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' Actually the <b>TypeGuessRows</b> setting is ensured to be zero, which means that
+             ''' Jet will check all lines in order to determine an Excel column's data type.
+             ''' </para>
+             ''' <para>
+             ''' If the setting isn't correct, it will be changed. This action may fail and
+             ''' any occuring exception willbe thrown.
+             ''' </para>
+             ''' </remarks>
+            Private Shared Sub configureJetForExcel()
+                
+                Const TypeGuessRows     As Integer = 0
+                Const ValuePathName     As String  = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Jet\4.0\Engines\Excel\TypeGuessRows"
+                Dim success             As Boolean
+                
+                ' Jet/Excel setting: Check all lines in order to determine a column's data type.
+                success = (RegUtils.getValue(ValuePathName) IsNot Nothing)
+                If (success) Then
+                    success = (RegUtils.getValue(Of Integer)(ValuePathName) = TypeGuessRows)
+                End If
+                
+                If (Not success) Then
+                    Microsoft.Win32.Registry.SetValue(RegUtils.getKeyPathName(ValuePathName), RegUtils.getValueName(ValuePathName), TypeGuessRows, Microsoft.Win32.RegistryValueKind.DWord)
+                End If
+            End Sub
             
         #End Region
         
