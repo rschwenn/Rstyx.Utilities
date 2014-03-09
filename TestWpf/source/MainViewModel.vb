@@ -95,8 +95,8 @@ Public Class MainViewModel
             Try
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
-                Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFileName(Me.Textbox)))
-                Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFileNameSpelling(Me.Textbox)))
+                'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFileName(Me.Textbox)))
+                'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFileNameSpelling(Me.Textbox)))
                 
                 'Dim Path As String = "T:\Debug.log"
                 'Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
@@ -159,29 +159,29 @@ Public Class MainViewModel
                 'Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, Nothing)
                 'Logger.logInfo(fi.FullName)
                 
-                'Dim Field = "UserDomaiN"
-                'Dim TableName = "Standorte$y"
-                'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsy"
-                ''
-                ''Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
-                'Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                '    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
-                '    'Dim Table As DataTable = XLconn.getTable(TableName)
-                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, XLconn.TableContainsField(TableName, Field)))
-                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
-                '    
-                '    'Dim SQL = "SELECT * FROM " & TableName
-                '    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
-                '    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
-                '    
-                '    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                '    'Dim yes = Table.containsField(Field)
-                '    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
-                '    
-                '    For Each row As System.Data.DataRow In Table.AsEnumerable()
-                '        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
-                '    Next 
-                'End Using
+                Dim Field = "UserDomaiN"
+                Dim TableName = "Standorte$y"
+                Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
+                '
+                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
+                Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
+                    'Dim Table As DataTable = XLconn.getTable(TableName)
+                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, XLconn.TableContainsField(TableName, Field)))
+                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+                    
+                    'Dim SQL = "SELECT * FROM " & TableName
+                    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+                    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
+                    
+                    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                    'Dim yes = Table.containsField(Field)
+                    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
+                    
+                    For Each row As System.Data.DataRow In Table.AsEnumerable()
+                        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+                    Next 
+                End Using
                 
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
