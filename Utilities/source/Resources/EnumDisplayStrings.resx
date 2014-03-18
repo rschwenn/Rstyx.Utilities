@@ -537,4 +537,34 @@
   <data name="Rstyx_Utilities_IO_DataFieldOptions_ZeroAsNaN" xml:space="preserve">
     <value>Zahl 0.0 als nicht definiert ansehen</value>
   </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_All" xml:space="preserve">
+    <value>Alle Ansichten</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_None" xml:space="preserve">
+    <value>Keine Ansicht</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View1" xml:space="preserve">
+    <value>Ansicht 1</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View2" xml:space="preserve">
+    <value>Ansicht 2</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View3" xml:space="preserve">
+    <value>Ansicht 3</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View4" xml:space="preserve">
+    <value>Ansicht 4</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View5" xml:space="preserve">
+    <value>Ansicht 5</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View6" xml:space="preserve">
+    <value>Ansicht 6</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View7" xml:space="preserve">
+    <value>Ansicht 7</value>
+  </data>
+  <data name="Bentley_Interop_MicroStationDGN_MsdViews_View8" xml:space="preserve">
+    <value>Ansicht 8</value>
+  </data>
 </root>
