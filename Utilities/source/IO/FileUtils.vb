@@ -330,6 +330,8 @@ Namespace IO
                     Dim DgnClass              As String = String.Empty
                     Dim ProjectLength         As Integer
                     
+                    givenFilename = givenFilename.Replace("""", "")
+                    
                     Logger.logDebug(StringUtils.sprintf("getFilePart(): gesuchter Namensteil: %s.", desiredFilePart.ToDisplayString()))
                     Logger.logDebug(StringUtils.sprintf("getFilePart(): gegeben : %s.", givenFilename))
                     

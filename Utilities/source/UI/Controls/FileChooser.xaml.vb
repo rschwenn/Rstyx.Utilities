@@ -528,7 +528,8 @@ Namespace UI.Controls
                     ' Init and show dialog.
                     If (OpenFile) Then
                         Logger.logDebug("getFilePathFromDialog(): Initialize OpenFileDialog.")
-                        Dim Dialog As Microsoft.Win32.OpenFileDialog = New Microsoft.Win32.OpenFileDialog()
+                        Dim DialogResult        As Nullable(Of Boolean)
+                        Dim Dialog              As Microsoft.Win32.OpenFileDialog = New Microsoft.Win32.OpenFileDialog()
                         
                         Dialog.Title            = Me.FileDialogTitle
                         Dialog.FileName         = InitialFileName
@@ -538,7 +539,9 @@ Namespace UI.Controls
                         Dialog.RestoreDirectory = True
                         Dialog.ValidateNames    = True
                         
-                        If (Dialog.ShowDialog(UIUtils.getMainWindow())) Then
+                        DialogResult = Dialog.ShowDialog(UIUtils.getMainWindow())
+                        
+                        If (DialogResult.HasValue AndAlso DialogResult.Value) Then
                             Aborted = False
                             ChoosenFile = Dialog.FileName
                             SetCurrentValue(InputFilePathProperty, Dialog.FileName)
@@ -546,7 +549,8 @@ Namespace UI.Controls
                         End if
                     Else
                         Logger.logDebug("getFilePathFromDialog(): Initialize SaveFileDialog.")
-                        Dim Dialog As Microsoft.Win32.SaveFileDialog = New Microsoft.Win32.SaveFileDialog()
+                        Dim DialogResult        As Nullable(Of Boolean)
+                        Dim Dialog              As Microsoft.Win32.SaveFileDialog = New Microsoft.Win32.SaveFileDialog()
                         
                         Dialog.Title            = Me.FileDialogTitle
                         Dialog.FileName         = InitialFileName
@@ -557,7 +561,9 @@ Namespace UI.Controls
                         Dialog.ValidateNames    = True
                         Dialog.OverwritePrompt  = True
                         
-                        If (Dialog.ShowDialog(UIUtils.getMainWindow())) Then
+                        DialogResult = Dialog.ShowDialog(UIUtils.getMainWindow())
+                        
+                        If (DialogResult.HasValue AndAlso DialogResult.Value) Then
                             Aborted = False
                             ChoosenFile = Dialog.FileName
                             SetCurrentValue(InputFilePathProperty, Dialog.FileName)
