@@ -113,7 +113,12 @@ Public Class MainViewModel
                 'Dim Info As String = Me.Textbox
                 'Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
                 'Logger.logInfo(StringUtils.sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
-                
+                 
+                Dim li  As GeoMath.DBAGLineInfo
+                li = GeoMath.getDBAGLineTitle(6265)
+                Logger.logInfo(li.ShortTitle)
+                Exit Sub
+
                 'Dim Zahl        As DataField(Of Double) = Nothing
                 'Dim Text        As DataField(Of String) = Nothing
                 'Dim PError      As ParseError = Nothing
@@ -231,7 +236,7 @@ Public Class MainViewModel
             'Dim s As String
             'Dim sa() As String
             'Dim d As Nullable(Of Double)
-            ''Dim li  As GeoMath.DBAGLineInfo
+            Dim li  As GeoMath.DBAGLineInfo
             ''Dim bool As Boolean
             '
             Dim TestEnum As Cinch.CustomDialogIcons = Cinch.CustomDialogIcons.Question
@@ -252,8 +257,8 @@ Public Class MainViewModel
             'd = GeoMath.getKilometer(a)
             
             'GeoMath.getCantFromPointinfo(s, d, False )
-            'Dim li = GeoMath.getDBAGLineTitle(6265)
-            'Logger.logInfo(li.ShortTitle)
+            li = GeoMath.getDBAGLineTitle(6265)
+            Logger.logInfo(li.ShortTitle)
             'Logger.logInfo(Strings.FileSpec2RegExp("X:\Quellen\DotNet\VisualBasic\_Backup\Rstyx.Utilities_2012-??-14.*"))
             
             'Logger.logInfo(s.left("y"c))
