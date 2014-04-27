@@ -1,0 +1,74 @@
+# Datei               : P:\0815\Test2_AKGURT---.A5
+# Format              : A5 : Alles
+# Programm            : iGeo
+# Bearbeiter          : admschw
+# Berechnet am        : 15.04.2014 17:58:08
+# Eingabedatei        : 
+# Konfigurationsdatei : P:\0815\Test_Trasse\test.amcfg
+# Trassenkonfiguration: P:\0815\Test_Trasse\Profile_1.acfg
+#                       Checksumme:          AFACC16B
+#                       Achse:               P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Km-Linie:            P:\0815\Test_Trasse\Profile\Gleis\Gleis_Km
+#                       Gradiente:           P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Überhöhungsband:     P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Regelprofilbereich:  P:\0815\Test_Trasse\Profile\Strasse\Strasse
+#                       Tunnelprofilbereich: P:\0815\Test_Trasse\Profile\Tunnel\iTunnel
+#
+# Berechnet durch     : intermetric Trassenbibliothek V190
+#
+# PktNr        Punktnummer
+# Y     [m]    Y-Grosskoordinate
+# X     [m]    X-Grosskoordinate
+# Z     [m]    Z-Grosskoordinate
+# St    [m]    Station der Achse
+# Km    [m]    Station der Stationierungsachse
+# Q     [m]    Querabstand zur Achse (+ = Ist-Punkt liegt rechts der Achse)
+# H     [m]    Höhe über der Gradiente (+ = Ist-Punkt liegt über der Gradiente)
+# HSOK  [m]    Höhe über der Schienenoberkante (Hebung berücksichtigt)
+# QG    [m]    Querabstand im gedrehten Gleissystem
+# HG    [m]    Höhe über der Schienenoberkante im Gleissystem
+# UebLi [m]    Überhöhung der linken Schiene
+# Ueb   [m]    Überhöhung der rechten Schiene
+# Heb   [m]    Anhebung der unteren Schiene zur Gradiente
+# G     [rad]  Steigungswinkel (Promillewert = tan(G) * 1000)
+# Ri    [rad]  Tangentenrichtung im Fusspunkt
+# Ra    [m]    Radius
+# V     [m]    Höhe über Strassenprofil
+# R     [m]    Radialer Abstand zum Tunnelprofil
+# L     [m]    Abwicklungsmass bei Tunnelprofil
+# HDGM  [m]    Höhe über dem Gelände
+# ZDGM  [m]    Geländehöhe
+# Tm    [m]    Tunnelmeter
+# QT    [m]    Querabstand zur Achse in Tunnelvortriebsrichtung (+ = Ist-Punkt liegt rechts der Achse)
+# ZSOK  [m]    Höhe der Schienenoberkante
+# ZLGS  [m]    Höhe der Gradiente
+# RG    [m]    Radialer Abstand zum Gleisprofil
+# LG    [m]    Abwicklungsmass bei Gleisprofil
+# QGT   [m]    Quer im Tunnelsystem
+# HGT   [m]    Hoch im Tunnelsystem
+# QGS   [m]    Quer im Strassensystem
+# HGS   [m]    Hoch im Strassensystem
+# KmStatus     0 = Eindeutiger Km, Km-Sprung (Überlänge): 1 = Ankommender Km, 2 = Abgehender Km
+# Text         Kodierung des Punkts
+#
+#
+#               PktNr               Y              X          Z             St             Km          Q          H       HSOK         QG         HG      UebLi      UebRe        Ueb        Heb           G          Ri             Ra          V          R          L       HDGM       ZDGM             Tm         QT       ZSOK       ZLGS         RG         LG        QGT        HGT        QGS        HGS  KmStatus  Text
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                 NWOAK   3510499.9127   5395819.5440   426.2977        15.3482     20191.9779     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -2.0000    -4.6039    53.8610        NaN        NaN        15.3482     0.0000   426.2977   426.2977        NaN        NaN        NaN        NaN        NaN        NaN         0  NWOAK                      
+               PWS-PWT   3510501.0263   5395815.0275   426.3214        20.0000     20196.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.0000    -2.3020    26.9317        NaN        NaN        20.0000     0.0000   426.3214   426.3214        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510503.4204   5395805.3183   426.3723        30.0000     20206.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -2.0000    -4.6039    53.8610        NaN        NaN        30.0000     0.0000   426.3723   426.3723        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510505.8145   5395795.6091   426.4233        40.0000     20216.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.0000    -2.3020    26.9317        NaN        NaN        40.0000     0.0000   426.4233   426.4233        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510508.2085   5395785.8999   426.4742        50.0000     20226.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.0000    -2.3020    26.9317        NaN        NaN        50.0000     0.0000   426.4742   426.4742        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510510.6026   5395776.1907   426.5252        60.0000     20236.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -2.0000    -4.6039    53.8634        NaN        NaN        60.0000     0.0000   426.5252   426.5252        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510512.9967   5395766.4815   426.5761        70.0000     20246.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.0000    -2.3020    26.9317        NaN        NaN        70.0000     0.0000   426.5761   426.5761        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510515.3908   5395756.7724   426.6271        80.0000     20256.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -0.9421    -2.3020    26.9304        NaN        NaN        80.0000     0.0000   426.6271   426.6271        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510517.7848   5395747.0632   426.6780        90.0000     20266.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -0.9421    -2.3020    26.9305        NaN        NaN        90.0000     0.0000   426.6780   426.6780        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510520.1789   5395737.3540   426.7290       100.0000     20276.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.0000    -2.3020    26.9317        NaN        NaN       100.0000     0.0000   426.7290   426.7290        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510522.5730   5395727.6448   426.7799       110.0000     20286.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -0.9421    -2.3020    26.9316        NaN        NaN       110.0000     0.0000   426.7799   426.7799        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510524.9670   5395717.9356   426.8309       120.0000     20296.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.0000    -2.3020    26.9317        NaN        NaN       120.0000     0.0000   426.8309   426.8309        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510527.3611   5395708.2264   426.8818       130.0000     20306.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -0.9421    -2.3020    26.9317        NaN        NaN       130.0000     0.0000   426.8818   426.8818        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510529.7552   5395698.5172   426.9328       140.0000     20316.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.0000    -2.3020    26.9305        NaN        NaN       140.0000     0.0000   426.9328   426.9328        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510532.1492   5395688.8080   426.9837       150.0000     20326.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -0.9421    -2.3020    26.9316        NaN        NaN       150.0000     0.0000   426.9837   426.9837        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510534.5433   5395679.0988   427.0347       160.0000     20336.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.8844    -4.6039    53.8634        NaN        NaN       160.0000     0.0000   427.0347   427.0347        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510536.9374   5395669.3896   427.0856       170.0000     20346.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -0.9421    -2.3020    26.9317        NaN        NaN       170.0000     0.0000   427.0856   427.0856        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    
+               PWS-PWT   3510539.3315   5395659.6804   427.1366       180.0000     20356.6297     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000     0.0000   0.0050947   2.8998376         0.0000    -1.8844    -4.6039    53.8633        NaN        NaN       180.0000     0.0000   427.1366   427.1366        NaN        NaN        NaN        NaN        NaN        NaN         0  PWS-PWT                    

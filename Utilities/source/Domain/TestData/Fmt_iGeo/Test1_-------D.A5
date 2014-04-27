@@ -1,0 +1,80 @@
+# Datei               : P:\0815\Test_Trasse\Test1_-------D.A5
+# Format              : A5 : Alles
+# Programm            : iGeo
+# Bearbeiter          : admschw
+# Berechnet am        : 14.04.2014 18:32:28
+# Eingabedatei        : P:\0815\Test_Trasse\Bstg3_5_alterZustand.kor
+# Konfigurationsdatei : P:\0815\Test_Trasse\test.amcfg
+# Trassenkonfiguration: P:\0815\Test_Trasse\6340_Links.acfg
+#                       Checksumme:          37BBBA2D
+#                       DGM:                 P:\0815\Test_Trasse\Komplett_PSS_3
+#
+# Berechnet durch     : intermetric Trassenbibliothek V190
+#
+# PktNr        Punktnummer
+# Y     [m]    Y-Grosskoordinate
+# X     [m]    X-Grosskoordinate
+# Z     [m]    Z-Grosskoordinate
+# St    [m]    Station der Achse
+# Km    [m]    Station der Stationierungsachse
+# Q     [m]    Querabstand zur Achse (+ = Ist-Punkt liegt rechts der Achse)
+# H     [m]    Höhe über der Gradiente (+ = Ist-Punkt liegt über der Gradiente)
+# HSOK  [m]    Höhe über der Schienenoberkante (Hebung berücksichtigt)
+# QG    [m]    Querabstand im gedrehten Gleissystem
+# HG    [m]    Höhe über der Schienenoberkante im Gleissystem
+# UebLi [m]    Überhöhung der linken Schiene
+# Ueb   [m]    Überhöhung der rechten Schiene
+# Heb   [m]    Anhebung der unteren Schiene zur Gradiente
+# G     [rad]  Steigungswinkel (Promillewert = tan(G) * 1000)
+# Ri    [rad]  Tangentenrichtung im Fusspunkt
+# Ra    [m]    Radius
+# V     [m]    Höhe über Strassenprofil
+# R     [m]    Radialer Abstand zum Tunnelprofil
+# L     [m]    Abwicklungsmass bei Tunnelprofil
+# HDGM  [m]    Höhe über dem Gelände
+# ZDGM  [m]    Geländehöhe
+# Tm    [m]    Tunnelmeter
+# QT    [m]    Querabstand zur Achse in Tunnelvortriebsrichtung (+ = Ist-Punkt liegt rechts der Achse)
+# ZSOK  [m]    Höhe der Schienenoberkante
+# ZLGS  [m]    Höhe der Gradiente
+# RG    [m]    Radialer Abstand zum Gleisprofil
+# LG    [m]    Abwicklungsmass bei Gleisprofil
+# QGT   [m]    Quer im Tunnelsystem
+# HGT   [m]    Hoch im Tunnelsystem
+# QGS   [m]    Quer im Strassensystem
+# HGS   [m]    Hoch im Strassensystem
+# KmStatus     0 = Eindeutiger Km, Km-Sprung (Überlänge): 1 = Ankommender Km, 2 = Abgehender Km
+# Text         Kodierung des Punkts
+#
+#
+#               PktNr               Y              X          Z             St             Km          Q          H       HSOK         QG         HG      UebLi      UebRe        Ueb        Heb           G          Ri             Ra          V          R          L       HDGM       ZDGM             Tm         QT       ZSOK       ZLGS         RG         LG        QGT        HGT        QGS        HGS  KmStatus  Text
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                  3001   4499501.5750   5692137.9860    98.6990            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9319    97.7671            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg-anf                   
+                  3002   4499500.5280   5692129.9700    98.7050            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9369    97.7681            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3003   4499498.9860   5692116.8780    98.7130            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9418    97.7712            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3004   4499497.5410   5692104.7980    98.7080            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9372    97.7708            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3005   4499495.2830   5692084.7820    98.7260            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9538    97.7722            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3006   4499494.7490   5692080.2930    98.7550            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9847    97.7703            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3007   4499492.6130   5692059.8060    98.7280            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9549    97.7731            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3008   4499490.4620   5692038.8190    98.7160            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9434    97.7726            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3009   4499489.3690   5692027.6440    98.7120            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9384    97.7736            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3010   4499488.8020   5692022.3000    98.7040            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9323    97.7717            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3011   4499488.4220   5692018.6290    98.4520            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.6812    97.7708            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0                             
+                  3012   4499488.1710   5692016.1700    98.4360            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.6656    97.7704            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0                             
+                  3013   4499487.8560   5692013.1120    98.6360            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8663    97.7697            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3014   4499486.8760   5692003.1640    98.6730            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9032    97.7698            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3015   4499485.1430   5691985.6620    98.7000            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9304    97.7696            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3016   4499483.2050   5691966.4330    98.6680            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9004    97.7676            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3017   4499482.6660   5691960.7860    98.6430            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8744    97.7686            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3028   4499474.2500   5691875.4210    98.6080            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8229    97.7851            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3027   4499476.1290   5691894.2650    98.6280            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8514    97.7766            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3026   4499477.0300   5691903.5980    98.6720            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9010    97.7710            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3025   4499478.2530   5691915.6960    98.6710            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9005    97.7705            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3024   4499480.3150   5691936.2600    98.6880            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.9159    97.7721            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3029   4499473.2470   5691865.4260    98.6250            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8357    97.7893            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3030   4499473.0880   5691862.3090    98.4240            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.6254    97.7986            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3031   4499472.7670   5691858.8670    98.5360            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.7350    97.8010            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg-wechsel               
+                  3032   4499471.7940   5691849.2790    98.6700            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8656    97.8044            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3033   4499470.8130   5691839.7170    98.6750            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8672    97.8078            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3034   4499470.3000   5691834.0790    98.6730            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8606    97.8124            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg                       
+                  3035   4499469.6430   5691828.2670    98.7010            NaN            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         NaN         NaN            NaN        NaN        NaN        NaN     0.8897    97.8113            NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN        NaN         0  bstg-ende                  

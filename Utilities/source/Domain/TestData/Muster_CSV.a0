@@ -1,0 +1,63 @@
+# Datei               : X:\Muster_CSV.A0
+# Format              : A0 : Alles EDV
+# Programm            : iGeo
+# Bearbeiter          : test
+# Berechnet am        : 28.06.2013 10:35:49
+# Eingabedatei        : P:\61569_3600_6340_Bf_Bebra\Bearbeitung\iGeo\iTrasse\2013_06_27_Umformung_Verbautraeger\Profile.kor
+# Konfigurationsdatei : P:\61569_3600_6340_Bf_Bebra\Bearbeitung\iGeo\iTrasse\2013_06_27_Umformung_Verbautraeger\3600_R.amcfg
+# Trassenkonfiguration: P:\61569_3600_6340_Bf_Bebra\Bearbeitung\iGeo\Config\211\3600_165_R.acfg
+#                       Checksumme:          EA933715
+#                       Achse:               P:\61569_3600_6340_Bf_Bebra\Bearbeitung\iGeo\Config\211\3600R_Gl8
+#                       Km-Linie:            P:\61569_3600_6340_Bf_Bebra\Bearbeitung\iGeo\Config\211\3600S
+#                       Gradiente:           P:\61569_3600_6340_Bf_Bebra\Bearbeitung\iGeo\Config\211\3600R_Gl8
+#                       Überhöhungsband:     P:\61569_3600_6340_Bf_Bebra\Bearbeitung\iGeo\Config\211\3600R_Gl8
+#
+# Berechnet durch     : intermetric Trassenbibliothek V190
+#
+# Feldnamen           : PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
+#
+#   ****************************************************************************************************************************
+#   * 
+#   * Vorschlag für Spezialformat zur EDV-Weiterverarbeitung
+#   *  
+#   *  - Dieser in Sternchen eingerahmte Block gehört nicht zum Ausgabeformat :-)
+#   *  - enthält "alle" Werte wie A5
+#   *  - Felder werden durch "|" getrennt
+#   *  - Feldnamen werden oben ("# Feldnamen           : ...") in der Reihenfolge deklariert, wie sie unten ausgegeben werden.
+#   *  - Anzahl und Reihenfolge der Felder sind damit unerheblich für programmiertes Einlesen.
+#   *  - Zusätzliche Felder, egal an welcher Stelle, stören vorhandene Einlese-Routinen nicht.
+#   *    => Sie können und sollten bei der iGeo-Entwicklung ohne vorherige Absprachen ergänzt werden.
+#   *  - Text-Felder (PktNr, Text und Kommentar) brauchen Spezielbehandlung:
+#   *    - Falls Trennzeichen ("|") enthalten sind, müssen diese durch doppeltes Erscheinen maskiert werden  ("||").
+#   *  - Nachkommastellen wie A5
+#   *  - Nicht vorhandene Werte = NaN
+#   *  - Falls die vorgesehene Spaltenbreite für einen Wert nicht ausreicht => Werte nicht abschneiden, sondern Spalte verbreitern.
+#   * 
+#   ****************************************************************************************************************************
+#
+# PktNr        Punktnummer                                              (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+# ...
+# < alle anderen Feldnamen mit Erläuterungen wie A5 >
+# ...
+# Text         Kodierung des Punkts                                     (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+# Kommentar    Kommentar aus KOR (nach #), "freie Daten" aus ipkt usw.  (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+#
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------
+#               PktNr  |             Y |             X |         Z |           St |           Km |         Q |         H |      HSOK |        QG |        HG |     UebLi |     UebRe |       Ueb |       Heb |          G |         Ri |           Ra |         V |         R |         L |      HDGM |      ZDGM |           Tm |        QT |      ZSOK |      ZLGS |        RG |        LG |       QGT |       HGT |       QGS |       HGS | KmStatus | Text                      | Kommentar 
+# ---------------------|---------------|---------------|-----------|--------------|--------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|------------|------------|--------------|-----------|-----------|-----------|-----------|-----------|--------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|----------|---------------------------|--------------------
+               1600100 |  3556125.5030 |  5648564.1250 |  203.7510 |    1181.0261 |  166580.2030 |    0.0294 |    0.0110 |    0.0110 |    0.0294 |    0.0110 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166580.2030 |    0.0294 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 | u=001                     | 
+                AA||UE |  3556124.1210 |  5648563.3370 |  204.0880 |    1181.0250 |  166580.2019 |   -1.5615 |    0.3480 |    0.3480 |   -1.5615 |    0.3480 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166580.2019 |   -1.5615 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+               8200102 |  3556125.7940 |  5648564.2900 |  209.4470 |    1181.0255 |  166580.2024 |    0.3639 |    5.7070 |    5.7070 |    0.3639 |    5.7070 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166580.2024 |    0.3639 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 | UA||RA                    | test kom #äs.r
+               8200103 |  3556121.3900 |  5648561.7800 |  210.0510 |    1181.0230 |  166580.1999 |   -4.7051 |    6.3110 |    6.3110 |   -4.7051 |    6.3110 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166580.1999 |   -4.7051 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+        ID || mit "XX" |  3556120.5630 |  5648572.8020 |  203.7550 |    1191.0108 |  166590.1876 |    0.0291 |    0.0150 |    0.0150 |    0.0291 |    0.0150 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166590.1876 |    0.0291 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 | u=002                     | 
+               0300201 |  3556119.1810 |  5648572.0160 |  204.0950 |    1191.0114 |  166590.1883 |   -1.5607 |    0.3550 |    0.3550 |   -1.5607 |    0.3550 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166590.1883 |   -1.5607 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+            30" (sec.) |  3556120.8130 |  5648572.9430 |  209.4320 |    1191.0096 |  166590.1865 |    0.3162 |    5.6920 |    5.6920 |    0.3162 |    5.6920 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166590.1865 |    0.3162 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+               8200203 |  3556117.0140 |  5648570.8040 |  210.0220 |    1191.0302 |  166590.2071 |   -4.0436 |    6.2820 |    6.2820 |   -4.0436 |    6.2820 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166590.2071 |   -4.0436 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+               1600300 |  3556116.2580 |  5648580.3740 |  203.7530 |    1199.7210 |  166598.8979 |    0.0341 |    0.0130 |    0.0130 |    0.0341 |    0.0130 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166598.8979 |    0.0341 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 | u=4                       | 
+               0300301 |  3556114.8760 |  5648579.5870 |  204.0950 |    1199.7208 |  166598.8977 |   -1.5563 |    0.3550 |    0.3550 |   -1.5563 |    0.3550 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166598.8977 |   -1.5563 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+               8200302 |  3556116.4760 |  5648580.5000 |  209.4160 |    1199.7226 |  166598.8995 |    0.2859 |    5.6760 |    5.6760 |    0.2859 |    5.6760 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166598.8995 |    0.2859 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+               8200303 |  3556113.2260 |  5648578.6110 |  209.9510 |    1199.6889 |  166598.8658 |   -3.4731 |    6.2110 |    6.2110 |   -3.4731 |    6.2110 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166598.8658 |   -3.4731 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+               1600400 |  3556111.3170 |  5648589.0630 |  203.7590 |    1209.7166 |  166608.8935 |    0.0389 |    0.0190 |    0.0190 |    0.0389 |    0.0190 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166608.8935 |    0.0389 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 | u=003                     | 
+               0300401 |  3556109.9300 |  5648588.2740 |  204.0960 |    1209.7171 |  166608.8940 |   -1.5568 |    0.3560 |    0.3560 |   -1.5568 |    0.3560 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166608.8940 |   -1.5568 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+               8200402 |  3556111.5050 |  5648589.1730 |  209.3970 |    1209.7192 |  166608.8961 |    0.2567 |    5.6570 |    5.6570 |    0.2567 |    5.6570 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  5.7656532 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |  166608.8961 |    0.2567 |  203.7400 |  203.7400 |       NaN |       NaN |       NaN |       NaN |       NaN |       NaN |        0 |                           | 
+ 123456789012345678901 | 1234567890123 | 1234567890123 | 123456789 | 123456789012 | 123456789012 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 1234567890 | 1234567890 | 123456789012 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789012 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 123456789 | 12345678 | 1234567890123456789012345 | 

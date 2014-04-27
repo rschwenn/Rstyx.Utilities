@@ -1,0 +1,63 @@
+# Datei               : P:\0815\Test2_AKGU----G.A0
+# Format              : A0 : Alles EDV
+# Programm            : iGeo
+# Bearbeiter          : admschw
+# Berechnet am        : 15.04.2014 18:00:30
+# Eingabedatei        : 
+# Konfigurationsdatei : P:\0815\Test_Trasse\test.amcfg
+# Trassenkonfiguration: P:\0815\Test_Trasse\Profile_1.acfg
+#                       Checksumme:          374AA470
+#                       Achse:               P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Km-Linie:            P:\0815\Test_Trasse\Profile\Gleis\Gleis_Km
+#                       Gradiente:           P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Überhöhungsband:     P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Gleisprofilbereich:  P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#
+# Berechnet durch     : intermetric Trassenbibliothek V190
+#
+# Feldnamen           : PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
+#
+# PktNr        Punktnummer                                              (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+# Y     [m]    Y-Grosskoordinate
+# X     [m]    X-Grosskoordinate
+# Z     [m]    Z-Grosskoordinate
+# St    [m]    Station der Achse
+# Km    [m]    Station der Stationierungsachse
+# Q     [m]    Querabstand zur Achse (+ = Ist-Punkt liegt rechts der Achse)
+# H     [m]    Höhe über der Gradiente (+ = Ist-Punkt liegt über der Gradiente)
+# HSOK  [m]    Höhe über der Schienenoberkante (Hebung berücksichtigt)
+# QG    [m]    Querabstand im gedrehten Gleissystem
+# HG    [m]    Höhe über der Schienenoberkante im Gleissystem
+# UebLi [m]    Überhöhung der linken Schiene
+# Ueb   [m]    Überhöhung der rechten Schiene
+# Heb   [m]    Anhebung der unteren Schiene zur Gradiente
+# G     [rad]  Steigungswinkel (Promillewert = tan(G) * 1000)
+# Ri    [rad]  Tangentenrichtung im Fusspunkt
+# Ra    [m]    Radius
+# V     [m]    Höhe über Strassenprofil
+# R     [m]    Radialer Abstand zum Tunnelprofil
+# L     [m]    Abwicklungsmass bei Tunnelprofil
+# HDGM  [m]    Höhe über dem Gelände
+# ZDGM  [m]    Geländehöhe
+# Tm    [m]    Tunnelmeter
+# QT    [m]    Querabstand zur Achse in Tunnelvortriebsrichtung (+ = Ist-Punkt liegt rechts der Achse)
+# ZSOK  [m]    Höhe der Schienenoberkante
+# ZLGS  [m]    Höhe der Gradiente
+# RG    [m]    Radialer Abstand zum Gleisprofil
+# LG    [m]    Abwicklungsmass bei Gleisprofil
+# QGT   [m]    Quer im Tunnelsystem
+# HGT   [m]    Hoch im Tunnelsystem
+# QGS   [m]    Quer im Strassensystem
+# HGS   [m]    Hoch im Strassensystem
+# KmStatus     0 = Eindeutiger Km, Km-Sprung (Überlänge): 1 = Ankommender Km, 2 = Abgehender Km
+# Text         Kodierung des Punkts                                     (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+# Kommentar    Kommentar aus KOR (nach #), "freie Daten" aus ipkt usw.  (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+#
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------
+#               PktNr  |             Y |             X |         Z |           St |           Km |         Q |         H |      HSOK |        QG |        HG |     UebLi |     UebRe |       Ueb |       Heb |          G |         Ri |           Ra |         V |         R |         L |      HDGM |      ZDGM |           Tm |        QT |      ZSOK |      ZLGS |        RG |        LG |       QGT |       HGT |       QGS |       HGS | KmStatus | Text                      | Kommentar 
+# ---------------------|---------------|---------------|-----------|--------------|--------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|------------|------------|--------------|-----------|-----------|-----------|-----------|-----------|--------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|----------|---------------------------|--------------------
+                   PWG |  3510608.7595 |  5395378.1138 |  427.8000 |     470.0000 |   20646.6325 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  2.8998376 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |     470.0000 |    0.0000 |  427.8000 |  427.8000 |    0.0550 |    0.0000 |       NaN |       NaN |       NaN |       NaN |        0 | PWG                       | 
+                UA||RA |  3510609.6237 |  5395374.6090 |  427.8000 |     473.6098 |   20650.2448 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |    0.0000 |  0.0000000 |  2.8998376 |       0.0000 |       NaN |       NaN |       NaN |       NaN |       NaN |     473.6098 |    0.0000 |  427.8000 |  427.8000 |    0.0550 |    0.0000 |       NaN |       NaN |       NaN |       NaN |        0 | UA||RA                    | 
+                    AA |  3510616.9267 |  5395345.5086 |  427.8000 |     503.6128 |   20680.2978 |    0.0000 |    0.0000 |    0.0000 |   -0.0005 |   -0.0187 |    0.0000 |    0.0375 |    0.0375 |    0.0000 |  0.0000000 |  2.8874591 |   -1211.8997 |       NaN |       NaN |       NaN |       NaN |       NaN |     503.6128 |    0.0000 |  427.8000 |  427.8000 |    0.0737 |   17.0967 |       NaN |       NaN |       NaN |       NaN |        0 | AA                        | 
+                   NWK |  3510623.4262 |  5395321.7540 |  427.7390 |     528.2414 |   20705.0004 |    0.0000 |    0.0000 |    0.0000 |   -0.0016 |   -0.0341 |    0.0000 |    0.0683 |    0.0683 |    0.0000 | -0.0049405 |  2.8587959 |    -665.5609 |       NaN |       NaN |       NaN |       NaN |       NaN |     528.2414 |    0.0000 |  427.7390 |  427.7390 |    0.0891 |   17.0956 |       NaN |       NaN |       NaN |       NaN |        0 | NWK                       | 
+                    AE |  3510630.7927 |  5395298.2782 |  427.5559 |     552.8479 |   20729.7030 |    0.0000 |    0.0000 |    0.0000 |   -0.0033 |   -0.0494 |    0.0000 |    0.0990 |    0.0990 |    0.0000 | -0.0098807 |  2.8134987 |    -458.8782 |       NaN |       NaN |       NaN |       NaN |       NaN |     552.8479 |    0.0000 |  427.5559 |  427.5559 |    0.1044 |   17.0939 |       NaN |       NaN |       NaN |       NaN |        0 | AE                        | 

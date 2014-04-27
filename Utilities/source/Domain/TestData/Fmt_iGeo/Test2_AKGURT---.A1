@@ -1,0 +1,38 @@
+# Datei               : P:\0815\Test2_AKGURT---.A1
+# Format              : A1 : PktNr  Y  X  Z  St/Km/Tm  Q  H/HSOK  Text
+# Programm            : iGeo
+# Bearbeiter          : admschw
+# Berechnet am        : 15.04.2014 17:57:59
+# Eingabedatei        : 
+# Konfigurationsdatei : P:\0815\Test_Trasse\test.amcfg
+# Trassenkonfiguration: P:\0815\Test_Trasse\Profile_1.acfg
+#                       Checksumme:          AFACC16B
+#                       Achse:               P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Km-Linie:            P:\0815\Test_Trasse\Profile\Gleis\Gleis_Km
+#                       Gradiente:           P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Überhöhungsband:     P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Regelprofilbereich:  P:\0815\Test_Trasse\Profile\Strasse\Strasse
+#                       Tunnelprofilbereich: P:\0815\Test_Trasse\Profile\Tunnel\iTunnel
+#
+# Berechnet durch     : intermetric Trassenbibliothek V190
+#
+#              PktNr              Y              X          Z             Km          Q       HSOK  Text
+#----------------------------------------------------------------------------------------------------------------------------
+               NWOAK   3510499.9127   5395819.5440   426.2977     20191.9779     0.0000     0.0000  NWOAK                     
+             PWS-PWT   3510501.0263   5395815.0275   426.3214     20196.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510503.4204   5395805.3183   426.3723     20206.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510505.8145   5395795.6091   426.4233     20216.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510508.2085   5395785.8999   426.4742     20226.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510510.6026   5395776.1907   426.5252     20236.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510512.9967   5395766.4815   426.5761     20246.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510515.3908   5395756.7724   426.6271     20256.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510517.7848   5395747.0632   426.6780     20266.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510520.1789   5395737.3540   426.7290     20276.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510522.5730   5395727.6448   426.7799     20286.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510524.9670   5395717.9356   426.8309     20296.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510527.3611   5395708.2264   426.8818     20306.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510529.7552   5395698.5172   426.9328     20316.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510532.1492   5395688.8080   426.9837     20326.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510534.5433   5395679.0988   427.0347     20336.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510536.9374   5395669.3896   427.0856     20346.6297     0.0000     0.0000  PWS-PWT                   
+             PWS-PWT   3510539.3315   5395659.6804   427.1366     20356.6297     0.0000     0.0000  PWS-PWT                   

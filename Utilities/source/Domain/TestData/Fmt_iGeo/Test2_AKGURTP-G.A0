@@ -1,0 +1,59 @@
+# Datei               : P:\0815\Test2_AKGURTP-G.A0
+# Format              : A0 : Alles EDV
+# Programm            : iGeo
+# Bearbeiter          : admschw
+# Berechnet am        : 15.04.2014 17:59:57
+# Eingabedatei        : 
+# Konfigurationsdatei : P:\0815\Test_Trasse\test.amcfg
+# Trassenkonfiguration: P:\0815\Test_Trasse\Profile_1.acfg
+#                       Checksumme:          F21F92DA
+#                       Achse:               P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Km-Linie:            P:\0815\Test_Trasse\Profile\Gleis\Gleis_Km
+#                       Gradiente:           P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Überhöhungsband:     P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#                       Regelprofilbereich:  P:\0815\Test_Trasse\Profile\Strasse\Strasse
+#                       Gleisprofilbereich:  P:\0815\Test_Trasse\Profile\Gleis\Gleis_L
+#
+# Berechnet durch     : intermetric Trassenbibliothek V190
+#
+# Feldnamen           : PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
+#
+# PktNr        Punktnummer                                              (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+# Y     [m]    Y-Grosskoordinate
+# X     [m]    X-Grosskoordinate
+# Z     [m]    Z-Grosskoordinate
+# St    [m]    Station der Achse
+# Km    [m]    Station der Stationierungsachse
+# Q     [m]    Querabstand zur Achse (+ = Ist-Punkt liegt rechts der Achse)
+# H     [m]    Höhe über der Gradiente (+ = Ist-Punkt liegt über der Gradiente)
+# HSOK  [m]    Höhe über der Schienenoberkante (Hebung berücksichtigt)
+# QG    [m]    Querabstand im gedrehten Gleissystem
+# HG    [m]    Höhe über der Schienenoberkante im Gleissystem
+# UebLi [m]    Überhöhung der linken Schiene
+# Ueb   [m]    Überhöhung der rechten Schiene
+# Heb   [m]    Anhebung der unteren Schiene zur Gradiente
+# G     [rad]  Steigungswinkel (Promillewert = tan(G) * 1000)
+# Ri    [rad]  Tangentenrichtung im Fusspunkt
+# Ra    [m]    Radius
+# V     [m]    Höhe über Strassenprofil
+# R     [m]    Radialer Abstand zum Tunnelprofil
+# L     [m]    Abwicklungsmass bei Tunnelprofil
+# HDGM  [m]    Höhe über dem Gelände
+# ZDGM  [m]    Geländehöhe
+# Tm    [m]    Tunnelmeter
+# QT    [m]    Querabstand zur Achse in Tunnelvortriebsrichtung (+ = Ist-Punkt liegt rechts der Achse)
+# ZSOK  [m]    Höhe der Schienenoberkante
+# ZLGS  [m]    Höhe der Gradiente
+# RG    [m]    Radialer Abstand zum Gleisprofil
+# LG    [m]    Abwicklungsmass bei Gleisprofil
+# QGT   [m]    Quer im Tunnelsystem
+# HGT   [m]    Hoch im Tunnelsystem
+# QGS   [m]    Quer im Strassensystem
+# HGS   [m]    Hoch im Strassensystem
+# KmStatus     0 = Eindeutiger Km, Km-Sprung (Überlänge): 1 = Ankommender Km, 2 = Abgehender Km
+# Text         Kodierung des Punkts                                     (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+# Kommentar    Kommentar aus KOR (nach #), "freie Daten" aus ipkt usw.  (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
+#
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------
+#               PktNr  |             Y |             X |         Z |           St |           Km |         Q |         H |      HSOK |        QG |        HG |     UebLi |     UebRe |       Ueb |       Heb |          G |         Ri |           Ra |         V |         R |         L |      HDGM |      ZDGM |           Tm |        QT |      ZSOK |      ZLGS |        RG |        LG |       QGT |       HGT |       QGS |       HGS | KmStatus | Text                      | Kommentar 
+# ---------------------|---------------|---------------|-----------|--------------|--------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|------------|------------|--------------|-----------|-----------|-----------|-----------|-----------|--------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|----------|---------------------------|--------------------
