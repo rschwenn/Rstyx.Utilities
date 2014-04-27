@@ -8,6 +8,7 @@ Imports System.Linq
 
 Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Collections
+Imports Rstyx.Utilities.Validation
 
 Namespace UI.ViewModel
     
@@ -21,6 +22,7 @@ Namespace UI.ViewModel
      ''' <item><description> <c>CloseViewCommand</c> property: Provides an UI Command which raises the Cinch.ViewModelBase.CloseRequest event. </description></item>
      ''' <item><description> <c>ShowHelpFileCommand</c> property: Provides an UI Command that calls <c>showHelpFile()</c> which has to be overridden to show the help file. </description></item>
      ''' <item><description> A long display name. </description></item>
+     ''' <item><description> UIValidationError*** properties and methods for tracking Binding exceptions (via View). </description></item>
      ''' <item><description> Detect Changes of My.Settings and raises <c>PropertyChanged()</c> for a corresponding local property. </description></item>
      ''' <item><description> <c>RaiseCanExecuteChangedForAll</c> method forces status update of all commands that are available via view model properties. </description></item>
      ''' <item><description> <c>TrySetProperty</c> methods for safely setting a property by checking it against a provided list of valid values. </description></item>
@@ -353,7 +355,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
              ''' <param name="SupportedValues">         <c>IList</c> of supported property values (i.g. the item source of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
              ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
@@ -405,7 +407,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
              ''' <param name="SupportedValues">         <c>KeyedCollection</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -457,7 +459,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
              ''' <param name="SupportedValues">         <c>IDictionary</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -507,7 +509,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredDisplayValue">  Display string, whose corresponding dictionary key should become the new property value. </param>
              ''' <param name="SupportedValues">         IDictionary where the keys are the supported property values and the items the display strings (of an ItemsControl). </param>
-             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredDisplayValue"/> is supported (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -558,7 +560,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredToStringValue"> String, whose corresponding List Item should become the new property value. </param>
              ''' <param name="SupportedValues">         IList with supported property values. </param>
-             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>OnPropertyChanged(PropertyName)</c>. </param>
+             ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredToStringValue"/> is a string representation of a supported property value (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -603,6 +605,84 @@ Namespace UI.ViewModel
                 
                 Return success
             End Function
+            
+        #End Region
+        
+        #Region "UI Validation Errors (resp. Binding exceptions)"
+            
+            ' See http://karlshifflett.wordpress.com/archive/mvvm/input-validation-ui-exceptions-model-validation-errors/
+            
+            Private UIValidationErrors As New Dictionary(Of String, UIValidationError)
+            
+            ''' <summary> Gets the count of current UI validation errors. </summary>
+             ''' <returns> count of current UI validation errors. </returns>
+             ''' <remarks>
+             ''' In order to work automatically, 
+             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
+             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' </remarks>
+            Public ReadOnly Property UIValidationErrorCount() As Integer
+                Get
+                    Return UIValidationErrors.Count
+                End Get
+            End Property
+            
+            ''' <summary> Gets the messages of all current UI validation errors (one line per error). </summary>
+             ''' <returns> Messages of all current UI validation errors. </returns>
+             ''' <remarks>
+             ''' In order to work automatically, 
+             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
+             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' </remarks>
+            Public ReadOnly Property UIValidationErrorUserMessages() As String
+                Get
+                    Dim sb As New System.Text.StringBuilder(1024)
+                    
+                    For Each kvp As KeyValuePair(Of String, UIValidationError) In UIValidationErrors
+                        sb.AppendLine(String.Format("{0}: {1}", kvp.Value.PropertyName, kvp.Value.ErrorMessage))
+                    Next
+                    
+                    Return sb.ToString()
+                End Get
+            End Property
+            
+            ''' <summary> Adds an UI validation error to this ViewModel. </summary>
+             ''' <param name="e"> The UI error. </param>
+             ''' <remarks>
+             ''' In order to be called automatically by the view, 
+             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
+             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' </remarks>
+            Public Sub AddUIValidationError(ByVal e As UIValidationError)
+                UIValidationErrors.Add(e.Key, e)
+                NotifyPropertyChanged("UIValidationErrorUserMessages")
+                NotifyPropertyChanged("UIValidationErrorCount")
+            End Sub
+            
+            ''' <summary> Clears the internal UI validation error dictionary of this ViewModel. </summary>
+             ''' <remarks>
+             ''' In order to be called automatically by the view, 
+             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
+             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' </remarks>
+            Protected Sub ClearUIValidationErrors()
+                UIValidationErrors.Clear()
+                NotifyPropertyChanged("UIValidationErrorUserMessages")
+                NotifyPropertyChanged("UIValidationErrorCount")
+            End Sub
+            
+            ''' <summary> Removes an UI validation error from this ViewModel. </summary>
+             ''' <param name="e"> The UI error. </param>
+             ''' <remarks>
+             ''' In order to be called automatically by the view, 
+             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
+             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' </remarks>
+            Public Sub RemoveUIValidationError(ByVal e As UIValidationError)
+                UIValidationErrors.Remove(e.Key)
+                NotifyPropertyChanged("UIValidationErrorUserMessages")
+                NotifyPropertyChanged("UIValidationErrorCount")
+            End Sub
             
         #End Region
         

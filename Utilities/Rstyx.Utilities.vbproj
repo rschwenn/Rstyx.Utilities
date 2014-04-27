@@ -157,6 +157,7 @@
     </Compile>
     <Compile Include="source\UI\XAML\FirstFocusableElementExtension.vb" />
     <Compile Include="source\Validation\DelegateRule.vb" />
+    <Compile Include="source\Validation\UIValidationError.vb" />
     <Compile Include="source\_global\ArrayUtils.vb" />
     <Compile Include="source\Collections\AlphanumericComparer.vb" />
     <Compile Include="source\Collections\CollectionExtensions.vb" />

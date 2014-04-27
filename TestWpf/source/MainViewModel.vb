@@ -166,8 +166,8 @@ Public Class MainViewModel
                 'Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, Nothing)
                 'Logger.logInfo(fi.FullName)
                 
-                Dim Field = "UserDomaiN"
-                Dim TableName = "Standorte$y"
+                'Dim Field = "UserDomaiN"
+                'Dim TableName = "Standorte$y"
                 Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
                 
                 Dim DBconn  As OleDbConnection = Nothing
