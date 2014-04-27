@@ -355,11 +355,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
              ''' <param name="SupportedValues">         <c>IList</c> of supported property values (i.g. the item source of an ItemsControl). </param>
-<<<<<<< HEAD
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
-=======
-             ''' <param name="NotifyNotifyPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
->>>>>>> cd6ccd7c9465ba06c4d5e1d9ce13802b01e41ad5
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
              ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
@@ -370,7 +366,7 @@ Namespace UI.ViewModel
                                              (PropertyName As String, _
                                               NewDesiredValue As TProperty, _
                                               ByRef SupportedValues As IList(Of TProperty), _
-                                              Optional NotifyNotifyPropertyChanged As Boolean = False _
+                                              Optional NotifyOnPropertyChanged As Boolean = False _
                                               ) As Boolean
                 Dim success As Boolean = False
                 
@@ -395,7 +391,7 @@ Namespace UI.ViewModel
                     
                     If (IsDifferentValue) Then
                         TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                        If (NotifyNotifyPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
                             MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
@@ -411,11 +407,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
              ''' <param name="SupportedValues">         <c>KeyedCollection</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
-<<<<<<< HEAD
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
-=======
-             ''' <param name="NotifyNotifyPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
->>>>>>> cd6ccd7c9465ba06c4d5e1d9ce13802b01e41ad5
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -426,7 +418,7 @@ Namespace UI.ViewModel
                                              (PropertyName As String, _
                                               NewDesiredValue As TProperty, _
                                               ByRef SupportedValues As KeyedCollection(Of TProperty, TCollectionItem), _
-                                              Optional NotifyNotifyPropertyChanged As Boolean = False _
+                                              Optional NotifyOnPropertyChanged As Boolean = False _
                                               ) As Boolean
                 Dim success As Boolean = False
                 
@@ -451,7 +443,7 @@ Namespace UI.ViewModel
                     
                     If (IsDifferentValue) Then
                         TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                        If (NotifyNotifyPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
                             MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
@@ -467,11 +459,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
              ''' <param name="SupportedValues">         <c>IDictionary</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
-<<<<<<< HEAD
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
-=======
-             ''' <param name="NotifyNotifyPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
->>>>>>> cd6ccd7c9465ba06c4d5e1d9ce13802b01e41ad5
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -482,7 +470,7 @@ Namespace UI.ViewModel
                                              (PropertyName As String, _
                                               NewDesiredValue As TProperty, _
                                               ByRef SupportedValues As IDictionary(Of TProperty, TCollectionItem), _
-                                              Optional NotifyNotifyPropertyChanged As Boolean = False _
+                                              Optional NotifyOnPropertyChanged As Boolean = False _
                                               ) As Boolean
                 Dim success As Boolean = False
                 
@@ -506,7 +494,7 @@ Namespace UI.ViewModel
                     
                     If (IsDifferentValue) Then
                         TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                        If (NotifyNotifyPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
                             MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
@@ -521,11 +509,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredDisplayValue">  Display string, whose corresponding dictionary key should become the new property value. </param>
              ''' <param name="SupportedValues">         IDictionary where the keys are the supported property values and the items the display strings (of an ItemsControl). </param>
-<<<<<<< HEAD
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
-=======
-             ''' <param name="NotifyNotifyPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
->>>>>>> cd6ccd7c9465ba06c4d5e1d9ce13802b01e41ad5
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredDisplayValue"/> is supported (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -536,7 +520,7 @@ Namespace UI.ViewModel
                                                             (PropertyName As String, _
                                                              NewDesiredDisplayValue As String, _
                                                              ByRef SupportedValues As IDictionary(Of TProperty, String), _
-                                                             Optional NotifyNotifyPropertyChanged As Boolean = False _
+                                                             Optional NotifyOnPropertyChanged As Boolean = False _
                                                              ) As Boolean
                 Dim success As Boolean = False
                 
@@ -562,7 +546,7 @@ Namespace UI.ViewModel
                     
                     If (IsDifferentValue) Then
                         TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                        If (NotifyNotifyPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
                             MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
@@ -576,11 +560,7 @@ Namespace UI.ViewModel
              ''' <param name="PropertyName">            Name of the target property. </param>
              ''' <param name="NewDesiredToStringValue"> String, whose corresponding List Item should become the new property value. </param>
              ''' <param name="SupportedValues">         IList with supported property values. </param>
-<<<<<<< HEAD
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
-=======
-             ''' <param name="NotifyNotifyPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
->>>>>>> cd6ccd7c9465ba06c4d5e1d9ce13802b01e41ad5
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredToStringValue"/> is a string representation of a supported property value (and the property may have changed). </returns>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
              ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
@@ -591,7 +571,7 @@ Namespace UI.ViewModel
                                                      (PropertyName As String,
                                                       NewDesiredToStringValue As String,
                                                       SupportedValues As ICollection(Of TProperty),
-                                                      Optional NotifyNotifyPropertyChanged As Boolean = False
+                                                      Optional NotifyOnPropertyChanged As Boolean = False
                                                       ) As Boolean
                 Dim success As Boolean = False
                 
@@ -617,7 +597,7 @@ Namespace UI.ViewModel
                     
                     If (IsDifferentValue) Then
                         TargetProperty.SetValue(Me, NewPropertyValue, Nothing)
-                        If (NotifyNotifyPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
+                        If (NotifyOnPropertyChanged AndAlso TypeOf Me Is System.ComponentModel.INotifyPropertyChanged) Then
                             MyBase.NotifyPropertyChanged(PropertyName)
                         End If
                     End If
