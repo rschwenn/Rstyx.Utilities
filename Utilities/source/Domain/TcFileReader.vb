@@ -19,9 +19,9 @@ Namespace Domain
      ''' <list type="bullet">
      ''' <listheader> <b>General Features :</b> </listheader>
      ''' <item> The <see cref="M:Load"/> method clears all results before loading the given file. </item>
-     ''' <item> File header lines will be provided by the <see cref="P:Header"/> property. </item>
-     ''' <item> Found TC blocks will be provided by the <see cref="P:Blocks"/> property. It contains all points that has been read without errors. </item>
-     ''' <item> Parsing errors will be catched and provided by the <see cref="P:ParseErrors"/> property. </item>
+     ''' <item> File header lines will be provided by the <see cref="P:TcFileReader.Header"/> property. </item>
+     ''' <item> Found TC blocks will be provided by the <see cref="P:TcFileReader.Blocks"/> property. It contains all points that has been read without errors. </item>
+     ''' <item> Parsing errors will be catched and provided by the <see cref="P:TcFileReader.ParseErrors"/> property. </item>
      ''' </list>
      ''' <para>
      ''' The track geometry coordinates will be expected as output blocks of following programs and types:
@@ -31,7 +31,7 @@ Namespace Domain
      ''' <item> <term> Verm.esn (Version 6.22) </term>  <description> "Umformung", from THW or D3 module (one-line or two-line records) </description></item>
      ''' <item> <term> Verm.esn (Version 8.40) </term>  <description> "Umformung", from THW or D3 module (one-line or two-line records) </description></item>
      ''' <item> <term> iTrassePC (Version 2.0) </term>  <description> "A1", "A5" </description></item>
-     ''' <item> <term> iGeo (Version 11/2013)  </term>  <description> "A1", "A5" </description></item>
+     ''' <item> <term> iGeo (Version 1.2.2)    </term>  <description> "A0", "A1", "A5" </description></item>
      ''' </list>
      ''' <list type="bullet">
      ''' <listheader> <b>Restrictions to the input file :</b> </listheader>
@@ -57,7 +57,8 @@ Namespace Domain
             Private _FilePath                   As String
             Private _ParseErrors                As New ParseErrorCollection()
             
-            Private RHO                         As Double = 200 / Math.PI
+            Private Const RHO                   As Double = 200 / Math.PI
+            Private Const DoublePipeMask        As String = "D1o2u3b4l5e6P7i8p9e0"
             
             Private _CommentLinesCount          As Long
             Private _DataLinesCount             As Long
@@ -117,7 +118,7 @@ Namespace Domain
                 End Property
                 
                 ''' <summary> Returns the Header lines of the text file. </summary>
-                 ''' <remarks> These are all leading comment lines that don't semm to belong to an output block of iTrassePC. </remarks>
+                 ''' <remarks> These are all leading comment lines that don't seem to belong to an output block of iTrassePC. </remarks>
                 Public ReadOnly Property Header() As Collection(Of String)
                     Get
                         Return _Header
@@ -231,6 +232,7 @@ Namespace Domain
                 Logger.logDebug(StringUtils.sprintf("Load TC file '%s'", Path))
                 Dim FileReader As New DataTextFileReader()
                 FileReader.SeparateHeader = False
+                FileReader.LineStartCommentToken = "#"
                 FileReader.Load(Path, Encoding, DetectEncodingFromByteOrderMarks, BufferSize)
                 
                 ' Reset results and settings.
@@ -328,9 +330,9 @@ Namespace Domain
                 Me.Reset(Nothing)
             End Sub
             
-            ''' <summary> Creates a report of all blocks of this TcFileReader. </summary>
+            ''' <summary> Creates a report of all blocks of this TcFileReader.</summary>
              ''' <param name="OnlySummary"> If <see langword="true"/>, the point lists won't be reported. </param>
-             ''' <returns> The report of all blocks of this TcFileReader. </returns>
+             ''' <returns> The report of all blocks of this TcFileReader.</returns>
             Public Function ToReport(OnlySummary As Boolean) As String
                 Dim List As New StringBuilder()
                 
@@ -353,7 +355,8 @@ Namespace Domain
         
         #Region "Overrides"
             
-            ''' <inheritdoc/>
+            ''' <summary> Creates a summary of file contents. </summary>
+             ''' <returns> Summary of all blocks of this TcFileReader.</returns>
             Public Overrides Function ToString() As String
                 Return StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToString, Me.FilePath, Me.Blocks.Count, Me.TotalPointCount, Me.ParseErrors.Count)
             End Function
@@ -399,17 +402,20 @@ Namespace Domain
                 ''' <summary> Not defined. </summary>
                 None = 0
                 
+                ''' <summary> Output format "A0" of iGeo. </summary>
+                A0  = 1
+                
                 ''' <summary> Output format "A1" of iGeo or iTrassePC. </summary>
-                A1  = 1
+                A1  = 2
                 
                 ''' <summary> Output format "A5" of iGeo or iTrassePC. </summary>
-                A5  = 2
+                A5  = 3
                 
                 ''' <summary> Output of Verm.esn module "THW". </summary>
-                THW = 3
+                THW = 4
                 
                 ''' <summary> Output of Verm.esn module "D3". </summary>
-                D3  = 4
+                D3  = 5
                 
             End Enum
             
@@ -425,6 +431,9 @@ Namespace Domain
                 ''' <summary> Two line record (Verm.esn). </summary>
                 TwoLine = 2
                 
+                ''' <summary> Variable fields, character separated (iGeo A0). </summary>
+                CSV = 3
+                
             End Enum
             
             ''' <summary> The type description of a block of points with track geometry coordinates. </summary>
@@ -435,11 +444,12 @@ Namespace Domain
                     
                     'Private Shared Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Microstation.AddIn.MetaData.TextFieldDefinition")
                     
-                    Private Shared MissingProgramRule   As Cinch.SimpleRule
-                    Private Shared MissingVersionRule   As Cinch.SimpleRule
-                    Private Shared MissingFormatRule    As DelegateRule
-                    Private Shared MissingSubFormatRule As Cinch.SimpleRule
-                    Private Shared FormatMismatchRule   As DelegateRule
+                    Private Shared MissingProgramRule       As Cinch.SimpleRule
+                    Private Shared MissingVersionRule       As Cinch.SimpleRule
+                    Private Shared MissingFieldNamesRule    As Cinch.SimpleRule
+                    Private Shared MissingFormatRule        As DelegateRule
+                    Private Shared MissingSubFormatRule     As Cinch.SimpleRule
+                    Private Shared FormatMismatchRule       As DelegateRule
                     
                 #End Region
                 
@@ -461,6 +471,21 @@ Namespace Domain
                                                                       
                                                                       If (BlockType.Program = TcBlockProgram.VermEsn) Then
                                                                           If (BlockType.Version = TcBlockVersion.None) Then IsValidRule = False
+                                                                      End If
+                                                                      
+                                                                      Return Not IsValidRule
+                                                                  End Function
+                                                                 )
+                        
+                        '
+                        MissingFieldNamesRule = New Cinch.SimpleRule("FieldNames",
+                                                                  Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFieldNames,
+                                                                  Function (oValidatingObject As Object) As Boolean
+                                                                      Dim IsValidRule  As Boolean = True
+                                                                      Dim BlockType    As TcBlockType = DirectCast(oValidatingObject, TcBlockType)
+                                                                      
+                                                                      If (BlockType.SubFormat = TcBlockSubFormat.CSV) Then
+                                                                          If (BlockType.FieldNames.IsEmptyOrWhiteSpace()) Then IsValidRule = False
                                                                       End If
                                                                       
                                                                       Return Not IsValidRule
@@ -525,7 +550,7 @@ Namespace Domain
                                                                               
                                                                           Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
                                                                               Select Case BlockType.Format
-                                                                                  Case TcBlockFormat.A1, TcBlockFormat.A5
+                                                                                  Case TcBlockFormat.A0, TcBlockFormat.A1, TcBlockFormat.A5
                                                                                       'o.k.
                                                                                   Case Else
                                                                                       IsValidRule = False
@@ -564,6 +589,9 @@ Namespace Domain
                 ''' <inheritdoc cref="TcBlockSubFormat" />
                 Public Property SubFormat() As TcBlockSubFormat = TcBlockSubFormat.None
                 
+                '''<summary> If <see cref="TcFileReader.TcBlockType.SubFormat"/> is <c>CSV</c>: The ordered list of field names. </summary>
+                Public Property FieldNames() As String = Nothing
+                
                 ''' <inheritdoc/>
                 Public Overrides Function ToString() As String
                     Dim RetValue As String = String.Empty
@@ -589,12 +617,14 @@ Namespace Domain
                         RetValue = "iGeo"
                         
                         If (Me.Version = TcBlockVersion.Current) Then
-                            RetValue &= " 11/2013"
+                            RetValue &= " 1.2.2"
                         Else
                             RetValue &= " v??" 
                         End If
                         
-                        If (Me.Format = TcBlockFormat.A1) Then
+                        If (Me.Format = TcBlockFormat.A0) Then
+                            RetValue &= " (Format A0)"
+                        ElseIf(Me.Format = TcBlockFormat.A1) Then
                             RetValue &= " (Format A1)"
                         ElseIf(Me.Format = TcBlockFormat.A5) Then
                             RetValue &= " (Format A5)"
@@ -781,8 +811,8 @@ Namespace Domain
             End Class
             
             
-            ''' <summary> Info regarding source of every found TC block. </summary>
-            Private Class TcSourceBlockInfo
+            ''' <summary> Info regarding source of every found TC block inside the internal <see cref="P:DataTextFileReader.DataCache"/>. </summary>
+            Protected Class TcSourceBlockInfo
                 
                 ''' <summary> Type of TC block. Only Program is determined yet! </summary>
                 Public BlockType        As New TcBlockType()
@@ -793,69 +823,128 @@ Namespace Domain
                 ''' <summary> Index into <see cref="P:DataTextFileReader.DataCache"/> representing the first DATA line of this block. </summary>
                 Public DataStartIndex   As Integer = -1
                 
-                ''' <summary> Tells if the first DATA line of this block has been found. </summary>
-                Public HasData          As Boolean = False
-                
                 ''' <summary> Index into <see cref="P:DataTextFileReader.DataCache"/> representing the last line of this block. </summary>
                 Public EndIndex         As Integer = -1
                 
+                ''' <summary> Tells if the first DATA line of this block has been found. </summary>
+                Public HasData          As Boolean = False
+                
+                ''' <summary> The TcRecordDefinition to use for parsing each record of this block. </summary>
+                Public RecordDefinition As TcRecordDefinition
+                
+            End Class
+            
+            ''' <summary> Base Definition of a TC source record. </summary>
+            Protected MustInherit Class TcRecordDefinition
+                
+                Public Y    As DataFieldDefinition(Of Double)
+                Public X    As DataFieldDefinition(Of Double)
+                Public Z    As DataFieldDefinition(Of Double)
+                Public St   As DataFieldDefinition(Of Double)
+                Public Km   As DataFieldDefinition(Of Double)
+                Public Q    As DataFieldDefinition(Of Double)
+                Public HSOK As DataFieldDefinition(Of Double)
+                Public Ra   As DataFieldDefinition(Of Double)
+                Public Ri   As DataFieldDefinition(Of Double)
+                Public Ueb  As DataFieldDefinition(Of Double)
+                Public ZSOK As DataFieldDefinition(Of Double)
             End Class
             
             ''' <summary> Definition of a iGeo TC source record. </summary>
-            Private Class TcRecordDefinitionIGeo
+            Protected Class TcRecordDefinitionIGeo
+                Inherits TcRecordDefinition
                 
-                Public ID   As DataFieldDefinition(Of String)
-                Public Y    As DataFieldDefinition(Of Double)
-                Public X    As DataFieldDefinition(Of Double)
-                Public Z    As DataFieldDefinition(Of Double)
-                Public St   As DataFieldDefinition(Of Double)
-                Public Km   As DataFieldDefinition(Of Double)
-                Public Q    As DataFieldDefinition(Of Double)
-                Public H    As DataFieldDefinition(Of Double)
-                Public HSOK As DataFieldDefinition(Of Double)
-                Public QG   As DataFieldDefinition(Of Double)
-                Public HG   As DataFieldDefinition(Of Double)
-                Public UebL As DataFieldDefinition(Of Double)
-                Public UebR As DataFieldDefinition(Of Double)
-                Public Ueb  As DataFieldDefinition(Of Double)
-                Public Heb  As DataFieldDefinition(Of Double)
-                Public G    As DataFieldDefinition(Of Double)
-                Public Ri   As DataFieldDefinition(Of Double)
-                Public Ra   As DataFieldDefinition(Of Double)
-                Public V    As DataFieldDefinition(Of Double)
-                Public R    As DataFieldDefinition(Of Double)
-                Public L    As DataFieldDefinition(Of Double)
-                Public HDGM As DataFieldDefinition(Of Double)
-                Public ZDGM As DataFieldDefinition(Of Double)
-                Public Tm   As DataFieldDefinition(Of Double)
-                Public QT   As DataFieldDefinition(Of Double)
-                Public LG   As DataFieldDefinition(Of Double)
-                Public RG   As DataFieldDefinition(Of Double)
-                Public ZSOK As DataFieldDefinition(Of Double)
-                Public ZLGS As DataFieldDefinition(Of Double)
-                Public Text As DataFieldDefinition(Of String)
+                ''' <summary> Creates a new instance of <c>TcRecordDefinitionIGeo</c>. </summary>
+                Public Sub New()
+                End Sub
+                
+                ''' <summary> Creates a new instance of <c>TcRecordDefinitionIGeo</c>. </summary>
+                 ''' <param name="InitIgnore"> If <see langword="true"/>, all fields will be initialized. </param>
+                 ''' <remarks>
+                 ''' If <paramref name="InitIgnore"/> is <see langword="true"/>, all fields will be initialized with a valid field definition,
+                 ''' that cause the field to be ignored.
+                 ''' This is usefull for parsing CSV records.
+                 ''' </remarks>
+                Public Sub New(InitIgnore As Boolean)
+                    If (InitIgnore) Then
+                        Me.ID       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.Ignore, 99, 99)
+                        Me.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.St       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.Km       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.QG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.HG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.UebL     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.UebR     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.Ueb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.Heb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.G        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.Ri       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.Ra       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.V        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.R        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.L        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.HDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.ZDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.Tm       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.HGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.Ignore, 99, 99)
+                        Me.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.Ignore, 99, 99)
+                    End If
+                End Sub
+                
+                Public Delimiter As Char = " "c
+                
+                Public ID       As DataFieldDefinition(Of String)
+                Public KmStatus As DataFieldDefinition(Of KilometerStatus)
+                Public H        As DataFieldDefinition(Of Double)
+                Public QG       As DataFieldDefinition(Of Double)
+                Public HG       As DataFieldDefinition(Of Double)
+                Public UebL     As DataFieldDefinition(Of Double)
+                Public UebR     As DataFieldDefinition(Of Double)
+                Public Heb      As DataFieldDefinition(Of Double)
+                Public G        As DataFieldDefinition(Of Double)
+                Public V        As DataFieldDefinition(Of Double)
+                Public R        As DataFieldDefinition(Of Double)
+                Public L        As DataFieldDefinition(Of Double)
+                Public HDGM     As DataFieldDefinition(Of Double)
+                Public ZDGM     As DataFieldDefinition(Of Double)
+                Public Tm       As DataFieldDefinition(Of Double)
+                Public QT       As DataFieldDefinition(Of Double)
+                Public LG       As DataFieldDefinition(Of Double)
+                Public RG       As DataFieldDefinition(Of Double)
+                Public QGT      As DataFieldDefinition(Of Double)
+                Public HGT      As DataFieldDefinition(Of Double)
+                Public QGS      As DataFieldDefinition(Of Double)
+                Public HGS      As DataFieldDefinition(Of Double)
+                Public ZLGS     As DataFieldDefinition(Of Double)
+                Public Text     As DataFieldDefinition(Of String)
+                Public Comment  As DataFieldDefinition(Of String)
             End Class
             
             ''' <summary> Definition of a Verm.esn TC source record. </summary>
-            Private Class TcRecordDefinitionVermEsn
+            Protected Class TcRecordDefinitionVermEsn
+                Inherits TcRecordDefinition
                 
                 Public ID_Factor As Integer
                 
-                Public ID   As DataFieldDefinition(Of Double)
-                Public Y    As DataFieldDefinition(Of Double)
-                Public X    As DataFieldDefinition(Of Double)
-                Public Z    As DataFieldDefinition(Of Double)
-                Public Com  As DataFieldDefinition(Of String)
-                Public Com2 As DataFieldDefinition(Of String)
-                Public St   As DataFieldDefinition(Of Double)
-                Public Km   As DataFieldDefinition(Of Double)
-                Public Q    As DataFieldDefinition(Of Double)
-                Public QKm  As DataFieldDefinition(Of Double)
-                Public HSOK As DataFieldDefinition(Of Double)
-                Public Ra   As DataFieldDefinition(Of Double)
-                Public Ri   As DataFieldDefinition(Of Double)
-                Public Ueb  As DataFieldDefinition(Of Double)
-                Public ZSOK As DataFieldDefinition(Of Double)
+                Public ID       As DataFieldDefinition(Of Double)
+                Public Com      As DataFieldDefinition(Of String)
+                Public Com2     As DataFieldDefinition(Of String)
+                Public QKm      As DataFieldDefinition(Of Double)
             End Class
             
         #End Region
@@ -954,8 +1043,85 @@ Namespace Domain
             
             ''' <summary> Returns a key into the record definition dictionary. </summary>
              ''' <param name="BlockType"> The block type to get the key for. </param>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="BlockType"/> is <see langword="null"/>. </exception>
             Private Function getKeyForRecordDefinition(BlockType As TcBlockType) As String
+                
+                If (BlockType Is Nothing) Then Throw New System.ArgumentNullException("BlockType")
+                
                 Return BlockType.Program.ToString & "_" & BlockType.Version.ToString & "_" & BlockType.Format.ToString
+            End Function
+            
+            ''' <summary> Returns the record definition for the given block type. </summary>
+             ''' <param name="BlockType"> The block type to get the record definition for. </param>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="BlockType"/> is <see langword="null"/>. </exception>
+            Private Function getIGeoRecordDefinition(BlockType As TcBlockType) As TcRecordDefinition
+                
+                If (BlockType Is Nothing) Then Throw New System.ArgumentNullException("BlockType")
+                
+                Dim RetValue As TcRecordDefinition = Nothing
+                
+                If (BlockType.IsValid) Then
+                    If (Not (BlockType.SubFormat = TcBlockSubFormat.CSV)) Then
+                        ' Predefined (fixed) format.
+                        RetValue = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(BlockType))
+                    Else
+                        ' CSV format depending on actual block.
+                        Dim RecordDef As New TcRecordDefinitionIGeo(InitIgnore:=True)
+                        
+                        RecordDef.Delimiter = "|"c
+                        Dim FieldNames() As String = BlockType.FieldNames.Split(RecordDef.Delimiter)
+                        
+                        For i As Integer = 1 To FieldNames.Length
+                            
+                            Dim FieldName As String = Trim(FieldNames(i - 1))
+                            
+                            ' A0: PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
+                            
+                            Select Case FieldName
+                                Case "PktNr"     : RecordDef.ID       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Y"         : RecordDef.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "X"         : RecordDef.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Z"         : RecordDef.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "St"        : RecordDef.St       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Km"        : RecordDef.Km       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Q"         : RecordDef.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "H"         : RecordDef.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "HSOK"      : RecordDef.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "QG"        : RecordDef.QG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "HG"        : RecordDef.HG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "UebLi"     : RecordDef.UebL     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "UebRe"     : RecordDef.UebR     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Ueb"       : RecordDef.Ueb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Heb"       : RecordDef.Heb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "G"         : RecordDef.G        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Ri"        : RecordDef.Ri       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Ra"        : RecordDef.Ra       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "V"         : RecordDef.V        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "R"         : RecordDef.R        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "L"         : RecordDef.L        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "HDGM"      : RecordDef.HDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "ZDGM"      : RecordDef.ZDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Tm"        : RecordDef.Tm       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "QT"        : RecordDef.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "ZSOK"      : RecordDef.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "ZLGS"      : RecordDef.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "RG"        : RecordDef.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "LG"        : RecordDef.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "QGT"       : RecordDef.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "HGT"       : RecordDef.HGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "QGS"       : RecordDef.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "HGS"       : RecordDef.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "KmStatus"  : RecordDef.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Text"      : RecordDef.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Kommentar" : RecordDef.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                            End Select
+                        Next
+                        
+                        RetValue = RecordDef
+                    End If
+                End If
+                
+                Return RetValue
             End Function
             
             ''' <summary> Returns the plain (file) name from a matched name. If <paramref name="LineNameMatch"/> isn't a valid path name, it will be returned without changes. </summary>
@@ -983,8 +1149,8 @@ Namespace Domain
              ''' <list type="bullet">
              ''' <listheader> <description> <b>Hints:</b> </description></listheader>
              ''' <item> The returned block <b>may be invalid!</b> (check for .IsValid!). </item>
-             ''' <item> All parsing errors will be added to <see cref="P:ParseErrors"/> property. </item>
-             ''' <item> The Points collection (<see cref="P:Points"/>) may be empty. </item>
+             ''' <item> All parsing errors will be added to <see cref="P:TcFileReader.ParseErrors"/> property. </item>
+             ''' <item> The Points collection (<see cref="P:TcFileReader.Blocks.Points"/>) may be empty. </item>
              ''' </list>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
@@ -1007,7 +1173,7 @@ Namespace Domain
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
-                        Dim RecDef As TcRecordDefinitionVermEsn = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                        Dim RecDef As TcRecordDefinitionVermEsn = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn)
                         Dim RecLen As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
                         Dim RecIdx As Integer = SourceBlock.DataStartIndex - RecLen
                         Dim LastRecEmpty As Boolean = False
@@ -1071,10 +1237,10 @@ Namespace Domain
                                         p.St = SplitLine.ParseField(RecDef.Km).Value
                                     End If
                                     
-                                    ' Point info and comment.
+                                    ' Point info.
                                     p.Info = SplitLine.ParseField(RecDef.Com).Value.Trim()
                                     If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = Com2
-                                    If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
+                                    'If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
                                     
                                     ' Other info.
                                     p.ActualCant   = GeoMath.parseCant(p.Info) / 1000
@@ -1106,7 +1272,7 @@ Namespace Domain
                 Return Block
             End Function
             
-            ''' <summary> Reads a block of iGeo/iTrassePC output (A1, A5). </summary>
+            ''' <summary> Reads a block of iGeo/iTrassePC output (A0, A1, A5). </summary>
              ''' <param name="SplitLines">  The data cache holding the block of interest. </param>
              ''' <param name="SourceBlock"> Determines the block type and it's position in <paramref name="SplitLines"/>. </param>
              ''' <returns> The complete <see cref="TcBlock"/> read from <paramref name="SplitLines"/>. </returns>
@@ -1114,8 +1280,8 @@ Namespace Domain
              ''' <list type="bullet">
              ''' <listheader> <description> <b>Hints:</b> </description></listheader>
              ''' <item> The returned block <b>may be invalid!</b> (check for .IsValid!). </item>
-             ''' <item> All parsing errors will be added to <see cref="P:ParseErrors"/> property. </item>
-             ''' <item> The Points collection (<see cref="P:Points"/>) may be empty. </item>
+             ''' <item> All parsing errors will be added to <see cref="P:TcFileReader.ParseErrors"/> property. </item>
+             ''' <item> The Block's Points collection (<see cref="P:TcFileReader.Blocks.Points"/>) may be empty. </item>
              ''' </list>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
@@ -1138,69 +1304,77 @@ Namespace Domain
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
-                        Dim RecDef As TcRecordDefinitionIGeo = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                        Dim RecDef As TcRecordDefinitionIGeo = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionIGeo)
                         Dim RecIdx As Integer = SourceBlock.DataStartIndex - 1
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - 1)
                             Try
                                 ' Switch to next record.
                                 RecIdx += 1
-                                Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
                                 
-                                If (SplitLine.HasData) Then
+                                If (SplitLines(RecIdx).HasData) Then
                                     
-                                    Dim UebL As Double = Double.NaN
-                                    Dim UebR As Double = Double.NaN
+                                    Dim SplitLine As PreSplittedTextLine = New PreSplittedTextLine(SplitLines(RecIdx).Data, LineStartCommentToken:="#", LineEndCommentToken:="#")
+                                    SplitLine.SourceLineNo = SplitLines(RecIdx).SourceLineNo
+                                    SplitLine.FieldDelimiter = RecDef.Delimiter
                                     
-                                    Dim p    As New GeoTcPoint()
+                                    Dim UebL     As Double = Double.NaN
+                                    Dim UebR     As Double = Double.NaN
+                                    'Dim KmStatus As Double = Double.NaN
+                                    
+                                    Dim p        As New GeoTcPoint()
                                     
                                     ' Cartesian coordinates.
-                                    p.ID = SplitLine.ParseField(RecDef.ID).Value
-                                    p.Y  = SplitLine.ParseField(RecDef.Y).Value
-                                    p.X  = SplitLine.ParseField(RecDef.X).Value
-                                    p.Z  = SplitLine.ParseField(RecDef.Z).Value
+                                    p.ID   = SplitLine.ParseField(RecDef.ID).Value
+                                    p.Y    = SplitLine.ParseField(RecDef.Y).Value
+                                    p.X    = SplitLine.ParseField(RecDef.X).Value
+                                    p.Z    = SplitLine.ParseField(RecDef.Z).Value
                                     
                                     ' Track values.
                                     p.St   = SplitLine.ParseField(RecDef.St).Value
+                                    p.Km   = SplitLine.ParseField(RecDef.Km).Value
                                     p.Q    = SplitLine.ParseField(RecDef.Q).Value
+                                    p.H    = SplitLine.ParseField(RecDef.H).Value
                                     p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value
                                     
-                                    ' Only A5.
-                                    If (Block.BlockType.Format = TcBlockFormat.A5) Then
-                                        p.Km   = SplitLine.ParseField(RecDef.Km).Value
-                                        p.H    = SplitLine.ParseField(RecDef.H).Value
-                                        p.QG   = SplitLine.ParseField(RecDef.QG).Value
-                                        p.HG   = SplitLine.ParseField(RecDef.HG).Value
-                                        
-                                        UebL   = SplitLine.ParseField(RecDef.UebL).Value
-                                        UebR   = SplitLine.ParseField(RecDef.UebR).Value
-                                        p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value
-                                        p.Heb  = SplitLine.ParseField(RecDef.Heb).Value
-                                        
-                                        p.G    = SplitLine.ParseField(RecDef.G).Value
-                                        p.Ri   = SplitLine.ParseField(RecDef.Ri).Value
-                                        p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
-                                        
-                                        p.V    = SplitLine.ParseField(RecDef.V).Value
-                                        p.R    = SplitLine.ParseField(RecDef.R).Value
-                                        p.L    = SplitLine.ParseField(RecDef.L).Value
-                                        
-                                        p.HDGM = SplitLine.ParseField(RecDef.HDGM).Value
-                                        p.ZDGM = SplitLine.ParseField(RecDef.ZDGM).Value
-                                        
-                                        If (Block.BlockType.Program = TcBlockProgram.iGeo) Then
-                                            p.Tm   = SplitLine.ParseField(RecDef.Tm).Value
-                                            p.QT   = SplitLine.ParseField(RecDef.QT).Value
-                                            p.LG   = SplitLine.ParseField(RecDef.LG).Value
-                                            p.RG   = SplitLine.ParseField(RecDef.RG).Value
-                                            p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
-                                            p.ZLGS = SplitLine.ParseField(RecDef.ZLGS).Value
-                                        End If
-                                    End If
+                                    p.QG   = SplitLine.ParseField(RecDef.QG).Value
+                                    p.HG   = SplitLine.ParseField(RecDef.HG).Value
+                                    
+                                    UebL   = SplitLine.ParseField(RecDef.UebL).Value
+                                    UebR   = SplitLine.ParseField(RecDef.UebR).Value
+                                    p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value
+                                    p.Heb  = SplitLine.ParseField(RecDef.Heb).Value
+                                    
+                                    p.G    = SplitLine.ParseField(RecDef.G).Value
+                                    p.Ri   = SplitLine.ParseField(RecDef.Ri).Value
+                                    p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
+                                    
+                                    p.V    = SplitLine.ParseField(RecDef.V).Value
+                                    p.R    = SplitLine.ParseField(RecDef.R).Value
+                                    p.L    = SplitLine.ParseField(RecDef.L).Value
+                                    
+                                    p.HDGM = SplitLine.ParseField(RecDef.HDGM).Value
+                                    p.ZDGM = SplitLine.ParseField(RecDef.ZDGM).Value
+                                    
+                                    p.Tm   = SplitLine.ParseField(RecDef.Tm).Value
+                                    p.QT   = SplitLine.ParseField(RecDef.QT).Value
+
+                                    p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
+                                    p.ZLGS = SplitLine.ParseField(RecDef.ZLGS).Value
+
+                                    p.RG   = SplitLine.ParseField(RecDef.RG).Value
+                                    p.LG   = SplitLine.ParseField(RecDef.LG).Value
+                                    p.QGT  = SplitLine.ParseField(RecDef.QGT).Value
+                                    p.HGT  = SplitLine.ParseField(RecDef.HGT).Value
+                                    p.QGS  = SplitLine.ParseField(RecDef.QGS).Value
+                                    p.HGS  = SplitLine.ParseField(RecDef.HGS).Value
+                                    
+                                    p.KmStatus = SplitLine.ParseField(RecDef.KmStatus).Value
                                     
                                     ' Point info and comment.
-                                    p.Info = SplitLine.ParseField(RecDef.Text).Value
-                                    If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
+                                    p.Info    = SplitLine.ParseField(RecDef.Text).Value
+                                    p.Comment = SplitLine.ParseField(RecDef.Comment).Value
+                                    If (p.Comment.IsEmptyOrWhiteSpace() AndAlso SplitLine.HasComment) Then p.Comment = SplitLine.Comment
                                     If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
                                     
                                     ' Other info.
@@ -1220,7 +1394,7 @@ Namespace Domain
                                         End If
                                     End If
                                     
-                                    ' Change Zero to NaN.
+                                    ' Correct Zero to NaN.
                                     If (Block.BlockType.Program = TcBlockProgram.iTrassePC) Then
                                         If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
                                             p.HSOK = Double.NaN
@@ -1295,7 +1469,6 @@ Namespace Domain
                 Dim PathName        As String
                 Dim Comment         As New StringBuilder()
                 Dim oMatch          As Match
-                'Dim DataFound       As Boolean = False
                 Dim FormatFound     As Boolean = False
                 Dim i               As Integer = SourceBlock.StartIndex
                 
@@ -1334,6 +1507,7 @@ Namespace Domain
                                         Block.BlockType.Format  = TcBlockFormat.THW
                                         PathName = oMatch.Groups(1).Value
                                         Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, False)
+                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
                                     End If
                                 End If
                                 If (Block.BlockType.Format = TcBlockFormat.None) Then
@@ -1346,6 +1520,7 @@ Namespace Domain
                                         Block.BlockType.Version = TcBlockVersion.Outdated
                                         Block.BlockType.Format  = TcBlockFormat.THW
                                         Block.TrackRef.NameOfAlignment = oMatch.Groups(1).Value
+                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
                                     End If
                                 End If
                                 If (Block.BlockType.Format = TcBlockFormat.None) Then
@@ -1370,6 +1545,8 @@ Namespace Domain
                                         ' Alignment name.
                                         Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, True)
                                         
+                                        ' Record definition.
+                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
                                     End If
                                 End If
                                 
@@ -1396,13 +1573,15 @@ Namespace Domain
                             SourceBlock.DataStartIndex = i
                             
                             ' Determine sub format.
-                            Block.BlockType.SubFormat = TcBlockSubFormat.OneLine
-                            If ((i < SourceBlock.EndIndex) AndAlso (SplitLines(i + 1).HasData)) Then
-                                Dim IDLength As Integer = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType)).ID.Length
-                                Dim ID1      As String  = SplittedLine.Data.Left(IDLength)
-                                Dim ID2      As String  = SplitLines(i + 1).Data.Left(IDLength)
-                                If (ID1 = ID2) Then
-                                    Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine
+                            If (FormatFound) Then
+                                Block.BlockType.SubFormat = TcBlockSubFormat.OneLine
+                                If ((i < SourceBlock.EndIndex) AndAlso (SplitLines(i + 1).HasData)) Then
+                                    Dim IDLength As Integer = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn).ID.Length
+                                    Dim ID1      As String  = SplittedLine.Data.Left(IDLength)
+                                    Dim ID2      As String  = SplitLines(i + 1).Data.Left(IDLength)
+                                    If (ID1 = ID2) Then
+                                        Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine
+                                    End If
                                 End If
                             End If
                         End If
@@ -1419,7 +1598,7 @@ Namespace Domain
                 If (SourceBlock.HasData) Then Logger.logDebug(StringUtils.sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
-            ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A1, A5), especially block type and geometry reference info and first data line. </summary>
+            ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A0, A1, A5), especially block type and geometry reference info and first data line. </summary>
              ''' <param name="SplitLines">     [In]  The data cache holding the block of interest. </param>
              ''' <param name="SourceBlock">    [In/Out] Info about block source in <paramref name="SplitLines"/>. </param>
              ''' <param name="Block">          [Out] The TcBlock to fill with info. </param>
@@ -1432,16 +1611,16 @@ Namespace Domain
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 If (Block Is Nothing) Then Throw New System.ArgumentNullException("Block")
                 
-                Dim SplittedLine    As PreSplittedTextLine
-                Dim Comment         As New StringBuilder()
-                'Dim DataFound       As Boolean = False
-                Dim FormatFound     As Boolean = False
-                Dim CommentEnd      As Boolean = False
-                Dim kvp             As KeyValuePair(Of String, String)
-                Dim i               As Integer = SourceBlock.StartIndex
+                Dim SplittedLine        As PreSplittedTextLine
+                Dim Comment             As New StringBuilder()
+                Dim FormatFound         As Boolean = False
+                Dim CommentEnd          As Boolean = False
+                Dim kvp                 As KeyValuePair(Of String, String)
+                Dim i                   As Integer = SourceBlock.StartIndex
                 
                 ' Supported Format strings.
-                Const Fmt_A1 = "A1 : PktNr  Y  X  Z  St/Km  Q  H/HSOK  Code"
+                Const Fmt_A0 = "A0 : Alles EDV"
+                Const Fmt_A1 = "A1 : PktNr  Y  X  Z  St/Km"  ' kleinster gemeinsamer Nenner von iTrassePC und iGeo
                 Const Fmt_A5 = "A5 : Alles"
                 
                 Block.BlockType.Program  = SourceBlock.BlockType.Program
@@ -1464,14 +1643,22 @@ Namespace Domain
                                 Select Case kvp.Key
                                     
                                     Case "Format"
-                                        Select Case kvp.Value
-                                            Case Fmt_A1
-                                                FormatFound = True
-                                                Block.BlockType.Format = TcBlockFormat.A1
-                                            Case Fmt_A5
-                                                FormatFound = True
-                                                Block.BlockType.Format = TcBlockFormat.A5
-                                        End Select
+                                        If (kvp.Value = Fmt_A0) Then
+                                            
+                                            FormatFound = True
+                                            Block.BlockType.Format = TcBlockFormat.A0
+                                            Block.BlockType.SubFormat = TcBlockSubFormat.CSV
+                                            
+                                        ElseIf (kvp.Value.IsMatchingTo(Fmt_A1)) Then
+                                            
+                                            FormatFound = True
+                                            Block.BlockType.Format = TcBlockFormat.A1
+                                            
+                                        ElseIf (kvp.Value = Fmt_A5) Then
+                                            
+                                            FormatFound = True
+                                            Block.BlockType.Format = TcBlockFormat.A5
+                                        End If
                                     
                                     Case "Datei":               CommentEnd = True
                                     
@@ -1486,6 +1673,8 @@ Namespace Domain
                                     Case "Profilpunktbereich":  Block.TrackRef.NameOfSectionPoints  = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "Gleisprofilbereich":  Block.TrackRef.NameOfRailSections   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     Case "DGM":                 Block.TrackRef.NameOfDTM            = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    
+                                    Case "Feldnamen":           Block.BlockType.FieldNames          = kvp.Value                          : CommentEnd = True  ' Format "A0"
                                     
                                 End Select
                             End If
@@ -1505,6 +1694,14 @@ Namespace Domain
                 Loop Until (SourceBlock.HasData OrElse (i > SourceBlock.EndIndex))
                 
                 Block.Comment = Comment.ToString()
+                
+                ' Set record definition. Only now, because for A0 the format and field names are required.
+                SourceBlock.RecordDefinition = getIGeoRecordDefinition(Block.BlockType)
+                'If (Block.BlockType.Format = TcBlockFormat.A0) Then
+                '    SourceBlock.RecordDefinition = getIGeoRecordDefinition(Block.BlockType)
+                'Else
+                '    SourceBlock.RecordDefinition = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                'End If
                 
                 Logger.logDebug(StringUtils.sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(StringUtils.sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
@@ -1767,10 +1964,12 @@ Namespace Domain
                 
                 ' Column definitions are zero-ased!
                 
+                ' iGeo A0: will be created uniqely for every A0 block (see getIGeoRecordDefinition() )
+                
                 ' iGeo + iTrassePC, A1
                 BlockType.Format  = TcBlockFormat.A1
                 BlockType.Version = TcBlockVersion.Current
-                Dim A1RecordDef As New TcRecordDefinitionIGeo With {
+                Dim A1RecordDef As New TcRecordDefinitionIGeo(InitIgnore:=True) With {
                     _
                     .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.WordNumber, 1, 0),
@@ -1891,22 +2090,44 @@ Namespace Domain
                     .ZLGS = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,
                                                                DataFieldPositionType.WordNumber, 27, 0),
                     _
-                    .LG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,
+                    .RG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,
                                                                DataFieldPositionType.WordNumber, 28, 0),
                     _
-                    .RG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,
+                    .LG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,
                                                                DataFieldPositionType.WordNumber, 29, 0),
                     _
-                    .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
+                    .QGT  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,
                                                                DataFieldPositionType.WordNumber, 30, 0,
-                                                               DataFieldOptions.NotRequired)
+                                                               DataFieldOptions.ZeroAsNaN),
+                    _
+                    .HGT  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,
+                                                               DataFieldPositionType.WordNumber, 31, 0,
+                                                               DataFieldOptions.ZeroAsNaN),
+                    _
+                    .QGS  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,
+                                                               DataFieldPositionType.WordNumber, 32, 0,
+                                                               DataFieldOptions.ZeroAsNaN),
+                    _
+                    .HGS  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,
+                                                               DataFieldPositionType.WordNumber, 33, 0,
+                                                               DataFieldOptions.ZeroAsNaN),
+                    _
+                    .KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus,
+                                                                   DataFieldPositionType.WordNumber, 34, 0),
+                    _
+                    .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
+                                                               DataFieldPositionType.WordNumber, 35, 0,
+                                                               DataFieldOptions.NotRequired),
+                    _
+                    .Comment = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,
+                                                               DataFieldPositionType.Ignore, 99, 99)
                     })
                 '
                 ' iTrassePC, A5
                 BlockType.Program = TcBlockProgram.iTrassePC
                 BlockType.Format  = TcBlockFormat.A5
                 BlockType.Version = TcBlockVersion.Current
-                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionIGeo With {
+                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionIGeo(InitIgnore:=True) With {
                     _
                     .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.WordNumber, 1, 0),

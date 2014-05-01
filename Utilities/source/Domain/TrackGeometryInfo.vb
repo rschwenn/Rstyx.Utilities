@@ -10,7 +10,7 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.TrackGeometryInfo")
             
-            Private Shared MissingNameOfAlignmentRule As Cinch.SimpleRule
+            Private Shared MissingNameOfAlignmentOrDTMRule As Cinch.SimpleRule
             
         #End Region
         
@@ -20,15 +20,16 @@ Namespace Domain
             Shared Sub New()
                 ' Create Validation Rules.
                 
-                MissingNameOfAlignmentRule = New Cinch.SimpleRule("NameOfAlignment",
-                                                                  Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_MissingNameOfAlignment,
-                                                                  Function (oValidatingObject As Object) (DirectCast(oValidatingObject, TrackGeometryInfo).NameOfAlignment.IsEmptyOrWhiteSpace()))
+                MissingNameOfAlignmentOrDTMRule = New Cinch.SimpleRule("NameOfAlignmentOrDTM",
+                                                          Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_MissingNameOfAlignmentOrDTM,
+                                                          Function (oValidatingObject As Object) (DirectCast(oValidatingObject, TrackGeometryInfo).NameOfAlignment.IsEmptyOrWhiteSpace() AndAlso
+                                                                                                  DirectCast(oValidatingObject, TrackGeometryInfo).NameOfDTM.IsEmptyOrWhiteSpace() ))
                 '
             End Sub
             
             ''' <summary> Creates a new TrackGeometryInfo. </summary>
             Public Sub New()
-                Me.AddRule(MissingNameOfAlignmentRule)
+                Me.AddRule(MissingNameOfAlignmentOrDTMRule)
             End Sub
             
         #End Region
@@ -72,10 +73,11 @@ Namespace Domain
                 Dim List As New System.Text.StringBuilder()
                 Dim RetValue As String
                 
-                If (Me.NameOfAlignment.IsEmptyOrWhiteSpace()) Then 
+                If (Not Me.IsValid) Then 
                     RetValue = MyBase.ToString()
                 Else
-                    List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfAlignment, Me.NameOfAlignment))
+                    ' At least one name is not empty.
+                    If (Me.NameOfAlignment.IsNotEmptyOrWhiteSpace())      Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfAlignment     , Me.NameOfAlignment))
                     If (Me.NameOfKmAlignment.IsNotEmptyOrWhiteSpace())    Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfKmAlignment   , Me.NameOfKmAlignment))
                     If (Me.NameOfGradientLine.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfGradientLine  , Me.NameOfGradientLine))
                     If (Me.NameOfCantLine.IsNotEmptyOrWhiteSpace())       Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfCantLine      , Me.NameOfCantLine))

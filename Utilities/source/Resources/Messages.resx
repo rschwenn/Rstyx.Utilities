@@ -328,6 +328,7 @@
   </data>
   <data name="TcBlockType_MissingFormat" xml:space="preserve">
     <value>Block-Format ist unbekannt (Unterstützte Formate für %s: %s und %s).</value>
+    <comment>BlockType.Program: String; TcBlockFormat: String; TcBlockFormat: String;</comment>
   </data>
   <data name="TcBlockType_MissingProgram" xml:space="preserve">
     <value>Herkunfts-Programm ist unbekannt.</value>
@@ -344,8 +345,8 @@
   <data name="TcBlock_InvalidTrackRef_Fallback" xml:space="preserve">
     <value>Trassenbezug ist ungültig (zu wenig bekannte Werte).</value>
   </data>
-  <data name="TrackGeometryInfo_MissingNameOfAlignment" xml:space="preserve">
-    <value>Achsname ist unbekannt.</value>
+  <data name="TrackGeometryInfo_MissingNameOfAlignmentOrDTM" xml:space="preserve">
+    <value>Achsname und DGM-Name sind unbekannt (mindestens einer der beiden muss bekannt sein).</value>
   </data>
   <data name="TcFileReader_InvalidTcBlock" xml:space="preserve">
     <value>Ungültiger Block mit Trassenkoordinaten (Zeilen %d bis %d):\n%s</value>
@@ -357,6 +358,7 @@
   </data>
   <data name="TcFileReader_EmptyTcBlock" xml:space="preserve">
     <value>Block mit Trassenkoordinaten enthält keine gültigen Punkte (Zeilen %d bis %d).</value>
+    <comment>Line Number Start: Integer; Line Number End: Integer</comment>
   </data>
   <data name="TcFileReader_LoadFailed" xml:space="preserve">
     <value>=&gt; Datei mit Trassenkoordinaten konnte nicht erfolgreich gelesen werden (%s).</value>
@@ -590,5 +592,34 @@
   <data name="TrackGeometryInfo_NameOfSectionPoints" xml:space="preserve">
     <value>Profilpunkte:    %s</value>
     <comment>Section related Points Name: String</comment>
+  </data>
+  <data name="Domain_Label_HGS" xml:space="preserve">
+    <value>Hoch im Strassensystem</value>
+  </data>
+  <data name="Domain_Label_HGT" xml:space="preserve">
+    <value>Hoch im Tunnelsystem</value>
+  </data>
+  <data name="Domain_Label_KmStatus" xml:space="preserve">
+    <value>Status des Kilometers</value>
+  </data>
+  <data name="Domain_Label_QGS" xml:space="preserve">
+    <value>Quer im Strassensystem</value>
+  </data>
+  <data name="Domain_Label_QGT" xml:space="preserve">
+    <value>Quer im Tunnelsystem</value>
+  </data>
+  <data name="TcBlockType_MissingFieldNames" xml:space="preserve">
+    <value>Feldnamen des CSV-Formats sind unbekannt.</value>
+  </data>
+  <data name="Domain_Label_Comment" xml:space="preserve">
+    <value>Kommentar</value>
+  </data>
+  <data name="PreSplittedTextLine_InvalidFieldNotEnumMember" xml:space="preserve">
+    <value>Das Feld '%s' enthält keinen gültigen Wert (%s).</value>
+    <comment>Field Caption: String; Field String: String</comment>
+  </data>
+  <data name="PreSplittedTextLine_ValidValues" xml:space="preserve">
+    <value>Gültige Werte sind:  %s.</value>
+    <comment>Valid Values List: String</comment>
   </data>
 </root>

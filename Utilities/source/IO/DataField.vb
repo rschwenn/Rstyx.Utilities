@@ -6,11 +6,14 @@ Namespace IO
     ''' <summary> Kind of determining a data field in a string. </summary>
     Public Enum DataFieldPositionType As Integer
         
+        ''' <summary> The field won't be parsed at all. </summary>
+        Ignore = 0
+
         ''' <summary> The field is determined by a serial number (starting at 1), related to a list of words delimited by white space. </summary>
-        WordNumber = 0
+        WordNumber = 1
         
         ''' <summary> The field is determined by a start column and a field length. </summary>
-        ColumnAndLength = 1
+        ColumnAndLength = 2
         
     End Enum
     

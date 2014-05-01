@@ -3,6 +3,23 @@ Imports System
 
 Namespace Domain
     
+    ''' <summary> Status of a Kilometer Value. </summary>
+    Public Enum KilometerStatus As Integer
+        
+        ''' <summary> Status (ambiguity) is unknown. </summary>
+        Unknown = -1
+        
+        ''' <summary> Unambiguous Kilometer value. </summary>
+        Normal = 0
+        
+        ''' <summary> Ambiguous Kilometer value. It's located in the incoming sector of a Kilometer skip of overlegth. </summary>
+        SkipIncoming = 1
+        
+        ''' <summary> Ambiguous Kilometer value. It's located in the outgoing sector of a Kilometer skip of overlegth. </summary>
+        SkipOutgoing = 2
+        
+    End Enum
+    
     ''' <summary> Shortcut for a <see cref="GeoTcPoint(Of String)"/>, representing the most usual case: a string identifier. </summary>
     Public Class GeoTcPoint
         Inherits GeoTcPoint(Of String)
@@ -53,6 +70,9 @@ Namespace Domain
             Public Property Km()            As Double = Double.NaN Implements IPointAtTrackGeometry.Km
             
             ''' <inheritdoc/>
+            Public Property KmStatus()      As KilometerStatus = KilometerStatus.Unknown Implements IPointAtTrackGeometry.KmStatus
+            
+            ''' <inheritdoc/>
             Public Property Q()             As Double = Double.NaN Implements IPointAtTrackGeometry.Q
             
             ''' <inheritdoc/>
@@ -92,6 +112,13 @@ Namespace Domain
             Public Property V()             As Double = Double.NaN Implements IPointAtTrackGeometry.V
             
             ''' <inheritdoc/>
+            Public Property QGS()           As Double = Double.NaN Implements IPointAtTrackGeometry.QGS
+            
+            ''' <inheritdoc/>
+            Public Property HGS()           As Double = Double.NaN Implements IPointAtTrackGeometry.HGS
+            
+            
+            ''' <inheritdoc/>
             Public Property R()             As Double = Double.NaN Implements IPointAtTrackGeometry.R
             
             ''' <inheritdoc/>
@@ -102,6 +129,12 @@ Namespace Domain
             
             ''' <inheritdoc/>
             Public Property QT()            As Double = Double.NaN Implements IPointAtTrackGeometry.QT
+            
+            ''' <inheritdoc/>
+            Public Property QGT()           As Double = Double.NaN Implements IPointAtTrackGeometry.QGT
+            
+            ''' <inheritdoc/>
+            Public Property HGT()           As Double = Double.NaN Implements IPointAtTrackGeometry.HGT
             
             
             ''' <inheritdoc/>

@@ -34,7 +34,6 @@ Pkt.Nr      Station  Abstand   Richtung     Radius  Ü(mm)  Höhe     dH  Abstand
  0.08998 146656.3730   0.0089 356.035570    242.000   0.0                <außerh.>  u= 10
  0.08997 146669.3039   0.0031 359.683281    242.000   0.0                <außerh.>  u= 32
 
-*********************************************************************************************************
 
 Trasse G:\GEO\PROJEKTE\83816\A\Dat2000\W468_Abzweig_tmp.tra  (26.08.13   11:30:54)
 Koordinaten= G:\GEO\PROJEKTE\83816\A\Dat2000\Ivmg_6207_vorab.kf

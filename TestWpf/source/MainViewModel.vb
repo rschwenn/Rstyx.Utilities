@@ -105,20 +105,20 @@ Public Class MainViewModel
                 'fdk.Load(Me.FilePath1)
                 'Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
                 
-                'TcReader = New TcFileReader()
-                'TcReader.Load(Me.FilePath1)
-                'Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
-                'Logger.logInfo(TcReader.ToString())
+                TcReader = New TcFileReader()
+                TcReader.Load(Me.FilePath1)
+                Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
+                Logger.logInfo(TcReader.ToString())
                 
                 'Dim Info As String = Me.Textbox
                 'Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
                 'Logger.logInfo(StringUtils.sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
                  
-                Dim li  As GeoMath.DBAGLineInfo
-                li = GeoMath.getDBAGLineTitle(6265)
-                Logger.logInfo(li.ShortTitle)
-                Exit Sub
-
+                'Dim li  As GeoMath.DBAGLineInfo
+                'li = GeoMath.getDBAGLineTitle(6265)
+                'Logger.logInfo(li.ShortTitle)
+                'Exit Sub
+                
                 'Dim Zahl        As DataField(Of Double) = Nothing
                 'Dim Text        As DataField(Of String) = Nothing
                 'Dim PError      As ParseError = Nothing
@@ -168,18 +168,18 @@ Public Class MainViewModel
                 
                 'Dim Field = "UserDomaiN"
                 'Dim TableName = "Standorte$y"
-                Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
+                'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
                 
-                Dim DBconn  As OleDbConnection = Nothing
-                Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
-                CSB.DataSource = Workbook
-                'CSB.Provider   = "Microsoft.Jet.OLEDB.4.0"
+                'Dim DBconn  As OleDbConnection = Nothing
+                'Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
+                'CSB.DataSource = Workbook
+                ''CSB.Provider   = "Microsoft.Jet.OLEDB.4.0"
+                ''CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
+                'CSB.Provider   = "yyMicrosoft.ACE.OLEDB.12.0"
                 'CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
-                CSB.Provider   = "yyMicrosoft.ACE.OLEDB.12.0"
-                CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
-                DBconn = New OleDbConnection(CSB.ConnectionString)
-                DBconn.Open()
-                DBconn.Close()
+                'DBconn = New OleDbConnection(CSB.ConnectionString)
+                'DBconn.Open()
+                'DBconn.Close()
                 
                 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
                 'Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)

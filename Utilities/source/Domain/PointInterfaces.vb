@@ -89,6 +89,9 @@ Namespace Domain
         ''' <summary> Kilometer along a separate kilometer leading alignment. </summary>
         Property Km()           As Double
         
+        ''' <summary> Status (ambiguity) of Kilometer. </summary>
+        Property KmStatus()     As KilometerStatus
+        
         ''' <summary> Perpendicular distance in XY-plane to the alignment. </summary>
         Property Q()            As Double
         
@@ -119,14 +122,21 @@ Namespace Domain
         Property HG()           As Double
         
         ''' <summary> Length along the (canted) rail cross section shape. </summary>
-        Property LG()            As Double
+        Property LG()           As Double
         
         ''' <summary> Radial distance to the (canted) rail cross section shape. </summary>
-        Property RG()            As Double
+        Property RG()           As Double
         
         
         ''' <summary> Height above road cross section shape. </summary>
         Property V()            As Double
+        
+        ''' <summary> Road system: Perpendicular distance to the alignment. </summary>
+        Property QGS()          As Double
+        
+        ''' <summary> Road system: Height. </summary>
+        Property HGS()          As Double
+        
         
         ''' <summary> Radial distance to the tunnel cross section shape. </summary>
         Property R()            As Double
@@ -135,10 +145,16 @@ Namespace Domain
         Property L()            As Double
         
         ''' <summary> Tunnel Meters (Station inside a tunnel). </summary>
-        Property TM()            As Double
+        Property TM()           As Double
         
         ''' <summary> Perpendicular distance in XY-plane to the alignment in direction of tunnel excavation. </summary>
-        Property QT()            As Double
+        Property QT()           As Double
+        
+        ''' <summary> Tunnel system: Perpendicular distance to the alignment. </summary>
+        Property QGT()          As Double
+        
+        ''' <summary> Tunnel system: Height. </summary>
+        Property HGT()          As Double
         
         
         ''' <summary> Radius. </summary>

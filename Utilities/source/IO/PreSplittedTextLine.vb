@@ -13,7 +13,8 @@ Namespace IO
             
             'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.PreSplittedTextLine")
             
-            Private _Words As Collection(Of DataFieldSource) = Nothing
+            Private _FieldDelimiter As Char = " "c
+            Private _Words          As Collection(Of DataFieldSource) = Nothing
             
         #End Region
         
@@ -81,9 +82,27 @@ Namespace IO
         
         #Region "Properties"
             
-            ''' <summary> Returns all data fields of <c>Me.Data</c> delimited by whitespace. </summary>
-             ''' <returns> All data fields delimited by whitespace. </returns>
-             ''' <remarks> The collection will be created at first access to this property. </remarks>
+            ''' <summary> A character that delimits words in <see cref="PreSplittedTextLine.Data"/>. </summary>
+            ''' <remarks>
+            ''' A whitespace character means the whole whitespace between words.
+            ''' Setting this property resets the <see cref="PreSplittedTextLine.Words"/> property.
+            ''' </remarks>
+            Public Property FieldDelimiter() As Char
+                Get
+                    Return _FieldDelimiter
+                End Get
+                Set(Value As Char)
+                    If (Char.IsWhiteSpace(Value)) Then Value = " "c
+                    If (Not (value = _FieldDelimiter)) then
+                        _FieldDelimiter = Value
+                        _Words = Nothing
+                    End If
+                End Set
+            End Property
+            
+            ''' <summary> Returns all data fields of <c>Me.Data</c> delimited by <see cref="PreSplittedTextLine.FieldDelimiter"/>. </summary>
+             ''' <returns> All data fields. </returns>
+             ''' <remarks> The collection will be created lazy at access to this property. </remarks>
             Public ReadOnly Property Words() As Collection(Of DataFieldSource)
                 Get
                     If (_Words Is Nothing) Then _Words = getWords()
@@ -95,7 +114,8 @@ Namespace IO
         
         #Region "Public Methods"
             
-            ''' <summary> Re-creates and returns the full (almost original) line. </summary>
+            ''' <summary> Re-creates the full (almost original) line. </summary>
+             ''' <returns> The full (almost original) line. </returns>
             Public Function getFullLine() As String
                 Dim RetValue As String = String.Empty
                 
@@ -147,7 +167,7 @@ Namespace IO
              ''' <item> <term> Double </term>  <description> <c>Double.NaN</c> </description></item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Double</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="TFieldValue"/> is not <c>String</c> or <c>Double</c>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This PreSplittedTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> The data field couldn't be parsed successfully. </exception>
@@ -189,22 +209,23 @@ Namespace IO
              ''' <item><description> The field isn't numeric while a numeric target type is required. </description></item>
              ''' </list>
              ''' <para>
-             ''' If parsing fails or the field is missing these default field values are returned:
+             ''' If parsing fails or the field is missing these default field values will be returned:
              ''' </para>
              ''' <list type="table">
              ''' <listheader> <term> <b>Target Type</b> </term>  <description> Default Value </description></listheader>
              ''' <item> <term> String </term>  <description> <c>String.Empty</c> </description></item>
              ''' <item> <term> Double </term>  <description> <c>Double.NaN</c> </description></item>
+             ''' <item> <term> Enum   </term>  <description> <c>Unknown</c> or <c>None</c> or <c>Default value assigning <see langword="null"/></c> </description></item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Double</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Double</c> or an <c>Enum</c>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This PreSplittedTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
             Public Function TryParseField(Of TFieldValue As IConvertible)(FieldDef As DataFieldDefinition(Of TFieldValue),
                                                                           <Out> ByRef Result As DataField(Of TFieldValue)
                                                                          ) As Boolean
-                If (Not ((GetType(TFieldValue) Is GetType(String)) OrElse (GetType(TFieldValue) Is GetType(Double)))) Then
-                    Throw New System.ArgumentException("TValue")
+                If (Not ((GetType(TFieldValue) Is GetType(String)) OrElse (GetType(TFieldValue) Is GetType(Double)) OrElse (GetType(TFieldValue).IsEnum))) Then
+                    Throw New System.ArgumentException("TFieldValue")
                 End If
                 If (FieldDef Is Nothing) Then Throw New System.ArgumentNullException("FieldDef")
                 If (Not Me.HasData) Then Throw New System.InvalidOperationException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_EmptyDataLine, Me.SourceLineNo))
@@ -212,6 +233,16 @@ Namespace IO
                 ' Default values.
                 Const DefaultString As String = ""
                 Const DefaultDouble As Double = Double.NaN
+                Dim   DefaultEnum   As TFieldValue = Nothing
+                
+                ' Special Enum defaults.
+                If (GetType(TFieldValue).IsEnum) Then
+                    If ([Enum].IsDefined(GetType(TFieldValue), "Unknown")) Then
+                        DefaultEnum = [Enum].Parse(GetType(TFieldValue), "Unknown", ignoreCase:=True)
+                    ElseIf ([Enum].IsDefined(GetType(TFieldValue), "None")) Then
+                        DefaultEnum = [Enum].Parse(GetType(TFieldValue), "None", ignoreCase:=True)
+                    End If
+                End If
                 
                 Dim success         As Boolean = True
                 Dim FieldHasValue   As Boolean = False
@@ -233,11 +264,14 @@ Namespace IO
                 Select Case TargetTypeCode
                     Case TypeCode.String:   FieldValue = Convert.ChangeType(DefaultString, TypeCode.String)
                     Case TypeCode.Double:   FieldValue = Convert.ChangeType(DefaultDouble, TypeCode.Double)
-                    Case Else:              Throw New System.ArgumentException("TValue")
+                    Case Else:              FieldValue = DefaultEnum   'Throw New System.ArgumentException("TValue")
                 End Select
                 
                 ' Get the field string and create a DataFieldSource.
-                If (FieldDef.PositionType = DataFieldPositionType.WordNumber) Then
+                If (FieldDef.PositionType = DataFieldPositionType.Ignore) Then
+                    FieldSource = New DataFieldSource(0, 1, "0")  ' Dummy.
+                    
+                ElseIf (FieldDef.PositionType = DataFieldPositionType.WordNumber) Then
                     If (FieldDef.ColumnOrWord > Me.Words.Count) Then
                         If (Not OptionNotRequired) Then
                             success = False
@@ -276,7 +310,7 @@ Namespace IO
                 ' Default value for missing field.
                 If (Not FieldHasValue) Then
                     If (OptionMissingAsZero) Then
-                        FieldSource   = New DataFieldSource(0, 1, "0")
+                        FieldSource   = New DataFieldSource(0, 1, "0")  ' Dummy.
                         ParseError    = Nothing
                         FieldHasValue = True
                         success       = True
@@ -335,7 +369,32 @@ Namespace IO
                             End If
                             
                         Case Else
-                            Throw New System.ArgumentException("TValue")
+                            If (GetType(TFieldValue).IsEnum) Then
+                                Try
+                                    FieldValue = [Enum].Parse(GetType(TFieldValue), FieldString, ignoreCase:=True)
+                                    
+                                    ' Treat not defined value as parsing error, too.
+                                    If (Not [Enum].IsDefined(GetType(TFieldValue), FieldValue)) Then
+                                        Throw New Exception()
+                                    End If
+                                Catch ex As Exception
+                                    success = False
+                                    Dim ValidValues As String = [Enum].GetNames(GetType(TFieldValue)).Join(", ") '& ", " & [Enum].GetValues(GetType(TFieldValue)).Cast(Of String).Join(", ")
+                                    For Each Value As Integer In [Enum].GetValues(GetType(TFieldValue))
+                                        ValidValues &= ", " & CStr(Value)
+                                    Next
+                                    ParseError = New ParseError(ParseErrorLevel.Error, 
+                                                                Me.SourceLineNo,
+                                                                FieldSource.Column,
+                                                                FieldSource.Column + FieldSource.Length,
+                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_InvalidFieldNotEnumMember, FieldDef.Caption, FieldSource.Value),
+                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_ValidValues, ValidValues),
+                                                                Nothing
+                                                               )
+                                End Try
+                            Else
+                                Throw New System.ArgumentException("TFieldValue")
+                            End If
                     End Select
                 End If
                 
@@ -420,18 +479,46 @@ Namespace IO
                 End If
             End Sub
             
-            ''' <summary> Splits <c>Me.Data</c> into words separated by whitespace. </summary>
+            ''' <summary> Splits <c>Me.Data</c> into words separated by <see cref="PreSplittedTextLine.FieldDelimiter"/>. </summary>
              ''' <returns> The words as <see cref="DataField"/>s. </returns>
              ''' <remarks></remarks>
             Private Function getWords() As Collection(Of DataFieldSource)
                 Dim RetValue As New Collection(Of DataFieldSource)
                 
                 If (Me.HasData) Then
-                    Dim Matches As System.Text.RegularExpressions.MatchCollection = Me.Data.GetMatches("\S+")
+                    Dim WordRegEx As String
                     
-                    For Each Match As System.Text.RegularExpressions.Match In Matches
-                        RetValue.Add(New DataFieldSource(Match.Index, Match.Length, Match.Value))
-                    Next
+                    If (Char.IsWhiteSpace(Me.FieldDelimiter)) Then
+                        ' Awk-like splitting.
+                        WordRegEx = "\S+"
+                        Dim Matches As System.Text.RegularExpressions.MatchCollection = Me.Data.GetMatches(WordRegEx)
+                        
+                        For Each Match As System.Text.RegularExpressions.Match In Matches
+                            RetValue.Add(New DataFieldSource(Match.Index, Match.Length, Match.Value))
+                        Next
+                    Else
+                        WordRegEx = "[^" & Me.FieldDelimiter & "]+"
+                        
+                        ' Hide masked (doubled) Delimiters.
+                        Dim MaskedDelimiter         As String = Me.FieldDelimiter & Me.FieldDelimiter
+                        Dim DoubledMaskedDelimiter  As String = "D1o2u3b4l5e6D7e8l9i0mM"
+                        Dim MaskedDelimitersCount   As Integer = 0
+                        Dim dL                      As Integer = DoubledMaskedDelimiter.Length - MaskedDelimiter.Length
+                        
+                        Dim Matches As System.Text.RegularExpressions.MatchCollection = Me.Data.Replace(MaskedDelimiter, DoubledMaskedDelimiter).GetMatches(WordRegEx)
+                        
+                        ' Restore masked Delimiters, now as intended: non-masked (single).
+                        For Each Match As System.Text.RegularExpressions.Match In Matches
+                            
+                            ' Correct source index and length because of masked delimiters.
+                            Dim LocalMaskedDelimitersCount  As Integer = Match.Value.GetMatches(DoubledMaskedDelimiter).Count
+                            Dim dIndex                      As Integer = dL * MaskedDelimitersCount
+                            Dim dLength                     As Integer = dL * LocalMaskedDelimitersCount
+                            MaskedDelimitersCount += LocalMaskedDelimitersCount
+                            
+                            RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, Match.Value.Replace(DoubledMaskedDelimiter, Me.FieldDelimiter).Trim()))
+                        Next
+                    End If
                 End If
                 
                 Return RetValue

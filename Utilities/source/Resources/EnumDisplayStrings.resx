@@ -567,4 +567,10 @@
   <data name="Bentley_Interop_MicroStationDGN_MsdViews_View8" xml:space="preserve">
     <value>Ansicht 8</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A0" xml:space="preserve">
+    <value>Ausgabe A0</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_CSV" xml:space="preserve">
+    <value>Variable Felder (CSV)</value>
+  </data>
 </root>

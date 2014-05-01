@@ -47,13 +47,13 @@ Namespace IO
             
             #Region "Settings"
                 
-                ''' <summary> If this string is found at line start, the whole line will be treated as comment line. Defaults to "#". </summary>
+                ''' <summary> If this string is found at line start, the whole line will be treated as comment line. Defaults to <see langword="null"/>. </summary>
                  ''' <remarks> If <see langword="null"/> or empty, comment lines won't be recognized. </remarks>
-                Public Property LineStartCommentToken() As String = "#"
+                Public Property LineStartCommentToken() As String = Nothing
                 
-                ''' <summary> If this string is found anywhere in the line, all following characters will be treated as line end comment. Defaults to "#". </summary>
+                ''' <summary> If this string is found anywhere in the line, all following characters will be treated as line end comment. Defaults to <see langword="null"/>. </summary>
                  ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
-                Public Property LineEndCommentToken() As String = "#"
+                Public Property LineEndCommentToken() As String = Nothing
                 
                 ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="P:DataTextFileReader.Header"/>. Defaults to <see langword="true"/>. </summary>
                 Public Property SeparateHeader() As Boolean = True
