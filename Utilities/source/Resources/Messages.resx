@@ -372,19 +372,19 @@
     <value>Es sind %d Fehler aufgetreten beim Analysieren der Trassenkoordinaten (%s).</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
-  <data name="PreSplittedTextLine_EmptyDataLine" xml:space="preserve">
+  <data name="DataTextLine_EmptyDataLine" xml:space="preserve">
     <value>Zeile %d enthält keine Daten.</value>
     <comment>Line Number: Integer</comment>
   </data>
-  <data name="PreSplittedTextLine_InvalidFieldNotNumeric" xml:space="preserve">
+  <data name="DataTextLine_InvalidFieldNotNumeric" xml:space="preserve">
     <value>Das Feld '%s' ist nicht numerisch (%s).</value>
     <comment>Field Caption: String; Field String: String</comment>
   </data>
-  <data name="PreSplittedTextLine_MissingField" xml:space="preserve">
+  <data name="DataTextLine_MissingField" xml:space="preserve">
     <value>Das Feld '%s' existiert nicht (Spalte %d, Länge %d).</value>
     <comment>Field Caption: String; Start Column: Integer; End Column: Integer</comment>
   </data>
-  <data name="PreSplittedTextLine_MissingWord" xml:space="preserve">
+  <data name="DataTextLine_MissingWord" xml:space="preserve">
     <value>Das Feld '%s' existiert nicht (%d. Feld).</value>
     <comment>Field Caption: String; Word Number: Integer</comment>
   </data>
@@ -433,7 +433,7 @@
   <data name="Domain_Label_ZSOK" xml:space="preserve">
     <value>SOK-Höhe</value>
   </data>
-  <data name="PreSplittedTextLine_InvalidFieldNotKilometer" xml:space="preserve">
+  <data name="DataTextLine_InvalidFieldNotKilometer" xml:space="preserve">
     <value>Das Feld '%s' ist keine gültige Kilometer-Angabe (%s).</value>
     <comment>Field Caption: String; Field String: String</comment>
   </data>
@@ -614,11 +614,11 @@
   <data name="Domain_Label_Comment" xml:space="preserve">
     <value>Kommentar</value>
   </data>
-  <data name="PreSplittedTextLine_InvalidFieldNotEnumMember" xml:space="preserve">
+  <data name="DataTextLine_InvalidFieldNotEnumMember" xml:space="preserve">
     <value>Das Feld '%s' enthält keinen gültigen Wert (%s).</value>
     <comment>Field Caption: String; Field String: String</comment>
   </data>
-  <data name="PreSplittedTextLine_ValidValues" xml:space="preserve">
+  <data name="DataTextLine_ValidValues" xml:space="preserve">
     <value>Gültige Werte sind:  %s.</value>
     <comment>Valid Values List: String</comment>
   </data>

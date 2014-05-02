@@ -7,11 +7,11 @@ Imports System.Runtime.InteropServices
 Namespace IO
     
     ''' <summary> Represents a line of a data text file, pre-splitted into data and comment. </summary>
-    Public Class PreSplittedTextLine
+    Public Class DataTextLine
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.PreSplittedTextLine")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataTextLine")
             
             Private _FieldDelimiter As Char = " "c
             Private _Words          As Collection(Of DataFieldSource) = Nothing
@@ -54,10 +54,10 @@ Namespace IO
              ''' <remarks> This won't be trimmed, but it's <c>String.Empty</c> if the data part of this line only consists of whitespaces. </remarks>
             Public ReadOnly Data                    As String
             
-            ''' <summary> If <see langword="true"/>, the <see cref="P:PreSplittedTextLine.Data"/> property isn't <c>String.Empty</c>. </summary>
+            ''' <summary> If <see langword="true"/>, the <see cref="P:DataTextLine.Data"/> property isn't <c>String.Empty</c>. </summary>
             Public ReadOnly HasData                 As Boolean
             
-            ''' <summary> If <see langword="true"/>, the <see cref="P:PreSplittedTextLine.Comment"/> property isn't <c>String.Empty</c>. </summary>
+            ''' <summary> If <see langword="true"/>, the <see cref="P:DataTextLine.Comment"/> property isn't <c>String.Empty</c>. </summary>
             Public ReadOnly HasComment              As Boolean
             
             ''' <summary> If <see langword="true"/>, this line starts whith an comment token. </summary>
@@ -82,10 +82,10 @@ Namespace IO
         
         #Region "Properties"
             
-            ''' <summary> A character that delimits words in <see cref="PreSplittedTextLine.Data"/>. </summary>
+            ''' <summary> A character that delimits words in <see cref="DataTextLine.Data"/>. </summary>
             ''' <remarks>
             ''' A whitespace character means the whole whitespace between words.
-            ''' Setting this property resets the <see cref="PreSplittedTextLine.Words"/> property.
+            ''' Setting this property resets the <see cref="DataTextLine.Words"/> property.
             ''' </remarks>
             Public Property FieldDelimiter() As Char
                 Get
@@ -100,7 +100,7 @@ Namespace IO
                 End Set
             End Property
             
-            ''' <summary> Returns all data fields of <c>Me.Data</c> delimited by <see cref="PreSplittedTextLine.FieldDelimiter"/>. </summary>
+            ''' <summary> Returns all data fields of <c>Me.Data</c> delimited by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
              ''' <returns> All data fields. </returns>
              ''' <remarks> The collection will be created lazy at access to this property. </remarks>
             Public ReadOnly Property Words() As Collection(Of DataFieldSource)
@@ -169,7 +169,7 @@ Namespace IO
              ''' </remarks>
              ''' <exception cref="System.ArgumentException"> <paramref name="TFieldValue"/> is not <c>String</c> or <c>Double</c>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.InvalidOperationException"> This PreSplittedTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
+             ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> The data field couldn't be parsed successfully. </exception>
             Public Function ParseField(Of TFieldValue As IConvertible)(FieldDef As DataFieldDefinition(Of TFieldValue)) As DataField(Of TFieldValue)
                 Dim Field As DataField(Of TFieldValue) = Nothing
@@ -220,7 +220,7 @@ Namespace IO
              ''' </remarks>
              ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Double</c> or an <c>Enum</c>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.InvalidOperationException"> This PreSplittedTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
+             ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
             Public Function TryParseField(Of TFieldValue As IConvertible)(FieldDef As DataFieldDefinition(Of TFieldValue),
                                                                           <Out> ByRef Result As DataField(Of TFieldValue)
                                                                          ) As Boolean
@@ -228,7 +228,7 @@ Namespace IO
                     Throw New System.ArgumentException("TFieldValue")
                 End If
                 If (FieldDef Is Nothing) Then Throw New System.ArgumentNullException("FieldDef")
-                If (Not Me.HasData) Then Throw New System.InvalidOperationException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_EmptyDataLine, Me.SourceLineNo))
+                If (Not Me.HasData) Then Throw New System.InvalidOperationException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_EmptyDataLine, Me.SourceLineNo))
                 
                 ' Default values.
                 Const DefaultString As String = ""
@@ -275,7 +275,7 @@ Namespace IO
                     If (FieldDef.ColumnOrWord > Me.Words.Count) Then
                         If (Not OptionNotRequired) Then
                             success = False
-                            ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
+                            ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
                         End If
                     Else
                         FieldSource = Me.Words(FieldDef.ColumnOrWord - 1)
@@ -286,7 +286,7 @@ Namespace IO
                     If (Not (FieldDef.ColumnOrWord < Me.Data.Length)) Then
                         If (Not OptionNotRequired) Then
                             success = False
-                            ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord, FieldDef.Length), Nothing)
+                            ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord, FieldDef.Length), Nothing)
                         End If
                     Else
                         ' Ensure field length doesn't exceeds Me.Data.
@@ -299,7 +299,7 @@ Namespace IO
                         If (FieldSource.Value.IsEmptyOrWhiteSpace()) Then
                             If (Not OptionNotRequired) Then
                                 success = False
-                                ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord + 1, FieldDef.Length), Nothing)
+                                ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord + 1, FieldDef.Length), Nothing)
                             End If
                         Else
                             FieldHasValue = True
@@ -343,10 +343,10 @@ Namespace IO
                             ' Parse number allowing or not the kilometer notation.
                             If (OptionAllowKilometerNotation) Then
                                 success    = GeoMath.TryParseKilometer(FieldString, FieldDouble)
-                                MessageFmt = Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_InvalidFieldNotKilometer
+                                MessageFmt = Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer
                             Else
                                 success    = Double.TryParse(FieldString, AllowedStyles, System.Globalization.NumberFormatInfo.InvariantInfo, FieldDouble)
-                                MessageFmt = Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_InvalidFieldNotNumeric
+                                MessageFmt = Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotNumeric
                             End If
                             
                             If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
@@ -387,8 +387,8 @@ Namespace IO
                                                                 Me.SourceLineNo,
                                                                 FieldSource.Column,
                                                                 FieldSource.Column + FieldSource.Length,
-                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_InvalidFieldNotEnumMember, FieldDef.Caption, FieldSource.Value),
-                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PreSplittedTextLine_ValidValues, ValidValues),
+                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotEnumMember, FieldDef.Caption, FieldSource.Value),
+                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_ValidValues, ValidValues),
                                                                 Nothing
                                                                )
                                 End Try
@@ -479,7 +479,7 @@ Namespace IO
                 End If
             End Sub
             
-            ''' <summary> Splits <c>Me.Data</c> into words separated by <see cref="PreSplittedTextLine.FieldDelimiter"/>. </summary>
+            ''' <summary> Splits <c>Me.Data</c> into words separated by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
              ''' <returns> The words as <see cref="DataField"/>s. </returns>
              ''' <remarks></remarks>
             Private Function getWords() As Collection(Of DataFieldSource)

@@ -200,6 +200,69 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zeile %d enthält keine Daten. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_EmptyDataLine() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_EmptyDataLine", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; enthält keinen gültigen Wert (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_InvalidFieldNotEnumMember() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_InvalidFieldNotEnumMember", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; ist keine gültige Kilometer-Angabe (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_InvalidFieldNotKilometer() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_InvalidFieldNotKilometer", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; ist nicht numerisch (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_InvalidFieldNotNumeric() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_InvalidFieldNotNumeric", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (Spalte %d, Länge %d). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_MissingField() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_MissingField", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (%d. Feld). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_MissingWord() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_MissingWord", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gültige Werte sind:  %s. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_ValidValues() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_ValidValues", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Datenbank-Verbindung zur Excel-Arbeitsmappe &apos;%s&apos; konnte nicht hergestelt werden. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DBUtils_ConnectionToExcelWorkbookFailed() As String
@@ -880,69 +943,6 @@ Namespace Resources
         Public Shared ReadOnly Property ParseError_ErrorLevelInLineNo() As String
             Get
                 Return ResourceManager.GetString("ParseError_ErrorLevelInLineNo", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Zeile %d enthält keine Daten. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property PreSplittedTextLine_EmptyDataLine() As String
-            Get
-                Return ResourceManager.GetString("PreSplittedTextLine_EmptyDataLine", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; enthält keinen gültigen Wert (%s). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property PreSplittedTextLine_InvalidFieldNotEnumMember() As String
-            Get
-                Return ResourceManager.GetString("PreSplittedTextLine_InvalidFieldNotEnumMember", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; ist keine gültige Kilometer-Angabe (%s). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property PreSplittedTextLine_InvalidFieldNotKilometer() As String
-            Get
-                Return ResourceManager.GetString("PreSplittedTextLine_InvalidFieldNotKilometer", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; ist nicht numerisch (%s). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property PreSplittedTextLine_InvalidFieldNotNumeric() As String
-            Get
-                Return ResourceManager.GetString("PreSplittedTextLine_InvalidFieldNotNumeric", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (Spalte %d, Länge %d). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property PreSplittedTextLine_MissingField() As String
-            Get
-                Return ResourceManager.GetString("PreSplittedTextLine_MissingField", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (%d. Feld). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property PreSplittedTextLine_MissingWord() As String
-            Get
-                Return ResourceManager.GetString("PreSplittedTextLine_MissingWord", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Gültige Werte sind:  %s. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property PreSplittedTextLine_ValidValues() As String
-            Get
-                Return ResourceManager.GetString("PreSplittedTextLine_ValidValues", resourceCulture)
             End Get
         End Property
         

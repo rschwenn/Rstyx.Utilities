@@ -222,7 +222,7 @@ Namespace Domain
                             DetectEncodingFromByteOrderMarks As Boolean,
                             BufferSize As Integer
                            )
-                Dim SplittedLine    As PreSplittedTextLine
+                Dim SplittedLine    As DataTextLine
                 Dim kvp             As KeyValuePair(Of String, String)
                 Dim SourceBlock     As TcSourceBlockInfo
                 Dim TcBlock         As TcBlock
@@ -978,7 +978,7 @@ Namespace Domain
              ''' BUT: Avoid including a preceeding empty block of iGeo and iTrassePC by looking for matching tokens.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
-            Private Function findStartOfBlock(SplitLines As Collection(Of PreSplittedTextLine), CurrentStartIndex As Integer) As Integer
+            Private Function findStartOfBlock(SplitLines As Collection(Of DataTextLine), CurrentStartIndex As Integer) As Integer
                 
                 If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
                 
@@ -986,7 +986,7 @@ Namespace Domain
                 Dim FoundStart          As Boolean = False
                 Dim k                   As Integer = CurrentStartIndex - 1
                 Dim kvp                 As KeyValuePair(Of String, String)
-                Dim PrevSplitLine       As PreSplittedTextLine
+                Dim PrevSplitLine       As DataTextLine
                 Dim SearchTerminators() As String = {"Überhöhungsband", "Gradiente", "Km-Linie", "Achse", "Checksumme"}
                 
                 Do While ((k > -1) AndAlso (Not FoundStart))
@@ -1155,7 +1155,7 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
-            Private Function readBlockVermEsn(SplitLines As Collection(Of PreSplittedTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
+            Private Function readBlockVermEsn(SplitLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
                 
                 If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
@@ -1186,7 +1186,7 @@ Namespace Domain
                                 Else
                                     RecIdx += RecLen
                                 End If
-                                Dim SplitLine As PreSplittedTextLine = SplitLines(RecIdx)
+                                Dim SplitLine As DataTextLine = SplitLines(RecIdx)
                                 
                                 If (Not SplitLine.HasData) Then
                                     LastRecEmpty = True
@@ -1286,7 +1286,7 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
-            Private Function readBlockIGeo(SplitLines As Collection(Of PreSplittedTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
+            Private Function readBlockIGeo(SplitLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
                 
                 If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
@@ -1314,7 +1314,7 @@ Namespace Domain
                                 
                                 If (SplitLines(RecIdx).HasData) Then
                                     
-                                    Dim SplitLine As PreSplittedTextLine = New PreSplittedTextLine(SplitLines(RecIdx).Data, LineStartCommentToken:="#", LineEndCommentToken:="#")
+                                    Dim SplitLine As DataTextLine = New DataTextLine(SplitLines(RecIdx).Data, LineStartCommentToken:="#", LineEndCommentToken:="#")
                                     SplitLine.SourceLineNo = SplitLines(RecIdx).SourceLineNo
                                     SplitLine.FieldDelimiter = RecDef.Delimiter
                                     
@@ -1457,13 +1457,13 @@ Namespace Domain
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
-            Private Sub findBlockMetaDataVermEsn(ByRef SplitLines As Collection(Of PreSplittedTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+            Private Sub findBlockMetaDataVermEsn(ByRef SplitLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
                 If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 If (Block Is Nothing) Then Throw New System.ArgumentNullException("Block")
                 
-                Dim SplittedLine    As PreSplittedTextLine
+                Dim SplittedLine    As DataTextLine
                 Dim FullLine        As String
                 Dim Pattern         As String
                 Dim PathName        As String
@@ -1605,13 +1605,13 @@ Namespace Domain
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
-            Private Sub findBlockMetaDataIGeo(ByRef SplitLines As Collection(Of PreSplittedTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+            Private Sub findBlockMetaDataIGeo(ByRef SplitLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
                 If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 If (Block Is Nothing) Then Throw New System.ArgumentNullException("Block")
                 
-                Dim SplittedLine        As PreSplittedTextLine
+                Dim SplittedLine        As DataTextLine
                 Dim Comment             As New StringBuilder()
                 Dim FormatFound         As Boolean = False
                 Dim CommentEnd          As Boolean = False

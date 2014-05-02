@@ -14,7 +14,7 @@ Namespace IO
             Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataTextFileReader")
             
             Private _Header     As New Collection(Of String)
-            Private _DataCache  As New Collection(Of PreSplittedTextLine)
+            Private _DataCache  As New Collection(Of DataTextLine)
             Private _FilePaths  As New Collection(Of String)
             
             Private _CommentLinesCount  As Integer
@@ -63,7 +63,7 @@ Namespace IO
             #Region "Results"
                 
                 ''' <summary> Returns the chached data of the whole text file. </summary>
-                Public ReadOnly Property DataCache() As Collection(Of PreSplittedTextLine)
+                Public ReadOnly Property DataCache() As Collection(Of DataTextLine)
                     Get
                         Return _DataCache
                     End Get
@@ -165,7 +165,7 @@ Namespace IO
                 Using oSR As New System.IO.StreamReader(Path, Encoding, DetectEncodingFromByteOrderMarks, BufferSize)
                     
                     Dim CurrentLine     As String
-                    Dim SplittedLine    As PreSplittedTextLine
+                    Dim SplittedLine    As DataTextLine
                     Dim CheckHeaderLine As Boolean = Me.SeparateHeader
                     Dim IsHeaderLine    As Boolean = False
                     Dim FileIndex       As Integer = Me.FilePaths.Count
@@ -178,7 +178,7 @@ Namespace IO
                         CurrentLine = oSR.ReadLine()
                         
                         _TotalLinesCount += 1
-                        SplittedLine = New PreSplittedTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
+                        SplittedLine = New DataTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
                         SplittedLine.SourceLineNo = _TotalLinesCount
                         SplittedLine.SourceFileIndex = FileIndex
                         
