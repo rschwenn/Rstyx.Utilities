@@ -105,7 +105,7 @@ Namespace IO
             Public ReadOnly StartColumn     As Long
             
             ''' <summary> The colulmn number in the source line determining the end of faulty string (starting at 1). </summary>
-             ''' <remarks> Zero means "not determined". If not zero, it has to be greater than <see cref="P:StartColumn"/>. </remarks>
+             ''' <remarks> Zero means "not determined". If not zero, it has to be greater than <see cref="ParseError.StartColumn"/>. </remarks>
             Public ReadOnly EndColumn       As Long
             
             ''' <summary> The error message (may be multi-line). </summary>

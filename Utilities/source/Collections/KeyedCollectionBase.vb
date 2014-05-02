@@ -13,7 +13,7 @@ Namespace Collections
      ''' <listheader><description> <b>Features:</b> </description></listheader>
      ''' <item><description> <c>Add</c> silently ignores an Item with an already existing key and also an Item that is <see langword="null"/>. </description></item>
      ''' <item><description> An <see cref="System.Collections.Generic.IEqualityComparer(Of TKey)"/> can be set for comparing keys (check for existence). </description></item>
-     ''' <item><description> The <see cref="P:Keys"/> property implements the same functionality as the <see cref="Dictionary(Of TKey, TValue)"/>.Keys property. </description></item>
+     ''' <item><description> The <see cref="KeyedCollectionBase(Of TKey, TItem).Keys"/> property implements the same functionality as the <see cref="Dictionary(Of TKey, TValue)"/>.Keys property. </description></item>
      ''' <item><description> The <see cref="System.Collections.Specialized.INotifyCollectionChanged"/> interface is provided: Use <c>OnCollectionChanged(ChangeType)</c> to notify the binding system about collection changes. </description></item>
      ''' </list>
      ''' </para>
@@ -41,7 +41,7 @@ Namespace Collections
          ''' <param name="Index"> Collection index. </param>
          ''' <param name="Item">  The item to add. </param>
          ''' <remarks>            If Item is <see langword="null"/> or if the key of the item already exists, silently nothing is done. Otherwise the Item is added at the given index. </remarks>
-         ''' <exception cref="T:System.ArgumentOutOfRangeException"> <paramref name="Index"/> is less than 0, or greater than <see cref="P:Count"/>. </exception>
+         ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> is less than 0, or greater than <see cref="KeyedCollectionBase(Of TKey, TItem).Count"/>. </exception>
         Protected Overrides Sub InsertItem(Index As Integer, Item As TItem)
             'Try
                 If ((Not Item is Nothing) AndAlso (Not MyClass.Contains(GetKeyForItem(Item)))) Then

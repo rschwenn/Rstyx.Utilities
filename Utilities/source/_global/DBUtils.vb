@@ -41,8 +41,8 @@ Imports System.IO
             ''' <summary> Opens a MS Jet connection to an Excel worksheet. </summary>
              ''' <param name="XlFilePath"> Full path of Excel worksheet. </param>
              ''' <returns>                 The <see cref="OleDbConnection"/> which should be opened. </returns>
-             ''' <exception cref="T:System.IO.FileNotFoundException"> <paramref name="XlFilePath"/> hasn't been found (may be empty or invalid). </exception>
-             ''' <exception cref="T:Rstyx.Utilities.RemarkException"> Wraps any exception with a clear message. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="XlFilePath"/> hasn't been found (may be empty or invalid). </exception>
+             ''' <exception cref="Rstyx.Utilities.RemarkException"> Wraps any exception with a clear message. </exception>
              ''' <remarks>
              ''' <para>
              ''' The first row of every Excel table must contain field names.
@@ -89,7 +89,7 @@ Imports System.IO
                     Return DBconn
                     
                 Catch ex As System.Exception
-                    ' <exception cref="T:System.InvalidOperationException"> The OLEDB provider "Microsoft.Jet.OLEDB.4.0" isn't available. </exception>
+                    ' <exception cref="System.InvalidOperationException"> The OLEDB provider "Microsoft.Jet.OLEDB.4.0" isn't available. </exception>
                     ' Clean-up resources, then re-throw with remark message.
                     If (DBconn IsNot Nothing) Then
                         DBconn.Dispose()
@@ -103,9 +103,9 @@ Imports System.IO
              ''' <param name="XlFilePath"> Full path of Excel worksheet. </param>
              ''' <param name="TableName">  The name of the table to get. May or may not enclosed in square brackets and/or end with "$". </param>
              ''' <returns>                 The DataTable. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="TableName"/> is <see langword="null"/> or empty. </exception>
-             ''' <exception cref="T:System.IO.FileNotFoundException"> <paramref name="XlFilePath"/> hasn't been found (may be empty or invalid). </exception>
-             ''' <exception cref="T:Rstyx.Utilities.RemarkException"> Wraps any exception with a clear message. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TableName"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="XlFilePath"/> hasn't been found (may be empty or invalid). </exception>
+             ''' <exception cref="Rstyx.Utilities.RemarkException"> Wraps any exception with a clear message. </exception>
             Public Shared Function getExcelSheet(byVal TableName As String, byVal XlFilePath As String) As DataTable
                 
                 If (TableName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TableName")
@@ -120,7 +120,7 @@ Imports System.IO
                     End Using
                     
                 Catch ex As System.Exception
-                    ' <exception cref="T:System.InvalidOperationException"> The OLEDB provider "Microsoft.Jet.OLEDB.4.0" isn't available. </exception>
+                    ' <exception cref="System.InvalidOperationException"> The OLEDB provider "Microsoft.Jet.OLEDB.4.0" isn't available. </exception>
                     Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_OpenExcelWorksheetFailed, TableName, XlFilePath), ex)
                 End Try
             End Function
@@ -175,8 +175,8 @@ Imports System.IO
             ''' <summary> Checks, if a certain field name exists in a given table. </summary>
              ''' <param name="Table">      The table to check. </param>
              ''' <param name="FieldName">  The field name of interest. </param>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Table"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Table"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
              ''' <returns>                 <see langword="true"/>, if the field has been found in the table, otherwise <see langword="false"/>. </returns>
              <System.Runtime.CompilerServices.Extension()> 
             Public Function containsField(Table As DataTable, byVal FieldName As String) As Boolean
@@ -197,9 +197,9 @@ Imports System.IO
             ''' <summary> Verifies that a certain field name exists in a given table. </summary>
              ''' <param name="Table">      The table to check. </param>
              ''' <param name="FieldName">  The field name of interest. </param>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Table"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
-             ''' <exception cref="T:RemarkException"> Thrown if the field name hasn't been found in the table. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Table"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="RemarkException"> Thrown if the field name hasn't been found in the table. </exception>
              <System.Runtime.CompilerServices.Extension()> 
             Public Sub VerifyField(Table As DataTable, byVal FieldName As String)
                 
@@ -219,9 +219,9 @@ Imports System.IO
              ''' <param name="DBconn">    An established <see cref="OleDbConnection"/> to use. </param>
              ''' <param name="TableName"> The name of the table to get. (An Excel table name must end with "$".) </param>
              ''' <returns>                The DataTable. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="DBconn"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="TableName"/> is <see langword="null"/> or empty. </exception>
-             ''' <exception cref="T:System.Data.OleDb.OleDbException"> Database error opening table. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="DBconn"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TableName"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="System.Data.OleDb.OleDbException"> Database error opening table. </exception>
              <System.Runtime.CompilerServices.Extension()> 
             Public Function getTable(DBconn As OleDbConnection, byVal TableName As String) As DataTable
                 
@@ -246,9 +246,9 @@ Imports System.IO
              ''' <param name="DBconn"> An established <see cref="OleDbConnection"/> to use. It will be opened if it isn't yet. </param>
              ''' <param name="SQL">    The query string. </param>
              ''' <returns>             The query result as DataTable. May be empty. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="DBconn"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="SQL"/> is <see langword="null"/> or empty. </exception>
-             ''' <exception cref="T:System.Data.OleDb.OleDbException"> Database error. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="DBconn"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="SQL"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="System.Data.OleDb.OleDbException"> Database error. </exception>
              <System.Runtime.CompilerServices.Extension()> 
             Public Function query(DBconn As OleDbConnection, byVal SQL As String) As DataTable
                 

@@ -8,12 +8,12 @@ Namespace UI.Controls
     ' <remarks>
     ' <para>
     ' The <see cref="LooseExpanderToggle"/> is a <see cref="System.Windows.Controls.Primitives.ToggleButton"/> containing a small triangle,
-    ' that toggles the <see cref="UIElement.Visibility"/> of the given <see cref="P:Target"/> Element.
+    ' that toggles the <see cref="UIElement.Visibility"/> of the given <see cref="LooseExpanderToggle.Target"/> Element.
     ' </para>
     ' <para>
     ' The visual style is like a <see cref="System.Windows.Controls.Primitives.ToggleButton"/> on a <see cref="System.Windows.Controls.ToolBar"/>.
-    ' The content is a usual small triangle whose null direction is determined by the <see cref="P:ExpandDirection"/> property.
-    ' The content determined by the <see cref="P:Content"/> property is placed beside the triangle.
+    ' The content is a usual small triangle whose null direction is determined by the <see cref="LooseExpanderToggle.ExpandDirection"/> property.
+    ' The content determined by the <see cref="LooseExpanderToggle.Content"/> property is placed beside the triangle.
     ' </para>
     ' <para>
     ' </para>
@@ -67,7 +67,7 @@ Namespace UI.Controls
 		        	Return ( (ExpDir = ExpandDirection.Down) OrElse (ExpDir = ExpandDirection.Left) OrElse (ExpDir = ExpandDirection.Right) OrElse (ExpDir = ExpandDirection.Up) )
 		        End Function
                 
-                ''' <summary> Determines the direction of the toggle symbol (triangle) when <see cref="P:IsChecked"/> (alias "IsExpanded") property is <c>False</c>. Defaults to <c>Down</c>. </summary>
+                ''' <summary> Determines the direction of the toggle symbol (triangle) when <see cref="LooseExpanderToggle.IsChecked"/> (alias "IsExpanded") property is <c>False</c>. Defaults to <c>Down</c>. </summary>
 		        <Bindable(True), Category("Behavior")>
 		        Public Property ExpandDirection() As ExpandDirection
 		        	Get

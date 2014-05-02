@@ -39,7 +39,7 @@ Imports PGK.Extensions
              ''' The <paramref name="FormatString"/> with expanded variables, 
              ''' or an empty string if an error occurs and <paramref name="ThrowOnError"/> is <see langword="false"/>.
              ''' </returns>
-             ''' <exception cref="T:System.FormatException"> <paramref name="FormatString"/> is not well formed. </exception>
+             ''' <exception cref="System.FormatException"> <paramref name="FormatString"/> is not well formed. </exception>
              ''' <remarks> 
               ''' <para>
               ''' Original written in VB6 by Phlip Bradbury (phlipping@yahoo.com) 
@@ -531,7 +531,7 @@ Imports PGK.Extensions
          ''' <param name="LineChar"> The character that builds the lines. </param>
          ''' <param name="Padding">  If <see langword="true"/> an empty line is added above and below the header. </param>
          ''' <returns>               The Headline string. </returns>
-         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/> or empty. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/> or empty. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function ToHeadLine(Value As String, LineChar As Char, Optional Padding As Boolean = True) As String
             

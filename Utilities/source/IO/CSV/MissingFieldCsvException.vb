@@ -30,7 +30,7 @@ Namespace IO.CSV
     ''' Represents the exception that is thrown when there is a missing field in a record of the CSV file.
     ''' </summary>
     ''' <remarks>
-    ''' MissingFieldException would have been a better name, but there is already a <see cref="T:System.MissingFieldException"/>.
+    ''' MissingFieldException would have been a better name, but there is already a <see cref="System.MissingFieldException"/>.
     ''' </remarks>
     <Serializable> _
     Public Class MissingFieldCsvException
@@ -88,8 +88,8 @@ Namespace IO.CSV
             ''' <summary>
             ''' Initializes a new instance of the MissingFieldCsvException class with serialized data.
             ''' </summary>
-            ''' <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-            ''' <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
+            ''' <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            ''' <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
             Protected Sub New(info As SerializationInfo, context As StreamingContext)
                 MyBase.New(info, context)
             End Sub

@@ -176,12 +176,12 @@ Namespace IO
              ''' <param name="Caption">      The Caption for the the data field. </param>
              ''' <param name="PositionType"> Kind of determining a data field in a string. </param>
              ''' <param name="ColumnOrWord"> The <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </param>
-             ''' <param name="Length">       The length of the data field, if <see cref="P:PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </param>
+             ''' <param name="Length">       The length of the data field, if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Caption"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="PositionType"/> is not a member of <see cref="PositionType"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="ColumnOrWord"/> is less than zero (Word) or less than 1 (Column). </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than zero (if <see cref="P:PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than zero (if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
             Public Sub New(Caption      As String,
                            PositionType As DataFieldPositionType,
                            ColumnOrWord As Integer,
@@ -194,13 +194,13 @@ Namespace IO
              ''' <param name="Caption">      The Caption for the the data field. </param>
              ''' <param name="PositionType"> Kind of determining a data field in a string. </param>
              ''' <param name="ColumnOrWord"> The <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </param>
-             ''' <param name="Length">       The length of the data field, if <see cref="P:PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </param>
+             ''' <param name="Length">       The length of the data field, if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </param>
              ''' <param name="Options">      Option flags to control parsing. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Caption"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="PositionType"/> is not a member of <see cref="PositionType"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="ColumnOrWord"/> is less than zero (Word) or less than 1 (Column). </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than zero (if <see cref="P:PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than zero (if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
             Public Sub New(Caption      As String,
                            PositionType As DataFieldPositionType,
                            ColumnOrWord As Integer,
@@ -236,12 +236,12 @@ Namespace IO
             ''' <summary> Kind of determining a data field in a string. </summary>
             Public ReadOnly PositionType    As DataFieldPositionType = DataFieldPositionType.WordNumber
             
-            ''' <summary> Depending on <see cref="P:PositionType"/> this is the <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </summary>
+            ''' <summary> Depending on <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> this is the <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </summary>
              ''' <remarks> The Column number is zero-based, while the Word number starts at 1. </remarks>
             Public ReadOnly ColumnOrWord    As Integer = -1
             
-            ''' <summary> The length of the data field, if <see cref="P:PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </summary>
-             ''' <remarks> If <see cref="P:PositionType"/> is <see cref="DataFieldPositionType.WordNumber"/>, this is not used. </remarks>
+            ''' <summary> The length of the data field, if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </summary>
+             ''' <remarks> If <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.WordNumber"/>, this is not used. </remarks>
             Public ReadOnly Length          As Integer = -1
             
             

@@ -36,8 +36,8 @@ Namespace IO
              ''' <param name="DelimiterRegEx"> The Delimiter for both the FileFilter and Folder lists (Regular Expression). Defaults to ";" (if it's <see langword="null"/>). </param>
              ''' <param name="SearchOptions">  Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <returns>                     The full path of the found file, or <see langword="null"/>. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFile(FileFilters    As String,
                                             Folders        As String,
                                             ByVal DelimiterRegEx As String,
@@ -66,8 +66,8 @@ Namespace IO
              ''' <param name="SearchOptions">  Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">    If True, the search is canceled when the first file is found. Defaults to False. </param>
              ''' <returns>                     The resulting list with found files. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFiles(FileFilters    As String,
                                              Folders        As String,
                                              ByVal DelimiterRegEx As String,
@@ -89,8 +89,8 @@ Namespace IO
              ''' <param name="SearchOptions"> Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">   If True, the search is canceled when the first file is found. Defaults to False. </param>
              ''' <returns>                    The resulting list with found files. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFiles(FileFilters    As IEnumerable(Of String), 
                                              Folders        As IEnumerable(Of DirectoryInfo), 
                                              SearchOptions  As System.IO.SearchOption,
@@ -115,8 +115,8 @@ Namespace IO
              ''' <param name="SearchOptions"> Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">   If True, the search is canceled when the first file is found. Defaults to False. </param>
              ''' <returns>                    The resulting list with found files. </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function findFiles(FileFilters    As IEnumerable(Of String), 
                                              Folders        As IEnumerable(Of String), 
                                              SearchOptions  As System.IO.SearchOption,
@@ -160,10 +160,10 @@ Namespace IO
              ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded. </param>
              ''' <param name="SearchOptions"> Available System.IO.SearchOptions (mainly recursive or not). </param>
              ''' <param name="OnlyOneFile">   If True, the search is canceled when the first file is found. Defaults to False. </param>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
-             ''' <exception cref="T:System.ArgumentException"> <paramref name="Folders"/> doesn't contain any existent Folder. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="Folders"/> doesn't contain any existent Folder. </exception>
             Private Shared Sub findAddFiles(ByRef FoundFiles As FileInfoCollection,
                                             FileFilters      As IEnumerable(Of String),
                                             Folders          As IEnumerable(Of String),
@@ -477,8 +477,8 @@ Namespace IO
              ''' The given <paramref name="FileName"/> if it's a valid file name, otherwise
              ''' a valid file name where invalid characters are replaced by <paramref name="ReplaceString"/>.
              ''' </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FileName"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.FormatException"> Validation of <paramref name="FileName"/> has been tried, but failed. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FileName"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.FormatException"> Validation of <paramref name="FileName"/> has been tried, but failed. </exception>
             Public Shared Function validateFileNameSpelling(byVal FileName As String, Optional byVal ReplaceString As String = "_") As String
                 
                 If (FileName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FileName")
@@ -511,11 +511,11 @@ Namespace IO
              ''' The given <paramref name="FilePath"/> if it's a valid file path, otherwise
              ''' a valid file path where invalid characters are replaced by <paramref name="ReplaceString"/>.
              ''' </returns>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="FilePath"/> is <see langword="null"/> or empty or white space. </exception>
-             ''' <exception cref="T:System.Security.SecurityException"> The caller does not have the required permission. </exception>
-             ''' <exception cref="T:System.UnauthorizedAccessException"> Access to <paramref name="FilePath"/> is denied. </exception>
-             ''' <exception cref="T:System.IO.PathTooLongException"> <paramref name="FilePath"/> is too long. </exception>
-             ''' <exception cref="T:System.FormatException"> Validation of <paramref name="FilePath"/> has been tried, but failed. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="FilePath"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.Security.SecurityException"> The caller does not have the required permission. </exception>
+             ''' <exception cref="System.UnauthorizedAccessException"> Access to <paramref name="FilePath"/> is denied. </exception>
+             ''' <exception cref="System.IO.PathTooLongException"> <paramref name="FilePath"/> is too long. </exception>
+             ''' <exception cref="System.FormatException"> Validation of <paramref name="FilePath"/> has been tried, but failed. </exception>
             Public Shared Function validateFilePathSpelling(byVal FilePath As String, Optional byVal ReplaceString As String = "_") As String
                 
                 If (FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FilePath")

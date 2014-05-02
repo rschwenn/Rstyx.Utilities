@@ -18,10 +18,10 @@ Namespace Domain
      ''' <remarks>
      ''' <list type="bullet">
      ''' <listheader> <b>General Features :</b> </listheader>
-     ''' <item> The <see cref="M:Load"/> method clears all results before loading the given file. </item>
-     ''' <item> File header lines will be provided by the <see cref="P:TcFileReader.Header"/> property. </item>
-     ''' <item> Found TC blocks will be provided by the <see cref="P:TcFileReader.Blocks"/> property. It contains all points that has been read without errors. </item>
-     ''' <item> Parsing errors will be catched and provided by the <see cref="P:TcFileReader.ParseErrors"/> property. </item>
+     ''' <item> The <see cref="TcFileReader.Load"/> method clears all results before loading the given file. </item>
+     ''' <item> File header lines will be provided by the <see cref="TcFileReader.Header"/> property. </item>
+     ''' <item> Found TC blocks will be provided by the <see cref="TcFileReader.Blocks"/> property. It contains all points that has been read without errors. </item>
+     ''' <item> Parsing errors will be catched and provided by the <see cref="TcFileReader.ParseErrors"/> property. </item>
      ''' </list>
      ''' <para>
      ''' The track geometry coordinates will be expected as output blocks of following programs and types:
@@ -35,8 +35,8 @@ Namespace Domain
      ''' </list>
      ''' <list type="bullet">
      ''' <listheader> <b>Restrictions to the input file :</b> </listheader>
-     ''' <item> All supported block types (and only such!) may appear mixed in one file in arbitrary order. </item>
-     ''' <item> All comment lines, immediately before the programs original output, will be associated to this block. </item>
+     ''' <item> All supported block types (and only such!) may appear mixed in one single file in arbitrary order. </item>
+     ''' <item> All comment lines, immediately before the programs original output, will be treated as block comment/info. </item>
      ''' <item> Comment lines at file start, that has not been associated to a block, will be treated as file header. </item>
      ''' <item> Other comment lines or empty lines will be ignored. </item>
      ''' <item> Every block ends one line before the next block starts. The last block ends at file end. </item>
@@ -181,7 +181,7 @@ Namespace Domain
              ''' The default settings for <see cref="StreamReader"/> are: UTF-8, not detect encoding, buffersize 1024.
              ''' </para>
              ''' <para>
-             ''' The loaded data will be provided by the <see cref="P:TcFileReader.Blocks"/> and <see cref="P:TcFileReader.Header"/> properties,
+             ''' The loaded data will be provided by the <see cref="TcFileReader.Blocks"/> and <see cref="TcFileReader.Header"/> properties,
              ''' which are cleared before.
              ''' </para>
              ''' </remarks>
@@ -193,7 +193,7 @@ Namespace Domain
              ''' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero. </exception>
              ''' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
              ''' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
-             ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="P:TcFileReader.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="TcFileReader.ParseErrors"/> isn't empty. </exception>
             Public Sub Load(Path As String)
                 'Me.Load(Path, Encoding.UTF8, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
                 Me.Load(Path, Encoding.Default, DetectEncodingFromByteOrderMarks:=True, BufferSize:=1024)
@@ -205,8 +205,8 @@ Namespace Domain
              ''' <param name="DetectEncodingFromByteOrderMarks"> Indicates whether to look for byte order marks at the beginning of the file. </param>
              ''' <param name="BufferSize">                       The minimum buffer size, in number of 16-bit characters. </param>
              ''' <remarks>
-             ''' The loaded data will be provided by the <see cref="P:TcFileReader.Blocks"/> and <see cref="P:TcFileReader.Header"/> properties,
-             ''' which are cleared before. Same for <see cref="P:TcFileReader.ParseErrors"/>.
+             ''' The loaded data will be provided by the <see cref="TcFileReader.Blocks"/> and <see cref="TcFileReader.Header"/> properties,
+             ''' which are cleared before. Same for <see cref="TcFileReader.ParseErrors"/>.
              ''' </remarks>
              ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
              ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
@@ -216,7 +216,7 @@ Namespace Domain
              ''' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero. </exception>
              ''' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
              ''' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
-             ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="P:TcFileReader.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="TcFileReader.ParseErrors"/> isn't empty. </exception>
             Public Sub Load(Path As String,
                             Encoding As Encoding,
                             DetectEncodingFromByteOrderMarks As Boolean,
@@ -811,19 +811,19 @@ Namespace Domain
             End Class
             
             
-            ''' <summary> Info regarding source of every found TC block inside the internal <see cref="P:DataTextFileReader.DataCache"/>. </summary>
+            ''' <summary> Info regarding source of every found TC block inside the internal <see cref="DataTextFileReader.DataCache"/>. </summary>
             Protected Class TcSourceBlockInfo
                 
                 ''' <summary> Type of TC block. Only Program is determined yet! </summary>
                 Public BlockType        As New TcBlockType()
                 
-                ''' <summary> Index into <see cref="P:DataTextFileReader.DataCache"/> representing the first line of this block. </summary>
+                ''' <summary> Index into <see cref="DataTextFileReader.DataCache"/> representing the first line of this block. </summary>
                 Public StartIndex       As Integer = -1
                 
-                ''' <summary> Index into <see cref="P:DataTextFileReader.DataCache"/> representing the first DATA line of this block. </summary>
+                ''' <summary> Index into <see cref="DataTextFileReader.DataCache"/> representing the first DATA line of this block. </summary>
                 Public DataStartIndex   As Integer = -1
                 
-                ''' <summary> Index into <see cref="P:DataTextFileReader.DataCache"/> representing the last line of this block. </summary>
+                ''' <summary> Index into <see cref="DataTextFileReader.DataCache"/> representing the last line of this block. </summary>
                 Public EndIndex         As Integer = -1
                 
                 ''' <summary> Tells if the first DATA line of this block has been found. </summary>
@@ -1149,8 +1149,8 @@ Namespace Domain
              ''' <list type="bullet">
              ''' <listheader> <description> <b>Hints:</b> </description></listheader>
              ''' <item> The returned block <b>may be invalid!</b> (check for .IsValid!). </item>
-             ''' <item> All parsing errors will be added to <see cref="P:TcFileReader.ParseErrors"/> property. </item>
-             ''' <item> The Points collection (<see cref="P:TcFileReader.Blocks.Points"/>) may be empty. </item>
+             ''' <item> All parsing errors will be added to <see cref="TcFileReader.ParseErrors"/> property. </item>
+             ''' <item> The Points collection (<see cref="TcFileReader.Blocks"/>.<see cref="TcFileReader.TcBlock.Points"/>) may be empty. </item>
              ''' </list>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
@@ -1280,8 +1280,8 @@ Namespace Domain
              ''' <list type="bullet">
              ''' <listheader> <description> <b>Hints:</b> </description></listheader>
              ''' <item> The returned block <b>may be invalid!</b> (check for .IsValid!). </item>
-             ''' <item> All parsing errors will be added to <see cref="P:TcFileReader.ParseErrors"/> property. </item>
-             ''' <item> The Block's Points collection (<see cref="P:TcFileReader.Blocks.Points"/>) may be empty. </item>
+             ''' <item> All parsing errors will be added to <see cref="TcFileReader.ParseErrors"/> property. </item>
+             ''' <item> The Block's Points collection (<see cref="TcFileReader.Blocks"/>.<see cref="TcFileReader.TcBlock.Points"/>) may be empty. </item>
              ''' </list>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>

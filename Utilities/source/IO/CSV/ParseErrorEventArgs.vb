@@ -23,7 +23,7 @@
 Namespace IO.CSV
     
     ''' <summary>
-    ''' Provides data for the <see cref="M:CsvReader.ParseError"/> event.
+    ''' Provides data for the <see cref="CsvReader.ParseError"/> event.
     ''' </summary>
     Public Class ParseErrorEventArgs
         Inherits System.EventArgs

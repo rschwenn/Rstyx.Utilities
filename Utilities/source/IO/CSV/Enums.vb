@@ -48,7 +48,7 @@ Namespace IO.CSV
     ''' </summary>
     Public Enum ParseErrorAction
         ''' <summary>
-        ''' Raises the <see cref="M:CsvReader.ParseError"/> event.
+        ''' Raises the <see cref="CsvReader.ParseError"/> event.
         ''' </summary>
         [RaiseEvent] = 0
         

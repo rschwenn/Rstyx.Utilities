@@ -10,7 +10,7 @@ Imports System
          ''' <param name="Value">        The input type. </param>
          ''' <param name="TheInterface"> The interface to check for. </param>
          ''' <returns>                   <see langword="true"/> if value isn't an abstrcat class and implements the Interface. </returns>
-         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function IsImplementing(Value As Type, TheInterface As Type) As Boolean
             

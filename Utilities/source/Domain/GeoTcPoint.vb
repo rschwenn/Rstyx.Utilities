@@ -165,7 +165,7 @@ Namespace Domain
         
         #Region "Public members"
             
-            ''' <summary> Transforms <see cref="P:Q"/> and <see cref="P:HSOK"/> to <see cref="P:QG"/> and <see cref="P:HG"/> if possible. </summary>
+            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> to <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> if possible. </summary>
              ''' <remarks> If this transformation isn't possible, the target values will become <c>Double.NaN</c>. </remarks>
             Public Sub transformHorizontalToCanted()
                 
@@ -187,7 +187,7 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Transforms <see cref="P:QG"/> and <see cref="P:HG"/> to <see cref="P:Q"/> and <see cref="P:HSOK"/> if possible. </summary>
+            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> to <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> if possible. </summary>
              ''' <remarks> If this transformation isn't possible, the target values will be <c>Double.NaN</c>. </remarks>
             Public Sub transformCantedToHorizontal()
                 

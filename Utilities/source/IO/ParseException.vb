@@ -61,8 +61,8 @@ Namespace IO
             
             
             ''' <summary> Initializes a new instance of the ParseException class with serialized data. </summary>
-             ''' <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-             ''' <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
+             ''' <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+             ''' <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
             Protected Sub New(info As SerializationInfo, context As StreamingContext)
                 MyBase.New(info, context)
                 
@@ -92,9 +92,9 @@ Namespace IO
         
         #Region "Overrides"
             
-            ''' <summary> Sets the <see cref="T:SerializationInfo"/> with information about the exception. </summary>
-             ''' <param name="info"> The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown. </param>
-             ''' <param name="context"> The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination. </param>
+            ''' <summary> Sets the <see cref="SerializationInfo"/> with information about the exception. </summary>
+             ''' <param name="info"> The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown. </param>
+             ''' <param name="context"> The <see cref="StreamingContext"/> that contains contextual information about the source or destination. </param>
             Public Overrides Sub GetObjectData(info As System.Runtime.Serialization.SerializationInfo, context As System.Runtime.Serialization.StreamingContext)
                 MyBase.GetObjectData(info, context)
                 

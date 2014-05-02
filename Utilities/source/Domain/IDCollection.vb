@@ -9,7 +9,7 @@ Namespace Domain
     End Class
     
     ''' <summary>  A generic, ready for use keyed collection for all objects that implement the <see cref="IIdentifiable(Of TKey)"/> interface. </summary>
-     ''' <typeparam name="TKey">  Type of collection keys. It's the type of the item's <see cref="P:IIdentifiable(Of TKey).ID"/> property. </typeparam>
+     ''' <typeparam name="TKey">  Type of collection keys. It's the type of the item's <see cref="IIdentifiable(Of TKey).ID"/> property. </typeparam>
      ''' <typeparam name="TItem"> Type of collection items. It has to implement the <see cref="IIdentifiable(Of TKey)"/> interface. </typeparam>
      ''' <remarks> The key for the collection will always be the <b>ID</b> property of <b>TItem</b>. </remarks>
     Public Class IDCollection(Of TKey, TItem As IIdentifiable(Of TKey))

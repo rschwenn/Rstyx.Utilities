@@ -14,7 +14,7 @@ Namespace UI.Binding.Converters
     '  
     
     ''' <summary> Converts between Boolean property and Visibility state - and vice versa. </summary>
-     ''' <remarks> The converter inverts it's direction when <see cref="P:Inverted"/> property is <see langword="true"/>. </remarks>
+     ''' <remarks> The converter inverts it's direction when <see cref="VisibilityToBooleanConverter.Inverted"/> property is <see langword="true"/>. </remarks>
     <ValueConversion(GetType(Object), GetType(Object))>
     Public Class VisibilityToBooleanConverter
         Implements IValueConverter

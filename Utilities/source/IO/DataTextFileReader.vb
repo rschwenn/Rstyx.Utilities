@@ -55,7 +55,7 @@ Namespace IO
                  ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
                 Public Property LineEndCommentToken() As String = Nothing
                 
-                ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="P:DataTextFileReader.Header"/>. Defaults to <see langword="true"/>. </summary>
+                ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="DataTextFileReader.Header"/>. Defaults to <see langword="true"/>. </summary>
                 Public Property SeparateHeader() As Boolean = True
                 
             #End Region
@@ -128,7 +128,7 @@ Namespace IO
              ''' The default settings for <see cref="StreamReader"/> are: UTF-8, not detect encoding, buffersize 1024.
              ''' </para>
              ''' <para>
-             ''' The loaded data will be appended to the <see cref="P:DataTextFileReader.DataCache"/> and  <see cref="P:DataTextFileReader.Header"/> properties.
+             ''' The loaded data will be appended to the <see cref="DataTextFileReader.DataCache"/> and  <see cref="DataTextFileReader.Header"/> properties.
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
@@ -148,7 +148,7 @@ Namespace IO
              ''' <param name="Encoding">                         The character encoding to use. </param>
              ''' <param name="DetectEncodingFromByteOrderMarks"> Indicates whether to look for byte order marks at the beginning of the file. </param>
              ''' <param name="BufferSize">                       The minimum buffer size, in number of 16-bit characters. </param>
-             ''' <remarks> The loaded data will be appended to the <see cref="P:DataTextFileReader.DataCache"/> and  <see cref="P:DataTextFileReader.Header"/> properties. </remarks>
+             ''' <remarks> The loaded data will be appended to the <see cref="DataTextFileReader.DataCache"/> and  <see cref="DataTextFileReader.Header"/> properties. </remarks>
              ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
              ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>

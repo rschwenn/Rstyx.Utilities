@@ -229,7 +229,7 @@ Namespace UI.ViewModel
         
         #Region "IDisposable Members"
             
-            ''' <summary> Hooks for <see cref="M:Cinch.ViewModelBase.Dispose"/>. </summary>
+            ''' <summary> Hooks for <see cref="Cinch.ViewModelBase.Dispose"/>. </summary>
             Protected Overrides Sub OnDispose()
                 ' Release timer resources.
                 DeferredResetStateAction.Dispose()
@@ -356,10 +356,10 @@ Namespace UI.ViewModel
              ''' <param name="NewDesiredValue">         Value that the target property should be set to. </param>
              ''' <param name="SupportedValues">         <c>IList</c> of supported property values (i.g. the item source of an ItemsControl). </param>
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
-             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetProperty(Of TProperty) _
@@ -409,10 +409,10 @@ Namespace UI.ViewModel
              ''' <param name="SupportedValues">         <c>KeyedCollection</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
-             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetProperty(Of TProperty, TCollectionItem) _
                                              (PropertyName As String, _
@@ -461,10 +461,10 @@ Namespace UI.ViewModel
              ''' <param name="SupportedValues">         <c>IDictionary</c> where the keys are the supported property values (i.g. the item source of an ItemsControl). </param>
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredValue"/> is supported (and the property may have changed). </returns>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
-             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetProperty(Of TProperty, TCollectionItem) _
                                              (PropertyName As String, _
@@ -511,10 +511,10 @@ Namespace UI.ViewModel
              ''' <param name="SupportedValues">         IDictionary where the keys are the supported property values and the items the display strings (of an ItemsControl). </param>
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredDisplayValue"/> is supported (and the property may have changed). </returns>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
-             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetPropertyByDisplayString(Of TProperty) _
                                                             (PropertyName As String, _
@@ -562,10 +562,10 @@ Namespace UI.ViewModel
              ''' <param name="SupportedValues">         IList with supported property values. </param>
              ''' <param name="NotifyOnPropertyChanged"> If <see langword="true"/> and the property has really changed, this method calls <c>NotifyPropertyChanged(PropertyName)</c>. </param>
              ''' <returns> <see langword="true"/> if <paramref name="NewDesiredToStringValue"/> is a string representation of a supported property value (and the property may have changed). </returns>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
-             ''' <exception cref="T:System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="T:System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
-             ''' <exception cref="T:System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="PropertyName"/> is <see langword="null"/> or empty or whitespace. </exception>
+             ''' <exception cref="System.ArgumentNullException">  <paramref name="SupportedValues"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.MissingMemberException"> <paramref name="PropertyName"/> is not a member of this view model. </exception>
+             ''' <exception cref="System.MemberAccessException">  <paramref name="PropertyName"/> is read-only. </exception>
              ''' <remarks> This is intended for setting a property with integrated validation and binding support for lightweight properties. </remarks>
             Protected Function TrySetPropertyByString(Of TProperty) _
                                                      (PropertyName As String,

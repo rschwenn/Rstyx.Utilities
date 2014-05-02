@@ -306,7 +306,7 @@ Namespace Apps
             ''' <summary> The given editor will be started if possible. </summary>
              ''' <param name="TargetEditor"> Determines one of the supported editors. </param>
              ''' <param name="Arguments">    Command line arguments for the editor. May be <see langword="null"/>. </param>
-             ''' <exception cref="T:System.ArgumentException"> <paramref name="TargetEditor"/> is not supported or <see cref="SupportedEditors"/><c>.None</c> or currently not available.. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="TargetEditor"/> is not supported or <see cref="SupportedEditors"/><c>.None</c> or currently not available.. </exception>
              ''' <remarks> 
              ''' <para>
              ''' Notes on jEdit's command line:
@@ -358,7 +358,7 @@ Namespace Apps
             
             ''' <summary> The given File will be opened in it's associated application if possible. </summary>
              ''' <param name="AbsoluteFilePath"> The absolute path of the file to start. </param>
-             ''' <exception cref="T:System.IO.FileNotFoundException"> <paramref name="AbsoluteFilePath"/> hasn't been found. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="AbsoluteFilePath"/> hasn't been found. </exception>
             Public Shared Sub startFile(ByVal AbsoluteFilePath As String)
                 
                 Logger.logDebug(StringUtils.sprintf("startFile(): zu startende Datei = '%s'.", AbsoluteFilePath))
@@ -369,9 +369,9 @@ Namespace Apps
             
             ''' <summary> Activates Excel and invokes the CSV import of GeoTools VBA Add-In. </summary>
              ''' <param name="FilePath"> The csv file to import in Excel. </param>
-             ''' <exception cref="T:System.IO.FileNotFoundException"> <paramref name="FilePath"/> hasn't been found. </exception>
-             ''' <exception cref="T:System.IO.FileNotFoundException"> <paramref name="XlmVbsFile"/> hasn't been found after extracting from resources. </exception>
-             ''' <exception cref="T:Rstyx.Utilities.RemarkException"> Wraps any exception occurred while invoking the system command with a clear message. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="FilePath"/> hasn't been found. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="XlmVbsFile"/> hasn't been found after extracting from resources. </exception>
+             ''' <exception cref="Rstyx.Utilities.RemarkException"> Wraps any exception occurred while invoking the system command with a clear message. </exception>
              ''' <remarks>
              ''' <para>
              ''' Excel will be started up if no running instance is found.

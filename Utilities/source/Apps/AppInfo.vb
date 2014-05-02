@@ -25,7 +25,7 @@ Namespace Apps
             
             ''' <summary> Creates a new AppInfo for a given assembly. </summary>
              ''' <param name="Assembly"> The assembly of interest. </param>
-             ''' <exception cref="T:System.ArgumentNullException"> <paramref name="Assembly"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Assembly"/> is <see langword="null"/>. </exception>
             Public Sub New(Assembly As System.Reflection.Assembly)
                 
                 If (Assembly Is Nothing) Then Throw New System.ArgumentNullException("Assembly")

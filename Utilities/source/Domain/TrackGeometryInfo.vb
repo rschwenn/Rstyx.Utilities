@@ -2,7 +2,7 @@
 Namespace Domain
     
     ''' <summary> Info record that identifies a track geometry. </summary>
-    ''' <remarks> To be valid, the <see cref="P:NameOfAlignment"/> property must not be empty. </remarks>
+    ''' <remarks> To be valid, the <see cref="TrackGeometryInfo.NameOfAlignment"/> property must not be empty. </remarks>
     Public Class TrackGeometryInfo
         Inherits Cinch.ValidatingObject
         

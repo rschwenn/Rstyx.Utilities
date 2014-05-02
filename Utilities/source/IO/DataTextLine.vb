@@ -54,10 +54,10 @@ Namespace IO
              ''' <remarks> This won't be trimmed, but it's <c>String.Empty</c> if the data part of this line only consists of whitespaces. </remarks>
             Public ReadOnly Data                    As String
             
-            ''' <summary> If <see langword="true"/>, the <see cref="P:DataTextLine.Data"/> property isn't <c>String.Empty</c>. </summary>
+            ''' <summary> If <see langword="true"/>, the <see cref="DataTextLine.Data"/> property isn't <c>String.Empty</c>. </summary>
             Public ReadOnly HasData                 As Boolean
             
-            ''' <summary> If <see langword="true"/>, the <see cref="P:DataTextLine.Comment"/> property isn't <c>String.Empty</c>. </summary>
+            ''' <summary> If <see langword="true"/>, the <see cref="DataTextLine.Comment"/> property isn't <c>String.Empty</c>. </summary>
             Public ReadOnly HasComment              As Boolean
             
             ''' <summary> If <see langword="true"/>, this line starts whith an comment token. </summary>
@@ -169,7 +169,7 @@ Namespace IO
              ''' </remarks>
              ''' <exception cref="System.ArgumentException"> <paramref name="TFieldValue"/> is not <c>String</c> or <c>Double</c>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
+             ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> The data field couldn't be parsed successfully. </exception>
             Public Function ParseField(Of TFieldValue As IConvertible)(FieldDef As DataFieldDefinition(Of TFieldValue)) As DataField(Of TFieldValue)
                 Dim Field As DataField(Of TFieldValue) = Nothing
@@ -220,7 +220,7 @@ Namespace IO
              ''' </remarks>
              ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Double</c> or an <c>Enum</c>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="P:HasData"/> is <see langword="false"/>). </exception>
+             ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
             Public Function TryParseField(Of TFieldValue As IConvertible)(FieldDef As DataFieldDefinition(Of TFieldValue),
                                                                           <Out> ByRef Result As DataField(Of TFieldValue)
                                                                          ) As Boolean

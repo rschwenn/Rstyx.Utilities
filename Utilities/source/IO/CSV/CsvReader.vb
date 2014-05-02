@@ -158,7 +158,7 @@ Namespace IO.CSV
                 
                 ''' <summary>
                 ''' Contains the current record index in the CSV file.
-                ''' A value of <see cref="M:Int32.MinValue"/> means that the reader has not been initialized yet.
+                ''' A value of <see cref="Int32.MinValue"/> means that the reader has not been initialized yet.
                 ''' Otherwise, a negative value means that no record has been read yet.
                 ''' </summary>
                 Private _currentRecordIndex As Long
@@ -359,12 +359,12 @@ Namespace IO.CSV
             
             ''' <summary>
             ''' Occurs when there is an error while parsing the CSV stream
-            ''' and <see cref="P:DefaultParseErrorAction" /> is set to <b>ParseErrorAction.[RaiseEvent]</b>.
+            ''' and <see cref="CsvReader.DefaultParseErrorAction" /> is set to <b>ParseErrorAction.[RaiseEvent]</b>.
             ''' </summary>
             Public Event ParseError As EventHandler(Of ParseErrorEventArgs)
             
             ''' <summary>
-            ''' Raises the <see cref="M:ParseError"/> event.
+            ''' Raises the <see cref="CsvReader.ParseError"/> event.
             ''' </summary>
             ''' <param name="e">The <see cref="ParseErrorEventArgs"/> that contains the event data.</param>
             Protected Overridable Sub OnParseError(e As ParseErrorEventArgs)
@@ -599,14 +599,14 @@ Namespace IO.CSV
         #Region "Indexers"
             
             ''' <summary>
-            ''' Gets the field with the specified name and record position. <see cref="M:hasHeaders"/> must be <see langword="true"/>.
+            ''' Gets the field with the specified name and record position. <see cref="CsvReader.HasHeaders"/> must be <see langword="true"/>.
             ''' </summary>
             ''' <value>
             ''' The field with the specified name and record position.
             ''' </value>
             ''' <exception cref="T:ArgumentNullException"> <paramref name="field"/> is <see langword="null"/> or an empty string. </exception>
             ''' <exception cref="T:InvalidOperationException">
-            ''' The CSV does not have headers (<see cref="M:HasHeaders"/> property is <see langword="false"/>). </exception>
+            ''' The CSV does not have headers (<see cref="CsvReader.HasHeaders"/> property is <see langword="false"/>). </exception>
             ''' <exception cref="T:ArgumentException"> <paramref name="field"/> not found. </exception>
             ''' <exception cref="T:ArgumentOutOfRangeException"> Record index must be > 0. </exception>
             ''' <exception cref="T:InvalidOperationException"> Cannot move to a previous record in forward-only mode. </exception>
@@ -630,7 +630,7 @@ Namespace IO.CSV
             ''' The field at the specified index and record position.
             ''' A <see langword="null"/> is returned if the field cannot be found for the record.
             ''' </value>
-            ''' <exception cref="T:ArgumentOutOfRangeException"> <paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[. </exception>
+            ''' <exception cref="T:ArgumentOutOfRangeException"> <paramref name="field"/> must be included in [0, <see cref="CsvReader.FieldCount"/>[. </exception>
             ''' <exception cref="T:ArgumentOutOfRangeException"> Record index must be > 0. </exception>
             ''' <exception cref="T:InvalidOperationException"> Cannot move to a previous record in forward-only mode. </exception>
             ''' <exception cref="T:EndOfStreamException"> Cannot read record at <paramref name="record"/>. </exception>
@@ -647,11 +647,11 @@ Namespace IO.CSV
             End Property
             
             ''' <summary>
-            ''' Gets the field with the specified name. <see cref="M:hasHeaders"/> must be <see langword="true"/>.
+            ''' Gets the field with the specified name. <see cref="CsvReader.HasHeaders"/> must be <see langword="true"/>.
             ''' </summary>
             ''' <value> The field with the specified name. </value>
             ''' <exception cref="T:ArgumentNullException"> <paramref name="field"/> is <see langword="null"/> or an empty string. </exception>
-            ''' <exception cref="T:InvalidOperationException"> The CSV does not have headers (<see cref="M:HasHeaders"/> property is <see langword="false"/>). </exception>
+            ''' <exception cref="T:InvalidOperationException"> The CSV does not have headers (<see cref="CsvReader.HasHeaders"/> property is <see langword="false"/>). </exception>
             ''' <exception cref="T:ArgumentException"> <paramref name="field"/> not found. </exception>
             ''' <exception cref="T:MalformedCsvException"> The CSV appears to be corrupt at the current position. </exception>
             ''' <exception cref="T:System.ComponentModel.ObjectDisposedException"> The instance has been disposed of. </exception>
@@ -677,7 +677,7 @@ Namespace IO.CSV
             ''' Gets the field at the specified index.
             ''' </summary>
             ''' <value>The field at the specified index.</value>
-            ''' <exception cref="T:ArgumentOutOfRangeException"> <paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[. </exception>
+            ''' <exception cref="T:ArgumentOutOfRangeException"> <paramref name="field"/> must be included in [0, <see cref="CsvReader.FieldCount"/>[. </exception>
             ''' <exception cref="T:InvalidOperationException"> No record read yet. Call ReadLine() first. </exception>
             ''' <exception cref="T:MalformedCsvException"> The CSV appears to be corrupt at the current position. </exception>
             ''' <exception cref="T:System.ComponentModel.ObjectDisposedException"> The instance has been disposed of. </exception>
@@ -1562,9 +1562,9 @@ Namespace IO.CSV
             ''' <param name="fieldIndex">The missing field index.</param>
             ''' <param name="currentPosition">The current position in the raw data.</param>
             ''' <returns>
-            ''' The resulting value according to <see cref="M:MissingFieldAction"/>.
+            ''' The resulting value according to <see cref="CsvReader.MissingFieldAction"/>.
             ''' If the action is set to <see cref="T:MissingFieldAction.TreatAsParseError"/>,
-            ''' then the parse error will be handled according to <see cref="P:DefaultParseErrorAction"/>.
+            ''' then the parse error will be handled according to <see cref="CsvReader.DefaultParseErrorAction"/>.
             ''' </returns>
             Private Function HandleMissingField(value As String, fieldIndex As Integer, ByRef currentPosition As Integer) As String
                 If ((fieldIndex < 0) OrElse (fieldIndex >= _fieldCount)) Then
@@ -1637,7 +1637,7 @@ Namespace IO.CSV
             End Property
             
             ''' <summary>
-            ''' Raises the <see cref="M:Disposed"/> event.
+            ''' Raises the <see cref="CsvReader.Disposed"/> event.
             ''' </summary>
             ''' <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data.</param>
             Protected Overridable Sub OnDisposed(e As EventArgs)
@@ -1650,7 +1650,7 @@ Namespace IO.CSV
             ''' <exception cref="T:System.ComponentModel.ObjectDisposedException">
             '''     The instance has been disposed of. </exception>
             ''' <remarks>
-            '''     Derived classes should call this method at the start of all methods and properties that should not be accessed after a call to <see cref="M:Dispose()"/>.
+            '''     Derived classes should call this method at the start of all methods and properties that should not be accessed after a call to <see cref="CsvReader.Dispose"/>.
             ''' </remarks>
             Protected Sub CheckDisposed()
                 If (_isDisposed) Then
@@ -1662,7 +1662,7 @@ Namespace IO.CSV
             ''' Releases all resources used by the instance.
             ''' </summary>
             ''' <remarks>
-            '''     Calls <see cref="M:Dispose(Boolean)"/> with the disposing parameter set to <see langword="true"/> to free unmanaged and managed resources.
+            '''     Calls <see cref="CsvReader.Dispose"/>(Boolean) with the disposing parameter set to <see langword="true"/> to free unmanaged and managed resources.
             ''' </remarks>
             Public Sub Dispose() Implements IDisposable.Dispose
                 If (Not _isDisposed) Then

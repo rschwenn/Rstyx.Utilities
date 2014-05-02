@@ -34,7 +34,7 @@ Public Class DeferredAction
         
         ''' <summary> Creates a new DeferredAction running in current thread. </summary>
          ''' <param name="action"> The action that is intended to be invoked deferred. </param>
-         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="action"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="action"/> is <see langword="null"/>. </exception>
         Public Sub New(action As Action)
             Me.New(action, System.Windows.Threading.Dispatcher.CurrentDispatcher)
         End Sub
@@ -42,8 +42,8 @@ Public Class DeferredAction
         ''' <summary> Creates a new DeferredAction running in a given thread. </summary>
          ''' <param name="action">     The action that is intended to be invoked deferred. </param>
          ''' <param name="dispatcher"> The dispatcher that will invoke the action (when time has come). </param>
-         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="action"/> is <see langword="null"/>. </exception>
-         ''' <exception cref="T:System.ArgumentNullException"> <paramref name="dispatcher"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="action"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="dispatcher"/> is <see langword="null"/>. </exception>
         Public Sub New(action As Action, dispatcher As System.Windows.Threading.Dispatcher)
             
             If (action Is Nothing) Then Throw New ArgumentNullException("action")
@@ -61,9 +61,9 @@ Public Class DeferredAction
         ''' Repeated calls will reschedule the action, if it has not already been performed.
         ''' </summary>
          ''' <param name="delay"> The amount of time to wait before performing the action. </param>
-         ''' <exception cref="T:System.ObjectDisposedException">     This <see cref="T:DeferredAction"/> has been already disposed of. </exception>
-         ''' <exception cref="T:System.ArgumentOutOfRangeException"> <paramref name="delay"/> is less than -1. </exception>
-         ''' <exception cref="T:System.NotSupportedException">       <paramref name="delay"/> is greater than 4294967294. </exception>
+         ''' <exception cref="System.ObjectDisposedException">     This <see cref="DeferredAction"/> has been already disposed of. </exception>
+         ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="delay"/> is less than -1. </exception>
+         ''' <exception cref="System.NotSupportedException">       <paramref name="delay"/> is greater than 4294967294. </exception>
         Public Sub Defer(delay As TimeSpan)
             'If (Me.timer IsNot Nothing) Then
                 Me.timer.Change(delay, TimeSpan.FromMilliseconds(-1))
