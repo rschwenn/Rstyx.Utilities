@@ -1,5 +1,8 @@
 # Files that shouldn't go into the repository
 
+# Signature keys
+*.snk
+
 # Build and Object Folders
 _bin/
 bin/
