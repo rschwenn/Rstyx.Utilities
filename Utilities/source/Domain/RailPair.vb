@@ -29,6 +29,7 @@ Namespace Domain
             ''' <summary> Creates a new RailPair with unknown configuration. </summary>
             Public Sub New()
                 Me.reset()
+                Me.AddRule(UnknownConfigurationRule)
             End Sub
             
         #End Region

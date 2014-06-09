@@ -42,6 +42,8 @@ Namespace UI.Controls
             Private _DisplayName As String = Nothing
             Private _DisplayNameLong As String = Nothing
             
+            Private IsCompletelyLoaded  As Boolean = False
+            
         #End Region
         
         #Region "Initializing and Finalizing"
@@ -52,17 +54,19 @@ Namespace UI.Controls
             ''' <summary> Custom Initializing: register event handlers. </summary>
             Private Sub UserControlBase_Loaded(sender As Object, e As System.Windows.RoutedEventArgs) Handles Me.Loaded
                 Try
-                    'Subscribe for notifications of user settings changes.
-                    'AddHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
-                    '
-                    ' TODO: Check MakeWeak!
-                    Dim WeakPropertyChangedListener As Cinch.WeakEventProxy(Of PropertyChangedEventArgs) = New Cinch.WeakEventProxy(Of PropertyChangedEventArgs)(AddressOf OnUserSettingsChanged)
-                    AddHandler My.Settings.PropertyChanged, AddressOf WeakPropertyChangedListener.Handler
-                    
-                    ' This will listen for each control that has the NotifyOnValidationError=True and a ValidationError occurs.
-                    ErrorEventRoutedEventHandler = New RoutedEventHandler(AddressOf ExceptionValidationErrorHandler)
-                    Me.AddHandler(System.Windows.Controls.Validation.ErrorEvent, ErrorEventRoutedEventHandler, True)
-                    
+                    If (Not IsCompletelyLoaded) Then
+                        IsCompletelyLoaded = True
+                        'Subscribe for notifications of user settings changes.
+                        'AddHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
+                        '
+                        ' TODO: Check MakeWeak!
+                        Dim WeakPropertyChangedListener As Cinch.WeakEventProxy(Of PropertyChangedEventArgs) = New Cinch.WeakEventProxy(Of PropertyChangedEventArgs)(AddressOf OnUserSettingsChanged)
+                        AddHandler My.Settings.PropertyChanged, AddressOf WeakPropertyChangedListener.Handler
+                        
+                        ' This will listen for each control that has the NotifyOnValidationError=True and a ValidationError occurs.
+                        ErrorEventRoutedEventHandler = New RoutedEventHandler(AddressOf ExceptionValidationErrorHandler)
+                        Me.AddHandler(System.Windows.Controls.Validation.ErrorEvent, ErrorEventRoutedEventHandler, True)
+                    End If
                 Catch ex As System.Exception
                     Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
@@ -71,11 +75,14 @@ Namespace UI.Controls
             ''' <summary> Unregister event handlers. </summary>
             Private Sub UserControlBase_Unloaded(sender As Object, e As System.Windows.RoutedEventArgs) Handles Me.Unloaded
                 Try
-                    RemoveHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
-                    
-                    Me.RemoveHandler(System.Windows.Controls.Validation.ErrorEvent, ErrorEventRoutedEventHandler)
-                    ErrorEventRoutedEventHandler = Nothing
-                    
+                    If (IsCompletelyLoaded) Then
+                        IsCompletelyLoaded = False
+                        
+                        RemoveHandler My.Settings.PropertyChanged, AddressOf OnUserSettingsChanged
+                        
+                        Me.RemoveHandler(System.Windows.Controls.Validation.ErrorEvent, ErrorEventRoutedEventHandler)
+                        ErrorEventRoutedEventHandler = Nothing
+                    End If
                 Catch ex As System.Exception
                     Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
