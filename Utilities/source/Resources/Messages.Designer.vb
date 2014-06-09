@@ -947,6 +947,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleis: Überhöhung = %.2f, Basis für Überhöhung = %.2f ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_ToString() As String
+            Get
+                Return ResourceManager.GetString("RailPair_ToString", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleiskonfiguration ist unbekannt (Überhöhung, Basis für Überhöhung). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_UnknownConfiguration() As String
+            Get
+                Return ResourceManager.GetString("RailPair_UnknownConfiguration", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Nicht erkannte Escape Sequenz: \{0} ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Sprintf_InvalidEscapeSequence() As String

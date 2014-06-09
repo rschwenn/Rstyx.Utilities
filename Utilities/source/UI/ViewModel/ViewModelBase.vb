@@ -632,7 +632,8 @@ Namespace UI.ViewModel
              ''' <remarks>
              ''' In order to work automatically, 
              ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
+             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
              ''' </remarks>
             Public ReadOnly Property UIValidationErrorUserMessages() As String
                 Get
@@ -651,7 +652,8 @@ Namespace UI.ViewModel
              ''' <remarks>
              ''' In order to be called automatically by the view, 
              ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
+             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
              ''' </remarks>
             Public Sub AddUIValidationError(ByVal e As UIValidationError)
                 UIValidationErrors.Add(e.Key, e)
@@ -663,7 +665,8 @@ Namespace UI.ViewModel
              ''' <remarks>
              ''' In order to be called automatically by the view, 
              ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
+             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
              ''' </remarks>
             Protected Sub ClearUIValidationErrors()
                 UIValidationErrors.Clear()
@@ -676,7 +679,8 @@ Namespace UI.ViewModel
              ''' <remarks>
              ''' In order to be called automatically by the view, 
              ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
+             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
              ''' </remarks>
             Public Sub RemoveUIValidationError(ByVal e As UIValidationError)
                 UIValidationErrors.Remove(e.Key)
