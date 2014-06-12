@@ -1,5 +1,6 @@
 ﻿
 Imports System
+Imports System.Math
 Imports System.Windows
 
 Namespace Domain
@@ -45,35 +46,51 @@ Namespace Domain
             ''' <summary> Gets the Cant (negative, if right running surface is higher). </summary>
             Public ReadOnly Property Cant() As Double
                 Get
-                    Cant = _Cant
+                    Return _Cant
                 End Get
             End Property
             
             ''' <summary> Gets the CantBase. </summary>
             Public ReadOnly Property CantBase() As Double
                 Get
-                    CantBase = _CantBase
+                    Return _CantBase
                 End Get
             End Property
             
-            ''' <summary> Coordinates of Left Running Surface in track system. </summary>
+            ''' <summary> Gets coordinates of Left Running Surface in track system. </summary>
             Public ReadOnly Property RSLeft() As Point
                 Get
-                    RSLeft = _RSLeft
+                    Return _RSLeft
                 End Get
             End Property
             
-            ''' <summary> Coordinates of Right Running Surface in track system. </summary>
+            ''' <summary> Gets coordinates of Higher Running Surface in track system. </summary>
+            Public ReadOnly Property RSHigher() As Point
+                Get
+                    Dim RetRS As Point = If((_Cant < 0), RSRight, RSLeft)
+                    Return RetRS
+                End Get
+            End Property
+            
+            ''' <summary> Gets coordinates of Lower Running Surface in track system. </summary>
+            Public ReadOnly Property RSLower() As Point
+                Get
+                    Dim RetRS As Point = If((_Cant < 0), RSLeft, RSRight)
+                    Return RetRS
+                End Get
+            End Property
+            
+            ''' <summary> Gets coordinates of Right Running Surface in track system. </summary>
             Public ReadOnly Property RSRight() As Point
                 Get
-                    RSRight = _RSRight
+                    Return _RSRight
                 End Get
             End Property
             
             ''' <summary> If <see langword="false"/>, the configuration of this RailsPair is unknown. Otherwise all properties are valid. </summary>
             Public ReadOnly Property IsConfigured() As Boolean
                 Get
-                    IsConfigured = _IsConfigured
+                    Return _IsConfigured
                 End Get
             End Property
             
@@ -122,11 +139,11 @@ Namespace Domain
                 
                 Dim yl  As Double
                 Dim yr  As Double
-                Dim hd2 As Double = Math.Sqrt(Math.Pow(CantBase, 2) - Math.Pow(Cant, 2)) / 2
+                Dim hd2 As Double = Sqrt(Pow(CantBase, 2) - Pow(Cant, 2)) / 2
                 
                 If (Cant < 0) Then
                     Yl = 0.0
-                    yr = Math.Abs(Cant)
+                    yr = Abs(Cant)
                 Else
                     Yl = Cant
                     yr = 0.0
@@ -159,7 +176,7 @@ Namespace Domain
                 If (Not Me.IsConfigured) Then 
                     RetValue = MyBase.ToString()
                 Else
-                    RetValue = Rstyx.Utilities.StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.RailPair_ToString, Me.Cant, Me.CantBase)
+                    RetValue = Rstyx.Utilities.StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.RailPair_ToString, Me.Cant * 1000, Me.CantBase)
                 End If
                 Return RetValue
             End Function

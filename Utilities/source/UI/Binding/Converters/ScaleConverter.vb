@@ -8,7 +8,7 @@ Imports System.Collections.Generic
 
 Namespace UI.Binding.Converters
     
-    ''' <summary> Takes a Double, applies a scale factor and returns the resulting Double. </summary>
+    ''' <summary> Takes a Double, applies a scale factor (or the reciprocal of a scale factor when convert back) and returns the resulting Double. </summary>
     <ValueConversion(GetType(Nullable(Of Double)), GetType(Nullable(Of Double)))>
     Public Class ScaleConverter
         Implements IValueConverter

@@ -623,7 +623,7 @@
     <comment>Valid Values List: String</comment>
   </data>
   <data name="RailPair_ToString" xml:space="preserve">
-    <value>Gleis: Überhöhung = %.2f, Basis für Überhöhung = %.2f</value>
+    <value>Gleis: Überhöhung = %.2f mm, Basis für Überhöhung = %.3f m</value>
   </data>
   <data name="RailPair_UnknownConfiguration" xml:space="preserve">
     <value>Gleiskonfiguration ist unbekannt (Überhöhung, Basis für Überhöhung).</value>

@@ -947,7 +947,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Gleis: Überhöhung = %.2f, Basis für Überhöhung = %.2f ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleis: Überhöhung = %.2f mm, Basis für Überhöhung = %.3f m ähnelt.
         '''</summary>
         Public Shared ReadOnly Property RailPair_ToString() As String
             Get
