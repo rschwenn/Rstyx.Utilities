@@ -119,7 +119,10 @@
     <Compile Include="source\Domain\GeoTcPoint.vb" />
     <Compile Include="source\Domain\IDCollection.vb" />
     <Compile Include="source\Domain\PointInterfaces.vb" />
+    <Compile Include="source\Domain\PositionAtTopology.vb" />
+    <Compile Include="source\Domain\PositionAtTrack.vb" />
     <Compile Include="source\Domain\RailPair.vb" />
+    <Compile Include="source\Domain\SubjectOrigination.vb" />
     <Compile Include="source\Domain\TrackGeometryInfo.vb" />
     <Compile Include="source\IO\DataTextFileReader.vb" />
     <Compile Include="source\IO\CSV\CsvReader.vb" />
