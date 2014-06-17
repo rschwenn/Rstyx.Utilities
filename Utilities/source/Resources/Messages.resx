@@ -628,4 +628,8 @@
   <data name="RailPair_UnknownConfiguration" xml:space="preserve">
     <value>Gleiskonfiguration ist unbekannt (Überhöhung, Basis für Überhöhung).</value>
   </data>
+  <data name="Kilometer_InvalidKilometerNotation" xml:space="preserve">
+    <value>Die Zeichenkette '%s' stellt keine gültige Kilomerschreibweise dar.</value>
+    <comment>Kilometer Notation: String</comment>
+  </data>
 </root>

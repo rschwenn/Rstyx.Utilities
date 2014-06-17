@@ -1069,6 +1069,42 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die eindeutig ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Normal() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_KilometerStatus_Normal", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die ankommend ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_SkipIncoming() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_KilometerStatus_SkipIncoming", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die abgehend ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_SkipOutgoing() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_KilometerStatus_SkipOutgoing", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Unknown() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_KilometerStatus_Unknown", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Ausgabe A0 ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A0() As String

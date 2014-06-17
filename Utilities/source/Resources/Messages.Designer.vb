@@ -938,6 +938,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die Zeichenkette &apos;%s&apos; stellt keine gültige Kilomerschreibweise dar. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Kilometer_InvalidKilometerNotation() As String
+            Get
+                Return ResourceManager.GetString("Kilometer_InvalidKilometerNotation", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die %s in Zeile %d: %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property ParseError_ErrorLevelInLineNo() As String

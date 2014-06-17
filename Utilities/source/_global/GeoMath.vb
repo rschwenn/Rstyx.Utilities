@@ -116,37 +116,6 @@ Imports PGK.Extensions
         
         #Region "Static Methods - Rail related"
             
-            ''' <summary> Formats a numeric Kilometer value to a usual DBAG Kilometer notation (i.e 123456.789 => "123.4+56.789") </summary>
-             ''' <param name="Kilometer">   Value to format (in [m]) </param>
-             ''' <param name="Precision">   Desired output precison </param>
-             ''' <param name="PrefixMeter"> Prefix for Meters if &lt; 10 m  (useful are only "", " ", "0") </param>
-             ''' <returns> Usual Kilometer String </returns>
-             ''' <remarks> Example output: "12.3 + 05.67", "12.3 + 5.67", "12.3 +  5.67" </remarks>
-            Public Shared Function formatKilometer(byVal Kilometer As Double, byVal Precision As Integer, byVal PrefixMeter As String) As String
-                Dim HektoMeter As Double
-                Dim Meter      As Double
-                Dim Part1      As String
-                Dim Part2      As String
-                
-                ' Format without blanks
-                HektoMeter = System.Math.Truncate(Kilometer / 100)
-                Meter  = Kilometer - HektoMeter * 100
-                
-                Part1 = StringUtils.sprintf("%.1f", HektoMeter/10)
-                Part2 = StringUtils.sprintf("%+." & Precision & "f", Meter)
-                
-                ' Tuning part 2
-                If (Kilometer >= 0) Then
-                    If ((Meter < 10) and (PrefixMeter <> "")) Then Part2 = replace(Part2, "+", "+" & PrefixMeter)
-                    Part2 = replace(Part2, "+", " + ")
-                Else
-                    If ((Meter > -10) and (PrefixMeter <> "")) Then Part2 = replace(Part2, "-", "-" & PrefixMeter)
-                    Part2 = replace(Part2, "-", " - ")
-                End If
-                
-                Return Part1 & Part2
-            End Function
-            
             ''' <summary> Converts a usual DBAG Kilometer notation into the corresponding numerical value (i.e "123.4+56.789" => 123456.789). </summary>
              ''' <param name="KilometerString"> A usual DBAG Kilometer notation or a numerical String. </param>
              ''' <param name="KilometerValue">  If successfull, the resulting numerical Kilometer value in [Meter]. </param>
@@ -236,20 +205,20 @@ Imports PGK.Extensions
                 Return Cant
             End Function
             
-            ''' <summary> Determines the title of a DBAG rail line according to the line number. </summary>
-             ''' <param name="LineNo"> DBAG rail line no. </param>
-             ''' <returns> A <see cref="DBAGLineInfo"/> record. </returns>
+            ''' <summary> Determines the title of a DBAG rail track according to the line number. </summary>
+             ''' <param name="LineNo"> DBAG rail track no. </param>
+             ''' <returns> A <see cref="DBAGTrackInfo"/> record. </returns>
              ''' <remarks> 
              ''' <para>
              ''' The line titles are read from a file with format "number Line title here"
              ''' </para>
              ''' <para>
-             ''' The file path is specified by application settings "GeoMath_DBAGLinesFile" or "GeoMath_DBAGLinesFileFallback"
+             ''' The file path is specified by application settings "GeoMath_DBAGTracksFile" or "GeoMath_DBAGTracksFileFallback"
              ''' which may contain environment variables like %variable%. If the first one doesn't determine an existing file
              ''' the second is tried.
              ''' </para>
              ''' </remarks>
-            Public Shared Function getDBAGLineTitle(byVal LineNo As Integer) As DBAGLineInfo
+            Public Shared Function getDBAGTrackTitle(byVal LineNo As Integer) As DBAGTrackInfo
               ' Declarations:
                 Dim LineFromFile     As String = String.Empty
                 Dim LineTextShort    As String = String.Empty
@@ -260,18 +229,18 @@ Imports PGK.Extensions
                 Dim NR               As Long    = 0
                 Dim LineNoFound      As Boolean = false
                 'Dim oSR              As StreamReader = Nothing
-                Dim LineInfo         As New DBAGLineInfo() With {.Number = LineNo}
+                Dim LineInfo         As New DBAGTrackInfo() With {.Number = LineNo}
                 
               ' Path of File with DB lines list
-                LineInfo.SourceFile = Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFile)
+                LineInfo.SourceFile = Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGTracksFile)
                 If (not File.Exists(LineInfo.SourceFile)) Then
-                    LineInfo.SourceFile = Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFileFallback)
+                    LineInfo.SourceFile = Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGTrackFileFallback)
                 End If 
                 
               ' Process LineInfo.SourceFile
                 If (Not File.Exists(LineInfo.SourceFile)) Then
-                    Logger.logError(StringUtils.sprintf("getDBAGLineTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGLinesFile, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFile)))
-                    Logger.logError(StringUtils.sprintf("getDBAGLineTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGLinesFileFallback, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGLinesFileFallback)))
+                    Logger.logError(StringUtils.sprintf("getDBAGTrackTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGTracksFile, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGTracksFile)))
+                    Logger.logError(StringUtils.sprintf("getDBAGTrackTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.GeoMath_DBAGTrackFileFallback, Environment.ExpandEnvironmentVariables(My.Settings.GeoMath_DBAGTrackFileFallback)))
                     
                     LineInfo.LongTitle  = "Streckenliste '" & LineInfo.SourceFile & "' nicht gefunden!"
                     LineInfo.ShortTitle = LineInfo.LongTitle
@@ -327,10 +296,10 @@ Imports PGK.Extensions
         
         #Region "Data Structures, Nested Classes"
             
-            ''' <summary> DBAG rail line info record </summary>
-            Public Class DBAGLineInfo
+            ''' <summary> DBAG rail track info record </summary>
+            Public Class DBAGTrackInfo
                 
-                ''' <summary> Rail line number </summary>
+                ''' <summary> Rail track number </summary>
                 Public Number            As Integer = 0
                 
                 ''' <summary> True, if the line info is dertermined successfully. </summary>

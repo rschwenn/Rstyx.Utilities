@@ -573,4 +573,16 @@
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockSubFormat_CSV" xml:space="preserve">
     <value>Variable Felder (CSV)</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_KilometerStatus_Normal" xml:space="preserve">
+    <value>eindeutig</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_KilometerStatus_SkipIncoming" xml:space="preserve">
+    <value>ankommend</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_KilometerStatus_SkipOutgoing" xml:space="preserve">
+    <value>abgehend</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_KilometerStatus_Unknown" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
 </root>

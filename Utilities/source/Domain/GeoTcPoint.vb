@@ -3,23 +3,6 @@ Imports System
 
 Namespace Domain
     
-    ''' <summary> Status of a Kilometer Value. </summary>
-    Public Enum KilometerStatus As Integer
-        
-        ''' <summary> Status (ambiguity) is unknown. </summary>
-        Unknown = -1
-        
-        ''' <summary> Unambiguous Kilometer value. </summary>
-        Normal = 0
-        
-        ''' <summary> Ambiguous Kilometer value. It's located in the incoming sector of a Kilometer skip of overlegth. </summary>
-        SkipIncoming = 1
-        
-        ''' <summary> Ambiguous Kilometer value. It's located in the outgoing sector of a Kilometer skip of overlegth. </summary>
-        SkipOutgoing = 2
-        
-    End Enum
-    
     ''' <summary> Shortcut for a <see cref="GeoTcPoint(Of String)"/>, representing the most usual case: a string identifier. </summary>
     Public Class GeoTcPoint
         Inherits GeoTcPoint(Of String)
