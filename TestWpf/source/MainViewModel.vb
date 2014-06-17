@@ -92,9 +92,12 @@ Public Class MainViewModel
         
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             
-            Dim TcReader As New TcFileReader()
+            'Dim TcReader As New TcFileReader()
             
             Try
+                Dim Km As Kilometer = New Kilometer(Me.Textbox)
+                Logger.logInfo(StringUtils.sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
+                
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFileName(Me.Textbox)))
@@ -105,17 +108,17 @@ Public Class MainViewModel
                 'fdk.Load(Me.FilePath1)
                 'Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
                 
-                TcReader = New TcFileReader()
-                TcReader.Load(Me.FilePath1)
-                Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
-                Logger.logInfo(TcReader.ToString())
+                'TcReader = New TcFileReader()
+                'TcReader.Load(Me.FilePath1)
+                'Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
+                'Logger.logInfo(TcReader.ToString())
                 
                 'Dim Info As String = Me.Textbox
                 'Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
                 'Logger.logInfo(StringUtils.sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
                  
-                'Dim li  As GeoMath.DBAGLineInfo
-                'li = GeoMath.getDBAGLineTitle(6265)
+                'Dim li  As GeoMath.DBAGTrackInfo
+                'li = GeoMath.getDBAGTrackTitle(6265)
                 'Logger.logInfo(li.ShortTitle)
                 'Exit Sub
                 
@@ -206,8 +209,8 @@ Public Class MainViewModel
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
                 
             Catch ex As ParseException
-                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
-                TcReader.ParseErrors.ShowInJEdit()
+                'Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
+                'TcReader.ParseErrors.ShowInJEdit()
                 
             Catch ex As System.Exception
                 Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
@@ -236,7 +239,7 @@ Public Class MainViewModel
             'Dim s As String
             'Dim sa() As String
             'Dim d As Nullable(Of Double)
-            Dim li  As GeoMath.DBAGLineInfo
+            Dim li  As GeoMath.DBAGTrackInfo
             ''Dim bool As Boolean
             '
             Dim TestEnum As Cinch.CustomDialogIcons = Cinch.CustomDialogIcons.Question
@@ -257,7 +260,7 @@ Public Class MainViewModel
             'd = GeoMath.getKilometer(a)
             
             'GeoMath.getCantFromPointinfo(s, d, False )
-            li = GeoMath.getDBAGLineTitle(6265)
+            li = GeoMath.getDBAGTrackTitle(6265)
             Logger.logInfo(li.ShortTitle)
             'Logger.logInfo(Strings.FileSpec2RegExp("X:\Quellen\DotNet\VisualBasic\_Backup\Rstyx.Utilities_2012-??-14.*"))
             

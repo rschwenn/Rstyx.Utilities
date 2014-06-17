@@ -118,6 +118,7 @@
     <Compile Include="source\Domain\GeoPoint.vb" />
     <Compile Include="source\Domain\GeoTcPoint.vb" />
     <Compile Include="source\Domain\IDCollection.vb" />
+    <Compile Include="source\Domain\Kilometer.vb" />
     <Compile Include="source\Domain\PointInterfaces.vb" />
     <Compile Include="source\Domain\PositionAtTopology.vb" />
     <Compile Include="source\Domain\PositionAtTrack.vb" />
