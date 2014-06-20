@@ -632,4 +632,8 @@
     <value>Die Zeichenkette '%s' stellt keine gültige Kilomerschreibweise dar.</value>
     <comment>Kilometer Notation: String</comment>
   </data>
+  <data name="Global_InvalidTypeArgument" xml:space="preserve">
+    <value>Ungültiges Typ-Argument (Typ '%s' wird nicht unterstützt)</value>
+    <comment>Type Name: String</comment>
+  </data>
 </root>

@@ -84,13 +84,10 @@ Namespace Domain
     Public Interface IPointAtTrackGeometry
         
         ''' <summary> Station along the alignment. </summary>
-        Property St()           As Double
+        Property St()           As Kilometer
         
         ''' <summary> Kilometer along a separate kilometer leading alignment. </summary>
-        Property Km()           As Double
-        
-        ''' <summary> Status (ambiguity) of Kilometer. </summary>
-        Property KmStatus()     As KilometerStatus
+        Property Km()           As Kilometer
         
         ''' <summary> Perpendicular distance in XY-plane to the alignment. </summary>
         Property Q()            As Double

@@ -4,14 +4,14 @@ Namespace Domain
     ''' <summary> Position description related to a railway track. </summary>
     Public Class PositionAtTrack
         
-        ''' <summary> Kilometer of object (DBAG Database format). </summary>
-        Public Property Kilometer           As Double = Double.NaN
+        ''' <summary> Kilometer of object. </summary>
+        Public Property Kilometer           As Kilometer = New Kilometer()
         
-        ''' <summary> Railway track number or similar code. </summary>
-        Public Property TrackNo             As String = String.Empty
+        '' <summary> Railway track number or similar code. </summary>
+        'Public Property TrackNo             As String = String.Empty
         
         ''' <summary> Railway track title. </summary>
-        Public Property TrackTitle          As String = String.Empty
+        Public Property TrackTitle          As TrackTitle = New TrackTitle()
         
         ''' <summary> Railway track zone (or segment or section). </summary>
         Public Property TrackZone           As String = String.Empty

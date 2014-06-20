@@ -4,6 +4,8 @@ Imports System.Collections.ObjectModel
 Imports System.Globalization
 Imports System.Runtime.InteropServices
 
+Imports Rstyx.Utilities.Domain
+
 Namespace IO
     
     ''' <summary> Represents a line of a data text file, pre-splitted into data and comment. </summary>
@@ -171,7 +173,7 @@ Namespace IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> The data field couldn't be parsed successfully. </exception>
-            Public Function ParseField(Of TFieldValue As IConvertible)(FieldDef As DataFieldDefinition(Of TFieldValue)) As DataField(Of TFieldValue)
+            Public Function ParseField(Of TFieldValue)(FieldDef As DataFieldDefinition(Of TFieldValue)) As DataField(Of TFieldValue)
                 Dim Field As DataField(Of TFieldValue) = Nothing
                 
                 If (Not Me.TryParseField(Of TFieldValue)(FieldDef, Field)) Then
@@ -213,34 +215,37 @@ Namespace IO
              ''' </para>
              ''' <list type="table">
              ''' <listheader> <term> <b>Target Type</b> </term>  <description> Default Value </description></listheader>
-             ''' <item> <term> String </term>  <description> <c>String.Empty</c> </description></item>
-             ''' <item> <term> Double </term>  <description> <c>Double.NaN</c> </description></item>
-             ''' <item> <term> Enum   </term>  <description> <c>Unknown</c> or <c>None</c> or <c>Default value assigning <see langword="null"/></c> </description></item>
+             ''' <item> <term> String    </term>  <description> <c>String.Empty</c> </description></item>
+             ''' <item> <term> Double    </term>  <description> <c>Double.NaN</c> </description></item>
+             ''' <item> <term> Enum      </term>  <description> <c>Unknown</c> or <c>None</c> or <c>Default value assigning <see langword="null"/></c> </description></item>
+             ''' <item> <term> Kilometer </term>  <description> New, empty <see cref="Kilometer"/> </description></item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Double</c> or an <c>Enum</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
-            Public Function TryParseField(Of TFieldValue As IConvertible)(FieldDef As DataFieldDefinition(Of TFieldValue),
-                                                                          <Out> ByRef Result As DataField(Of TFieldValue)
-                                                                         ) As Boolean
-                If (Not ((GetType(TFieldValue) Is GetType(String)) OrElse (GetType(TFieldValue) Is GetType(Double)) OrElse (GetType(TFieldValue).IsEnum))) Then
-                    Throw New System.ArgumentException("TFieldValue")
+            Public Function TryParseField(Of TFieldValue)(FieldDef As DataFieldDefinition(Of TFieldValue),
+                                                          <Out> ByRef Result As DataField(Of TFieldValue)
+                                                         ) As Boolean
+                Dim TargetType  As Type = GetType(TFieldValue)
+                If (Not ((TargetType Is GetType(String)) OrElse (TargetType Is GetType(Double)) OrElse (TargetType Is GetType(Kilometer)) OrElse TargetType.IsEnum)) Then
+                    Throw New System.ArgumentException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_InvalidTypeArgument, TargetType.Name), "TFieldValue")
                 End If
                 If (FieldDef Is Nothing) Then Throw New System.ArgumentNullException("FieldDef")
                 If (Not Me.HasData) Then Throw New System.InvalidOperationException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_EmptyDataLine, Me.SourceLineNo))
                 
                 ' Default values.
-                Const DefaultString As String = ""
-                Const DefaultDouble As Double = Double.NaN
-                Dim   DefaultEnum   As TFieldValue = Nothing
+                Const DefaultString     As String = ""
+                Const DefaultDouble     As Double = Double.NaN
+                Dim   DefaultKilometer  As Kilometer = New Kilometer()
+                Dim   DefaultEnum       As TFieldValue = Nothing
                 
                 ' Special Enum defaults.
-                If (GetType(TFieldValue).IsEnum) Then
-                    If ([Enum].IsDefined(GetType(TFieldValue), "Unknown")) Then
-                        DefaultEnum = [Enum].Parse(GetType(TFieldValue), "Unknown", ignoreCase:=True)
-                    ElseIf ([Enum].IsDefined(GetType(TFieldValue), "None")) Then
-                        DefaultEnum = [Enum].Parse(GetType(TFieldValue), "None", ignoreCase:=True)
+                If (TargetType.IsEnum) Then
+                    If ([Enum].IsDefined(TargetType, "Unknown")) Then
+                        DefaultEnum = [Enum].Parse(TargetType, "Unknown", ignoreCase:=True)
+                    ElseIf ([Enum].IsDefined(TargetType, "None")) Then
+                        DefaultEnum = [Enum].Parse(TargetType, "None", ignoreCase:=True)
                     End If
                 End If
                 
@@ -249,7 +254,13 @@ Namespace IO
                 Dim FieldSource     As DataFieldSource = Nothing
                 Dim FieldValue      As TFieldValue = Nothing
                 Dim ParseError      As ParseError = Nothing
-                Dim TargetTypeCode  As TypeCode = Type.GetTypeCode(GetType(TFieldValue))
+                Dim TargetTypeName  As String = TargetType.Name
+                
+                ' Helper objects of every supported type.
+                Dim TypeString     As Type = GetType(String)
+                Dim TypeDouble     As Type = GetType(Double)
+                Dim TypeKilometer  As Type = GetType(Kilometer)
+                'Dim TypeEnum       As Type = GetType TFieldValue
                 
                 ' Extract options.
                 Dim OptionAllowKilometerNotation    As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.AllowKilometerNotation)
@@ -261,10 +272,14 @@ Namespace IO
                 Dim OptionZeroAsNaN                 As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.ZeroAsNaN)
                 
                 ' Assign default field value. This will be returned if parsing failes or the field is missing.
-                Select Case TargetTypeCode
-                    Case TypeCode.String:   FieldValue = Convert.ChangeType(DefaultString, TypeCode.String)
-                    Case TypeCode.Double:   FieldValue = Convert.ChangeType(DefaultDouble, TypeCode.Double)
-                    Case Else:              FieldValue = DefaultEnum   'Throw New System.ArgumentException("TValue")
+                Select Case TargetType
+                    Case TypeString:    FieldValue = Convert.ChangeType(DefaultString, TargetType)
+                    Case TypeDouble:    FieldValue = Convert.ChangeType(DefaultDouble, TargetType)
+                    Case TypeKilometer: FieldValue = Convert.ChangeType(DefaultKilometer, TargetType)
+                    Case Else:              
+                        If (TargetType.IsEnum) Then 
+                            FieldValue = DefaultEnum
+                        End If
                 End Select
                 
                 ' Get the field string and create a DataFieldSource.
@@ -322,14 +337,14 @@ Namespace IO
                     
                     Dim FieldString As String = FieldSource.Value
                     
-                    Select Case TargetTypeCode
+                    Select Case TargetType
                         
-                        Case TypeCode.String
+                        Case TypeString
                             
                             If (OptionTrim) Then FieldString = FieldString.Trim()
-                            FieldValue = Convert.ChangeType(FieldString, TypeCode.String)
+                            FieldValue = Convert.ChangeType(FieldString, TargetType)
                             
-                        Case TypeCode.Double
+                        Case TypeDouble
                             
                             Dim MessageFmt    As String
                             Dim FieldDouble   As Double
@@ -342,7 +357,8 @@ Namespace IO
                             
                             ' Parse number allowing or not the kilometer notation.
                             If (OptionAllowKilometerNotation) Then
-                                success    = GeoMath.TryParseKilometer(FieldString, FieldDouble)
+                                success = DefaultKilometer.TryParseKilometer(FieldString)
+                                If (success) Then FieldDouble = DefaultKilometer.Value
                                 MessageFmt = Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer
                             Else
                                 success    = Double.TryParse(FieldString, AllowedStyles, System.Globalization.NumberFormatInfo.InvariantInfo, FieldDouble)
@@ -365,22 +381,54 @@ Namespace IO
                                 End If
                                 If (OptionZeroAsNaN AndAlso (FieldDouble = 0.0)) Then FieldDouble = Double.NaN
                                 
-                                FieldValue = Convert.ChangeType(FieldDouble, TypeCode.Double)
+                                FieldValue = Convert.ChangeType(FieldDouble, TargetType)
+                            End If
+                            
+                        Case TypeKilometer
+                            
+                            Dim FieldKilometer  As Kilometer = New Kilometer()
+                            Dim AllowedStyles   As NumberStyles = NumberStyles.Float
+                            
+                            ' Remove asterisks.
+                            If (OptionIgnoreLeadingAsterisks) Then
+                                FieldString = FieldString.Trim().ReplaceWith("^\*+", String.Empty)
+                            End If
+                            
+                            ' Parse kilometer.
+                            success = FieldKilometer.TryParseKilometer(FieldString)
+                            
+                            If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
+                                ParseError = New ParseError(ParseErrorLevel.Error, 
+                                                            Me.SourceLineNo,
+                                                            FieldSource.Column,
+                                                            FieldSource.Column + FieldSource.Length,
+                                                            StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer, FieldDef.Caption, FieldSource.Value),
+                                                            Nothing
+                                                           )
+                            Else
+                                If ((Not success) AndAlso OptionNonNumericAsNaN) Then
+                                    ' Already there: FieldKilometer.Value = Double.NaN
+                                    ParseError  = Nothing
+                                    success     = True
+                                End If
+                                If (OptionZeroAsNaN AndAlso (FieldKilometer.Value = 0.0)) Then FieldKilometer = DefaultKilometer
+                                
+                                FieldValue = Convert.ChangeType(FieldKilometer, TargetType)
                             End If
                             
                         Case Else
-                            If (GetType(TFieldValue).IsEnum) Then
+                            If (TargetType.IsEnum) Then
                                 Try
-                                    FieldValue = [Enum].Parse(GetType(TFieldValue), FieldString, ignoreCase:=True)
+                                    FieldValue = [Enum].Parse(TargetType, FieldString, ignoreCase:=True)
                                     
                                     ' Treat not defined value as parsing error, too.
-                                    If (Not [Enum].IsDefined(GetType(TFieldValue), FieldValue)) Then
+                                    If (Not [Enum].IsDefined(TargetType, FieldValue)) Then
                                         Throw New Exception()
                                     End If
                                 Catch ex As Exception
                                     success = False
-                                    Dim ValidValues As String = [Enum].GetNames(GetType(TFieldValue)).Join(", ") '& ", " & [Enum].GetValues(GetType(TFieldValue)).Cast(Of String).Join(", ")
-                                    For Each Value As Integer In [Enum].GetValues(GetType(TFieldValue))
+                                    Dim ValidValues As String = [Enum].GetNames(TargetType).Join(", ") '& ", " & [Enum].GetValues(TargetType).Cast(Of String).Join(", ")
+                                    For Each Value As Integer In [Enum].GetValues(TargetType)
                                         ValidValues &= ", " & CStr(Value)
                                     Next
                                     ParseError = New ParseError(ParseErrorLevel.Error, 

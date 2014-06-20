@@ -1,5 +1,7 @@
 ﻿
 Imports System
+Imports System.Runtime.InteropServices
+Imports System.Text.RegularExpressions
 
 Namespace Domain
     
@@ -47,13 +49,10 @@ Namespace Domain
         #Region "IPointAtTrackGeometry Members"
             
             ''' <inheritdoc/>
-            Public Property St()            As Double = Double.NaN Implements IPointAtTrackGeometry.St
+            Public Property St()            As Kilometer = New Kilometer() Implements IPointAtTrackGeometry.St
             
             ''' <inheritdoc/>
-            Public Property Km()            As Double = Double.NaN Implements IPointAtTrackGeometry.Km
-            
-            ''' <inheritdoc/>
-            Public Property KmStatus()      As KilometerStatus = KilometerStatus.Unknown Implements IPointAtTrackGeometry.KmStatus
+            Public Property Km()            As Kilometer = New Kilometer() Implements IPointAtTrackGeometry.Km
             
             ''' <inheritdoc/>
             Public Property Q()             As Double = Double.NaN Implements IPointAtTrackGeometry.Q
@@ -146,7 +145,7 @@ Namespace Domain
             
         #End Region
         
-        #Region "Public members"
+        #Region "Public Methods"
             
             ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> to <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> if possible. </summary>
              ''' <remarks> If this transformation isn't possible, the target values will become <c>Double.NaN</c>. </remarks>
@@ -194,6 +193,43 @@ Namespace Domain
                 End If
             End Sub
             
+            ''' <summary> Parses actual cant value from <see cref=" GeoTcPoint(Of TPointID).Info"/> and maybe <see cref=" GeoTcPoint(Of TPointID).Comment"/> property. </summary>
+             ''' <param name="TryComment">     If <see langword="true"/> and no cant has been found in <see cref=" GeoTcPoint(Of TPointID).Info"/>, the <see cref=" GeoTcPoint(Of TPointID).Comment"/> will be parsed, too. </param>
+             ''' <param name="Strict">         If <see langword="true"/>, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first integer number is used. </param>
+             ''' <param name="Absolute">       If <see langword="true"/>, the parsed Cant value is always positive. </param>
+             ''' <param name="EditCantSource"> If <see langword="true"/>, the Cant pattern substring is removed from <see cref=" GeoTcPoint(Of TPointID).Info"/>. </param>
+             ''' <returns> <see langword="true"/> on success. </returns>
+             ''' <remarks> 
+             ''' <para>
+             ''' The measured cant will be parsed from <see cref=" GeoTcPoint(Of TPointID).Info"/> following these rules:
+             ''' </para>
+             ''' <para>
+             ''' Case 1: If the string "u= xxx" is found anywhere then "xxx" will be treated as measured cant.
+             ''' </para>
+             ''' <para>
+             ''' If case 1 didn't succeeded and <paramref name="Strict"/> is <see langword="false"/>,
+             ''' then the first integer number will be used, if any.
+             ''' </para>
+             ''' <para>
+             ''' The found cant will be assigned to the <see cref=" GeoTcPoint(Of TPointID)"/><c>.ActualCant</c> property.
+             ''' </para>
+             ''' </remarks>
+            Public Function TryParseActualCant(Optional byVal TryComment As Boolean = False,
+                                               Optional byVal Strict As Boolean = True,
+                                               Optional byVal Absolute As Boolean = False,
+                                               Optional byVal EditCantSource As Boolean = False
+                                              ) As Boolean
+                ' Parse point info.
+                Me.ActualCant = TryParseActualCant(Pointinfo:=Me.Info, Strict:=Strict, Absolute:=Absolute, EditCantSource:=EditCantSource)
+                
+                ' Fallback: Parse point comment if needed.
+                If (TryComment AndAlso Double.IsNaN(Me.ActualCant)) Then
+                    Me.ActualCant = TryParseActualCant(Pointinfo:=Me.Comment, Strict:=Strict, Absolute:=Absolute, EditCantSource:=EditCantSource)
+                End If
+                
+                Return (Not Double.IsNaN(Me.ActualCant))
+            End Function
+            
         #End Region
         
         #Region "Overrides"
@@ -202,7 +238,69 @@ Namespace Domain
              ''' <returns> Formatted output. </returns>
             Public Overrides Function ToString() As String
                 Return StringUtils.sprintf("%+20s %10.3f %10.3f %8.3f %8.3f   %8.3f %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f   %-16s %12.3f %12.3f%9.3f",
-                                           Me.ID, Me.Km, Me.St, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.RG, Me.Ra, Me.Ueb * 1000, Me.ActualCant * 1000, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
+                                           Me.ID, Me.Km.Value, Me.St.Value, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.RG, Me.Ra, Me.Ueb * 1000, Me.ActualCant * 1000, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
+            End Function
+            
+        #End Region
+        
+        #Region "Private Methods"
+            
+            ''' <summary> Parses Cant value from a Pointinfo string. </summary>
+             ''' <param name="Pointinfo">      [Input and Output] The Pointinfo string to parse. </param>
+             ''' <param name="strict">         If <see langword="true"/>, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first integer number is used. </param>
+             ''' <param name="absolute">       If <see langword="true"/>, the returned Cant value is always positive. </param>
+             ''' <param name="EditCantSource"> If <see langword="true"/>, the Cant pattern substring is removed from Pointinfo. </param>
+             ''' <returns> The found Cant value or <c>Double.NaN</c>. </returns>
+             ''' <remarks> 
+             ''' <para>
+             ''' The measured cant will be parsed from <paramref name="Pointinfo"/> following these rules:
+             ''' </para>
+             ''' <para>
+             ''' Case 1: If the string "u= xxx" is found anywhere then "xxx" will be treated as measured cant.
+             ''' </para>
+             ''' <para>
+             ''' If case 1 didn't succeeded and <paramref name="strict"/> is <see langword="false"/>,
+             ''' then the first integer number will be used, if any.
+             ''' </para>
+             ''' </remarks>
+            Private Function TryParseActualCant(<[In]><Out> ByRef Pointinfo As String,
+                                                byVal Strict As Boolean,
+                                                byVal Absolute As Boolean,
+                                                byVal EditCantSource As Boolean
+                                               ) As Double
+                Dim Cant    As Double  = Double.NaN
+                Dim ui      As String  = String.Empty
+                Dim success As Boolean = false
+                
+                If (Pointinfo.IsNotEmptyOrWhiteSpace()) Then
+                    ' 1. search for "u=..."
+                    Dim Pattern As String = "u *= *([-|+]? *[0-9]+)"
+                    Dim oMatch  As Match = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
+                    If (oMatch.Success) Then
+                        ui = oMatch.Groups(1).Value
+                        ui = ui.Replace(" ", String.Empty)
+                    End If
+                    
+                    ' 2. "u=..." not found, look for first integer number.
+                    If (ui.IsEmptyOrWhiteSpace() AndAlso (Not Strict)) Then
+                        Pattern = "[-|+]? *[0-9]+"
+                        oMatch = Regex.Match(Pointinfo, Pattern, RegexOptions.IgnoreCase)
+                        If (oMatch.Success) Then
+                          ui = oMatch.Value
+                          ui = ui.Replace(" ", String.Empty)
+                        End If
+                    End If
+                    
+                    ' Result.
+                    If (ui.IsNotEmpty()) Then
+                        ' 3. Cant value found.
+                        Cant = cdbl(ui)
+                        If (Absolute) Then Cant = System.Math.Abs(Cant.ConvertTo(Of Double))
+                        If (EditCantSource) Then Pointinfo = Pointinfo.replace(oMatch.Groups(0).Value, String.Empty)
+                    End If
+                End If
+                
+                Return Cant / 1000
             End Function
             
         #End Region

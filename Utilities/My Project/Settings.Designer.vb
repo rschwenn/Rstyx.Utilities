@@ -78,18 +78,18 @@ Namespace My
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("%I_Uebersichten%\Bahn\Strecken_Daten\Strecken.txt")>  _
-        Public ReadOnly Property GeoMath_DBAGTracksFile() As String
+        Public ReadOnly Property TrackTitle_DBAGTracksFile() As String
             Get
-                Return CType(Me("GeoMath_DBAGTracksFile"),String)
+                Return CType(Me("TrackTitle_DBAGTracksFile"),String)
             End Get
         End Property
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("R:\Uebersichten\Bahn\Strecken_Daten\Strecken.txt")>  _
-        Public ReadOnly Property GeoMath_DBAGTrackFileFallback() As String
+        Public ReadOnly Property TrackTitle_DBAGTrackFileFallback() As String
             Get
-                Return CType(Me("GeoMath_DBAGTrackFileFallback"),String)
+                Return CType(Me("TrackTitle_DBAGTrackFileFallback"),String)
             End Get
         End Property
         

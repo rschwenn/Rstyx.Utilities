@@ -840,8 +840,8 @@ Namespace Domain
                 Public Y    As DataFieldDefinition(Of Double)
                 Public X    As DataFieldDefinition(Of Double)
                 Public Z    As DataFieldDefinition(Of Double)
-                Public St   As DataFieldDefinition(Of Double)
-                Public Km   As DataFieldDefinition(Of Double)
+                Public St   As DataFieldDefinition(Of Kilometer)
+                Public Km   As DataFieldDefinition(Of Kilometer)
                 Public Q    As DataFieldDefinition(Of Double)
                 Public HSOK As DataFieldDefinition(Of Double)
                 Public Ra   As DataFieldDefinition(Of Double)
@@ -871,8 +871,8 @@ Namespace Domain
                         Me.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.Ignore, 99, 99)
                         Me.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.Ignore, 99, 99)
                         Me.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.St       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.Km       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.St       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.Ignore, 99, 99)
+                        Me.Km       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.Ignore, 99, 99)
                         Me.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.Ignore, 99, 99)
                         Me.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.Ignore, 99, 99)
                         Me.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.Ignore, 99, 99)
@@ -1082,8 +1082,8 @@ Namespace Domain
                                 Case "Y"         : RecordDef.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
                                 Case "X"         : RecordDef.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
                                 Case "Z"         : RecordDef.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "St"        : RecordDef.St       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Km"        : RecordDef.Km       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "St"        : RecordDef.St       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "Km"        : RecordDef.Km       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
                                 Case "Q"         : RecordDef.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
                                 Case "H"         : RecordDef.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
                                 Case "HSOK"      : RecordDef.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
@@ -1243,14 +1243,14 @@ Namespace Domain
                                     'If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
                                     
                                     ' Other info.
-                                    p.ActualCant   = GeoMath.parseCant(p.Info) / 1000
                                     p.CantBase     = Me.CantBase
                                     p.SourceLineNo = SplitLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Calculate values not having read.
+                                    p.TryParseActualCant()
                                     p.transformHorizontalToCanted()
-                                    If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                    If (Double.IsNaN(p.Km.Value) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
                                     
                                     ' Add Point to the block.
@@ -1369,7 +1369,13 @@ Namespace Domain
                                     p.QGS  = SplitLine.ParseField(RecDef.QGS).Value
                                     p.HGS  = SplitLine.ParseField(RecDef.HGS).Value
                                     
-                                    p.KmStatus = SplitLine.ParseField(RecDef.KmStatus).Value
+                                    ' Kilometer Status.
+                                    If (Not Double.IsNaN(p.Km.Value)) Then
+                                        Dim KmStat As KilometerStatus = SplitLine.ParseField(RecDef.KmStatus).Value
+                                        If (Not KmStat = KilometerStatus.Unknown) Then
+                                            p.Km = New Kilometer(p.Km.TDBValue, KmStat)
+                                        End If
+                                    End If
                                     
                                     ' Point info and comment.
                                     p.Info    = SplitLine.ParseField(RecDef.Text).Value
@@ -1378,10 +1384,6 @@ Namespace Domain
                                     If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
                                     
                                     ' Other info.
-                                    p.ActualCant = GeoMath.parseCant(p.Info) / 1000
-                                    If (Double.IsNaN(p.ActualCant)) Then
-                                        p.ActualCant = GeoMath.parseCant(p.Comment) / 1000
-                                    End If
                                     p.CantBase     = Me.CantBase
                                     p.SourceLineNo = SplitLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
@@ -1426,8 +1428,9 @@ Namespace Domain
                                     End If
                                     
                                     ' Calculate values not having read.
+                                    p.TryParseActualCant(TryComment:=True)
                                     p.transformHorizontalToCanted()
-                                    If (Double.IsNaN(p.Km) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                    If (Double.IsNaN(p.Km.Value) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
                                     If (Double.IsNaN(p.ZSOK)) Then p.ZSOK = p.Z - p.HSOK
                                     
@@ -1746,8 +1749,8 @@ Namespace Domain
                     _
                     .St   = Nothing,
                     _
-                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.ColumnAndLength, 7, 12),
+                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                                  DataFieldPositionType.ColumnAndLength, 7, 12),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.ColumnAndLength, 19, 9,
@@ -1806,8 +1809,8 @@ Namespace Domain
                     _
                     .St   = Nothing,
                     _
-                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.ColumnAndLength, 8, 12),
+                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                                  DataFieldPositionType.ColumnAndLength, 8, 12),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.ColumnAndLength, 20, 9,
@@ -1863,12 +1866,11 @@ Namespace Domain
                                                                DataFieldPositionType.ColumnAndLength, 60, 15,
                                                                DataFieldOptions.NotRequired),
                     _
-                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.ColumnAndLength, 33, 16),
+                    .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                                  DataFieldPositionType.ColumnAndLength, 33, 16),
                     _
-                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.ColumnAndLength, 7, 15,
-                                                               DataFieldOptions.AllowKilometerNotation),
+                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                                  DataFieldPositionType.ColumnAndLength, 7, 15),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.ColumnAndLength, 22, 9,
@@ -1924,12 +1926,11 @@ Namespace Domain
                                                                DataFieldPositionType.ColumnAndLength, 63, 15,
                                                                DataFieldOptions.NotRequired),
                     _
-                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.ColumnAndLength, 36, 16),
+                    .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                                 DataFieldPositionType.ColumnAndLength, 36, 16),
                     _
-                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.ColumnAndLength, 8, 15,
-                                                               DataFieldOptions.AllowKilometerNotation),
+                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                                  DataFieldPositionType.ColumnAndLength, 8, 15),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.ColumnAndLength, 23, 9,
@@ -1984,8 +1985,8 @@ Namespace Domain
                                                                DataFieldPositionType.WordNumber, 4, 0,
                                                                DataFieldOptions.ZeroAsNaN),
                     _
-                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.WordNumber, 5, 0),
+                    .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                                  DataFieldPositionType.WordNumber, 5, 0),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.WordNumber, 6, 0),
@@ -2021,11 +2022,11 @@ Namespace Domain
                                                                DataFieldPositionType.WordNumber, 4, 0,
                                                                DataFieldOptions.ZeroAsNaN),
                     _
-                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.WordNumber, 5, 0),
+                    .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                                  DataFieldPositionType.WordNumber, 5, 0),
                     _
-                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.WordNumber, 6, 0),
+                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                                  DataFieldPositionType.WordNumber, 6, 0),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.WordNumber, 7, 0),
@@ -2141,11 +2142,11 @@ Namespace Domain
                     .Z    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,
                                                                DataFieldPositionType.WordNumber, 4, 0),
                     _
-                    .St   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.WordNumber, 5, 0),
+                    .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
+                                                                  DataFieldPositionType.WordNumber, 5, 0),
                     _
-                    .Km   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.WordNumber, 6, 0),
+                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
+                                                                  DataFieldPositionType.WordNumber, 6, 0),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.WordNumber, 7, 0),

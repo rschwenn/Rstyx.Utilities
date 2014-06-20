@@ -857,6 +857,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ungültiges Typ-Argument (Typ &apos;%s&apos; wird nicht unterstützt) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_InvalidTypeArgument() As String
+            Get
+                Return ResourceManager.GetString("Global_InvalidTypeArgument", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die &apos;%s()&apos; wurde noch nicht implementiert! ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_NotImplemented() As String

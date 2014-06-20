@@ -8,7 +8,7 @@ Namespace IO
         
         ''' <summary> The field won't be parsed at all. </summary>
         Ignore = 0
-
+        
         ''' <summary> The field is determined by a serial number (starting at 1), related to a list of words delimited by white space. </summary>
         WordNumber = 1
         
@@ -25,7 +25,7 @@ Namespace IO
         ''' <summary> No options. </summary>
         None = 0
         
-        ''' <summary> Determines that, for a target type of <c>Double</c>, the source string may be a kilometer notation, i.e. <c>12.3 + 45.68</c>. </summary>
+        ''' <summary> Determines that, for a target type of <c>Double</c>, the source string will be parsed by <see cref="Rstyx.Utilities.Domain.Kilometer.TryParseKilometer"/>. </summary>
         AllowKilometerNotation = 1
         
         ''' <summary> Determines that leading asterisks ("*") will be ignored while numeric parsing. </summary>
@@ -99,7 +99,7 @@ Namespace IO
     ''' <summary> Represents a parsed data field: It's source in a string, the parsed value and maybe the error occurred while parsing. </summary>
      ''' <typeparam name="TFieldValue"> The type of the field value. </typeparam>
      ''' <remarks></remarks>
-    Public Class DataField(Of TFieldValue As IConvertible)
+    Public Class DataField(Of TFieldValue)
         
         #Region "Constructors"
              
@@ -164,8 +164,12 @@ Namespace IO
     
     ''' <summary> Represents the definition of a <see cref="DataField"/>. </summary>
      ''' <typeparam name="TFieldValue"> The target type of the field value. </typeparam>
-     ''' <remarks> This definition is intended to be a parsing instruction on how to pick a piece of data out of a string. </remarks>
-    Public Class DataFieldDefinition(Of TFieldValue As IConvertible)
+     ''' <remarks>
+     ''' This definition is intended to be a parsing instruction on how to pick a piece of data out of a string.
+     ''' The argument <paramref name="TFieldValue"/> comes to play only to determine the type of a <see cref="DataField"/>
+     ''' when this will be created.
+     ''' </remarks>
+    Public Class DataFieldDefinition(Of TFieldValue)
         
         #Region "Constructors"
             
