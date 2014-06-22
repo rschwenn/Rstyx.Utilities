@@ -7,9 +7,6 @@ Namespace Domain
         ''' <summary> Kilometer of object. </summary>
         Public Property Kilometer           As Kilometer = New Kilometer()
         
-        '' <summary> Railway track number or similar code. </summary>
-        'Public Property TrackNo             As String = String.Empty
-        
         ''' <summary> Railway track title. </summary>
         Public Property TrackTitle          As TrackTitle = New TrackTitle()
         
