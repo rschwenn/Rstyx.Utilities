@@ -145,28 +145,33 @@ Namespace Domain
              ''' <remarks> Example output: "12.3 + 05.67", "12.3 + 5.67", "12.3 +  5.67". </remarks>
             Public Function ToKilometerNotation(byVal Precision As Integer, byVal PrefixMeter As String) As String
                 
-                Dim HektoMeter As Double
-                Dim Meter      As Double
+                Dim HektoMeter  As Double
+                Dim Meter       As Double
+                Dim Part1       As String = String.Empty
+                Dim Part2       As String = String.Empty
                 
-                If (Not Double.IsNaN(_TDBValue)) Then
-                    HektoMeter = Truncate((_TDBValue - 100000000) / 10000)
-                    Meter      = _TDBValue - 100000000 - (HektoMeter * 10000)
-                Else
-                    HektoMeter = Truncate(_Value / 100)
-                    Meter      = _Value - (HektoMeter * 100)
-                End If
-                
-                ' Format without blanks.
-                Dim Part1 As String = StringUtils.sprintf("%.1f", HektoMeter / 10)
-                Dim Part2 As String = StringUtils.sprintf("%+." & Precision & "f", Meter)
-                
-                ' Insert blanks and maybe prefix for meters.
-                If (_Value >= 0) Then
-                    If ((Meter < 10) AndAlso PrefixMeter.IsNotEmptyOrWhiteSpace()) Then Part2 = replace(Part2, "+", "+" & PrefixMeter)
-                    Part2 = replace(Part2, "+", " + ")
-                Else
-                    If ((Meter > -10) AndAlso PrefixMeter.IsNotEmptyOrWhiteSpace()) Then Part2 = replace(Part2, "-", "-" & PrefixMeter)
-                    Part2 = replace(Part2, "-", " - ")
+                If (Not Double.IsNaN(_Value)) Then
+                    
+                    If (Not Double.IsNaN(_TDBValue)) Then
+                        HektoMeter = Truncate((_TDBValue - 100000000) / 10000)
+                        Meter      = _TDBValue - 100000000 - (HektoMeter * 10000)
+                    Else
+                        HektoMeter = Truncate(_Value / 100)
+                        Meter      = _Value - (HektoMeter * 100)
+                    End If
+                    
+                    ' Format without blanks.
+                    Part1 = StringUtils.sprintf("%.1f", HektoMeter / 10)
+                    Part2 = StringUtils.sprintf("%+." & Precision & "f", Meter)
+                    
+                    ' Insert blanks and maybe prefix for meters.
+                    If (_Value >= 0) Then
+                        If ((Meter < 10) AndAlso PrefixMeter.IsNotEmptyOrWhiteSpace()) Then Part2 = replace(Part2, "+", "+" & PrefixMeter)
+                        Part2 = replace(Part2, "+", " + ")
+                    Else
+                        If ((Meter > -10) AndAlso PrefixMeter.IsNotEmptyOrWhiteSpace()) Then Part2 = replace(Part2, "-", "-" & PrefixMeter)
+                        Part2 = replace(Part2, "-", " - ")
+                    End If
                 End If
                 
                 Return Part1 & Part2
@@ -222,6 +227,15 @@ Namespace Domain
                 End If
                 
                 Return success
+            End Function
+            
+        #End Region
+        
+        #Region "Overrides"
+            
+            ''' <summary> Returns a formatted Kilometer output. </summary>
+            Public Overrides Function ToString() As String
+                Return Me.ToKilometerNotation(Precision:=3)
             End Function
             
         #End Region

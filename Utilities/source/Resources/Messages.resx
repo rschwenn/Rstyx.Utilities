@@ -636,4 +636,13 @@
     <value>Ungültiges Typ-Argument (Typ '%s' wird nicht unterstützt)</value>
     <comment>Type Name: String</comment>
   </data>
+  <data name="RailPair_InvalidCantBaseNegative" xml:space="preserve">
+    <value>Basis für Überhöhung ist ungültig (negativ)</value>
+  </data>
+  <data name="RailPair_UnknownCant" xml:space="preserve">
+    <value>Überhöhung ist unbekannt (NaN)</value>
+  </data>
+  <data name="RailPair_UnknownCantBase" xml:space="preserve">
+    <value>Basis für Überhöhung ist unbekannt (NaN)</value>
+  </data>
 </root>

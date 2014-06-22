@@ -133,9 +133,9 @@ Namespace Domain
              ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. </remarks>
             Public Sub reconfigure(Cant As Double, CantBase As Double)
                 
-                If (Double.IsNaN(Cant))     Then Throw New System.ArgumentException("Cant is NaN")
-                If (Double.IsNaN(CantBase)) Then Throw New System.ArgumentException("CantBase is NaN")
-                If (CantBase < 0.001)       Then Throw New System.ArgumentException("CantBase is Zero")
+                If (Double.IsNaN(Cant))     Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant, "Cant")
+                If (Double.IsNaN(CantBase)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase, "CantBase")
+                If (CantBase < 0.001)       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_InvalidCantBaseNegative, "CantBase")
                 
                 Dim yl  As Double
                 Dim yr  As Double

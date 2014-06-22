@@ -965,11 +965,38 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Basis für Überhöhung ist ungültig (negativ) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_InvalidCantBaseNegative() As String
+            Get
+                Return ResourceManager.GetString("RailPair_InvalidCantBaseNegative", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Gleis: Überhöhung = %.2f mm, Basis für Überhöhung = %.3f m ähnelt.
         '''</summary>
         Public Shared ReadOnly Property RailPair_ToString() As String
             Get
                 Return ResourceManager.GetString("RailPair_ToString", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Überhöhung ist unbekannt (NaN) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_UnknownCant() As String
+            Get
+                Return ResourceManager.GetString("RailPair_UnknownCant", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Basis für Überhöhung ist unbekannt (NaN) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_UnknownCantBase() As String
+            Get
+                Return ResourceManager.GetString("RailPair_UnknownCantBase", resourceCulture)
             End Get
         End Property
         
