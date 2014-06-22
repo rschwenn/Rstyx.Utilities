@@ -124,6 +124,7 @@
     <Compile Include="source\Domain\PositionAtTrack.vb" />
     <Compile Include="source\Domain\RailPair.vb" />
     <Compile Include="source\Domain\SubjectOrigination.vb" />
+    <Compile Include="source\Domain\TopologyNode.vb" />
     <Compile Include="source\Domain\TrackGeometryInfo.vb" />
     <Compile Include="source\Domain\TrackTitle.vb" />
     <Compile Include="source\IO\DataTextFileReader.vb" />
