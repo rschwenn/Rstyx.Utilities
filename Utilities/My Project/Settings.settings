@@ -8,17 +8,10 @@
     <Setting Name="Library_AutoSaveSettings" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
-<<<<<<< HEAD
     <Setting Name="TrackTitle_DBAGTracksFile" Type="System.String" Scope="Application">
       <Value Profile="(Default)">%I_Uebersichten%\Bahn\Strecken_Daten\Strecken.txt</Value>
     </Setting>
     <Setting Name="TrackTitle_DBAGTrackFileFallback" Type="System.String" Scope="Application">
-=======
-    <Setting Name="GeoMath_DBAGTracksFile" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">%I_Uebersichten%\Bahn\Strecken_Daten\Strecken.txt</Value>
-    </Setting>
-    <Setting Name="GeoMath_DBAGTrackFileFallback" Type="System.String" Scope="Application">
->>>>>>> 296d534c2a2d27730e7cf956b8aaffdfa7bc8e57
       <Value Profile="(Default)">R:\Uebersichten\Bahn\Strecken_Daten\Strecken.txt</Value>
     </Setting>
     <Setting Name="UIResources_LoggerName" Type="System.String" Scope="Application">
