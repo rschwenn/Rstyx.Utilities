@@ -645,4 +645,8 @@
   <data name="RailPair_UnknownCantBase" xml:space="preserve">
     <value>Basis für Überhöhung ist unbekannt (NaN)</value>
   </data>
+  <data name="DataTextLine_InvalidFieldNotInteger" xml:space="preserve">
+    <value>Das Feld '%s' stellt keine ganze Zahl dar (%s).</value>
+    <comment>Field Caption: String; Field String: String</comment>
+  </data>
 </root>

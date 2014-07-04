@@ -176,7 +176,7 @@ Namespace IO
             Private Sub New()
             End Sub
             
-            ''' <summary> Creates a new instance of DataWordDefinition using default options. </summary>
+            ''' <summary> Creates a new instance of <see cref="DataField"/> using default options (hence no option flag is used). </summary>
              ''' <param name="Caption">      The Caption for the the data field. </param>
              ''' <param name="PositionType"> Kind of determining a data field in a string. </param>
              ''' <param name="ColumnOrWord"> The <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </param>
@@ -194,7 +194,7 @@ Namespace IO
                 Me.New(Caption, PositionType, ColumnOrWord, Length, DataFieldOptions.None)
             End Sub
             
-            ''' <summary> Creates a new instance of DataWordDefinition. </summary>
+            ''' <summary> Creates a new instance of <see cref="DataField"/>. </summary>
              ''' <param name="Caption">      The Caption for the the data field. </param>
              ''' <param name="PositionType"> Kind of determining a data field in a string. </param>
              ''' <param name="ColumnOrWord"> The <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </param>

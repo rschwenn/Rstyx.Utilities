@@ -218,6 +218,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; stellt keine ganze Zahl dar (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_InvalidFieldNotInteger() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_InvalidFieldNotInteger", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; ist keine gültige Kilometer-Angabe (%s). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DataTextLine_InvalidFieldNotKilometer() As String
