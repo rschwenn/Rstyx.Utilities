@@ -1,7 +1,7 @@
 ﻿
 Namespace Domain
     
-    ''' <summary> Shortcut for a <see cref="IDCollection(Of String)"/>, representing the most usual case: objects with a string identifier. </summary>
+    ''' <summary> Shortcut for a <see cref="IDCollection(Of String, TItem)"/>, representing the most usual case: objects with a string identifier. </summary>
      ''' <typeparam name="TItem"> Type of collection items. It has to implement the <see cref="IIdentifiable(Of TKey)"/> interface. </typeparam>
      ''' <remarks> The key for the collection will always be the <b>ID</b> property of <b>TItem</b>, which is a String. </remarks>
     Public Class IDCollection(Of TItem As IIdentifiable(Of String))

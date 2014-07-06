@@ -218,7 +218,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; stellt keine ganze Zahl dar (%s). ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; stellt keine ganze Zahl zwischen %d und %d dar (%s). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DataTextLine_InvalidFieldNotInteger() As String
             Get
@@ -232,6 +232,15 @@ Namespace Resources
         Public Shared ReadOnly Property DataTextLine_InvalidFieldNotKilometer() As String
             Get
                 Return ResourceManager.GetString("DataTextLine_InvalidFieldNotKilometer", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; stellt keine ganze Zahl zwischen %d und %d dar (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataTextLine_InvalidFieldNotLong() As String
+            Get
+                Return ResourceManager.GetString("DataTextLine_InvalidFieldNotLong", resourceCulture)
             End Get
         End Property
         
@@ -974,6 +983,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Strecke %d  km %s (Gleis %s, RiKz=%s) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PositionAtTrack_ToString() As String
+            Get
+                Return ResourceManager.GetString("PositionAtTrack_ToString", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Basis für Überhöhung ist ungültig (negativ) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property RailPair_InvalidCantBaseNegative() As String
@@ -1393,6 +1411,15 @@ Namespace Resources
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfTunnelSections() As String
             Get
                 Return ResourceManager.GetString("TrackGeometryInfo_NameOfTunnelSections", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Strecke %d ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TrackTitle_ToString() As String
+            Get
+                Return ResourceManager.GetString("TrackTitle_ToString", resourceCulture)
             End Get
         End Property
         

@@ -646,7 +646,19 @@
     <value>Basis für Überhöhung ist unbekannt (NaN)</value>
   </data>
   <data name="DataTextLine_InvalidFieldNotInteger" xml:space="preserve">
-    <value>Das Feld '%s' stellt keine ganze Zahl dar (%s).</value>
-    <comment>Field Caption: String; Field String: String</comment>
+    <value>Das Feld '%s' stellt keine ganze Zahl zwischen %d und %d dar (%s).</value>
+    <comment>Field Caption: String; MinValue: Integer; MaxValue: Integer; Field String: String</comment>
+  </data>
+  <data name="DataTextLine_InvalidFieldNotLong" xml:space="preserve">
+    <value>Das Feld '%s' stellt keine ganze Zahl zwischen %d und %d dar (%s).</value>
+    <comment>Field Caption: String; MinValue: Integer; MaxValue: Integer; Field String: String</comment>
+  </data>
+  <data name="PositionAtTrack_ToString" xml:space="preserve">
+    <value>Strecke %d  km %s (Gleis %s, RiKz=%s)</value>
+    <comment>Track Number: Integer, Kilometer: String, RailsNameNo: String, RailsCode: String</comment>
+  </data>
+  <data name="TrackTitle_ToString" xml:space="preserve">
+    <value>Strecke %d</value>
+    <comment>Track Number: Integer</comment>
   </data>
 </root>

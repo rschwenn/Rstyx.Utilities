@@ -16,8 +16,13 @@ Namespace Domain
         ''' <summary> Code of track rails (right, left, single). </summary>
         Public Property RailsCode           As String = String.Empty
         
-        ''' <summary> Number of track rails (at a railway mstation). </summary>
-        Public Property RailsNo             As String = String.Empty
+        ''' <summary> Name or umber of track rails (at a railway mstation). </summary>
+        Public Property RailsNameNo         As String = String.Empty
+                
+         ''' <inheritdoc/>
+        Public Overrides Function ToString() As String
+            Return Rstyx.Utilities.StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.PositionAtTrack_ToString, Me.TrackTitle.Number, Me.Kilometer.ToString(), Me.RailsNameNo, Me.RailsCode)
+        End Function
         
     End Class
     

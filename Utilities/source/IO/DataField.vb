@@ -158,6 +158,14 @@ Namespace IO
              ''' <remarks> If <c>HasValue</c> is <see langword="false"/>, this value has no meaning. </remarks>
             Public ReadOnly Value       As TFieldValue = Nothing
             
+            Public Overrides Function ToString() As String
+                If (Me.ParseError IsNot Nothing) Then
+                    Return Me.ParseError.ToString()
+                Else
+                    Return Me.Value.ToString()
+                End If
+            End Function
+            
         #End Region
         
     End Class

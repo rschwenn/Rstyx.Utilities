@@ -219,19 +219,20 @@ Namespace IO
              ''' <listheader> <term> <b>Target Type</b> </term>  <description> Default Value </description></listheader>
              ''' <item> <term> String    </term>  <description> <c>String.Empty</c> </description></item>
              ''' <item> <term> Integer   </term>  <description> <c>Zero</c> </description></item>
+             ''' <item> <term> Long      </term>  <description> <c>Zero</c> </description></item>
              ''' <item> <term> Double    </term>  <description> <c>Double.NaN</c> </description></item>
              ''' <item> <term> Enum      </term>  <description> <c>Unknown</c> or <c>None</c> or <c>Default value assigning <see langword="null"/></c> </description></item>
              ''' <item> <term> Kilometer </term>  <description> New, empty <see cref="Kilometer"/> </description></item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Integer</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Integer</c> or <c>Long</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
             Public Function TryParseField(Of TFieldValue)(FieldDef As DataFieldDefinition(Of TFieldValue),
                                                           <Out> ByRef Result As DataField(Of TFieldValue)
                                                          ) As Boolean
                 Dim TargetType  As Type = GetType(TFieldValue)
-                If (Not ((TargetType Is GetType(String)) OrElse (TargetType Is GetType(Integer)) OrElse (TargetType Is GetType(Double)) OrElse (TargetType Is GetType(Kilometer)) OrElse TargetType.IsEnum)) Then
+                If (Not ((TargetType Is GetType(String)) OrElse (TargetType Is GetType(Integer)) OrElse (TargetType Is GetType(Long)) OrElse (TargetType Is GetType(Double)) OrElse (TargetType Is GetType(Kilometer)) OrElse TargetType.IsEnum)) Then
                     Throw New System.ArgumentException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_InvalidTypeArgument, TargetType.Name), "TFieldValue")
                 End If
                 If (FieldDef Is Nothing) Then Throw New System.ArgumentNullException("FieldDef")
@@ -240,6 +241,7 @@ Namespace IO
                 ' Default values.
                 Const DefaultString     As String      = ""
                 Const DefaultInteger    As Integer     = 0
+                Const DefaultLong       As Long        = 0
                 Const DefaultDouble     As Double      = Double.NaN
                 Dim   DefaultKilometer  As Kilometer   = New Kilometer()
                 Dim   DefaultEnum       As TFieldValue = Nothing
@@ -261,10 +263,11 @@ Namespace IO
                 Dim TargetTypeName  As String = TargetType.Name
                 
                 ' Helper objects of every supported type.
-                Dim TypeString     As Type = GetType(String)
-                Dim TypeInteger    As Type = GetType(Integer)
-                Dim TypeDouble     As Type = GetType(Double)
-                Dim TypeKilometer  As Type = GetType(Kilometer)
+                Dim TypeString      As Type = GetType(String)
+                Dim TypeInteger     As Type = GetType(Integer)
+                Dim TypeLong        As Type = GetType(Long)
+                Dim TypeDouble      As Type = GetType(Double)
+                Dim TypeKilometer   As Type = GetType(Kilometer)
                 'Dim TypeEnum       As Type = GetType TFieldValue
                 
                 ' Extract options.
@@ -278,9 +281,10 @@ Namespace IO
                 
                 ' Assign default field value. This will be returned if parsing failes or the field is missing.
                 Select Case TargetType
-                    Case TypeString:    FieldValue = Convert.ChangeType(DefaultString, TargetType)
-                    Case TypeInteger:   FieldValue = Convert.ChangeType(DefaultInteger, TargetType)
-                    Case TypeDouble:    FieldValue = Convert.ChangeType(DefaultDouble, TargetType)
+                    Case TypeString:    FieldValue = Convert.ChangeType(DefaultString,    TargetType)
+                    Case TypeInteger:   FieldValue = Convert.ChangeType(DefaultInteger,   TargetType)
+                    Case TypeLong:      FieldValue = Convert.ChangeType(DefaultLong,      TargetType)
+                    Case TypeDouble:    FieldValue = Convert.ChangeType(DefaultDouble,    TargetType)
                     Case TypeKilometer: FieldValue = Convert.ChangeType(DefaultKilometer, TargetType)
                     Case Else:              
                         If (TargetType.IsEnum) Then 
@@ -367,7 +371,7 @@ Namespace IO
                                                             Me.SourceLineNo,
                                                             FieldSource.Column,
                                                             FieldSource.Column + FieldSource.Length,
-                                                            StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotInteger, FieldDef.Caption, FieldSource.Value),
+                                                            StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotInteger, FieldDef.Caption, Integer.MinValue, Integer.MaxValue, FieldSource.Value),
                                                             Nothing
                                                            )
                             Else
@@ -379,6 +383,37 @@ Namespace IO
                                 If (OptionZeroAsNaN AndAlso (FieldInteger = 0.0)) Then FieldInteger = DefaultInteger
                                 
                                 FieldValue = Convert.ChangeType(FieldInteger, TargetType)
+                            End If
+                            
+                        Case TypeLong
+                            
+                            Dim FieldLong  As Long
+                            
+                            ' Remove asterisks.
+                            If (OptionIgnoreLeadingAsterisks) Then
+                                FieldString = FieldString.Trim().ReplaceWith("^\*+", String.Empty)
+                            End If
+                            
+                            ' Parse number
+                            success = Long.TryParse(FieldString, FieldLong)
+                            
+                            If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
+                                ParseError = New ParseError(ParseErrorLevel.Error, 
+                                                            Me.SourceLineNo,
+                                                            FieldSource.Column,
+                                                            FieldSource.Column + FieldSource.Length,
+                                                            StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotLong, FieldDef.Caption, Long.MinValue, Long.MaxValue, FieldSource.Value),
+                                                            Nothing
+                                                           )
+                            Else
+                                If ((Not success) AndAlso OptionNonNumericAsNaN) Then
+                                    FieldLong = DefaultLong
+                                    ParseError   = Nothing
+                                    success      = True
+                                End If
+                                If (OptionZeroAsNaN AndAlso (FieldLong = 0.0)) Then FieldLong = DefaultLong
+                                
+                                FieldValue = Convert.ChangeType(FieldLong, TargetType)
                             End If
                             
                         Case TypeDouble

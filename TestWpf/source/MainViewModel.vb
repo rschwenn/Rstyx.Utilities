@@ -95,6 +95,12 @@ Public Class MainViewModel
             Dim TcReader As New TcFileReader()
             
             Try
+                Dim dt As System.DateTime = System.DateTime.Now
+                Logger.logInfo(DateAndTime.DateString)
+                Logger.logInfo(DateAndTime.TimeString)
+                Logger.logInfo(dt.ToLongDateString())
+                Logger.logInfo(dt.ToShortDateString())
+                
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)
                 'Logger.logInfo(StringUtils.sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
                 
@@ -108,12 +114,12 @@ Public Class MainViewModel
                 'fdk.Load(Me.FilePath1)
                 'Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
                 
-                Dim li  As TrackTitle = TrackTitle.GetDBAGTrackTitle(6265)
+                'Dim li  As TrackTitle = TrackTitle.GetDBAGTrackTitle(6265)
                 
-                TcReader = New TcFileReader()
-                TcReader.Load(Me.FilePath1)
-                Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
-                Logger.logInfo(TcReader.ToString())
+                'TcReader = New TcFileReader()
+                'TcReader.Load(Me.FilePath1)
+                'Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
+                'Logger.logInfo(TcReader.ToString())
                 
                 'Dim Info As String = Me.Textbox
                 'Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)

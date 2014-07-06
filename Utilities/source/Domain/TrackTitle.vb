@@ -130,6 +130,11 @@ Namespace Domain
                 
                 Return oTrackTitle
             End Function
+                
+             ''' <inheritdoc/>
+            Public Overrides Function ToString() As String
+                Return Rstyx.Utilities.StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackTitle_ToString, Me.Number)
+            End Function
             
         #End Region
         
