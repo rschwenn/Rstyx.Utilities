@@ -165,6 +165,7 @@ Namespace Domain
         Property ActualCant()   As Double
         
         ''' <summary> Cant (Superelevation). </summary>
+         ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>
         Property Ueb()          As Double
         
         ''' <summary> Height difference between gradient design (vertical curve set) and running surface of rail (at special geometry). </summary>

@@ -148,7 +148,12 @@ Namespace Domain
         #Region "Public Methods"
             
             ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> to <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> if possible. </summary>
-             ''' <remarks> If this transformation isn't possible, the target values will become <c>Double.NaN</c>. </remarks>
+             ''' <para>
+             ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
+             ''' </para>
+             ''' <para>
+             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
+             ''' </para>
             Public Sub transformHorizontalToCanted()
                 
                 If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
@@ -170,15 +175,22 @@ Namespace Domain
             End Sub
             
             ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> to <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> if possible. </summary>
-             ''' <remarks> If this transformation isn't possible, the target values will be <c>Double.NaN</c>. </remarks>
+             ''' <remarks>
+             ''' <para>
+             ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
+             ''' </para>
+             ''' <para>
+             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
+             ''' </para>
+             ''' </remarks>
             Public Sub transformCantedToHorizontal()
                 
-                If ((Me.Ueb > -0.0005) And (Me.Ueb < -0.0005)) Then
+                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
                     Me.Q    = Me.QG
                     Me.HSOK = Me.HG
                     
                 ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
-                    Dim sf  As Integer = Math.Sign(Me.Ra)
+                    Dim sf      As Integer = Math.Sign(Me.Ra)
                     Dim phi     As Double = sf * Math.Atan(Me.Ueb / Me.CantBase) * (-1)
                     Dim CosPhi  As Double = Math.Cos(phi)
                     Dim SinPhi  As Double = Math.Sin(phi)

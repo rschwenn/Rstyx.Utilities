@@ -101,6 +101,9 @@ Public Class MainViewModel
                 Logger.logInfo(dt.ToLongDateString())
                 Logger.logInfo(dt.ToShortDateString())
                 
+                Dim z As Double = Double.NaN
+                Logger.logInfo(Not (z = 0))
+                
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)
                 'Logger.logInfo(StringUtils.sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
                 
