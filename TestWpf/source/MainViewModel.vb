@@ -1,4 +1,6 @@
 ﻿
+Imports System
+Imports System.Collections.Generic
 Imports System.Data
 Imports System.Data.OleDb
 Imports System.Data.DataTableExtensions
@@ -92,17 +94,35 @@ Public Class MainViewModel
         
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             
-            Dim TcReader As New TcFileReader()
+            'Dim TcReader As New TcFileReader()
             
             Try
-                Dim dt As System.DateTime = System.DateTime.Now
-                Logger.logInfo(DateAndTime.DateString)
-                Logger.logInfo(DateAndTime.TimeString)
-                Logger.logInfo(dt.ToLongDateString())
-                Logger.logInfo(dt.ToShortDateString())
+                Dim dtUTC As DateTime = DateTime.UtcNow
+                Logger.logInfo(dtUTC.ToLongDateString())
+                Logger.logInfo(dtUTC.ToShortDateString())
+                Logger.logInfo(dtUTC.ToLongTimeString())
+                Logger.logInfo(dtUTC.ToShortTimeString())
+                Dim dtLocal As DateTime = dtUTC.ToLocalTime()
+                Logger.logInfo(dtLocal.ToShortTimeString())
+                Logger.logInfo("")
                 
-                Dim z As Double = Double.NaN
-                Logger.logInfo(Not (z = 0))
+                'Dim RefTime As DateTime = DateTime.Parse("01.01.1970 0:00")
+                Dim RefTime As DateTime = DateTime.SpecifyKind(DateTime.Parse("01.01.1970 0:00"), DateTimeKind.Utc)
+                Dim ts As TimeSpan = dtUTC.Subtract(RefTime)
+                Dim sec As Integer = CInt(ts.TotalSeconds)
+                Dim NewTime As DateTime = RefTime.AddSeconds(sec)
+                Logger.logInfo(RefTime.ToString())
+                Logger.logInfo(RefTime.ToLocalTime().ToString())
+                Logger.logInfo("")
+                
+                Logger.logInfo(ts.TotalSeconds.ToString())
+                
+                Dim dict As New Dictionary(Of String, String)
+                dict.Add("Test", "***")
+                dict("yyyyyy") = "khggzgi"
+                Dim a As String = dict("yyyyyy")
+                Dim b As String = dict("Test")
+                
                 
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)
                 'Logger.logInfo(StringUtils.sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
@@ -220,8 +240,8 @@ Public Class MainViewModel
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
                 
             Catch ex As ParseException
-                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
-                TcReader.ParseErrors.ShowInJEdit()
+                'Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
+                'TcReader.ParseErrors.ShowInJEdit()
                 
             Catch ex As System.Exception
                 Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))

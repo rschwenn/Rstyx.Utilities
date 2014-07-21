@@ -5,10 +5,10 @@ Namespace Domain
     Public Class PositionAtTopology
         
         ''' <summary> A-node. </summary>
-        Public Property NodeA               As TopologyNode = Nothing
+        Public Property NodeA               As TopologyNode = New TopologyNode()
         
         ''' <summary> B-node. </summary>
-        Public Property NodeB               As TopologyNode = Nothing
+        Public Property NodeB               As TopologyNode = New TopologyNode()
         
         ''' <summary> Distance of A-node to position. </summary>
         Public Property DistanceToNodeA     As Double = Double.NaN

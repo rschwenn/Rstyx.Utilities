@@ -36,7 +36,7 @@ Namespace Domain
         Public Property Job                 As String = String.Empty
         
         ''' <summary> Incorporated program. </summary>
-        Public Property Programm            As String = String.Empty
+        Public Property Program             As String = String.Empty
         
     End Class
     
