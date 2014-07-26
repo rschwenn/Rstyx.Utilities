@@ -193,37 +193,39 @@ Namespace Domain
                 Dim success As Boolean = False
                 reset()
                 
-                Dim KilometerValue As Double = Double.NaN
-                
-                Dim Pattern As String = "^ *([+\-]? *[0-9]*[.]*[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *$"
-                Dim oMatch  As Match  = Regex.Match(KilometerString, Pattern, RegexOptions.IgnoreCase)
-                
-                If (Not oMatch.Success) Then
-                    ' No valid Kilometer notation => maybe numeric.
-                    Dim DoubleValue As Double
-                    If (Double.TryParse(KilometerString, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, DoubleValue)) Then
-                        success = True
-                        parseNumber(DoubleValue)
-                    End If
-                Else
-                    ' Valid Kilometer notation.
-                    Dim Kilometer  As Double  = oMatch.Groups(1).Value.Replace(" ", "").ConvertTo(Of Double)  ' signed
-                    Dim MiddleSign As String  = oMatch.Groups(2).Value
-                    Dim Meter      As Double  = oMatch.Groups(3).Value.ConvertTo(Of Double)   ' unsigned
-                    Dim SignKm     As Integer = Sign(Kilometer)
-                    Dim SignM      As Integer = If(InStr(MiddleSign, "-") > 0, SignM = -1, SignM = 1)
-                    Dim SignTotal  As Integer = If(((SignM = -1) Or (SignKm = -1)), -1, 1)
+                If (KilometerString.IsNotEmptyOrWhiteSpace()) Then
+                    Dim KilometerValue As Double = Double.NaN
                     
-                    _Value = SignTotal * (Abs(Kilometer) * 1000 + Meter)
-                    _TDBValue = (SignTotal * (Abs(Kilometer) * 100000 + Meter)) + 100000000
+                    Dim Pattern As String = "^ *([+\-]? *[0-9]*[.]*[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *$"
+                    Dim oMatch  As Match  = Regex.Match(KilometerString, Pattern, RegexOptions.IgnoreCase)
                     
-                    If (Meter >= 100) Then
-                        _Status = KilometerStatus.SkipIncoming
+                    If (Not oMatch.Success) Then
+                        ' No valid Kilometer notation => maybe numeric.
+                        Dim DoubleValue As Double
+                        If (Double.TryParse(KilometerString, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, DoubleValue)) Then
+                            success = True
+                            parseNumber(DoubleValue)
+                        End If
                     Else
-                        _Status = KilometerStatus.Normal
+                        ' Valid Kilometer notation.
+                        Dim Kilometer  As Double  = oMatch.Groups(1).Value.Replace(" ", "").ConvertTo(Of Double)  ' signed
+                        Dim MiddleSign As String  = oMatch.Groups(2).Value
+                        Dim Meter      As Double  = oMatch.Groups(3).Value.ConvertTo(Of Double)   ' unsigned
+                        Dim SignKm     As Integer = Sign(Kilometer)
+                        Dim SignM      As Integer = If(InStr(MiddleSign, "-") > 0, SignM = -1, SignM = 1)
+                        Dim SignTotal  As Integer = If(((SignM = -1) Or (SignKm = -1)), -1, 1)
+                        
+                        _Value = SignTotal * (Abs(Kilometer) * 1000 + Meter)
+                        _TDBValue = (SignTotal * (Abs(Kilometer) * 100000 + Meter)) + 100000000
+                        
+                        If (Meter >= 100) Then
+                            _Status = KilometerStatus.SkipIncoming
+                        Else
+                            _Status = KilometerStatus.Normal
+                        End If
+                        
+                        success = True
                     End If
-                    
-                    success = True
                 End If
                 
                 Return success

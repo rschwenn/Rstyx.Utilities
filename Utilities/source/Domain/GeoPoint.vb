@@ -93,6 +93,15 @@ Namespace Domain
             
         #End Region
         
+        #Region "Overrides"
+            
+            ''' <summary> Returns point ID and info. </summary>
+            Public Overrides Function ToString() As String
+                Return Me.ID.ToString() & "  (" & Me.Info & ")"
+            End Function
+            
+        #End Region
+        
     End Class
 
 End Namespace
