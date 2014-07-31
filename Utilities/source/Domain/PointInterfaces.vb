@@ -162,6 +162,7 @@ Namespace Domain
         
         
         ''' <summary> Actual cant. </summary>
+         ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>
         Property ActualCant()   As Double
         
         ''' <summary> Cant (Superelevation). </summary>
