@@ -10,6 +10,9 @@
         ''' <summary> A default value for <see cref="StatusText"/>. Deaults to String.Empty. </summary>
         Property StatusTextDefault() As String
         
+        ''' <summary> A tool tip for status text (i.e for displaying more text than fits in status bar). </summary>
+        Property StatusTextToolTip() As String
+        
         ''' <summary> The current progress in percent. </summary>
         Property Progress() As Double
         

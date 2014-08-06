@@ -251,6 +251,7 @@ Namespace UI.ViewModel
             
             Private _Progress                   As Double = 0
             Private _StatusText                 As String = String.Empty
+            Private _StatusTextToolTip              As String = Nothing
             Private _StatusTextDefault          As String = String.Empty
             
             Private VisibleProgressStepCount    As Double = 90
@@ -314,7 +315,9 @@ Namespace UI.ViewModel
                 Set(value As String)
                     If (Not (value = _StatusText)) Then
                         _StatusText = value
+                        _StatusTextToolTip = Nothing
                         MyBase.NotifyPropertyChanged("StatusText")
+                        MyBase.NotifyPropertyChanged("StatusTextToolTip")
                         Cinch.ApplicationHelper.DoEvents()
                     End if
                 End Set
@@ -330,6 +333,28 @@ Namespace UI.ViewModel
                         Dim forward As Boolean = ((Me.StatusText.IsEmptyOrWhiteSpace()) OrElse (Me.StatusText = _StatusTextDefault))
                         _StatusTextDefault = value
                         If (forward) Then Me.StatusText = _StatusTextDefault
+                    End if
+                End Set
+            End Property
+            
+            ''' <summary> A tool tip for status text (i.e for displaying more text than fits in status bar). </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' HINT: Every time <see cref="StatusText"/> is set, this property is set to <see langword="null"/>!
+             ''' </para>
+             ''' <para>
+             ''' In order to reflect value change on UI, <c>Cinch.ApplicationHelper.DoEvents()</c> is called.
+             ''' </para>
+             ''' </remarks>
+            Public Property StatusTextToolTip() As String Implements IStatusIndicator.StatusTextToolTip
+                Get
+                    Return _StatusTextToolTip
+                End Get
+                Set(value As String)
+                    If (Not (value = _StatusTextToolTip)) Then
+                        _StatusTextToolTip = value
+                        MyBase.NotifyPropertyChanged("StatusTextToolTip")
+                        Cinch.ApplicationHelper.DoEvents()
                     End if
                 End Set
             End Property
@@ -615,11 +640,12 @@ Namespace UI.ViewModel
             Private UIValidationErrors As New Dictionary(Of String, UIValidationError)
             
             ''' <summary> Gets the count of current UI validation errors. </summary>
-             ''' <returns> count of current UI validation errors. </returns>
+             ''' <returns> Count of current UI validation errors. </returns>
              ''' <remarks>
              ''' In order to work automatically, 
              ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's <c>NotifyOnValidationError</c> property to be set to <see langword="true"/>.
+             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
+             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
              ''' </remarks>
             Public ReadOnly Property UIValidationErrorCount() As Integer
                 Get
@@ -659,6 +685,7 @@ Namespace UI.ViewModel
                 UIValidationErrors.Add(e.Key, e)
                 NotifyPropertyChanged("UIValidationErrorUserMessages")
                 NotifyPropertyChanged("UIValidationErrorCount")
+                OnUIValidationErrorsChanged()
             End Sub
             
             ''' <summary> Clears the internal UI validation error dictionary of this ViewModel. </summary>
@@ -672,6 +699,7 @@ Namespace UI.ViewModel
                 UIValidationErrors.Clear()
                 NotifyPropertyChanged("UIValidationErrorUserMessages")
                 NotifyPropertyChanged("UIValidationErrorCount")
+                OnUIValidationErrorsChanged()
             End Sub
             
             ''' <summary> Removes an UI validation error from this ViewModel. </summary>
@@ -686,6 +714,12 @@ Namespace UI.ViewModel
                 UIValidationErrors.Remove(e.Key)
                 NotifyPropertyChanged("UIValidationErrorUserMessages")
                 NotifyPropertyChanged("UIValidationErrorCount")
+                OnUIValidationErrorsChanged()
+            End Sub
+            
+            
+            ''' <summary> Response to changed UIValidationErrors (The default implementation is empty). </summary>
+            Protected Overridable Sub OnUIValidationErrorsChanged()
             End Sub
             
         #End Region
