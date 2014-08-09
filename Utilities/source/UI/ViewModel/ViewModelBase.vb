@@ -251,8 +251,9 @@ Namespace UI.ViewModel
             
             Private _Progress                   As Double = 0
             Private _StatusText                 As String = String.Empty
-            Private _StatusTextToolTip              As String = Nothing
             Private _StatusTextDefault          As String = String.Empty
+            Private _StatusTextToolTip          As String = Nothing
+            Private _StatusTextToolTipDefault   As String = Nothing
             
             Private VisibleProgressStepCount    As Double = 90
             Private NextProgressThreshold       As Double = 0
@@ -324,6 +325,7 @@ Namespace UI.ViewModel
             End Property
             
             ''' <summary> A default value for <see cref="StatusText"/>. Deaults to String.Empty. </summary>
+             ''' <remarks> <see cref="resetStateIndication"/>() sets <see cref="StatusText"/> to this default value. </remarks>
             Public Property StatusTextDefault() As String Implements IStatusIndicator.StatusTextDefault
                 Get
                     Return _StatusTextDefault
@@ -359,16 +361,34 @@ Namespace UI.ViewModel
                 End Set
             End Property
             
-            ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero. </summary>
+            ''' <summary> A default value for <see cref="StatusTextToolTip"/>. Deaults to String.Empty. </summary>
+             ''' <remarks> <see cref="resetStateIndication"/>() sets <see cref="StatusTextToolTip"/> to this default value. </remarks>
+            Public Property StatusTextToolTipDefault() As String Implements IStatusIndicator.StatusTextToolTipDefault
+                Get
+                    Return _StatusTextToolTipDefault
+                End Get
+                Set(value As String)
+                    If (Not (value = _StatusTextToolTipDefault)) Then
+                        Dim forward As Boolean = ((Me.StatusTextToolTip.IsEmptyOrWhiteSpace()) OrElse (Me.StatusTextToolTip = _StatusTextToolTipDefault))
+                        _StatusTextToolTipDefault = value
+                        If (forward) Then Me.StatusTextToolTip = _StatusTextToolTipDefault
+                    End if
+                End Set
+            End Property
+            
+            ''' <summary> Sets <see cref="StatusText"/> to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (immediately). </summary>
+             ''' <remarks> If there's already a delayed reset pending, it's aborted. </remarks>
             Public Sub resetStateIndication() Implements IStatusIndicator.resetStateIndication
+                DeferredResetStateAction.Abort()
+                Me.StatusTextToolTip = Nothing
                 Me.StatusText = Me.StatusTextDefault
                 Me.Progress = 0
             End Sub
             
             ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay). </summary>
              ''' <param name="Delay"> Delay for reset (in Milliseconds). </param>
-            Public Sub resetStateIndication(Delay As Long) Implements IStatusIndicator.resetStateIndication
-                DeferredResetStateAction.Defer(System.TimeSpan.FromMilliseconds(Delay))
+            Public Sub resetStateIndication(Delay As Double) Implements IStatusIndicator.resetStateIndication
+                DeferredResetStateAction.Defer(Delay)
             End Sub
             
         #End Region

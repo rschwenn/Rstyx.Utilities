@@ -61,13 +61,29 @@ Public Class DeferredAction
         ''' Repeated calls will reschedule the action, if it has not already been performed.
         ''' </summary>
          ''' <param name="delay"> The amount of time to wait before performing the action. </param>
-         ''' <exception cref="System.ObjectDisposedException">     This <see cref="DeferredAction"/> has been already disposed of. </exception>
+         ''' <exception cref="System.ObjectDisposedException">     This <see cref="DeferredAction"/> (resp. it's timer) has been already disposed of. </exception>
          ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="delay"/> is less than -1. </exception>
-         ''' <exception cref="System.NotSupportedException">       <paramref name="delay"/> is greater than 4294967294. </exception>
+         ''' <exception cref="System.NotSupportedException">       <paramref name="delay"/> is greater than 4294967294 milliseconds. </exception>
         Public Sub Defer(delay As TimeSpan)
-            'If (Me.timer IsNot Nothing) Then
-                Me.timer.Change(delay, TimeSpan.FromMilliseconds(-1))
-            'End If
+            Me.timer.Change(delay, TimeSpan.FromMilliseconds(-1))
+        End Sub
+        
+        ''' <summary>
+        ''' Schedules the action for performing once after the specified delay.
+        ''' Repeated calls will reschedule the action, if it has not already been performed.
+        ''' </summary>
+         ''' <param name="delay"> The amount of time (in milliseconds) to wait before performing the action. </param>
+         ''' <exception cref="System.ObjectDisposedException">     This <see cref="DeferredAction"/> (resp. it's timer) has been already disposed of. </exception>
+         ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="delay"/> is less than -1. </exception>
+         ''' <exception cref="System.NotSupportedException">       <paramref name="delay"/> is greater than 4294967294 milliseconds. </exception>
+        Public Sub Defer(delay As Double)
+            Me.timer.Change(TimeSpan.FromMilliseconds(delay), TimeSpan.FromMilliseconds(-1))
+        End Sub
+        
+        ''' <summary> Aborts an active schedule, if there is one. </summary>
+         ''' <exception cref="System.ObjectDisposedException"> This <see cref="DeferredAction"/> (resp. it's timer) has been already disposed of. </exception>
+        Public Sub Abort()
+            Me.timer.Change(TimeSpan.FromMilliseconds(-1), TimeSpan.FromMilliseconds(-1))
         End Sub
         
     #End Region

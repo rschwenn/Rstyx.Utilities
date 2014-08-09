@@ -13,14 +13,17 @@
         ''' <summary> A tool tip for status text (i.e for displaying more text than fits in status bar). </summary>
         Property StatusTextToolTip() As String
         
+        ''' <summary> A default value for <see cref="StatusTextToolTip"/>. Deaults to <see langword="null"/>. </summary>
+        Property StatusTextToolTipDefault() As String
+        
         ''' <summary> The current progress in percent. </summary>
         Property Progress() As Double
         
-        ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero. </summary>
+        ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (immediately). </summary>
         Sub resetStateIndication()
         
         ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay). </summary>
-        Sub resetStateIndication(Delay As Long)
+        Sub resetStateIndication(Delay As Double)
         
     End Interface
     
