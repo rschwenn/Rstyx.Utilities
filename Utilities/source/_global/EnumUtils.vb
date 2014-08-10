@@ -4,10 +4,12 @@ Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Reflection
 Imports System.Resources
+Imports System.Runtime.InteropServices
 
 Imports PGK.Extensions
 
-'Imports PGK.Extensions
+Imports Rstyx.Utilities.StringUtils
+
 
 'Namespace Enums
     
@@ -157,12 +159,17 @@ Imports PGK.Extensions
         End Function
         
         ''' <summary> Returns a localized display string for the given <c>Nullable(Of Enum)</c> value from resources. </summary>
-         ''' <typeparam name="T">             The value type wrapped by the <c>Nullable</c>. </typeparam>
+         ''' <typeparam name="TEnum">         The Enum type wrapped by the <c>Nullable</c>. </typeparam>
          ''' <param name="NullableStructure"> The <c>Nullable(Of Enum)</c> value to display. </param>
          ''' <returns>                        If <c>T</c> is an <c>Enum</c> then the localized string available in resources, otherwise <c>T.ToString()</c>. </returns>
+         ''' <exception cref="System.ArgumentException"> <paramref name="TEnum"/> is not an Enum type. </exception>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function ToDisplayString(Of T As Structure)(NullableStructure As Nullable(Of T)) As String
+        Public Function ToDisplayString(Of TEnum As Structure)(NullableStructure As Nullable(Of TEnum)) As String
             
+            Dim TargetType As Type = GetType(TEnum)
+            If (Not (TargetType.BaseType.Name = GetType(System.Enum).Name)) Then
+                Throw New System.ArgumentException(sprintf(Rstyx.Utilities.Resources.Messages.EnumUtils_InvalidTargetType, TargetType.Name), "TEnum")
+            End If
             Dim RetValue  As String = String.Empty
             
             If (NullableStructure.HasValue) Then
@@ -175,6 +182,40 @@ Imports PGK.Extensions
                 
             End If
             
+            Return RetValue
+        End Function
+        
+        ''' <summary> Converts a localized display string for the given Enum type to the underlying Enum object. </summary>
+         ''' <typeparam name="TEnum">         The target Enum type. </typeparam>
+         ''' <param name="Result">            The resulting Enum object. It's type will be treated as target Enum type. </param>
+         ''' <param name="EnumDisplayString"> The localized display string of a Enum of type . </param>
+         ''' <returns> <see langword="true"/> on success, otherwise <see langword="false"/>. </returns>
+         ''' <remarks> See <see cref="ToDisplayString"/> for more information. </remarks>
+         ''' <exception cref="System.ArgumentException"> <paramref name="Result"/> is not an Enum type. </exception>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function TryParseDisplayString(Of TEnum As Structure)(<OutAttribute> ByRef Result As TEnum, EnumDisplayString As String) As Boolean
+            
+            Dim TargetType As Type = GetType(TEnum)
+            If (Not (TargetType.BaseType.Name = GetType(System.Enum).Name)) Then
+                Throw New System.ArgumentException(sprintf(Rstyx.Utilities.Resources.Messages.EnumUtils_InvalidTargetType, TargetType.Name), "TEnum")
+            End If
+            Dim RetValue  As Boolean = False
+            Try
+                Dim EnumValue As TEnum
+                
+                For Each i As Integer In System.Enum.GetValues(GetType(TEnum))
+                    
+                    If ([Enum].TryParse(i, EnumValue)) Then
+                    
+                        If (ToDisplayString(EnumValue) = EnumDisplayString) Then
+                            Result   = EnumValue
+                            RetValue = True
+                        End If
+                    End If
+                Next
+            Catch ex as System.Exception
+                System.Diagnostics.Trace.WriteLine(ex)
+            End Try
             Return RetValue
         End Function
         

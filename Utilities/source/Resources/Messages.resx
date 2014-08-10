@@ -661,4 +661,7 @@
     <value>Strecke %d</value>
     <comment>Track Number: Integer</comment>
   </data>
+  <data name="EnumUtils_InvalidTargetType" xml:space="preserve">
+    <value>Der Zieltyp '%s' ist kein System.Enum.</value>
+  </data>
 </root>

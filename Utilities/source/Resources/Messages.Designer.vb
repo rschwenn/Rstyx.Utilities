@@ -668,6 +668,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Der Zieltyp &apos;%s&apos; ist kein System.Enum. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property EnumUtils_InvalidTargetType() As String
+            Get
+                Return ResourceManager.GetString("EnumUtils_InvalidTargetType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler bei Verarbeitung der Dateien des Ordners &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property FileUtils_ErrorProcessingFolder() As String
