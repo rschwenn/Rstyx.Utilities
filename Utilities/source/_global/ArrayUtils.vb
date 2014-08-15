@@ -56,8 +56,8 @@
                   Dim CountParms2  As Integer
                   Dim EmbedCount() As Integer
                   Dim IsEmbedded   As Boolean
-                  Dim tmpArray()   As Object = new Object() {}
-                  Dim flatParms()  As Object = new Object() {}
+                  Dim tmpArray()   As Object = New Object() {}
+                  Dim flatParms()  As Object = New Object() {}
                   
                 'Try
                     ' Initialisierung

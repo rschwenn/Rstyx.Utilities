@@ -117,11 +117,8 @@ Public Class MainViewModel
                 
                 Logger.logInfo(ts.TotalSeconds.ToString())
                 
-                Dim dict As New Dictionary(Of String, String)
-                dict.Add("Test", "***")
-                dict("yyyyyy") = "khggzgi"
-                Dim a As String = dict("yyyyyy")
-                Dim b As String = dict("Test")
+                Logger.logInfo(StringUtils.sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
+                Logger.logInfo(StringUtils.sprintf("Nothing: '%6.3f'", Nothing))
                 
                 
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)

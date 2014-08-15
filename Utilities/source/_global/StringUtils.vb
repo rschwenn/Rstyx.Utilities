@@ -140,7 +140,11 @@ Imports PGK.Extensions
                     Dim VParms()      As Object
                     
                     ' Unwind encapsulated arrays into one flat parameter array.
-                    VParms = Parms
+                    If (Parms Is Nothing) Then
+                        VParms = New Object() {Nothing}
+                    Else
+                        VParms = Parms
+                    End If
                     FlatParms = ArrayUtils.getFlatArray(VParms)
                     ParamUpTo = LBound(FlatParms)
                     
