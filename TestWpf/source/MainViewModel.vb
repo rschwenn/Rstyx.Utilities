@@ -117,8 +117,15 @@ Public Class MainViewModel
                 
                 Logger.logInfo(ts.TotalSeconds.ToString())
                 
-                Logger.logInfo(StringUtils.sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
-                Logger.logInfo(StringUtils.sprintf("Nothing: '%6.3f'", Nothing))
+                'Logger.logInfo(StringUtils.sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
+                'Logger.logInfo(StringUtils.sprintf("Nothing: '%6.3f'", Nothing))
+                
+                Dim TestText1 As String = "25082013"
+                Dim TestDate As DateTime
+                'Dim success As Boolean = DateTime.TryParse(TestText1, TestDate)
+                Dim success As Boolean = DateTime.TryParseExact(TestText1, "ddMMyyyy", Nothing, Globalization.DateTimeStyles.None, TestDate)
+                Logger.logInfo(TestDate.ToShortDateString())
+                Logger.logInfo(TestDate.ToString("ddMMyyyy"))
                 
                 
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)

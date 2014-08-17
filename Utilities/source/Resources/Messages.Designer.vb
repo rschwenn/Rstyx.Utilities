@@ -992,11 +992,47 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Strecke %d  km %s (Gleis %s, RiKz=%s) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Km ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property PositionAtTrack_ToString() As String
+        Public Shared ReadOnly Property PositionAtTrack_Label_Kilometer() As String
             Get
-                Return ResourceManager.GetString("PositionAtTrack_ToString", resourceCulture)
+                Return ResourceManager.GetString("PositionAtTrack_Label_Kilometer", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Kode/RiKz ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PositionAtTrack_Label_RailsCode() As String
+            Get
+                Return ResourceManager.GetString("PositionAtTrack_Label_RailsCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleis ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PositionAtTrack_Label_RailsName() As String
+            Get
+                Return ResourceManager.GetString("PositionAtTrack_Label_RailsName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Strecke ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PositionAtTrack_Label_Track() As String
+            Get
+                Return ResourceManager.GetString("PositionAtTrack_Label_Track", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Streckenposition unbekannt ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PositionAtTrack_Label_UnKnownPosition() As String
+            Get
+                Return ResourceManager.GetString("PositionAtTrack_Label_UnKnownPosition", resourceCulture)
             End Get
         End Property
         

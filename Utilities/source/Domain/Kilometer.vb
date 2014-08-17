@@ -231,6 +231,11 @@ Namespace Domain
                 Return success
             End Function
             
+            ''' <summary> Checks if <see cref=" Value"/> isn't <c>Double.NAN</c>. </summary>
+            Public Function HasValue() As Boolean
+                Return (Not Double.IsNaN(_Value))
+            End Function
+            
         #End Region
         
         #Region "Overrides"

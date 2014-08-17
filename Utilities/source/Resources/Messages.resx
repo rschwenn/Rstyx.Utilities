@@ -653,15 +653,26 @@
     <value>Das Feld '%s' stellt keine ganze Zahl zwischen %d und %d dar (%s).</value>
     <comment>Field Caption: String; MinValue: Integer; MaxValue: Integer; Field String: String</comment>
   </data>
-  <data name="PositionAtTrack_ToString" xml:space="preserve">
-    <value>Strecke %d  km %s (Gleis %s, RiKz=%s)</value>
-    <comment>Track Number: Integer, Kilometer: String, RailsNameNo: String, RailsCode: String</comment>
-  </data>
   <data name="TrackTitle_ToString" xml:space="preserve">
     <value>Strecke %d</value>
     <comment>Track Number: Integer</comment>
   </data>
   <data name="EnumUtils_InvalidTargetType" xml:space="preserve">
     <value>Der Zieltyp '%s' ist kein System.Enum.</value>
+  </data>
+  <data name="PositionAtTrack_Label_Kilometer" xml:space="preserve">
+    <value>Km</value>
+  </data>
+  <data name="PositionAtTrack_Label_RailsCode" xml:space="preserve">
+    <value>Kode/RiKz</value>
+  </data>
+  <data name="PositionAtTrack_Label_RailsName" xml:space="preserve">
+    <value>Gleis</value>
+  </data>
+  <data name="PositionAtTrack_Label_Track" xml:space="preserve">
+    <value>Strecke</value>
+  </data>
+  <data name="PositionAtTrack_Label_UnKnownPosition" xml:space="preserve">
+    <value>Streckenposition unbekannt</value>
   </data>
 </root>

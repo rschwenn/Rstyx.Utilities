@@ -1,4 +1,7 @@
 ﻿
+Imports System.Collections.Generic
+Imports System.Text
+
 Imports PGK.Extensions
 
 'Namespace Strings
@@ -423,6 +426,32 @@ Imports PGK.Extensions
     
     ''' <summary> Extension methods for strings or other types dealing with strings. </summary>
     Public Module StringExtensions
+        
+        ''' <summary> Joins strings only if not <see langword="null"/>, empty or whitespace. </summary>
+         ''' <param name="SourceStrings"> The source Strings. </param>
+         ''' <param name="JoinString">    The join string. </param>
+         ''' <returns> The joined string. May be empty (but not <see langword="null"/>). </returns>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceStrings"/> or <paramref name="TestStrings"/> is <see langword="null"/>. </exception>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function JoinIgnoreEmpty(SourceStrings As IEnumerable(Of String), JoinString As String) As String
+            
+            If (SourceStrings Is Nothing) Then Throw New System.ArgumentNullException("SourceStrings")
+            If (JoinString Is Nothing)    Then Throw New System.ArgumentNullException("JoinString")
+            
+            Dim Builder As New StringBuilder()
+            
+            For Each SourceString As String In SourceStrings
+                If (SourceString.IsNotEmptyOrWhiteSpace()) Then
+                    Builder.Append(SourceString)
+                    Builder.Append(JoinString)
+                End If
+            Next
+            ' Remove trailing join string.
+            If (Builder.Length > 0) Then
+                Builder.Remove(Builder.Length - JoinString.Length, JoinString.Length)
+            End If
+            Return Builder.ToString()
+        End Function
         
         ''' <summary> Check whether or not the string containes any of given test strings. </summary>
          ''' <param name="Value">       Input String. </param>
