@@ -329,7 +329,7 @@
                         Watermark="Wasser Wasser Wasser"
                         />
                 </DockPanel>
-                    
+                
                 <DockPanel>
                     <Label Target="{Binding ElementName=tbTest}" Content="_Test"/>
                     <TextBox
@@ -402,6 +402,24 @@
                 
                 <!--xmlns:Ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"-->
                 <!--<Ribbon:RibbonToggleButton Height="28" Name="RibbonToggleButton1" Width="38" Content="RTB" IsChecked="True" />-->
+            </DockPanel>
+            
+            
+            <DockPanel>
+                <Label Target="{Binding ElementName=ValidatingTextBox1}" Content="Test Double"/>
+                <TextBox
+                    Name="ValidatingTextBox1"
+                    Text="{Binding Path=ValidatingProperty1, Mode=TwoWay, StringFormat=\{0:0.0\}, NotifyOnValidationError=True, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
+                    Width="100"
+                    />
+                    <!--Text="{Binding Path=ValidatingProperty, Mode=TwoWay, StringFormat=\{0:0.0\}, NotifyOnValidationError=True, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged"-->
+                    <!--Text="{Binding Path=Textbox, Mode=TwoWay, Converter={x:Static RstyxConverters:ConverterProvider.DebugConverter}}"-->
+                    
+                <Label Target="{Binding ElementName=ValidatingTextBox2}" Content="Test Kilometer"/>
+                <TextBox
+                    Name="ValidatingTextBox2"
+                    Text="{Binding ValidatingProperty2, Mode=TwoWay, NotifyOnValidationError=True, UpdateSourceTrigger=LostFocus, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
+                    />
             </DockPanel>
         </DockPanel>
         

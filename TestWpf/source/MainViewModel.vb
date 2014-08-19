@@ -40,6 +40,19 @@ Public Class MainViewModel
         
         Public Property FilePath1 As String
         Public Property Textbox   As String
+        Public Property ValidatingProperty1  As Double
+        
+        Private _BackStoreKilometer  As Kilometer = New Kilometer(1234.5678)
+        'Private _ValidatingProperty2 As String
+        Public Property ValidatingProperty2 As String
+            Get
+                Return _BackStoreKilometer.ToString()
+            End Get
+            Set(value As String)
+                _BackStoreKilometer.ParseKilometer(value)
+                Me.NotifyPropertyChanged("ValidatingProperty2")
+            End Set
+        End Property
         
         Private _TextField  As String
         Public ReadOnly Property TextField  As String

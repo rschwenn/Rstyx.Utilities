@@ -177,6 +177,24 @@ Namespace Domain
                 Return Part1 & Part2
             End Function
             
+            ''' <summary> Parses a string as usual Kilometer notation. </summary>
+             ''' <param name="KilometerString"> A usual Kilometer notation or a numerical String. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If parsing has been successful, the properties provide the recognized values. Otherwise they will be set to <c>Double.NaN</c>.
+             ''' </para>
+             ''' <para>
+             ''' First, the string will be tried to be recognized as Kilometer notation, on failure as double number.
+             ''' If double number is greater than 90.000.000 it will be treated as TDB notation.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or empty or whitespace only. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="KilometerString"/> can't be parsed into a <see cref="Kilometer"/>. </exception>
+            Public Sub ParseKilometer(ByVal KilometerString As String)
+                If (KilometerString.IsEmptyOrWhiteSpace())  Then Throw New System.ArgumentNullException("KilometerString")
+                If (Not TryParseKilometer(KilometerString)) Then Throw New System.ArgumentException("KilometerString")
+            End Sub
+            
             ''' <summary> Tries to parse a string as usual Kilometer notation. </summary>
              ''' <param name="KilometerString"> A usual Kilometer notation or a numerical String. </param>
              ''' <returns> <see langword="true"/> if the string has been parsed successful as Kilometer, otherwise <see langword="false"/>. </returns>
