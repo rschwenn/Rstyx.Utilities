@@ -15,6 +15,7 @@ Namespace Domain
         
         #Region "Constructor"
             
+            ''' <summary> Creates a new, empty instance. </summary>
             Public Sub New
             End Sub
             
