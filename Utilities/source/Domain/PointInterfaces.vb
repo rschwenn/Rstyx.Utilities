@@ -102,7 +102,7 @@ Namespace Domain
         ''' <summary> Height above gradient design (vertical curve set). </summary>
         Property H()            As Double
         
-        ''' <summary> Slope angle of gradient design (vertical curve set). </summary>
+        ''' <summary> Slope angle of gradient design (vertical curve set) in [rad]. </summary>
         Property G()            As Double
         
         ''' <summary> Height coordinate of running surface of rail. </summary>
@@ -157,19 +157,19 @@ Namespace Domain
         ''' <summary> Radius. </summary>
         Property Ra()           As Double
         
-        ''' <summary> Azimuth of alignment tangent. </summary>
+        ''' <summary> Azimuth of alignment tangent in [rad]. </summary>
         Property Ri()           As Double
         
         
-        ''' <summary> Actual cant. </summary>
+        ''' <summary> Actual cant in [m]. </summary>
          ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>
         Property ActualCant()   As Double
         
-        ''' <summary> Cant (Superelevation). </summary>
+        ''' <summary> Cant (Superelevation) in [m]. </summary>
          ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>
         Property Ueb()          As Double
         
-        ''' <summary> Height difference between gradient design (vertical curve set) and running surface of rail (at special geometry). </summary>
+        ''' <summary> Height difference between gradient design (vertical curve set) and running surface of rail (at special geometry) in [m]. </summary>
         Property Heb()          As Double     'Hebewert in der Schere [m]
         
         ''' <summary> The distance between rails for determining cant (used for calculations). </summary>

@@ -607,11 +607,11 @@ Imports PGK.Extensions
         End Function
         
         ''' <summary> Indents the single lines of the string. </summary>
-         ''' <param name="Value">                     The string to split. </param>
+         ''' <param name="Value">                     The string to indent. </param>
          ''' <param name="Width">                     The width or count of spaces to prepend every line with. </param>
          ''' <param name="IncludeFirstline">          If <see langword="true"/>, the first line will be indented too. </param>
          ''' <param name="PrependNewlineIfMultiline"> If <see langword="true"/> and <paramref name="Value"/> is multi-line, then <paramref name="Value"/> will be prepended by a new line. </param>
-         ''' <returns>                                A String with  indented lines. </returns>
+         ''' <returns>                                A String with indented lines. </returns>
          ''' <remarks> </remarks>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function indent(Value As String, Width As Integer, IncludeFirstline As Boolean, PrependNewlineIfMultiline As Boolean) As String

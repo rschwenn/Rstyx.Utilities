@@ -429,7 +429,7 @@ Namespace IO
                             
                             ' Parse number allowing or not the kilometer notation.
                             If (OptionAllowKilometerNotation) Then
-                                success = DefaultKilometer.TryParseKilometer(FieldString)
+                                success = DefaultKilometer.TryParse(FieldString)
                                 If (success) Then FieldDouble = DefaultKilometer.Value
                                 MessageFmt = Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer
                             Else
@@ -467,7 +467,7 @@ Namespace IO
                             End If
                             
                             ' Parse kilometer.
-                            success = FieldKilometer.TryParseKilometer(FieldString)
+                            success = FieldKilometer.TryParse(FieldString)
                             
                             If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
                                 ParseError = New ParseError(ParseErrorLevel.Error, 

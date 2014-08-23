@@ -83,7 +83,7 @@ Namespace Domain
              ''' </para>
              ''' <para>
              ''' This constructor throws an exception if <paramref name="KilometerString"/> couldn't be parsed succesfully.
-             ''' To avoid an exception, use the parameterless constructor and call <see cref="Kilometer.TryParseKilometer"/>.
+             ''' To avoid an exception, use the parameterless constructor and call <see cref="Kilometer.TryParse"/>.
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or <c>String.Empty</c>. </exception>
@@ -92,7 +92,7 @@ Namespace Domain
                 
                 If (KilometerString.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("KilometerString")
                 
-                If (Not TryParseKilometer(KilometerString)) Then
+                If (Not TryParse(KilometerString)) Then
                     Throw New System.ArgumentException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Kilometer_InvalidKilometerNotation, KilometerString), "KilometerString")
                 End If
             End Sub
@@ -190,9 +190,9 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or empty or whitespace only. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="KilometerString"/> can't be parsed into a <see cref="Kilometer"/>. </exception>
-            Public Sub ParseKilometer(ByVal KilometerString As String)
+            Public Sub Parse(ByVal KilometerString As String)
                 If (KilometerString.IsEmptyOrWhiteSpace())  Then Throw New System.ArgumentNullException("KilometerString")
-                If (Not TryParseKilometer(KilometerString)) Then Throw New System.ArgumentException("KilometerString")
+                If (Not TryParse(KilometerString)) Then Throw New System.ArgumentException("KilometerString")
             End Sub
             
             ''' <summary> Tries to parse a string as usual Kilometer notation. </summary>
@@ -207,7 +207,7 @@ Namespace Domain
              ''' If double number is greater than 90.000.000 it will be treated as TDB notation.
              ''' </para>
              ''' </remarks>
-            Public Function TryParseKilometer(ByVal KilometerString As String) As Boolean
+            Public Function TryParse(ByVal KilometerString As String) As Boolean
                 Dim success As Boolean = False
                 reset()
                 

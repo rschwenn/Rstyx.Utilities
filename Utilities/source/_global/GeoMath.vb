@@ -1,6 +1,7 @@
 ﻿
 Imports System
 Imports System.IO
+Imports System.Runtime.InteropServices
 
 Imports PGK.Extensions
 
@@ -50,7 +51,7 @@ Imports PGK.Extensions
                 Dim Angle   As Double
                 TwoPI = 2 * System.Math.PI
                 Angle = Radiant
-                If (not Double.IsNaN(Angle)) Then
+                If (Not Double.IsNaN(Angle)) Then
                     Do While (Angle < -System.Math.PI)
                         Angle = Angle + TwoPI
                     Loop
@@ -67,7 +68,7 @@ Imports PGK.Extensions
             Public Shared Function normalizeGon(ByVal Gon As Double) As Double
                 Dim Angle  As Double
                 Angle = Gon
-                If (not Double.IsNaN(Angle)) Then
+                If (Not Double.IsNaN(Angle)) Then
                     Do While (Angle < 0)
                        Angle = Angle + 400
                     Loop
@@ -98,7 +99,7 @@ Imports PGK.Extensions
             
             ''' <summary> Convert hexadecimal String representation without prefix to decimal Long (i.e "FF" => 255). </summary>
              ''' <param name="Hexadecimal"> String representation of a number that is to be interpreted as hex. </param>
-             ''' <returns> Decimal number or <see langword="null"/> </returns>
+             ''' <returns> Decimal number or <see langword="null"/>. </returns>
             Public Shared Function Hex2Dec(ByVal Hexadecimal As String) As Nullable(Of Long)
                 Dim Dec     As Nullable(Of Long)
                 Try
@@ -109,6 +110,20 @@ Imports PGK.Extensions
                 Return Dec
             End Function
             
+            ''' <summary> Replacement for <c>Double.TryParse</c>. Returns <c>Double.NaN</c> if parsing fails. </summary>
+             ''' <param name="Value">  String to parse. </param>
+             ''' <param name="Result"> The parsing result. <c>Double.NaN</c> if parsing fails. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks></remarks>
+            Public Shared Function TryParseDouble(Value As String, <out> ByRef Result As Double) As Boolean
+                Dim success As Boolean = False
+                
+                If (Value.IsNotEmptyOrWhiteSpace()) Then success = Double.TryParse(Value, Result)
+                
+                If (Not success) Then Result = Double.NaN
+                
+                Return success
+            End Function
             
         #End Region
         

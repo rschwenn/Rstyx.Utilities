@@ -25,7 +25,7 @@ Namespace IO
         ''' <summary> No options. </summary>
         None = 0
         
-        ''' <summary> Determines that, for a target type of <c>Double</c>, the source string will be parsed by <see cref="Rstyx.Utilities.Domain.Kilometer.TryParseKilometer"/>. </summary>
+        ''' <summary> Determines that, for a target type of <c>Double</c>, the source string will be parsed by <see cref="Rstyx.Utilities.Domain.Kilometer.TryParse"/>. </summary>
         AllowKilometerNotation = 1
         
         ''' <summary> Determines that leading asterisks ("*") will be ignored while numeric parsing. </summary>

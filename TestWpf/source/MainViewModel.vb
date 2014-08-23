@@ -140,6 +140,9 @@ Public Class MainViewModel
                 Logger.logInfo(TestDate.ToShortDateString())
                 Logger.logInfo(TestDate.ToString("ddMMyyyy"))
                 
+                Dim TestDouble As Double = 33
+                Double.TryParse(Nothing , TestDouble)
+                Logger.logInfo(StringUtils.sprintf("Double = %.3f", TestDouble))
                 
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)
                 'Logger.logInfo(StringUtils.sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
