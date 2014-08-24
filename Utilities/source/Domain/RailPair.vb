@@ -143,20 +143,29 @@ Namespace Domain
                 
                 Dim yl  As Double
                 Dim yr  As Double
-                Dim hd2 As Double = Sqrt(Pow(CantBase, 2) - Pow(Cant, 2)) / 2
+                Dim xl  As Double
+                Dim xr  As Double
+                'Dim hd2 As Double = Sqrt(Pow(CantBase, 2) - Pow(Cant, 2)) / 2
+                Dim cbh As Double = Sqrt(Pow(CantBase, 2) - Pow(Cant, 2))
                 
                 If (Cant < 0) Then
                     Yl = 0.0
                     yr = Abs(Cant)
+                    xl = -CantBase / 2
+                    xr = cbh + xl
                 Else
                     Yl = Cant
                     yr = 0.0
+                    xr = CantBase / 2
+                    xl = -cbh + xr
                 End If
                 
                 _Cant     = Cant
                 _CantBase = CantBase
-                _RSLeft   = New Point(-hd2, yl)
-                _RSRight  = New Point(hd2, yr)
+                _RSLeft   = New Point(xl, yl)
+                _RSRight  = New Point(xr, yr)
+                '_RSLeft   = New Point(-hd2, yl)
+                '_RSRight  = New Point(hd2, yr)
                 Me.Radius = 1 * Sign(_Cant)
                 
                 _IsConfigured  = True

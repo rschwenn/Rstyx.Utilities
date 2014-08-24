@@ -1,11 +1,39 @@
 ﻿
 Imports System
+Imports System.Math
 Imports System.IO
 Imports System.Runtime.InteropServices
 
 Imports PGK.Extensions
 
 'Namespace GeoMath
+    
+    ''' <summary> Extension methods for numeric types. </summary>
+    Public Module MathExtensions
+        
+        ''' <summary> Checks two double values for equality considering a tolerance. </summary>
+         ''' <param name="Value">        First Value </param>
+         ''' <param name="CompareValue"> Second Value </param>
+         ''' <param name="Tolerance">    Difference between values to tolerate. (<c>Double.NaN</c> is treated as 0.0) </param>
+         ''' <returns> <see langword="true"/> if difference between <paramref name="Value"/> and <paramref name="CompareValue"/> is less than or equal <paramref name="Tolerance"/>. </returns>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function EqualsAlmost(Value As Double, CompareValue As Double, ByVal Tolerance As Double) As Boolean
+            Dim IsEqual As Boolean = False
+            
+            If (Double.IsNaN(Tolerance)) Then
+                Tolerance = 0.0
+            End If
+            
+            If (Double.IsNaN(Value) And Double.IsNaN(CompareValue)) Then
+                IsEqual = True
+            ElseIf (Not (Double.IsNaN(Value) OrElse Double.IsNaN(CompareValue))) Then
+                IsEqual = (Not (Abs(Value - CompareValue) > Abs(Tolerance)))
+            End If
+            
+            Return IsEqual
+        End Function
+        
+    End Module
     
     ''' <summary> Static utility methods for (geodetic) mathematic needs. </summary>
     Public NotInheritable Class GeoMath

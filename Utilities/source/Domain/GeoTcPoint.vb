@@ -1,5 +1,5 @@
 ﻿
-Imports System
+Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Text.RegularExpressions
 
@@ -161,13 +161,14 @@ Namespace Domain
                     Me.HG = Me.HSOK
                     
                 ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
-                    Dim sf  As Integer = Math.Sign(Me.Ra)
-                    Dim phi As Double  = sf * Math.Atan(Me.Ueb / Me.CantBase) * (-1)
-                    Dim X0  As Double  = Math.Abs(Me.CantBase / 2 * Math.Sin(phi))
-                    Dim Y0  As Double  = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Math.Cos(phi)))
+                    Dim sf  As Integer = Sign(Me.Ra)
+                    Dim cbh As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
+                    Dim phi As Double  = sf * Atan(Me.Ueb / cbh) * (-1)
+                    Dim X0  As Double  = Abs(Me.Ueb / 2)
+                    Dim Y0  As Double  = sf * (Me.CantBase - cbh) / 2
                     
-                    Me.QG = (Me.Q - Y0) * Math.Cos(phi) + (Me.HSOK - X0) * Math.Sin(phi)
-                    Me.HG = (Me.HSOK - X0) * Math.Cos(phi) - (Me.Q - Y0) * Math.Sin(phi)
+                    Me.QG = (Me.Q - Y0) * Cos(phi) + (Me.HSOK - X0) * Sin(phi)
+                    Me.HG = (Me.HSOK - X0) * Cos(phi) - (Me.Q - Y0) * Sin(phi)
                 Else
                     Me.QG = Double.NaN
                     Me.HG = Double.NaN
@@ -190,15 +191,16 @@ Namespace Domain
                     Me.HSOK = Me.HG
                     
                 ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
-                    Dim sf      As Integer = Math.Sign(Me.Ra)
-                    Dim phi     As Double = sf * Math.Atan(Me.Ueb / Me.CantBase) * (-1)
-                    Dim CosPhi  As Double = Math.Cos(phi)
-                    Dim SinPhi  As Double = Math.Sin(phi)
-                    Dim X0      As Double = Math.Abs(Me.CantBase / 2 * Math.Sin(phi))
-                    Dim Y0      As Double = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Math.Cos(phi)))
+                    Dim sf      As Integer = Sign(Me.Ra)
+                    Dim cbh     As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
+                    Dim phi     As Double  = sf * Atan(Me.Ueb / cbh) * (-1)
+                    Dim CosPhi  As Double  = Cos(phi)
+                    Dim SinPhi  As Double  = Sin(phi)
+                    Dim X0      As Double  = Abs(Me.Ueb / 2)
+                    Dim Y0      As Double  = sf * (Me.CantBase - cbh) / 2
                     
                     Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)
-                    Me.Q = Y0 + Me.QG / CosPhi - (Me.HSOK - X0) * SinPhi
+                    Me.Q    = Y0 + (Me.QG - (Me.HSOK - X0) * SinPhi) / CosPhi
                 Else
                     Me.Q    = Double.NaN
                     Me.HSOK = Double.NaN
@@ -307,13 +309,75 @@ Namespace Domain
                     If (ui.IsNotEmpty()) Then
                         ' 3. Cant value found.
                         Cant = cdbl(ui)
-                        If (Absolute) Then Cant = System.Math.Abs(Cant.ConvertTo(Of Double))
+                        If (Absolute) Then Cant = Abs(Cant.ConvertTo(Of Double))
                         If (EditCantSource) Then Pointinfo = Pointinfo.replace(oMatch.Groups(0).Value, String.Empty)
                     End If
                 End If
                 
                 Return Cant / 1000
             End Function
+            
+        #End Region
+        
+        #Region "Backup (Old Methods)"
+            
+            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> to <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> if possible. </summary>
+             ''' <para>
+             ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
+             ''' </para>
+             ''' <para>
+             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
+             ''' </para>
+            Private Sub transformHorizontalToCanted_old()
+                
+                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
+                    Me.QG = Me.Q
+                    Me.HG = Me.HSOK
+                    
+                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
+                    Dim sf  As Integer = Sign(Me.Ra)
+                    Dim phi As Double  = sf * Atan(Me.Ueb / Me.CantBase) * (-1)
+                    Dim X0  As Double  = Abs(Me.CantBase / 2 * Sin(phi))
+                    Dim Y0  As Double  = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Cos(phi)))
+                    
+                    Me.QG = (Me.Q - Y0) * Cos(phi) + (Me.HSOK - X0) * Sin(phi)
+                    Me.HG = (Me.HSOK - X0) * Cos(phi) - (Me.Q - Y0) * Sin(phi)
+                Else
+                    Me.QG = Double.NaN
+                    Me.HG = Double.NaN
+                End If
+            End Sub
+            
+            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> to <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> if possible. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
+             ''' </para>
+             ''' <para>
+             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
+             ''' </para>
+             ''' </remarks>
+            Private Sub transformCantedToHorizontal_old()
+                
+                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
+                    Me.Q    = Me.QG
+                    Me.HSOK = Me.HG
+                    
+                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
+                    Dim sf      As Integer = Sign(Me.Ra)
+                    Dim phi     As Double = sf * Atan(Me.Ueb / Me.CantBase) * (-1)
+                    Dim CosPhi  As Double = Cos(phi)
+                    Dim SinPhi  As Double = Sin(phi)
+                    Dim X0      As Double = Abs(Me.CantBase / 2 * Sin(phi))
+                    Dim Y0      As Double = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Cos(phi)))
+                    
+                    Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)
+                    Me.Q = Y0 + Me.QG / CosPhi - (Me.HSOK - X0) * SinPhi
+                Else
+                    Me.Q    = Double.NaN
+                    Me.HSOK = Double.NaN
+                End If
+            End Sub
             
         #End Region
         

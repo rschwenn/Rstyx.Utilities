@@ -49,7 +49,7 @@ Public Class MainViewModel
                 Return _BackStoreKilometer.ToString()
             End Get
             Set(value As String)
-                _BackStoreKilometer.ParseKilometer(value)
+                _BackStoreKilometer.Parse(value)
                 Me.NotifyPropertyChanged("ValidatingProperty2")
             End Set
         End Property
@@ -143,6 +143,41 @@ Public Class MainViewModel
                 Dim TestDouble As Double = 33
                 Double.TryParse(Nothing , TestDouble)
                 Logger.logInfo(StringUtils.sprintf("Double = %.3f", TestDouble))
+                
+                Dim p1 As New GeoTcPoint()
+                p1.Q    = -4.000
+                p1.HSOK =  5.000
+                p1.Ueb  =  0.150
+                p1.Ra   =  1
+                Dim p2 As New GeoTcPoint()
+                p2.Q    =  4.000
+                p2.HSOK =  5.000
+                p2.Ueb  =  0.150
+                p2.Ra   =  1
+                p1.transformHorizontalToCanted()
+                p2.transformHorizontalToCanted()
+                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p1.Q, p1.HSOK, p1.Ueb, p1.QG, p1.HG))
+                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p2.Q, p2.HSOK, p2.Ueb, p2.QG, p2.HG))
+                
+                Dim p3 As New GeoTcPoint()
+                p3.QG   = p1.QG
+                p3.HG   = p1.HG
+                p3.Ueb  = 0.150
+                p3.Ra   = 1
+                Dim p4 As New GeoTcPoint()
+                p4.QG   = p2.QG
+                p4.HG   = p2.HG
+                p4.Ueb  = 0.150
+                p4.Ra   = 1
+                p3.transformCantedToHorizontal()
+                p4.transformCantedToHorizontal()
+                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb, p3.QG, p3.HG))
+                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb, p4.QG, p4.HG))
+                
+                Dim d1  As Double = 1.2301
+                Dim d2  As Double = 1.23
+                Dim eps As Double = 0.000099999999999
+                Logger.logInfo(StringUtils.sprintf("%.4f = %.4f (eps=%.4f): %s", d1, d2, eps, d1.EqualsAlmost(d2, eps)))
                 
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)
                 'Logger.logInfo(StringUtils.sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
