@@ -156,15 +156,17 @@ Namespace Domain
              ''' </para>
             Public Sub transformHorizontalToCanted()
                 
-                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
+                If (Me.Ueb.EqualsAlmost(0, 0.0005)) Then
+                    
                     Me.QG = Me.Q
                     Me.HG = Me.HSOK
                     
-                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
-                    Dim sf  As Integer = Sign(Me.Ra)
+                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsAlmost(0, 0.001))) Then
+                    
+                    Dim sf  As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
                     Dim cbh As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
-                    Dim phi As Double  = sf * Atan(Me.Ueb / cbh) * (-1)
-                    Dim X0  As Double  = Abs(Me.Ueb / 2)
+                    Dim phi As Double  = sf * Atan(Abs(Me.Ueb) / cbh) * (-1)
+                    Dim X0  As Double  = Abs(Me.Ueb) / 2
                     Dim Y0  As Double  = sf * (Me.CantBase - cbh) / 2
                     
                     Me.QG = (Me.Q - Y0) * Cos(phi) + (Me.HSOK - X0) * Sin(phi)
@@ -186,17 +188,19 @@ Namespace Domain
              ''' </remarks>
             Public Sub transformCantedToHorizontal()
                 
-                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
+                If (Me.Ueb.EqualsAlmost(0, 0.0005)) Then
+                    
                     Me.Q    = Me.QG
                     Me.HSOK = Me.HG
                     
-                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
-                    Dim sf      As Integer = Sign(Me.Ra)
+                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsAlmost(0, 0.001))) Then
+                    
+                    Dim sf      As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
                     Dim cbh     As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
-                    Dim phi     As Double  = sf * Atan(Me.Ueb / cbh) * (-1)
+                    Dim phi     As Double  = sf * Atan(Abs(Me.Ueb) / cbh) * (-1)
                     Dim CosPhi  As Double  = Cos(phi)
                     Dim SinPhi  As Double  = Sin(phi)
-                    Dim X0      As Double  = Abs(Me.Ueb / 2)
+                    Dim X0      As Double  = Abs(Me.Ueb) / 2
                     Dim Y0      As Double  = sf * (Me.CantBase - cbh) / 2
                     
                     Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)

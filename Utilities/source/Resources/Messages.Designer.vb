@@ -1019,6 +1019,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Seite ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PositionAtTrack_Label_Side() As String
+            Get
+                Return ResourceManager.GetString("PositionAtTrack_Label_Side", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Strecke ähnelt.
         '''</summary>
         Public Shared ReadOnly Property PositionAtTrack_Label_Track() As String

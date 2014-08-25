@@ -675,4 +675,7 @@
   <data name="PositionAtTrack_Label_UnKnownPosition" xml:space="preserve">
     <value>Streckenposition unbekannt</value>
   </data>
+  <data name="PositionAtTrack_Label_Side" xml:space="preserve">
+    <value>Seite</value>
+  </data>
 </root>

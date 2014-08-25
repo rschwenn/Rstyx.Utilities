@@ -18,8 +18,11 @@ Namespace Domain
         ''' <summary> Code of track rails (right, left, single). </summary>
         Public Property RailsCode       As String = String.Empty
         
-        ''' <summary> Name or umber of track rails (at a railway mstation). </summary>
+        ''' <summary> Name or number of track rails (at a railway mstation). </summary>
         Public Property RailsNameNo     As String = String.Empty
+        
+        ''' <summary> Textual specification of track side (i.e.: left, right, l, r, +, -). </summary>
+        Public Property Side            As String = String.Empty
                 
          ''' <inheritdoc/>
         Public Overrides Function ToString() As String
@@ -28,6 +31,7 @@ Namespace Domain
             If (Me.Kilometer.HasValue())                 Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_Kilometer & ": " & Me.Kilometer.ToString())
             If (Me.RailsNameNo.IsNotEmptyOrWhiteSpace()) Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_RailsName & ": " & Me.RailsNameNo)
             If (Me.RailsCode.IsNotEmptyOrWhiteSpace())   Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_RailsCode & "="  & Me.RailsCode)
+            If (Me.Side.IsNotEmptyOrWhiteSpace())        Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_Side      & ": " & Me.Side)
             If (PositionString.Count = 0)                Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_UnKnownPosition)
             Return PositionString.JoinIgnoreEmpty(", ")
         End Function
