@@ -585,4 +585,10 @@
   <data name="Rstyx_Utilities_Domain_KilometerStatus_Unknown" xml:space="preserve">
     <value>unbekannt</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcConstraints_CantedRailsSystemRequired" xml:space="preserve">
+    <value>Werte im Gleissystem erforderlich</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TcFileReader_TcConstraints_None" xml:space="preserve">
+    <value>keine</value>
+  </data>
 </root>

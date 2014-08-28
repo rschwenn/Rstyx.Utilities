@@ -1253,6 +1253,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Werte im gedrehten Gleissystem können nicht bestimmt werden. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_Constraints_MissingCantedRailsSystem() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_Constraints_MissingCantedRailsSystem", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Vorzeichen der Überhöhung kann nicht bestimmt werden, weil der Radius Null ist. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_Constraints_MissingCantSign() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_Constraints_MissingCantSign", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Block mit Trassenkoordinaten enthält keine gültigen Punkte (Zeilen %d bis %d). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcFileReader_EmptyTcBlock() As String

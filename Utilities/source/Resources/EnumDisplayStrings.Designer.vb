@@ -1258,6 +1258,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Werte im Gleissystem erforderlich ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcConstraints_CantedRailsSystemRequired() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcConstraints_CantedRailsSystemRequired", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcConstraints_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TcFileReader_TcConstraints_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Kilometerschreibweise akzeptieren ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_AllowKilometerNotation() As String

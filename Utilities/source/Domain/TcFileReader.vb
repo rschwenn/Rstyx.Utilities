@@ -98,6 +98,10 @@ Namespace Domain
                 
                 ''' <summary> If <see langword="true"/> and no kilometer value is found, the station value will be used also as kilometer. Defaults to <see langword="true"/>. </summary>
                 Public Property StationAsKilometer() As Boolean = True
+
+                ''' <summary> Determines logical constraints to be considered for the intended usage of read points (beside the pure source format constraints) . Defaults to <c>None</c>. </summary>
+                 ''' <remarks> If any of these contraints is injured, a <see cref="ParseError"/> will be created. </remarks>
+                Public Property Constraints() As TcConstraints = TcConstraints.None
                 
             #End Region
             
@@ -364,6 +368,18 @@ Namespace Domain
         #End Region
         
         #Region "Nested Data Structures"
+            
+            ''' <summary> Constraints to be considered for the intended usage of read points. </summary>
+            <Flags>
+            Public Enum TcConstraints As Integer
+                
+                ''' <summary> No constraints. </summary>
+                None = 0
+                
+                ''' <summary> Values in canted rails system are required. </summary>
+                CantedRailsSystemRequired = 1
+                
+            End Enum
             
             ''' <summary> Program that is the origin of a track geometry coordinates block. </summary>
             Public Enum TcBlockProgram As Integer
@@ -1250,8 +1266,27 @@ Namespace Domain
                                     ' Calculate values not having read.
                                     p.TryParseActualCant()
                                     p.transformHorizontalToCanted()
-                                    If (Double.IsNaN(p.Km.Value) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                    If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
+                                    
+                                    ' Check for desired constraints.
+                                    If (Me.Constraints.HasFlag(TcConstraints.CantedRailsSystemRequired)) Then
+                                        
+                                        If (Double.IsNaN(p.QG) OrElse Double.IsNaN(p.HG)) Then
+                                            
+                                            Dim Hints As String = Nothing
+                                            If (Double.IsNaN(p.HSOK)) Then
+                                                Hints = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, RecDef.HSOK.Caption, RecDef.HSOK.ColumnOrWord, RecDef.HSOK.Length)
+                                            ElseIf (Double.IsNaN(p.Ueb)) Then
+                                                Hints = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, RecDef.Ueb.Caption, RecDef.Ueb.ColumnOrWord, RecDef.Ueb.Length)
+                                            ElseIf (Double.IsNaN(p.Ra)) Then
+                                                Hints = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, RecDef.Ra.Caption, RecDef.Ra.ColumnOrWord, RecDef.Ra.Length)
+                                            ElseIf (p.Ra.EqualsAlmost(0, 0.001)) Then
+                                                Hints = Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantSign
+                                            End If
+                                            Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.[Error], SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantedRailsSystem, Hints, Nothing))
+                                        End If
+                                    End If
                                     
                                     ' Add Point to the block.
                                     Block.Points.Add(p)
@@ -1430,9 +1465,28 @@ Namespace Domain
                                     ' Calculate values not having read.
                                     p.TryParseActualCant(TryComment:=True)
                                     p.transformHorizontalToCanted()
-                                    If (Double.IsNaN(p.Km.Value) AndAlso Me.StationAsKilometer) Then p.Km = p.St
+                                    If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
                                     If (Double.IsNaN(p.ZSOK)) Then p.ZSOK = p.Z - p.HSOK
+                                    
+                                    ' Check for desired constraints.
+                                    If (Me.Constraints.HasFlag(TcConstraints.CantedRailsSystemRequired)) Then
+                                        
+                                        If (Double.IsNaN(p.QG) OrElse Double.IsNaN(p.HG)) Then
+                                            
+                                            Dim Hints As String = Nothing
+                                            If (Double.IsNaN(p.HSOK)) Then
+                                                Hints = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, RecDef.HSOK.Caption, RecDef.HSOK.ColumnOrWord, RecDef.HSOK.Length)
+                                            ElseIf (Double.IsNaN(p.Ueb)) Then
+                                                Hints = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, RecDef.Ueb.Caption, RecDef.Ueb.ColumnOrWord, RecDef.Ueb.Length)
+                                            ElseIf (Double.IsNaN(p.Ra)) Then
+                                                Hints = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, RecDef.Ra.Caption, RecDef.Ra.ColumnOrWord, RecDef.Ra.Length)
+                                            ElseIf (p.Ra.EqualsAlmost(0, 0.001)) Then
+                                                Hints = Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantSign
+                                            End If
+                                            Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.[Error], SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantedRailsSystem, Hints, Nothing))
+                                        End If
+                                    End If
                                     
                                     ' Add Point to the block.
                                     Block.Points.Add(p)

@@ -678,4 +678,10 @@
   <data name="PositionAtTrack_Label_Side" xml:space="preserve">
     <value>Seite</value>
   </data>
+  <data name="TcFileReader_Constraints_MissingCantedRailsSystem" xml:space="preserve">
+    <value>Werte im gedrehten Gleissystem können nicht bestimmt werden.</value>
+  </data>
+  <data name="TcFileReader_Constraints_MissingCantSign" xml:space="preserve">
+    <value>Das Vorzeichen der Überhöhung kann nicht bestimmt werden, weil der Radius Null ist.</value>
+  </data>
 </root>
