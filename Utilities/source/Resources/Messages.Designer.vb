@@ -1316,6 +1316,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID fehlt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_MissingID() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_MissingID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Zweite Zeile des Datensatzes fehlt (diese muss unmittelbar auf die erste Zeile folgen). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcFileReader_MissingSecondLine() As String

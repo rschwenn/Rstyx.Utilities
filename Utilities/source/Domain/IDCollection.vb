@@ -1,4 +1,6 @@
 ﻿
+Imports System.Collections.Generic
+
 Namespace Domain
     
     ''' <summary> Shortcut for a <see cref="IDCollection(Of String, TItem)"/>, representing the most usual case: objects with a string identifier. </summary>
@@ -6,6 +8,19 @@ Namespace Domain
      ''' <remarks> The key for the collection will always be the <b>ID</b> property of <b>TItem</b>, which is a String. </remarks>
     Public Class IDCollection(Of TItem As IIdentifiable(Of String))
         Inherits IDCollection(Of String, TItem)
+        
+        #Region "Constructors"
+            
+            ''' <summary> Creates a new, empty IDCollection. </summary>
+            Public Sub New
+                MyBase.New()
+            End Sub
+            
+            Public Sub New(InitialMembers As IEnumerable(Of IIdentifiable(Of String)))
+                MyBase.New(InitialMembers)
+            End Sub
+            
+        #End Region
     End Class
     
     ''' <summary>  A generic, ready for use keyed collection for all objects that implement the <see cref="IIdentifiable(Of TKey)"/> interface. </summary>
@@ -26,7 +41,14 @@ Namespace Domain
             ''' <summary> Creates a new, empty IDCollection. </summary>
             Public Sub New
                 MyBase.New()
-                Logger.logDebug("New(): Initialize empty IDCollection.")
+            End Sub
+            
+            ''' <summary> Creates a new IDCollection, initiated with items of <paramref name="InitialMembers"/>. </summary>
+            Public Sub New(InitialMembers As IEnumerable(Of IIdentifiable(Of TKey)))
+                MyBase.New()
+                For Each NewItem As IIdentifiable(Of TKey) In InitialMembers
+                    Me.Add(NewItem)
+                Next
             End Sub
             
         #End Region

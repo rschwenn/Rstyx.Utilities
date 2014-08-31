@@ -684,4 +684,7 @@
   <data name="TcFileReader_Constraints_MissingCantSign" xml:space="preserve">
     <value>Das Vorzeichen der Überhöhung kann nicht bestimmt werden, weil der Radius Null ist.</value>
   </data>
+  <data name="TcFileReader_MissingID" xml:space="preserve">
+    <value>Punkt-ID fehlt.</value>
+  </data>
 </root>

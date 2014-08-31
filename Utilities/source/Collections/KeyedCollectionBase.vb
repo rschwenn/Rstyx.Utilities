@@ -43,12 +43,9 @@ Namespace Collections
          ''' <remarks>            If Item is <see langword="null"/> or if the key of the item already exists, silently nothing is done. Otherwise the Item is added at the given index. </remarks>
          ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> is less than 0, or greater than <see cref="KeyedCollectionBase(Of TKey, TItem).Count"/>. </exception>
         Protected Overrides Sub InsertItem(Index As Integer, Item As TItem)
-            'Try
-                If ((Not Item is Nothing) AndAlso (Not MyClass.Contains(GetKeyForItem(Item)))) Then
-                    MyBase.InsertItem(Index, Item)
-                End If
-            'Catch ex As System.Exception
-            'End Try
+            If ((Not Item is Nothing) AndAlso (Not MyClass.Contains(GetKeyForItem(Item)))) Then
+                MyBase.InsertItem(Index, Item)
+            End If
         End Sub
         
         #Region "INotifyCollectionChanged Members"

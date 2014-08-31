@@ -1355,12 +1355,20 @@ Namespace Domain
                                     
                                     Dim UebL     As Double = Double.NaN
                                     Dim UebR     As Double = Double.NaN
-                                    'Dim KmStatus As Double = Double.NaN
+                                    Dim IDField  As DataField(Of String)
                                     
                                     Dim p        As New GeoTcPoint()
                                     
+                                    ' ID
+                                    IDField = SplitLine.ParseField(RecDef.ID) 
+                                    p.ID    = IDField.Value
+                                    If (p.ID.IsEmptyOrWhiteSpace()) Then
+                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingID, Nothing))
+                                    ElseIf (Block.Points.Contains(p.ID)) Then
+                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, IDField.Source.Column, IDField.Source.Column + IDField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
+                                    End If
+                                    
                                     ' Cartesian coordinates.
-                                    p.ID   = SplitLine.ParseField(RecDef.ID).Value
                                     p.Y    = SplitLine.ParseField(RecDef.Y).Value
                                     p.X    = SplitLine.ParseField(RecDef.X).Value
                                     p.Z    = SplitLine.ParseField(RecDef.Z).Value
@@ -1424,12 +1432,25 @@ Namespace Domain
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Resolve Ambiguities.
+                                    Dim NoRadius As Boolean = (Double.IsNaN(p.Ra) OrElse p.Ra.EqualsAlmost(0, 0.001))
+                                    If (p.Ueb.EqualsAlmost(0, 0.001) AndAlso NoRadius) Then
+                                        ' Ignore minimal cant if radius is unknown or zero.
+                                        p.Ueb = 0.0
+                                    End If
+                                    If ( (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsAlmost(0, 0.001))) AndAlso NoRadius) Then
+                                        ' Ensure that sign of cant is determinable by setting a special radius.
+                                        Dim CantSign As Double = UebL - UebR
+                                        If (Not Double.IsNaN(CantSign)) Then
+                                            p.Ra = If(CantSign < 0, Double.NegativeInfinity, Double.PositiveInfinity)
+                                        End If
+                                    End If
                                     If (Block.BlockType.Format = TcBlockFormat.A1) Then
                                         If (Block.TrackRef.NameOfCantLine.IsEmptyOrWhiteSpace()) Then
                                             p.H    = p.HSOK
                                             p.HSOK = Double.NaN
                                         End If
                                     End If
+
                                     
                                     ' Correct Zero to NaN.
                                     If (Block.BlockType.Program = TcBlockProgram.iTrassePC) Then
