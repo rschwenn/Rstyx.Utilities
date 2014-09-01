@@ -1406,6 +1406,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Koord.system:    %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TrackGeometryInfo_CoordSys() As String
+            Get
+                Return ResourceManager.GetString("TrackGeometryInfo_CoordSys", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhensystem:     %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TrackGeometryInfo_HeightSys() As String
+            Get
+                Return ResourceManager.GetString("TrackGeometryInfo_HeightSys", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Achsname und DGM-Name sind unbekannt (mindestens einer der beiden muss bekannt sein). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_MissingNameOfAlignmentOrDTM() As String

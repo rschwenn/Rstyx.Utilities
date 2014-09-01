@@ -1,7 +1,12 @@
 
 
+# Systemangaben kommen nicht von Verm.esn (nur Test)!
+#
 Umformung G:\GEO\projekte\84225\A\Dat2000\Test_1gl.P rechtes Gleis  (01.09.14   13:23:33)
 Koordinaten= G:\GEO\PROJEKTE\84225\A\Dat2000\Gleis_Beut_Troeb_4283-HN76.kf
+
+Lagesystem:  42/83_X
+Höhensystem:  HN 76
 
 Abstand: + = rechts der Trasse (Linksverschiebung)
 dH:      + = unterhalb der Gradiente (Hebung)

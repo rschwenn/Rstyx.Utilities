@@ -687,4 +687,12 @@
   <data name="TcFileReader_MissingID" xml:space="preserve">
     <value>Punkt-ID fehlt.</value>
   </data>
+  <data name="TrackGeometryInfo_CoordSys" xml:space="preserve">
+    <value>Koord.system:    %s</value>
+    <comment>Coordinate System: String</comment>
+  </data>
+  <data name="TrackGeometryInfo_HeightSys" xml:space="preserve">
+    <value>Höhensystem:     %s</value>
+    <comment>Height System: String</comment>
+  </data>
 </root>

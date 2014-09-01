@@ -4,7 +4,7 @@ Koordinaten= G:\GEO\PROJEKTE\84225\A\Dat2000\Gleis_Beut_Troeb_4283-HN76.kf
 
 Lagesystem:  
 
-Gradiente:G:\GEO\PROJEKTE\84225\A\Dat2000\Test_R.Gra
+Gradiente:G:\GEO\PROJEKTE\84225\A\Dat2000\T e s t_R.Gra
 Höhensystem:  
 
 Punktbereich:G:\GEO\PROJEKTE\84225\A\Dat2000\tmp.pbr

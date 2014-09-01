@@ -108,7 +108,7 @@ Public Class MainViewModel
         
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             
-            'Dim TcReader As New TcFileReader()
+            'Dim TcReader As TcFileReader
             
             Try
                 Dim dtUTC As DateTime = DateTime.UtcNow

@@ -36,6 +36,12 @@ Namespace Domain
         
         #Region "Properties"
             
+            ''' <summary> Specifies the reference system of easting and northing coordinates. </summary>
+            Public Property CoordSys()              As String = String.Empty
+            
+            ''' <summary> Specifies the reference system of height coordinate. </summary>
+            Public Property HeightSys()             As String = String.Empty
+            
             ''' <summary> Name of alignment (horizontal curve set). </summary>
             Public Property NameOfAlignment()       As String = String.Empty
             
@@ -56,10 +62,10 @@ Namespace Domain
             
             ''' <summary> Name of line defining names and scopes of rail cross sections. </summary>
              ''' <remarks> A rail cross section is defined in canted track coordinate system. </remarks>
-            Public Property NameOfRailSections()  As String = String.Empty
+            Public Property NameOfRailSections()    As String = String.Empty
             
             ''' <summary> Name of line defining names and scopes of section related points. </summary>
-            Public Property NameOfSectionPoints()  As String = String.Empty
+            Public Property NameOfSectionPoints()   As String = String.Empty
             
             ''' <summary> Name of Digital Terrain Model. </summary>
             Public Property NameOfDTM()             As String = String.Empty
@@ -77,6 +83,8 @@ Namespace Domain
                     RetValue = MyBase.ToString()
                 Else
                     ' At least one name is not empty.
+                    If (Me.CoordSys.IsNotEmptyOrWhiteSpace())             Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_CoordSys            , Me.CoordSys))
+                    If (Me.HeightSys.IsNotEmptyOrWhiteSpace())            Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_HeightSys           , Me.HeightSys))
                     If (Me.NameOfAlignment.IsNotEmptyOrWhiteSpace())      Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfAlignment     , Me.NameOfAlignment))
                     If (Me.NameOfKmAlignment.IsNotEmptyOrWhiteSpace())    Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfKmAlignment   , Me.NameOfKmAlignment))
                     If (Me.NameOfGradientLine.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfGradientLine  , Me.NameOfGradientLine))

@@ -1220,6 +1220,7 @@ Namespace Domain
                                         p.Y  = SplitLine.ParseField(RecDef.Y).Value
                                         p.X  = SplitLine.ParseField(RecDef.X).Value
                                         p.Z  = SplitLine.ParseField(RecDef.Z).Value
+                                        p.CoordSys = Block.TrackRef.CoordSys
                                         Com2 = SplitLine.ParseField(RecDef.Com2).Value.Trim()
                                         If (RecDef.St IsNot Nothing) Then p.St = SplitLine.ParseField(RecDef.St).Value
                                         
@@ -1268,6 +1269,7 @@ Namespace Domain
                                     p.transformHorizontalToCanted()
                                     If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
+                                    If (Not Double.IsNaN(p.Z)) Then p.HeightSys = Block.TrackRef.HeightSys
                                     
                                     ' Check for desired constraints.
                                     If (Me.Constraints.HasFlag(TcConstraints.CantedRailsSystemRequired)) Then
@@ -1537,9 +1539,9 @@ Namespace Domain
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
             Private Sub findBlockMetaDataVermEsn(ByRef SplitLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
-                If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
+                If (SplitLines Is Nothing)  Then Throw New System.ArgumentNullException("SplitLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
-                If (Block Is Nothing) Then Throw New System.ArgumentNullException("Block")
+                If (Block Is Nothing) Then  Throw New System.ArgumentNullException("Block")
                 
                 Dim SplittedLine    As DataTextLine
                 Dim FullLine        As String
@@ -1628,8 +1630,8 @@ Namespace Domain
                                     End If
                                 End If
                                 
-                                ' Check for: Gradient and Km name.
-                                If (Block.BlockType.Format = TcBlockFormat.THW) Then
+                                ' Check for: Gradient and Km name, and also for system names.
+                                'If (Block.BlockType.Format = TcBlockFormat.THW) Then
                                     
                                     Pattern = "^\s*(.*?)\s*:\s*(\S*.*\S+)\s*"
                                     oMatch = Regex.Match(FullLine, Pattern)
@@ -1640,9 +1642,11 @@ Namespace Domain
                                         Select Case Key
                                             Case "Gradiente":            Block.TrackRef.NameOfGradientLine = getNameFromMatch(Value, False)
                                             Case "Reduktion auf Trasse": Block.TrackRef.NameOfKmAlignment  = getNameFromMatch(Value, False)
+                                            Case "Lagesystem":           Block.TrackRef.CoordSys           = Value.Trim()
+                                            Case "Höhensystem":          Block.TrackRef.HeightSys          = Value.Trim()
                                         End Select
                                     End If
-                                End If
+                                'End If
                             End If
                             
                         Else
