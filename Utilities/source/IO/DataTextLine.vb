@@ -619,13 +619,16 @@ Namespace IO
                     Else
                         WordRegEx = "[^" & Me.FieldDelimiter & "]+"
                         
+                        ' Ensure last field will be considerd even if it's empty (hence Me.Data ends with delimiter).
+                        Dim DataTuned As String = Me.Data & " "
+                        
                         ' Hide masked (doubled) Delimiters.
                         Dim MaskedDelimiter         As String = Me.FieldDelimiter & Me.FieldDelimiter
                         Dim DoubledMaskedDelimiter  As String = "D1o2u3b4l5e6D7e8l9i0mM"
                         Dim MaskedDelimitersCount   As Integer = 0
                         Dim dL                      As Integer = DoubledMaskedDelimiter.Length - MaskedDelimiter.Length
                         
-                        Dim Matches As System.Text.RegularExpressions.MatchCollection = Me.Data.Replace(MaskedDelimiter, DoubledMaskedDelimiter).GetMatches(WordRegEx)
+                        Dim Matches As System.Text.RegularExpressions.MatchCollection = DataTuned.Replace(MaskedDelimiter, DoubledMaskedDelimiter).GetMatches(WordRegEx)
                         
                         ' Restore masked Delimiters, now as intended: non-masked (single).
                         For Each Match As System.Text.RegularExpressions.Match In Matches
