@@ -630,6 +630,20 @@ Imports PGK.Extensions
             Return RetValue
         End Function
         
+        ''' <summary> Surrounds the string with <paramref name="SurroundChar"/>. </summary>
+         ''' <param name="Value">          The source string. </param>
+         ''' <param name="SurroundString"> The string to surround <paramref name="Value"/> with. </param>
+         ''' <returns> The sourrounded string, or <see langword="null"/> if <paramref name="Value"/> was <see langword="null"/>. </returns>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/> or empty. </exception>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function SurroundWith(Value As String, SurroundString As String) As String
+            Dim RetValue As String = Value
+            If (RetValue IsNot Nothing) Then
+                RetValue = SurroundString & RetValue & SurroundString
+            End If
+            Return RetValue
+        End Function
+        
     End Module
     
 'End Namespace
