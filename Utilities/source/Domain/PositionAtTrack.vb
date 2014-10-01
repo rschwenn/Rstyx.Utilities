@@ -9,8 +9,8 @@ Namespace Domain
         ''' <summary> Kilometer of object. </summary>
         Public Property Kilometer       As Kilometer = New Kilometer()
         
-        ''' <summary> Railway track title. </summary>
-        Public Property TrackTitle      As TrackTitle = New TrackTitle()
+        ''' <summary> Railway track number. </summary>
+        Public Property TrackNo         As Integer = 0
         
         ''' <summary> Railway track zone (or segment or section). </summary>
         Public Property TrackZone       As String = String.Empty
@@ -27,7 +27,7 @@ Namespace Domain
          ''' <inheritdoc/>
         Public Overrides Function ToString() As String
             Dim PositionString As New Collection(Of String)
-            If (Not (Me.TrackTitle.Number = 0))          Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_Track     & ": " & Me.TrackTitle.Number)
+            If (Not (Me.TrackNo = 0))                    Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_Track     & ": " & Me.TrackNo)
             If (Me.Kilometer.HasValue())                 Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_Kilometer & ": " & Me.Kilometer.ToString())
             If (Me.RailsNameNo.IsNotEmptyOrWhiteSpace()) Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_RailsName & ": " & Me.RailsNameNo)
             If (Me.RailsCode.IsNotEmptyOrWhiteSpace())   Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_RailsCode & "="  & Me.RailsCode)
