@@ -123,7 +123,7 @@
     <Compile Include="source\Domain\PositionAtTopology.vb" />
     <Compile Include="source\Domain\PositionAtTrack.vb" />
     <Compile Include="source\Domain\RailPair.vb" />
-    <Compile Include="source\Domain\SubjectOrigination.vb" />
+    <Compile Include="source\Domain\SubjectOrigin.vb" />
     <Compile Include="source\Domain\TopologyNode.vb" />
     <Compile Include="source\Domain\TrackGeometryInfo.vb" />
     <Compile Include="source\Domain\TrackTitle.vb" />

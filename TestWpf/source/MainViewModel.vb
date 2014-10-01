@@ -111,6 +111,12 @@ Public Class MainViewModel
             'Dim TcReader As TcFileReader
             
             Try
+                Dim pts As New VEPoints()
+                pts.readFromBinaryFile(Me.FilePath1)
+                Logger.logInfo(pts.ToString())
+                pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\KF_out.kf")
+                
+                
                 Dim dtUTC As DateTime = DateTime.UtcNow
                 Logger.logInfo(dtUTC.ToLongDateString())
                 Logger.logInfo(dtUTC.ToShortDateString())
@@ -174,6 +180,11 @@ Public Class MainViewModel
                 p4.transformCantedToHorizontal()
                 Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb * sign(p3.Ra), p3.QG, p3.HG))
                 Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb * sign(p4.Ra), p4.QG, p4.HG))
+                
+                Dim dou As Double = 24430.0 'Double.NaN
+                Dim i16 As Int16 = 0
+                If (Not Double.IsNaN(dou)) Then i16 = CInt(dou)
+                Logger.logInfo(i16)
                 
                 'Dim d1  As Double = 1.2301
                 'Dim d2  As Double = 1.23

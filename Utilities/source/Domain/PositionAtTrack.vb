@@ -3,7 +3,7 @@ Imports System.Collections.ObjectModel
 
 Namespace Domain
     
-    ''' <summary> Position description related to a railway track. </summary>
+    ''' <summary> General position description related to a railway track. </summary>
     Public Class PositionAtTrack
         
         ''' <summary> Kilometer of object. </summary>

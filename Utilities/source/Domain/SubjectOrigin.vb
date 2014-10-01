@@ -1,8 +1,8 @@
 ﻿
 Namespace Domain
     
-    ''' <summary> Information about origination of any subject. </summary>
-    Public Class SubjectOrigination
+    ''' <summary> Information about origin of any subject. </summary>
+    Public Class SubjectOrigin
         
         ''' <summary> Date of measure. </summary>
         Public Property MeasureDate         As String = String.Empty

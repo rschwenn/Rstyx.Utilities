@@ -1,4 +1,6 @@
 ﻿
+Imports System
+
 Namespace Domain
     
     ''' <summary> Shortcut for a <see cref="GeoPoint(Of String)"/>, representing the most usual case: a string identifier. </summary>
@@ -42,6 +44,9 @@ Namespace Domain
             Public Property Info()          As String = String.Empty Implements IGeoPointInfo.Info
             
             ''' <inheritdoc/>
+            Public Property HeightInfo()    As String = String.Empty Implements IGeoPointInfo.HeightInfo
+            
+            ''' <inheritdoc/>
             Public Property Comment()       As String = String.Empty Implements IGeoPointInfo.Comment
             
             ''' <inheritdoc/>
@@ -55,6 +60,12 @@ Namespace Domain
             
             ''' <inheritdoc/>
             Public Property ObjectKey()     As String = String.Empty Implements IGeoPointInfo.ObjectKey
+            
+            ''' <inheritdoc/>
+            Public Property Job()           As String = String.Empty Implements IGeoPointInfo.Job
+            
+            ''' <inheritdoc/>
+            Public Property TimeStamp       As DateTime = DateTime.UtcNow Implements IGeoPointInfo.TimeStamp
             
         #End Region
         
@@ -74,6 +85,18 @@ Namespace Domain
             
             ''' <inheritdoc/>
             Public Property mh()            As Double = Double.NaN   Implements ICartesianCoordinates3D.mh
+            
+            ''' <inheritdoc/>
+            Public Property wp()            As Double = Double.NaN   Implements ICartesianCoordinates3D.wp
+            
+            ''' <inheritdoc/>
+            Public Property wh()            As Double = Double.NaN   Implements ICartesianCoordinates3D.wh
+            
+            ''' <inheritdoc/>
+            Public Property sp()            As String = String.Empty Implements ICartesianCoordinates3D.sp
+            
+            ''' <inheritdoc/>
+            Public Property sh()            As String = String.Empty Implements ICartesianCoordinates3D.sh
             
             ''' <inheritdoc/>
             Public Property CoordSys()      As String = String.Empty Implements ICartesianCoordinates3D.CoordSys

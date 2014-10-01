@@ -91,6 +91,7 @@
     <Compile Include="source\TestWindow.xaml.vb">
       <DependentUpon>TestWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="source\VEPoints.vb" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

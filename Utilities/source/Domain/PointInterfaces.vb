@@ -17,8 +17,11 @@ Namespace Domain
         ''' <summary> A comment. </summary>
         Property Comment()      As String
         
-        ''' <summary> An arbitrary information text. </summary>
+        ''' <summary> A general information text. </summary>
         Property Info()         As String
+
+        ''' <summary> An information text regarding point height. </summary>
+        Property HeightInfo     As String
         
         ''' <summary> The point's kind or type. </summary>
         Property Kind()         As String
@@ -26,16 +29,22 @@ Namespace Domain
         ''' <summary> The type of marking used to realize the point. </summary>
         Property MarkType()     As String
         
-        ''' <summary> Hints for marking. </summary>
+        ''' <summary> Hints for marking, i.e. stability. </summary>
         Property MarkHints()    As String
         
-        ''' <summary> A unique object key (or feature key). </summary>
+        ''' <summary> A unique object or feature key. </summary>
         Property ObjectKey()    As String
+        
+        ''' <summary> A Job designation. </summary>
+        Property Job            As String
+        
+        ''' <summary> A time stamp designating the point's origin or last change. Defaults to time of object creation. </summary>
+        Property TimeStamp      As System.DateTime
         
     End Interface
     
     
-    ''' <summary> A cartesian coordinates triple with specified reference systems and precision. </summary>
+    ''' <summary> A cartesian coordinates triple with specified reference systems and precisions. </summary>
     Public Interface ICartesianCoordinates3D
         
         ''' <summary> The easting coordinate. </summary>
@@ -53,6 +62,20 @@ Namespace Domain
         
         ''' <summary> Mean error of height. </summary>
         Property mh()           As Double
+        
+        
+        ''' <summary> Weight of position. </summary>
+        Property wp()           As Double
+        
+        ''' <summary> Weight of height. </summary>
+        Property wh()           As Double
+        
+        
+        ''' <summary> Status of position. </summary>
+        Property sp             As String
+        
+        ''' <summary> Status of height. </summary>
+        Property sh             As String
         
         
         ''' <summary> Specifies the reference system of easting and northing coordinates. </summary>
