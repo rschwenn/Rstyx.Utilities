@@ -98,7 +98,7 @@ Namespace Domain
                 
                 ''' <summary> If <see langword="true"/> and no kilometer value is found, the station value will be used also as kilometer. Defaults to <see langword="true"/>. </summary>
                 Public Property StationAsKilometer() As Boolean = True
-
+                
                 ''' <summary> Determines logical constraints to be considered for the intended usage of read points (beside the pure source format constraints) . Defaults to <c>None</c>. </summary>
                  ''' <remarks> If any of these contraints is injured, a <see cref="ParseError"/> will be created. </remarks>
                 Public Property Constraints() As TcConstraints = TcConstraints.None
@@ -182,7 +182,7 @@ Namespace Domain
              ''' <param name="Path"> The complete path of to the TC file to be read (for <see cref="StreamReader"/>). </param>
              ''' <remarks>
              ''' <para>
-             ''' The default settings for <see cref="StreamReader"/> are: UTF-8, not detect encoding, buffersize 1024.
+             ''' The default settings for <see cref="StreamReader"/> are: Default encoding, detect encoding from BOM, buffersize 1024.
              ''' </para>
              ''' <para>
              ''' The loaded data will be provided by the <see cref="TcFileReader.Blocks"/> and <see cref="TcFileReader.Header"/> properties,

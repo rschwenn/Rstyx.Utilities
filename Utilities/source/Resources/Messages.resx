@@ -695,4 +695,52 @@
     <value>Höhensystem:     %s</value>
     <comment>Height System: String</comment>
   </data>
+  <data name="GeoVEPointList_ReadBinaryFailed" xml:space="preserve">
+    <value>Fehler beim Lesen der Verm.esn-Punktdatei (KF) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_ReadBinaryStart" xml:space="preserve">
+    <value>Lese Verm.esn-Punktdatei (KF) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_ReadBinarySuccess" xml:space="preserve">
+    <value>%d Punkte gelesen aus Verm.esn-Punktdatei (KF) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_ReadKvFailed" xml:space="preserve">
+    <value>Fehler beim Lesen der ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_ReadKvStart" xml:space="preserve">
+    <value>Lese ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_ReadKvSuccess" xml:space="preserve">
+    <value>%d Punkte gelesen aus ASCII-Punktdatei (KV) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_WriteBinaryFailed" xml:space="preserve">
+    <value>Fehler beim Schreiben der Verm.esn-Punktdatei (KF) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_WriteBinaryStart" xml:space="preserve">
+    <value>Schreibe Verm.esn-Punktdatei (KF) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_WriteBinarySuccess" xml:space="preserve">
+    <value>%d Punkte geschrieben in Verm.esn-Punktdatei (KF) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_WriteKvFailed" xml:space="preserve">
+    <value>Fehler beim Schreiben der ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_WriteKvStart" xml:space="preserve">
+    <value>Schreibe ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_WriteKvSuccess" xml:space="preserve">
+    <value>%d Punkte geschrieben in ASCII-Punktdatei (KV) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
 </root>

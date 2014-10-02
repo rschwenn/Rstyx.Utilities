@@ -117,6 +117,8 @@
     <Compile Include="source\Apps\AppUtils.vb" />
     <Compile Include="source\Domain\GeoPoint.vb" />
     <Compile Include="source\Domain\GeoTcPoint.vb" />
+    <Compile Include="source\Domain\GeoVEPoint.vb" />
+    <Compile Include="source\Domain\GeoVEPointList.vb" />
     <Compile Include="source\Domain\IDCollection.vb" />
     <Compile Include="source\Domain\Kilometer.vb" />
     <Compile Include="source\Domain\PointInterfaces.vb" />

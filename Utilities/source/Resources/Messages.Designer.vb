@@ -830,6 +830,114 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadBinaryFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadBinaryFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadBinaryStart() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadBinaryStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus Verm.esn-Punktdatei (KF) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadBinarySuccess() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadBinarySuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadKvFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadKvFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadKvStart() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadKvStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (KV) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadKvSuccess() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadKvSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_WriteBinaryFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_WriteBinaryFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_WriteBinaryStart() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_WriteBinaryStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in Verm.esn-Punktdatei (KF) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_WriteBinarySuccess() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_WriteBinarySuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_WriteKvFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_WriteKvFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_WriteKvStart() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_WriteKvStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in ASCII-Punktdatei (KV) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_WriteKvSuccess() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_WriteKvSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Anwendungsfehler (Application_DispatcherUnhandledException). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_DispatcherUnhandledException() As String

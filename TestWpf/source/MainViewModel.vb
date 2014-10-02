@@ -1,6 +1,7 @@
 ﻿
 Imports System
 Imports System.Collections.Generic
+Imports System.Collections.ObjectModel
 Imports System.Data
 Imports System.Data.OleDb
 Imports System.Data.DataTableExtensions
@@ -111,8 +112,12 @@ Public Class MainViewModel
             'Dim TcReader As TcFileReader
             
             Try
-                Dim pts As New VEPoints()
+                'Dim pt As New Collection(Of VEPoint)
+                'Logger.logInfo(TypeOf pt Is Collection(Of GeoPoint(Of Double)))
+                
+                Dim pts As New GeoVEPointList()
                 pts.readFromBinaryFile(Me.FilePath1)
+                'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\dummy.kf")
                 Logger.logInfo(pts.ToString())
                 pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\KF_out.kf")
                 
