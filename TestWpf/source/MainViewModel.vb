@@ -116,80 +116,83 @@ Public Class MainViewModel
                 'Logger.logInfo(TypeOf pt Is Collection(Of GeoPoint(Of Double)))
                 
                 Dim pts As New GeoVEPointList()
-                pts.readFromBinaryFile(Me.FilePath1)
+                pts.ShowParseErrorsInJedit = True
+                pts.CollectParseErrors = True
+                pts.readFromKvFile(Me.FilePath1)
                 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\dummy.kf")
                 Logger.logInfo(pts.ToString())
-                pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\KF_out.kf")
+                pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                'pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 
-                Dim dtUTC As DateTime = DateTime.UtcNow
-                Logger.logInfo(dtUTC.ToLongDateString())
-                Logger.logInfo(dtUTC.ToShortDateString())
-                Logger.logInfo(dtUTC.ToLongTimeString())
-                Logger.logInfo(dtUTC.ToShortTimeString())
-                Dim dtLocal As DateTime = dtUTC.ToLocalTime()
-                Logger.logInfo(dtLocal.ToShortTimeString())
-                Logger.logInfo("")
-                
-                'Dim RefTime As DateTime = DateTime.Parse("01.01.1970 0:00")
-                Dim RefTime As DateTime = DateTime.SpecifyKind(DateTime.Parse("01.01.1970 0:00"), DateTimeKind.Utc)
-                Dim ts As TimeSpan = dtUTC.Subtract(RefTime)
-                Dim sec As Integer = CInt(ts.TotalSeconds)
-                Dim NewTime As DateTime = RefTime.AddSeconds(sec)
-                Logger.logInfo(RefTime.ToString())
-                Logger.logInfo(RefTime.ToLocalTime().ToString())
-                Logger.logInfo("")
-                
-                Logger.logInfo(ts.TotalSeconds.ToString())
-                
-                'Logger.logInfo(StringUtils.sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
-                'Logger.logInfo(StringUtils.sprintf("Nothing: '%6.3f'", Nothing))
-                
-                Dim TestText1 As String = "25082013"
-                Dim TestDate As DateTime
-                'Dim success As Boolean = DateTime.TryParse(TestText1, TestDate)
-                Dim success As Boolean = DateTime.TryParseExact(TestText1, "ddMMyyyy", Nothing, Globalization.DateTimeStyles.None, TestDate)
-                Logger.logInfo(TestDate.ToShortDateString())
-                Logger.logInfo(TestDate.ToString("ddMMyyyy"))
-                
-                Dim TestDouble As Double = 33
-                Double.TryParse(Nothing , TestDouble)
-                Logger.logInfo(StringUtils.sprintf("Double = %.3f", TestDouble))
-                
-                Dim p1 As New GeoTcPoint()
-                p1.Q    = -4.000
-                p1.HSOK =  5.000
-                p1.Ueb  =  -0.150
-                p1.Ra   =  -1
-                Dim p2 As New GeoTcPoint()
-                p2.Q    =  4.000
-                p2.HSOK =  5.000
-                p2.Ueb  =  -0.150
-                p2.Ra   =  -1
-                p1.transformHorizontalToCanted()
-                p2.transformHorizontalToCanted()
-                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p1.Q, p1.HSOK, p1.Ueb * sign(p1.Ra), p1.QG, p1.HG))
-                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p2.Q, p2.HSOK, p2.Ueb * sign(p2.Ra), p2.QG, p2.HG))
-                
-                Dim p3 As New GeoTcPoint()
-                p3.QG   = p1.QG
-                p3.HG   = p1.HG
-                p3.Ueb  = -0.150
-                p3.Ra   = -1
-                Dim p4 As New GeoTcPoint()
-                p4.QG   = p2.QG
-                p4.HG   = p2.HG
-                p4.Ueb  = -0.150
-                p4.Ra   = -1
-                p3.transformCantedToHorizontal()
-                p4.transformCantedToHorizontal()
-                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb * sign(p3.Ra), p3.QG, p3.HG))
-                Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb * sign(p4.Ra), p4.QG, p4.HG))
-                
-                Dim dou As Double = 24430.0 'Double.NaN
-                Dim i16 As Int16 = 0
-                If (Not Double.IsNaN(dou)) Then i16 = CInt(dou)
-                Logger.logInfo(i16)
+                'Dim dtUTC As DateTime = DateTime.UtcNow
+                'Logger.logInfo(dtUTC.ToLongDateString())
+                'Logger.logInfo(dtUTC.ToShortDateString())
+                'Logger.logInfo(dtUTC.ToLongTimeString())
+                'Logger.logInfo(dtUTC.ToShortTimeString())
+                'Dim dtLocal As DateTime = dtUTC.ToLocalTime()
+                'Logger.logInfo(dtLocal.ToShortTimeString())
+                'Logger.logInfo("")
+                '
+                ''Dim RefTime As DateTime = DateTime.Parse("01.01.1970 0:00")
+                'Dim RefTime As DateTime = DateTime.SpecifyKind(DateTime.Parse("01.01.1970 0:00"), DateTimeKind.Utc)
+                'Dim ts As TimeSpan = dtUTC.Subtract(RefTime)
+                'Dim sec As Integer = CInt(ts.TotalSeconds)
+                'Dim NewTime As DateTime = RefTime.AddSeconds(sec)
+                'Logger.logInfo(RefTime.ToString())
+                'Logger.logInfo(RefTime.ToLocalTime().ToString())
+                'Logger.logInfo("")
+                '
+                'Logger.logInfo(ts.TotalSeconds.ToString())
+                '
+                ''Logger.logInfo(StringUtils.sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
+                ''Logger.logInfo(StringUtils.sprintf("Nothing: '%6.3f'", Nothing))
+                '
+                'Dim TestText1 As String = "25082013"
+                'Dim TestDate As DateTime
+                ''Dim success As Boolean = DateTime.TryParse(TestText1, TestDate)
+                'Dim success As Boolean = DateTime.TryParseExact(TestText1, "ddMMyyyy", Nothing, Globalization.DateTimeStyles.None, TestDate)
+                'Logger.logInfo(TestDate.ToShortDateString())
+                'Logger.logInfo(TestDate.ToString("ddMMyyyy"))
+                '
+                'Dim TestDouble As Double = 33
+                'Double.TryParse(Nothing , TestDouble)
+                'Logger.logInfo(StringUtils.sprintf("Double = %.3f", TestDouble))
+                '
+                'Dim p1 As New GeoTcPoint()
+                'p1.Q    = -4.000
+                'p1.HSOK =  5.000
+                'p1.Ueb  =  -0.150
+                'p1.Ra   =  -1
+                'Dim p2 As New GeoTcPoint()
+                'p2.Q    =  4.000
+                'p2.HSOK =  5.000
+                'p2.Ueb  =  -0.150
+                'p2.Ra   =  -1
+                'p1.transformHorizontalToCanted()
+                'p2.transformHorizontalToCanted()
+                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p1.Q, p1.HSOK, p1.Ueb * sign(p1.Ra), p1.QG, p1.HG))
+                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p2.Q, p2.HSOK, p2.Ueb * sign(p2.Ra), p2.QG, p2.HG))
+                '
+                'Dim p3 As New GeoTcPoint()
+                'p3.QG   = p1.QG
+                'p3.HG   = p1.HG
+                'p3.Ueb  = -0.150
+                'p3.Ra   = -1
+                'Dim p4 As New GeoTcPoint()
+                'p4.QG   = p2.QG
+                'p4.HG   = p2.HG
+                'p4.Ueb  = -0.150
+                'p4.Ra   = -1
+                'p3.transformCantedToHorizontal()
+                'p4.transformCantedToHorizontal()
+                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb * sign(p3.Ra), p3.QG, p3.HG))
+                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb * sign(p4.Ra), p4.QG, p4.HG))
+                '
+                'Dim dou As Double = 24430.0 'Double.NaN
+                'Dim i16 As Int16 = 0
+                'If (Not Double.IsNaN(dou)) Then i16 = CInt(dou)
+                'Logger.logInfo(i16)
                 
                 'Dim d1  As Double = 1.2301
                 'Dim d2  As Double = 1.23
@@ -314,6 +317,7 @@ Public Class MainViewModel
             Catch ex As ParseException
                 'Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
                 'TcReader.ParseErrors.ShowInJEdit()
+                Logger.logError(ex, "==> Fehler...")
                 
             Catch ex As System.Exception
                 Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))

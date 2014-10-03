@@ -380,6 +380,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Info (Höhe) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_HeightInfo() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_HeightInfo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhensystem ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_HeightSys() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_HeightSys", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Höhe über SOK im gedrehten Gleissystem ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_HG() As String
@@ -412,6 +430,24 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_HSOK() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_HSOK", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Info ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Info() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Info", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Auftrag ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Job() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Job", resourceCulture)
             End Get
         End Property
         
@@ -452,11 +488,56 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Vermarkungsart ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_MarkType() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_MarkType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Mittlerer Fehler der Höhe ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_mh() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_mh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Mittlerer Fehler der Lage ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_mp() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_mp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Objektschlüssel ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_ObjectKey() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_ObjectKey", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_PointID() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_PointID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punktart ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_PointKind() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_PointKind", resourceCulture)
             End Get
         End Property
         
@@ -533,6 +614,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleiskode / RiKz ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_RailsCode() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_RailsCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Radialer Abstand zum Gleisprofil ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_RG() As String
@@ -551,11 +641,38 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhenstatus ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_sh() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_sh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lagestatus ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_sp() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_sp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Station ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_St() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_St", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Stabilität ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Stability() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Stability", resourceCulture)
             End Get
         End Property
         
@@ -574,6 +691,15 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_Tm() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_Tm", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die StreckenNr ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_TrackNo() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_TrackNo", resourceCulture)
             End Get
         End Property
         
@@ -830,6 +956,60 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punktnummern geändert. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ChangePointNumbersSuccess() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ChangePointNumbersSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zuordnungstabelle ist leer =&gt; nichts zu tun. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_EmptyPointChangeTab() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_EmptyPointChangeTab", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die #                                                                                                                     Vermarkungsart ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_Label_KvDefaultHeader1() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_Label_KvDefaultHeader1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die #                                                                                                 RiKz            StabilKz   |  LH-Status ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_Label_KvDefaultHeader2() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_Label_KvDefaultHeader2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die # PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_Label_KvDefaultHeader3() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_Label_KvDefaultHeader3", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; Koordinatendatei enthält keine Punkte (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_NoPoints() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_NoPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoVEPointList_ReadBinaryFailed() As String
@@ -857,11 +1037,20 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoVEPointList_ReadKvFailed() As String
             Get
                 Return ResourceManager.GetString("GeoVEPointList_ReadKvFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadKvParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadKvParsingFailed", resourceCulture)
             End Get
         End Property
         

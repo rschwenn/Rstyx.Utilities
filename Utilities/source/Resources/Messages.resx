@@ -708,7 +708,7 @@
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
   <data name="GeoVEPointList_ReadKvFailed" xml:space="preserve">
-    <value>Fehler beim Lesen der ASCII-Punktdatei (KV) '%s'.</value>
+    <value>Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KV) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
   <data name="GeoVEPointList_ReadKvStart" xml:space="preserve">
@@ -742,5 +742,83 @@
   <data name="GeoVEPointList_WriteKvSuccess" xml:space="preserve">
     <value>%d Punkte geschrieben in ASCII-Punktdatei (KV) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
+  </data>
+  <data name="Domain_Label_HeightInfo" xml:space="preserve">
+    <value>Info (Höhe)</value>
+    <comment>Point Info regarding Height</comment>
+  </data>
+  <data name="Domain_Label_HeightSys" xml:space="preserve">
+    <value>Höhensystem</value>
+    <comment>Height System</comment>
+  </data>
+  <data name="Domain_Label_Info" xml:space="preserve">
+    <value>Info</value>
+    <comment>Point Info (in doubt: regarding Position)</comment>
+  </data>
+  <data name="Domain_Label_Job" xml:space="preserve">
+    <value>Auftrag</value>
+  </data>
+  <data name="Domain_Label_MarkType" xml:space="preserve">
+    <value>Vermarkungsart</value>
+  </data>
+  <data name="Domain_Label_mh" xml:space="preserve">
+    <value>Mittlerer Fehler der Höhe</value>
+    <comment>Mean Error of Height</comment>
+  </data>
+  <data name="Domain_Label_mp" xml:space="preserve">
+    <value>Mittlerer Fehler der Lage</value>
+    <comment>Mean Error of Position</comment>
+  </data>
+  <data name="Domain_Label_ObjectKey" xml:space="preserve">
+    <value>Objektschlüssel</value>
+    <comment>Object or feature key</comment>
+  </data>
+  <data name="Domain_Label_PointKind" xml:space="preserve">
+    <value>Punktart</value>
+  </data>
+  <data name="Domain_Label_RailsCode" xml:space="preserve">
+    <value>Gleiskode / RiKz</value>
+  </data>
+  <data name="Domain_Label_sh" xml:space="preserve">
+    <value>Höhenstatus</value>
+    <comment>Status of Height</comment>
+  </data>
+  <data name="Domain_Label_sp" xml:space="preserve">
+    <value>Lagestatus</value>
+    <comment>Status of Position</comment>
+  </data>
+  <data name="Domain_Label_Stability" xml:space="preserve">
+    <value>Stabilität</value>
+  </data>
+  <data name="Domain_Label_TrackNo" xml:space="preserve">
+    <value>StreckenNr</value>
+    <comment>Number of rail track</comment>
+  </data>
+  <data name="GeoVEPointList_ReadKvParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_NoPoints" xml:space="preserve">
+    <value>=&gt; Koordinatendatei enthält keine Punkte (%s).</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoVEPointList_ChangePointNumbersSuccess" xml:space="preserve">
+    <value>=&gt; %d Punktnummern geändert.</value>
+    <comment>Point Count: Integer</comment>
+  </data>
+  <data name="GeoVEPointList_EmptyPointChangeTab" xml:space="preserve">
+    <value>Zuordnungstabelle ist leer =&gt; nichts zu tun.</value>
+  </data>
+  <data name="GeoVEPointList_Label_KvDefaultHeader1" xml:space="preserve">
+    <value>#                                                                                                                     Vermarkungsart</value>
+    <comment>Default Header Line #1 for KV file</comment>
+  </data>
+  <data name="GeoVEPointList_Label_KvDefaultHeader2" xml:space="preserve">
+    <value>#                                                                                                 RiKz            StabilKz   |  LH-Status</value>
+    <comment>Default Header Line #2 for KV file</comment>
+  </data>
+  <data name="GeoVEPointList_Label_KvDefaultHeader3" xml:space="preserve">
+    <value># PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr</value>
+    <comment>Default Header Line #3 for KV file</comment>
   </data>
 </root>

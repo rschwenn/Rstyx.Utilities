@@ -28,13 +28,13 @@ Namespace IO
         ''' <summary> Determines that, for a target type of <c>Double</c>, the source string will be parsed by <see cref="Rstyx.Utilities.Domain.Kilometer.TryParse"/>. </summary>
         AllowKilometerNotation = 1
         
-        ''' <summary> Determines that leading asterisks ("*") will be ignored while numeric parsing. </summary>
+        ''' <summary> Determines that, for a numeric target type, leading asterisks ("*") will be ignored. </summary>
         IgnoreLeadingAsterisks = 2
         
-        ''' <summary> Determines that, for a target type of <c>Double</c>, a missing value will be treated as <c>Zero</c>. </summary>
+        ''' <summary> Determines that a missing value will be treated as <c>Zero</c>. This flag implies the meaning of <see cref="DataFieldOptions.NotRequired"/>. </summary>
         MissingAsZero = 4
         
-        ''' <summary> Determines that, for a target type of <c>Double</c>, a non-numeric value will be treated as <c>Double.NAN</c>. </summary>
+        ''' <summary> Determines that, for a numeric target type, a non-numeric value will be treated as "unknown", hence <c>Double.NaN</c> resp. default value (Zero). </summary>
         NonNumericAsNaN = 8
         
         ''' <summary> Determines that the field isn't required to be found in the source string. This way a missing field won't lead parsing to fail. </summary>
@@ -43,7 +43,7 @@ Namespace IO
         ''' <summary> Determines that a string field will be trimmed. </summary>
         Trim = 32
         
-        ''' <summary> Determines that, for a target type of <c>Double</c>, a value of zero will be treated as <c>Double.NAN</c>. </summary>
+        ''' <summary> Determines that, for a target type of <c>Double</c> or <c>Kilometer</c>, a value of zero will be treated as <c>Double.NaN</c>. </summary>
         ZeroAsNaN = 64
         
     End Enum
@@ -193,7 +193,7 @@ Namespace IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Caption"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="PositionType"/> is not a member of <see cref="PositionType"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="ColumnOrWord"/> is less than zero (Word) or less than 1 (Column). </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than zero (if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than 1 (if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
             Public Sub New(Caption      As String,
                            PositionType As DataFieldPositionType,
                            ColumnOrWord As Integer,
@@ -212,7 +212,7 @@ Namespace IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Caption"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="PositionType"/> is not a member of <see cref="PositionType"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="ColumnOrWord"/> is less than zero (Word) or less than 1 (Column). </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than zero (if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than 1 (if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>). </exception>
             Public Sub New(Caption      As String,
                            PositionType As DataFieldPositionType,
                            ColumnOrWord As Integer,

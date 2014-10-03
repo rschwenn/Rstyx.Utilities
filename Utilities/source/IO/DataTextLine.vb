@@ -145,7 +145,7 @@ Namespace IO
              ''' <returns>                      The resulting DataField object. </returns>
              ''' <remarks>
              ''' <para>
-             ''' If a parsing error occurs, an exception is thrown that containes a <see cref="ParseError"/> (without assigned <c>FilePath</c> field).
+             ''' If a parsing error occurs, an exception is thrown that containes the <see cref="ParseError"/> (without assigned <c>FilePath</c> field).
              ''' </para>
              ''' <para>
              ''' If the field doesn't exist but <paramref name="FieldDef"/><c>.Options</c> has the flag <c>NotRequired</c>,
@@ -155,23 +155,33 @@ Namespace IO
              ''' If the field's start column does exist in <c>Me.Data</c>, it doesn't matter if the field's end would be behind <c>Me.Data</c>'s end: 
              ''' The field will be taken shorter than intended without complaing.
              ''' </para>
+             ''' The following conditions are recognized as parse errors.
              ''' <list type="bullet">
-             ''' <item><listheader> The following conditions are recognized as parse errors. </listheader></item>
              ''' <item><description> The field doesn't exist (unless <paramref name="FieldDef"/><c>.Options</c> has the flag <c>NotRequired</c>). </description></item>
              ''' <item><description> The field isn't numeric while a numeric target type is required. </description></item>
              ''' </list>
              ''' <para>
-             ''' If parsing fails or the field is missing these default field values will be returned:
+             ''' </para>
+             ''' A field is considered to be non-existent, if:
+             ''' <list type="bullet">
+             ''' <item><description> The field is a word and it's word number is greater than the actual word count. </description></item>
+             ''' <item><description> The field is fixed-width and it's start column is behind the actual line end. </description></item>
+             ''' <item><description> The field is fixed-width and it's source string is empty or contains white space only. </description></item>
+             ''' </list>
+             ''' <para>
+             ''' If parsing fails or the field is missing these default field values will be assigned:
              ''' </para>
              ''' <list type="table">
              ''' <listheader> <term> <b>Target Type</b> </term>  <description> Default Value </description></listheader>
              ''' <item> <term> String    </term>  <description> <c>String.Empty</c> </description></item>
+             ''' <item> <term> Integer   </term>  <description> <c>Zero</c> </description></item>
+             ''' <item> <term> Long      </term>  <description> <c>Zero</c> </description></item>
              ''' <item> <term> Double    </term>  <description> <c>Double.NaN</c> </description></item>
              ''' <item> <term> Enum      </term>  <description> <c>Unknown</c> or <c>None</c> or <c>Default value assigning <see langword="null"/></c> </description></item>
              ''' <item> <term> Kilometer </term>  <description> New, empty <see cref="Kilometer"/> </description></item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TFieldValue"/> is not <c>String</c> or <c>Double</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Integer</c> or <c>Long</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> The data field couldn't be parsed successfully. </exception>
@@ -207,13 +217,21 @@ Namespace IO
              ''' If the field's start column does exist in <c>Me.Data</c>, it doesn't matter if the field's end would be behind <c>Me.Data</c>'s end: 
              ''' The field will be taken shorter than intended without complaing.
              ''' </para>
+             ''' The following conditions are recognized as parse errors.
              ''' <list type="bullet">
-             ''' <item><listheader> The following conditions are recognized as parse errors. </listheader></item>
              ''' <item><description> The field doesn't exist (unless <paramref name="FieldDef"/><c>.Options</c> has the flag <c>NotRequired</c>). </description></item>
              ''' <item><description> The field isn't numeric while a numeric target type is required. </description></item>
              ''' </list>
              ''' <para>
-             ''' If parsing fails or the field is missing these default field values will be returned:
+             ''' </para>
+             ''' A field is considered to be non-existent, if:
+             ''' <list type="bullet">
+             ''' <item><description> The field is a word and it's word number is greater than the actual word count. </description></item>
+             ''' <item><description> The field is fixed-width and it's start column is behind the actual line end. </description></item>
+             ''' <item><description> The field is fixed-width and it's source string is empty or contains white space only. </description></item>
+             ''' </list>
+             ''' <para>
+             ''' If parsing fails or the field is missing these default field values will be assigned:
              ''' </para>
              ''' <list type="table">
              ''' <listheader> <term> <b>Target Type</b> </term>  <description> Default Value </description></listheader>
@@ -380,7 +398,7 @@ Namespace IO
                                     ParseError   = Nothing
                                     success      = True
                                 End If
-                                If (OptionZeroAsNaN AndAlso (FieldInteger = 0.0)) Then FieldInteger = DefaultInteger
+                                'If (OptionZeroAsNaN AndAlso (FieldInteger = 0)) Then FieldInteger = DefaultInteger
                                 
                                 FieldValue = Convert.ChangeType(FieldInteger, TargetType)
                             End If
@@ -411,7 +429,7 @@ Namespace IO
                                     ParseError   = Nothing
                                     success      = True
                                 End If
-                                If (OptionZeroAsNaN AndAlso (FieldLong = 0.0)) Then FieldLong = DefaultLong
+                                'If (OptionZeroAsNaN AndAlso (FieldLong = 0)) Then FieldLong = DefaultLong
                                 
                                 FieldValue = Convert.ChangeType(FieldLong, TargetType)
                             End If
@@ -566,11 +584,11 @@ Namespace IO
                         Dim Comm As String = TextLine.Substring(LineStartCommentToken.Length)
                         If (Comm.IsNotEmptyOrWhiteSpace()) Then
                             HasComment = True
-                            If (Comm.StartsWith(" ", System.StringComparison.Ordinal)) Then
-                                Comment = Comm.Substring(1)
-                            Else
+                            'If (Comm.StartsWith(" ", System.StringComparison.Ordinal)) Then
+                            '    Comment = Comm.Substring(1)
+                            'Else
                                 Comment = Comm
-                            End If
+                            'End If
                         End If
                         
                     ElseIf ((LineEndCommentToken IsNot Nothing) AndAlso (TextLine.Contains(LineEndCommentToken))) Then

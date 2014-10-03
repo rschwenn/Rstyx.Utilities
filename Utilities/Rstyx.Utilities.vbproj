@@ -141,6 +141,7 @@
       <DependentUpon>CsvExceptionMessage.resx</DependentUpon>
     </Compile>
     <Compile Include="source\IO\DataField.vb" />
+    <Compile Include="source\IO\Interfaces.vb" />
     <Compile Include="source\IO\ParseError.vb" />
     <Compile Include="source\IO\ParseErrorCollection.vb" />
     <Compile Include="source\IO\ParseException.vb" />
@@ -236,8 +237,9 @@
     <EmbeddedResource Include="source\Resources\Messages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <!--<Generator>VbMyResourcesResXFileCodeGenerator</Generator>-->
-      <LastGenOutput>Messages.Designer.vb</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Messages.Designer.vb</LastGenOutput>
       <!--<LogicalName>Resources.ExceptionMessage.resources</LogicalName>-->
     </EmbeddedResource>
   </ItemGroup>

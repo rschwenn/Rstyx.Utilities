@@ -6,7 +6,7 @@ Namespace Domain
     Public Interface IIdentifiable(Of TKey)
         
         ''' <summary> An ID of a given Type. </summary>
-        Property ID             As Tkey
+        Property ID()           As Tkey
         
     End Interface
     
@@ -36,10 +36,10 @@ Namespace Domain
         Property ObjectKey()    As String
         
         ''' <summary> A Job designation. </summary>
-        Property Job            As String
+        Property Job()          As String
         
         ''' <summary> A time stamp designating the point's origin or last change. Defaults to time of object creation. </summary>
-        Property TimeStamp      As System.DateTime
+        Property TimeStamp()    As System.DateTime
         
     End Interface
     

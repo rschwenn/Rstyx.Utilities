@@ -1226,7 +1226,7 @@ Namespace Domain
                                         
                                         ' Get second line of this record.
                                         SplitLine = SplitLines(RecIdx + 1)
-                                        If (Not SplitLine.HasData) Then Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingSecondLine, Nothing))
+                                        If (Not SplitLine.HasData) Then Throw New ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingSecondLine, Nothing))
                                     End If
                                     
                                     ' Track coordinates line.
@@ -1234,9 +1234,9 @@ Namespace Domain
                                     Dim DoubleField As DataField(Of Double) = SplitLine.ParseField(RecDef.ID)
                                     p.ID = StringUtils.sprintf("%d", DoubleField.Value * RecDef.ID_Factor)
                                     If ((Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) AndAlso (Not (p.ID = ID2))) Then
-                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
+                                        Throw New ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
                                     ElseIf (Block.Points.Contains(p.ID)) Then
-                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
+                                        Throw New ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleField.Source.Column, DoubleField.Source.Column + DoubleField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
                                     End If
                                     
                                     ' Track values.
@@ -1286,7 +1286,7 @@ Namespace Domain
                                             ElseIf (p.Ra.EqualsAlmost(0, 0.001)) Then
                                                 Hints = Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantSign
                                             End If
-                                            Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.[Error], SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantedRailsSystem, Hints, Nothing))
+                                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantedRailsSystem, Hints, Nothing))
                                         End If
                                     End If
                                     
@@ -1365,9 +1365,9 @@ Namespace Domain
                                     IDField = SplitLine.ParseField(RecDef.ID) 
                                     p.ID    = IDField.Value
                                     If (p.ID.IsEmptyOrWhiteSpace()) Then
-                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingID, Nothing))
+                                        Throw New ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingID, Nothing))
                                     ElseIf (Block.Points.Contains(p.ID)) Then
-                                        Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, IDField.Source.Column, IDField.Source.Column + IDField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
+                                        Throw New ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, IDField.Source.Column, IDField.Source.Column + IDField.Source.Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDdoubled, p.ID), Nothing))
                                     End If
                                     
                                     ' Cartesian coordinates.
@@ -1507,7 +1507,7 @@ Namespace Domain
                                             ElseIf (p.Ra.EqualsAlmost(0, 0.001)) Then
                                                 Hints = Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantSign
                                             End If
-                                            Throw New Rstyx.Utilities.IO.ParseException(New ParseError(ParseErrorLevel.[Error], SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantedRailsSystem, Hints, Nothing))
+                                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_Constraints_MissingCantedRailsSystem, Hints, Nothing))
                                         End If
                                     End If
                                     
