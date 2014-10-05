@@ -1,6 +1,16 @@
 ﻿
 'Namespace System
     
+    ''' <summary> Specifies that the implementing object is identified by an object of specified generic parameter. </summary>
+     ''' <typeparam name="TKey"> Type of the Identifier. </typeparam>
+    Public Interface IIdentifiable(Of TKey)
+        
+        ''' <summary> An ID of a given Type. </summary>
+        Property ID()           As Tkey
+        
+    End Interface
+    
+    
     ''' <summary> A provider of properties to indicate program state (i.e. for binding to status bar). </summary>
     Public Interface IStatusIndicator
         

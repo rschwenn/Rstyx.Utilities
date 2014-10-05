@@ -146,10 +146,11 @@ Namespace IO
              ''' <remarks>
              ''' <para>
              ''' If a parsing error occurs, an exception is thrown that containes the <see cref="ParseError"/> (without assigned <c>FilePath</c> field).
+             ''' The <see cref="ParseError"/> always contains error source information (line and columns)
              ''' </para>
              ''' <para>
              ''' If the field doesn't exist but <paramref name="FieldDef"/><c>.Options</c> has the flag <c>NotRequired</c>,
-             ''' then <paramref name="Result"/><c>.Value</c> will be a default value and the function returns <see langword="true"/> (success).
+             ''' then the <c>.Value</c> of returned data field will be a default value.
              ''' </para>
              ''' <para>
              ''' If the field's start column does exist in <c>Me.Data</c>, it doesn't matter if the field's end would be behind <c>Me.Data</c>'s end: 
@@ -189,11 +190,12 @@ Namespace IO
                 Dim Field As DataField(Of TFieldValue) = Nothing
                 
                 If (Not Me.TryParseField(Of TFieldValue)(FieldDef, Field)) Then
-                    If ((Field IsNot Nothing) AndAlso (Field.ParseError IsNot Nothing)) Then
-                        Throw New Rstyx.Utilities.IO.ParseException(Field.ParseError)
-                    Else
-                        Throw New Rstyx.Utilities.IO.ParseException("!!!  parsing data field crashed...")
-                    End If
+                    Throw New Rstyx.Utilities.IO.ParseException(Field.ParseError)
+                    'If ((Field IsNot Nothing) AndAlso (Field.ParseError IsNot Nothing)) Then
+                    '    Throw New Rstyx.Utilities.IO.ParseException(Field.ParseError)
+                    'Else
+                    '    Throw New Rstyx.Utilities.IO.ParseException("!!!  parsing data field crashed...")
+                    'End If
                 End If
                 
                 Return Field
@@ -208,6 +210,7 @@ Namespace IO
              ''' <para>
              ''' No exception is thrown if a parsing error occurs. Instead a new <see cref="ParseError"/> is created (without assigned <c>FilePath</c> field)
              ''' and passed back as part of <paramref name="Result"/>.
+             ''' The <see cref="ParseError"/> always contains error source information (line and columns)
              ''' </para>
              ''' <para>
              ''' If the field doesn't exist but <paramref name="FieldDef"/><c>.Options</c> has the flag <c>NotRequired</c>,
@@ -488,7 +491,7 @@ Namespace IO
                             success = FieldKilometer.TryParse(FieldString)
                             
                             If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
-                                ParseError = New ParseError(ParseErrorLevel.Error, 
+                                ParseError = New ParseError(ParseErrorLevel.Error,
                                                             Me.SourceLineNo,
                                                             FieldSource.Column,
                                                             FieldSource.Column + FieldSource.Length,
@@ -521,7 +524,7 @@ Namespace IO
                                     For Each Value As Integer In [Enum].GetValues(TargetType)
                                         ValidValues &= ", " & CStr(Value)
                                     Next
-                                    ParseError = New ParseError(ParseErrorLevel.Error, 
+                                    ParseError = New ParseError(ParseErrorLevel.Error,
                                                                 Me.SourceLineNo,
                                                                 FieldSource.Column,
                                                                 FieldSource.Column + FieldSource.Length,

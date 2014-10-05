@@ -798,15 +798,15 @@
     <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_NoPoints" xml:space="preserve">
+  <data name="GeoPointList_NoPoints" xml:space="preserve">
     <value>=&gt; Koordinatendatei enthält keine Punkte (%s).</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_ChangePointNumbersSuccess" xml:space="preserve">
+  <data name="GeoPointList_ChangePointNumbersSuccess" xml:space="preserve">
     <value>=&gt; %d Punktnummern geändert.</value>
     <comment>Point Count: Integer</comment>
   </data>
-  <data name="GeoVEPointList_EmptyPointChangeTab" xml:space="preserve">
+  <data name="GeoPointList_EmptyPointChangeTab" xml:space="preserve">
     <value>Zuordnungstabelle ist leer =&gt; nichts zu tun.</value>
   </data>
   <data name="GeoVEPointList_Label_KvDefaultHeader1" xml:space="preserve">
@@ -820,5 +820,25 @@
   <data name="GeoVEPointList_Label_KvDefaultHeader3" xml:space="preserve">
     <value># PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr</value>
     <comment>Default Header Line #3 for KV file</comment>
+  </data>
+  <data name="GeoPointConstraints_RepeatedPointID" xml:space="preserve">
+    <value>Punkt-ID (%s) trit wiederholt auf.</value>
+    <comment>Point ID: String</comment>
+  </data>
+  <data name="GeoPointConstraints_MissingHeight" xml:space="preserve">
+    <value>Höhe fehlt bei Punkt %s.</value>
+    <comment>Point ID: String</comment>
+  </data>
+  <data name="GeoPointConstraints_MissingPosition" xml:space="preserve">
+    <value>Lagekoorinaten fehlen bei Punkt %s.</value>
+    <comment>Point ID: String</comment>
+  </data>
+  <data name="ParseError_ErrorLevelWithoutLineNo" xml:space="preserve">
+    <value>%s: %s</value>
+    <comment>ErrorLevel: String; Error Message: String</comment>
+  </data>
+  <data name="GeoVEPointList_ReadBinaryParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Analysieren der Verm.esn-Punktdatei (KF) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
   </data>
 </root>

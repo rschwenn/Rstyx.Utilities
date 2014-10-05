@@ -9,6 +9,7 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 
 Imports Rstyx.Utilities
+Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.Validation
 
@@ -99,7 +100,7 @@ Namespace Domain
                 ''' <summary> If <see langword="true"/> and no kilometer value is found, the station value will be used also as kilometer. Defaults to <see langword="true"/>. </summary>
                 Public Property StationAsKilometer() As Boolean = True
                 
-                ''' <summary> Determines logical constraints to be considered for the intended usage of read points (beside the pure source format constraints) . Defaults to <c>None</c>. </summary>
+                ''' <summary> Determines logical constraints to be considered for the intended usage of read points (beside the pure source format constraints). Defaults to <c>None</c>. </summary>
                  ''' <remarks> If any of these contraints is injured, a <see cref="ParseError"/> will be created. </remarks>
                 Public Property Constraints() As TcConstraints = TcConstraints.None
                 

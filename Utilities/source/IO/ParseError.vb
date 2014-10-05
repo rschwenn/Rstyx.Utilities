@@ -19,6 +19,10 @@ Namespace IO
     #End Region
     
     ''' <summary> Represents an error that has been occurred while parsing a text file. </summary>
+     ''' <remarks>
+     ''' The error holds at least an severity level and message.
+     ''' Optional are source field information stored, that enables to highlight the error source in the source text file.
+     ''' </remarks>
     Public Class ParseError
         
         #Region "Private Fields"
@@ -32,7 +36,40 @@ Namespace IO
             Private Sub New()
             End Sub
             
-            ''' <summary> Creates a new instance of ParseError. </summary>
+            ''' <summary> Creates a new instance of ParseError without source information. </summary>
+             ''' <param name="Level">       The degree of severity of the error. </param>
+             ''' <param name="Message">     The error Message. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
+            Public Sub New(Level       As ParseErrorLevel,
+                           Message     As String
+                          )
+                Me.New(Level, Message, Nothing, Nothing)
+            End Sub
+            
+            ''' <summary> Creates a new instance of ParseError without source information. </summary>
+             ''' <param name="Level">       The degree of severity of the error. </param>
+             ''' <param name="Message">     The error Message. </param>
+             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath">    Full path of the source file. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
+            Public Sub New(Level       As ParseErrorLevel,
+                           Message     As String,
+                           Hints       As String,
+                           FilePath    As String
+                          )
+                If (Message.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Message")
+                
+                Me.Level       = Level
+                Me.Message     = Message
+                Me.Hints       = Hints
+                Me.FilePath    = FilePath
+                
+                Me.HasSource   = False
+            End Sub
+            
+            ''' <summary> Creates a new instance of ParseError with source information. </summary>
              ''' <param name="Level">       The degree of severity of the error. </param>
              ''' <param name="LineNo">      The line number in the source file, starting at 1. </param>
              ''' <param name="StartColumn"> The colulmn number in the source line determining the start of faulty string. </param>
@@ -54,7 +91,7 @@ Namespace IO
                 Me.New(Level, LineNo, StartColumn, EndColumn, Message, Nothing, FilePath)
             End Sub
             
-            ''' <summary> Creates a new instance of ParseError. </summary>
+            ''' <summary> Creates a new instance of ParseError with source information. </summary>
              ''' <param name="Level">       The degree of severity of the error. </param>
              ''' <param name="LineNo">      The line number in the source file, starting at 1. </param>
              ''' <param name="StartColumn"> The colulmn number in the source line determining the start of faulty string. </param>
@@ -88,6 +125,8 @@ Namespace IO
                 Me.Message     = Message
                 Me.Hints       = Hints
                 Me.FilePath    = FilePath
+                
+                Me.HasSource   = True
             End Sub
             
         #End Region
@@ -96,6 +135,17 @@ Namespace IO
             
             ''' <summary> The degree of severity of the error. </summary>
             Public ReadOnly Level           As ParseErrorLevel
+            
+            ''' <summary> The error message (may be multi-line). </summary>
+             ''' <remarks>
+             ''' It cannot be <see langword="null"/> or <c>String.Empty</c> or whitespace only.
+             ''' Multiple lines has to be separated by <b>Environment.NewLine</b>.
+             ''' </remarks>
+            Public ReadOnly Message         As String
+            
+            
+            ''' <summary> Determines if source information (line, columns) is available. </summary>
+            Public ReadOnly HasSource       As Boolean
             
             ''' <summary> The line number in the source file, starting at 1. </summary>
             Public ReadOnly LineNo          As Long
@@ -108,12 +158,6 @@ Namespace IO
              ''' <remarks> Zero means "not determined". If not zero, it has to be greater than <see cref="ParseError.StartColumn"/>. </remarks>
             Public ReadOnly EndColumn       As Long
             
-            ''' <summary> The error message (may be multi-line). </summary>
-             ''' <remarks>
-             ''' It cannot be <see langword="null"/> or <c>String.Empty</c> or whitespace only.
-             ''' Multiple lines has to be separated by <b>Environment.NewLine</b>.
-             ''' </remarks>
-            Public ReadOnly Message         As String
             
             ''' <summary> Hints that could help the user to understand the error. </summary>
              ''' <remarks>
@@ -123,7 +167,7 @@ Namespace IO
             Public ReadOnly Hints           As String
             
             ''' <summary> Full path of the file this error is related to. </summary>
-             ''' <remarks> May be <see langword="null"/>. In this case the consumer has to know the file path by itself. </remarks>
+             ''' <remarks> May be <see langword="null"/>. In this case the consumer has to know the file path by itself (i.e. <see cref="ParseErrorCollection.FilePath"/>). </remarks>
             Public ReadOnly FilePath        As String
             
         #End Region
@@ -134,12 +178,11 @@ Namespace IO
             Public Overrides Function ToString() As String
                 Dim RetValue As String = String.Empty
                 
-                RetValue = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.ParseError_ErrorLevelInLineNo, Me.Level.ToDisplayString(), Me.LineNo, Me.Message.Replace(Environment.NewLine, "  " & Environment.NewLine))
-                
-                '' Hints.
-                'If (Me.Hints.IsNotEmptyOrWhiteSpace()) Then
-                '    RetValue &= Environment.NewLine & "  => " & Me.Hints.Replace(Environment.NewLine, "  " & Environment.NewLine)
-                'End If
+                If (Me.HasSource) Then
+                    RetValue = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.ParseError_ErrorLevelInLineNo, Me.Level.ToDisplayString(), Me.LineNo, Me.Message.Replace(Environment.NewLine, "  " & Environment.NewLine))
+                Else
+                    RetValue = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.ParseError_ErrorLevelWithoutLineNo, Me.Level.ToDisplayString(), Me.Message.Replace(Environment.NewLine, "  " & Environment.NewLine))
+                End If
                 
                 Return RetValue
             End Function

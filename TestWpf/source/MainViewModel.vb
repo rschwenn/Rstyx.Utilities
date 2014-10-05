@@ -115,11 +115,14 @@ Public Class MainViewModel
                 'Dim pt As New Collection(Of VEPoint)
                 'Logger.logInfo(TypeOf pt Is Collection(Of GeoPoint(Of Double)))
                 
+                Logger.logInfo("")
                 Dim pts As New GeoVEPointList()
                 pts.ShowParseErrorsInJedit = True
                 pts.CollectParseErrors = True
-                pts.readFromKvFile(Me.FilePath1)
-                'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\dummy.kf")
+                pts.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
+                'pts.readFromKvFile(Me.FilePath1)
+                pts.readFromKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
+                'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.kf")
                 Logger.logInfo(pts.ToString())
                 pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
                 'pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
