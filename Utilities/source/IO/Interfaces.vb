@@ -6,7 +6,7 @@ Namespace IO
     Public Interface IParseErrors
             
             ''' <summary> Provides access to the errors occurred while parsing the file. </summary>
-            ReadOnly Property ParseErrors() As ParseErrorCollection
+            Property ParseErrors() As ParseErrorCollection
             
             ''' <summary> Determines if parse errors should be collected. Defaults to <see langword="false"/>. </summary>
              ''' <remarks>

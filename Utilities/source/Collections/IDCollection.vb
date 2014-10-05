@@ -1,7 +1,7 @@
 ﻿
 Imports System.Collections.Generic
 
-Namespace Domain
+Namespace Collections
     
     ''' <summary> Shortcut for a <see cref="IDCollection(Of String, TItem)"/>, representing the most usual case: objects with a string identifier. </summary>
      ''' <typeparam name="TItem"> Type of collection items. It has to implement the <see cref="IIdentifiable(Of TKey)"/> interface. </typeparam>

@@ -6,7 +6,7 @@ Imports System.Collections.ObjectModel
 Namespace IO
     
     ''' <summary>  A collection of <see cref="Rstyx.Utilities.IO.ParseError"/> objects. </summary>
-     ''' <remarks>  </remarks>
+     ''' <remarks> There are methods to show the errors in jEdit and to log them to LoggingConsole. </remarks>
     Public Class ParseErrorCollection
         Inherits System.Collections.ObjectModel.Collection(Of Rstyx.Utilities.IO.ParseError)
         
@@ -14,13 +14,14 @@ Namespace IO
             
             Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseErrorCollection")
             
-            Protected _HasErrors    As Boolean
-            Protected _HasWarnings  As Boolean
+            Protected _HasErrors            As Boolean
+            Protected _HasWarnings          As Boolean
+            Protected _HasItemsWithSource   As Boolean
             
-            Protected _ErrorCount   As Long
-            Protected _WarningCount As Long
+            Protected _ErrorCount           As Long
+            Protected _WarningCount         As Long
             
-            Protected IndexOfLineNo As New Dictionary(Of Long, Integer)
+            Protected IndexOfLineNo         As New Dictionary(Of Long, Integer)
             
         #End Region
         
@@ -41,7 +42,33 @@ Namespace IO
         
         #Region "Collection Implementation"
             
-            ''' <summary> Adds a new error to the collection. </summary>
+            ''' <summary> Adds a new error without source information to the collection. </summary>
+             ''' <param name="Message">     The error Message. </param>
+             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
+            Public Sub AddError(Message     As String,
+                                Optional Hints    As String = Nothing,
+                                Optional FilePath As String = Nothing
+                               )
+                Me.Add(New ParseError(ParseErrorLevel.[Error], Message, Hints, FilePath))
+            End Sub
+            
+            ''' <summary> Adds a new warning without source information to the collection. </summary>
+             ''' <param name="Message">     The error Message. </param>
+             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
+            Public Sub AddWarning(Message     As String,
+                                  Optional Hints    As String = Nothing,
+                                  Optional FilePath As String = Nothing
+                                 )
+                Me.Add(New ParseError(ParseErrorLevel.Warning, Message, Hints, FilePath))
+            End Sub
+            
+            ''' <summary> Adds a new error with source information to the collection. </summary>
              ''' <param name="LineNo">      The line number in the source file, starting at 1. </param>
              ''' <param name="StartColumn"> The colulmn number in the source line determining the start of faulty string. </param>
              ''' <param name="EndColumn">   The colulmn number in the source line determining the end of faulty string. </param>
@@ -63,7 +90,7 @@ Namespace IO
                 Me.Add(New ParseError(ParseErrorLevel.[Error], LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
-            ''' <summary> Adds a new warning to the collection. </summary>
+            ''' <summary> Adds a new warning with source information to the collection. </summary>
              ''' <param name="LineNo">      The line number in the source file, starting at 1. </param>
              ''' <param name="StartColumn"> The colulmn number in the source line determining the start of faulty string. </param>
              ''' <param name="EndColumn">   The colulmn number in the source line determining the end of faulty string. </param>
@@ -85,7 +112,22 @@ Namespace IO
                 Me.Add(New ParseError(ParseErrorLevel.Warning, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
-            ''' <summary> Adds a new Item to the collection. </summary>
+            ''' <summary> Adds a new Item without source information to the collection. </summary>
+             ''' <param name="Level">       The degree of severity of the error. </param>
+             ''' <param name="Message">     The error Message. </param>
+             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
+            Public Overloads Sub Add(Level              As ParseErrorLevel,
+                                     Message            As String,
+                                     Optional Hints     As String = Nothing,
+                                     Optional FilePath  As String = Nothing
+                                    )
+                Me.Add(New ParseError(Level, Message, Hints, FilePath))
+            End Sub
+            
+            ''' <summary> Adds a new Item with source information to the collection. </summary>
              ''' <param name="Level">       The degree of severity of the error. </param>
              ''' <param name="LineNo">      The line number in the source file, starting at 1. </param>
              ''' <param name="StartColumn"> The colulmn number in the source line determining the start of faulty string. </param>
@@ -98,21 +140,23 @@ Namespace IO
              ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is not greater than <paramref name="StartColumn"/>. </exception>
-            Public Shadows Sub Add(Level       As ParseErrorLevel,
-                                   LineNo      As Long,
-                                   StartColumn As Long,
-                                   EndColumn   As Long,
-                                   Message     As String,
-                                   Optional Hints    As String = Nothing,
-                                   Optional FilePath As String = Nothing
-                                  )
+            Public Overloads Sub Add(Level       As ParseErrorLevel,
+                                     LineNo      As Long,
+                                     StartColumn As Long,
+                                     EndColumn   As Long,
+                                     Message     As String,
+                                     Optional Hints    As String = Nothing,
+                                     Optional FilePath As String = Nothing
+                                    )
                 Me.Add(New ParseError(Level, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
-            ''' <summary> Adds a new error to the collection. </summary>
+            ''' <summary> Inserts a new error to the collection at the given index. </summary>
+             ''' <param name="index"> The index to insert item at. </param>
              ''' <param name="Item"> The <see cref="ParseError"/> to add. </param>
-            Public Shadows Sub Add(Item As ParseError)
-                'If (Item Is Nothing) Then Then Throw New System.ArgumentNullException("Item")
+            Protected Overrides Sub InsertItem(ByVal index As Integer, ByVal Item As ParseError)
+                
+                If (Item Is Nothing) Then Throw New System.ArgumentNullException("Item")
                 
                 ' Track Error Level.
                 If (Item.Level = ParseErrorLevel.Error) Then
@@ -123,18 +167,23 @@ Namespace IO
                     _WarningCount += 1
                 End If
                 
+                ' Track availability of error source information.
+                If (Item.HasSource) Then
+                    _HasItemsWithSource = True
+                End If
+                
                 ' Track Line Numbers.
                 If (Not IndexOfLineNo.ContainsKey(Item.LineNo)) Then
                     IndexOfLineNo.Add(Item.LineNo, Me.Count)
                 End If
                 
                 ' Add Item.
-                MyBase.Add(Item)
+                MyBase.InsertItem(index, Item)
             End Sub
             
             ''' <summary> Removes all errors and warnings and also clears status information. </summary>
-            Public Shadows Sub Clear()
-                MyBase.Clear()
+            Protected Overrides Sub ClearItems()
+                MyBase.ClearItems()
                 
                 FilePath      = Nothing
                 _HasErrors    = False
@@ -143,12 +192,6 @@ Namespace IO
                 _WarningCount = 0
                 
                 IndexOfLineNo.Clear()
-            End Sub
-            
-            ''' <summary> Hides the inherited method. </summary>
-             ''' <param name="Item"> The <see cref="ParseError"/> to insert. </param>
-            Protected Shadows Sub Insert(Index As Integer, Item As Rstyx.Utilities.IO.ParseError)
-                MyBase.Insert(Index, Item)
             End Sub
             
             ''' <summary> Hides the inherited method. </summary>
@@ -176,6 +219,13 @@ Namespace IO
             Public ReadOnly Property HasWarnings() As Boolean
                 Get
                     Return _HasWarnings
+                End Get
+            End Property
+            
+            ''' <summary> Gets the info whether or not there is at least one item with source information. </summary>
+            Public ReadOnly Property HasItemsWithSource() As Boolean
+                Get
+                    Return _HasItemsWithSource
                 End Get
             End Property
             
@@ -227,7 +277,7 @@ Namespace IO
                     Throw New NotSupportedException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_EditorNotAvailable, Apps.AppUtils.SupportedEditors.jEdit.ToDisplayString()))
                 End If
                 
-                If (Me.Count > 0) Then
+                If (Me.HasItemsWithSource) Then
                     ' Create Beanshell script.
                     Dim BshPath As String = Me.ToJeditBeanshell()
                     
@@ -279,25 +329,27 @@ Namespace IO
                         
                         oErr = Me.Item(i)
                         
-                        ' Error details.
-                        Level      = If(oErr.Level = ParseErrorLevel.Error, "ErrorSource.ERROR", "ErrorSource.WARNING")
-                        SourcePath = String2Java(If(oErr.FilePath IsNot Nothing, oErr.FilePath, Me.FilePath))
-                        Msg        = oErr.Message.splitLines()
-                        
-                        ' Create new error with main message.
-                        SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s"");",
-                                     Level, SourcePath, oErr.LineNo - 1, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)))
-                        oBsh.WriteLine(SourceText)
-                        
-                        ' Extra message lines.
-                        For k As Integer = 1 To Msg.Length - 1
-                            oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
-                        Next
-                        If (oErr.Hints IsNot Nothing) Then
-                            Msg = oErr.Hints.Split("\n")
-                            For k As Integer = 0 To Msg.Length - 1
+                        If (oErr.HasSource) Then
+                            ' Error details.
+                            Level      = If(oErr.Level = ParseErrorLevel.Error, "ErrorSource.ERROR", "ErrorSource.WARNING")
+                            SourcePath = String2Java(If(oErr.FilePath IsNot Nothing, oErr.FilePath, Me.FilePath))
+                            Msg        = oErr.Message.splitLines()
+                            
+                            ' Create new error with main message.
+                            SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s"");",
+                                         Level, SourcePath, oErr.LineNo - 1, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)))
+                            oBsh.WriteLine(SourceText)
+                            
+                            ' Extra message lines.
+                            For k As Integer = 1 To Msg.Length - 1
                                 oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                             Next
+                            If (oErr.Hints IsNot Nothing) Then
+                                Msg = oErr.Hints.Split("\n")
+                                For k As Integer = 0 To Msg.Length - 1
+                                    oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
+                                Next
+                            End If
                         End If
                         
                         ' Commit newly created error to list.

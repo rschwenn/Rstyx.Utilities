@@ -956,20 +956,56 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe fehlt bei Punkt %s. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_MissingHeight() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_MissingHeight", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lagekoorinaten fehlen bei Punkt %s. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_MissingPosition() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_MissingPosition", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) trit wiederholt auf. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_RepeatedPointID() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_RepeatedPointID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punktnummern geändert. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ChangePointNumbersSuccess() As String
+        Public Shared ReadOnly Property GeoPointList_ChangePointNumbersSuccess() As String
             Get
-                Return ResourceManager.GetString("GeoVEPointList_ChangePointNumbersSuccess", resourceCulture)
+                Return ResourceManager.GetString("GeoPointList_ChangePointNumbersSuccess", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Zuordnungstabelle ist leer =&gt; nichts zu tun. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_EmptyPointChangeTab() As String
+        Public Shared ReadOnly Property GeoPointList_EmptyPointChangeTab() As String
             Get
-                Return ResourceManager.GetString("GeoVEPointList_EmptyPointChangeTab", resourceCulture)
+                Return ResourceManager.GetString("GeoPointList_EmptyPointChangeTab", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; Koordinatendatei enthält keine Punkte (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointList_NoPoints() As String
+            Get
+                Return ResourceManager.GetString("GeoPointList_NoPoints", resourceCulture)
             End Get
         End Property
         
@@ -1001,20 +1037,20 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; Koordinatendatei enthält keine Punkte (%s). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_NoPoints() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_NoPoints", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoVEPointList_ReadBinaryFailed() As String
             Get
                 Return ResourceManager.GetString("GeoVEPointList_ReadBinaryFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoVEPointList_ReadBinaryParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoVEPointList_ReadBinaryParsingFailed", resourceCulture)
             End Get
         End Property
         
@@ -1285,6 +1321,15 @@ Namespace Resources
         Public Shared ReadOnly Property ParseError_ErrorLevelInLineNo() As String
             Get
                 Return ResourceManager.GetString("ParseError_ErrorLevelInLineNo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %s: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property ParseError_ErrorLevelWithoutLineNo() As String
+            Get
+                Return ResourceManager.GetString("ParseError_ErrorLevelWithoutLineNo", resourceCulture)
             End Get
         End Property
         
