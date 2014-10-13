@@ -65,7 +65,7 @@ Namespace Domain
             Public Property Job()           As String = String.Empty Implements IGeoPointInfo.Job
             
             ''' <inheritdoc/>
-            Public Property TimeStamp       As DateTime = DateTime.UtcNow Implements IGeoPointInfo.TimeStamp
+            Public Property TimeStamp       As Nullable(Of DateTime) = Nothing Implements IGeoPointInfo.TimeStamp
             
         #End Region
         

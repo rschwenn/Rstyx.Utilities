@@ -115,8 +115,10 @@
     <Compile Include="My Project\Settings.vb" />
     <Compile Include="source\Apps\AppInfo.vb" />
     <Compile Include="source\Apps\AppUtils.vb" />
+    <Compile Include="source\Domain\GeoIPoint.vb" />
+    <Compile Include="source\Domain\GeoIPointList.vb" />
     <Compile Include="source\Domain\GeoPoint.vb" />
-    <Compile Include="source\Domain\GeoPointList.vb" />
+    <Compile Include="source\Domain\GeoPointListBase.vb" />
     <Compile Include="source\Domain\GeoTcPoint.vb" />
     <Compile Include="source\Domain\GeoVEPoint.vb" />
     <Compile Include="source\Domain\GeoVEPointList.vb" />

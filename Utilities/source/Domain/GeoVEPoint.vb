@@ -7,7 +7,7 @@ Namespace Domain
     ''' <summary> One single VE point. </summary>
     Public Class GeoVEPoint
         Inherits GeoPoint(Of Double)
-
+        
         #Region "Private Fields"
             
             Private PointNoFactor   As Integer = 100000

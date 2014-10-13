@@ -21,12 +21,11 @@ Namespace Domain
      ''' <item><description> Property for accessing the Header. </description></item>
      ''' <item><description> Methods for reading and writing the binary Verm.esn file. </description></item>
      ''' <item><description> Methods for reading and writing the ASCII "KV" file. </description></item>
-     ''' <item><description> Manipulation methods: - changing the point numbers according to a point change table. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
     Public Class GeoVEPointList
-        Inherits GeoPointList(Of Double, GeoVEPoint)
+        Inherits GeoPointListBase(Of Double, GeoVEPoint)
         
         #Region "Private Fields"
             

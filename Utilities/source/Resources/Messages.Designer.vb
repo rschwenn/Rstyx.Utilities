@@ -317,6 +317,51 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 1 Typ ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_AttKey1() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_AttKey1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 2 Typ ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_AttKey2() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_AttKey2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 1 Wert ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_AttValue1() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_AttValue1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 2 Wert ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_AttValue2() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_AttValue2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Berechnungs-Kode ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_CalcCode() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_CalcCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Kommentar ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Com() As String
@@ -344,11 +389,65 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Koordinatensystem ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_CoordSys() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_CoordSys", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Koordinatentyp ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_CoordType() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_CoordType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Kennzeichen ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Flags() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Flags", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Steigungswinkel ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_G() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_G", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grafik-Kode ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GraficsCode() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GraficsCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grafik-Dimension ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GraficsDim() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GraficsDim", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grafik-Exzentrum ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GraficsEcc() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GraficsEcc", resourceCulture)
             End Get
         End Property
         
@@ -686,6 +785,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zeitstempel ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_TimeStamp() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_TimeStamp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Tunnelmeter ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Tm() As String
@@ -736,6 +844,24 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_V() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_V", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gewicht Höhe ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_wh() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_wh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gewicht Lage ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_wp() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_wp", resourceCulture)
             End Get
         End Property
         
@@ -952,6 +1078,105 @@ Namespace Resources
         Public Shared ReadOnly Property FileUtils_SearchIgnoresRepeatedFolderName() As String
             Get
                 Return ResourceManager.GetString("FileUtils_SearchIgnoresRepeatedFolderName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Beispiel für gültiges Format: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_HintValidTimeStampFormat() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_HintValidTimeStampFormat", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; hat kein gültiges Format (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_InvalidFieldNotTimeStamp() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_InvalidFieldNotTimeStamp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die #123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890.... ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_Label_iPktDefaultHeader1() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_Label_iPktDefaultHeader1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die #&lt;LfNr&gt;+BC+&lt;-OS-&gt;+GC+&lt;GDim&gt;+&lt;GExz&gt;+&lt;---Punktnummer----&gt;+&lt;K&gt;+&lt;-RechtsWert-&gt;+&lt;--HochWert--&gt;+&lt;----Höhe----&gt;+&lt;---Zeitstempel---&gt;+&lt;-KS-&gt;+&lt;--&gt;+&lt;GL&gt;+&lt;GH&gt;+&lt;---------Text----------&gt;+AT+&lt;-------Attribut--------&gt;+AT+&lt;-------Attribut--------&gt;+freie Daten... ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_Label_iPktDefaultHeader2() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_Label_iPktDefaultHeader2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_ReadIpktFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_ReadIpktFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_ReadIpktParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_ReadIpktParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_ReadIpktStart() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_ReadIpktStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (iPkt) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_ReadIpktSuccess() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_ReadIpktSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_WriteIpktFailed() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_WriteIpktFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_WriteIpktStart() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_WriteIpktStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in ASCII-Punktdatei (iPkt) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPointList_WriteIpktSuccess() As String
+            Get
+                Return ResourceManager.GetString("GeoIPointList_WriteIpktSuccess", resourceCulture)
             End Get
         End Property
         

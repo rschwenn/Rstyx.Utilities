@@ -1,4 +1,6 @@
 ﻿
+Imports System
+
 Namespace Domain
     
     ''' <summary> A set of properties describing a geodetic point. </summary>
@@ -29,7 +31,7 @@ Namespace Domain
         Property Job()          As String
         
         ''' <summary> A time stamp designating the point's origin or last change. Defaults to time of object creation. </summary>
-        Property TimeStamp()    As System.DateTime
+        Property TimeStamp()    As Nullable(Of DateTime)
         
     End Interface
     

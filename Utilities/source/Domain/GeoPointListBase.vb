@@ -30,7 +30,7 @@ Namespace Domain
     End Enum
     
     
-    ''' <summary> A generic, ready for use keyed collection for GeoPoint's. </summary>
+    ''' <summary> A generic, keyed collection base class for GeoPoint's. </summary>
      ''' <typeparam name="TPointID">  Type of Point ID. </typeparam>
      ''' <typeparam name="Point">     Type of collection items. It has to be or inherit from the <see cref="GeoPoint(Of TPointID)"/> interface. </typeparam>
      ''' <remarks>
@@ -40,12 +40,11 @@ Namespace Domain
      ''' <list type="bullet">
      ''' <item><description> Basic suport for reading an ascii file. </description></item>
      ''' <item><description> Implements <see cref="IParseErrors"/> in order to support error handling. </description></item>
-     ''' <item><description>  </description></item>
-     ''' <item><description>  </description></item>
+     ''' <item><description> Manipulation method for changing the point numbers according to a point change table. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public Class GeoPointList(Of TPointID, Point As GeoPoint(Of TPointID))
+    Public MustInherit Class GeoPointListBase(Of TPointID, Point As GeoPoint(Of TPointID))
         Inherits IDCollection(Of TPointID, GeoPoint(Of TPointID))
         Implements IParseErrors
         
@@ -148,7 +147,7 @@ Namespace Domain
         
         #Region "Overrides"
             
-            ''' <summary> Clears this collection as well as <see cref="GeoPointList.ParseErrors"/> and <see cref="GeoPointList.Header"/>. </summary>
+            ''' <summary> Clears this collection as well as <see cref="GeoPointListBase.ParseErrors"/> and <see cref="GeoPointListBase.Header"/>. </summary>
             Protected Overrides Sub ClearItems()
                 MyBase.ClearItems()
                 Me.ParseErrors.Clear()

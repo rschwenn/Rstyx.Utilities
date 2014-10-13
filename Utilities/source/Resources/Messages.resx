@@ -841,4 +841,89 @@
     <value>Es sind %d Fehler aufgetreten beim Analysieren der Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
+  <data name="GeoIPointList_Label_iPktDefaultHeader1" xml:space="preserve">
+    <value>#123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890....</value>
+  </data>
+  <data name="GeoIPointList_Label_iPktDefaultHeader2" xml:space="preserve">
+    <value>#&lt;LfNr&gt;+BC+&lt;-OS-&gt;+GC+&lt;GDim&gt;+&lt;GExz&gt;+&lt;---Punktnummer----&gt;+&lt;K&gt;+&lt;-RechtsWert-&gt;+&lt;--HochWert--&gt;+&lt;----Höhe----&gt;+&lt;---Zeitstempel---&gt;+&lt;-KS-&gt;+&lt;--&gt;+&lt;GL&gt;+&lt;GH&gt;+&lt;---------Text----------&gt;+AT+&lt;-------Attribut--------&gt;+AT+&lt;-------Attribut--------&gt;+freie Daten...</value>
+  </data>
+  <data name="GeoIPointList_ReadIpktFailed" xml:space="preserve">
+    <value>Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (iPkt) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoIPointList_ReadIpktStart" xml:space="preserve">
+    <value>Lese ASCII-Punktdatei (iPkt) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoIPointList_ReadIpktSuccess" xml:space="preserve">
+    <value>%d Punkte gelesen aus ASCII-Punktdatei (iPkt) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
+  <data name="GeoIPointList_ReadIpktParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (iPkt) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="GeoIPointList_WriteIpktFailed" xml:space="preserve">
+    <value>Fehler beim Schreiben der ASCII-Punktdatei (iPkt) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoIPointList_WriteIpktStart" xml:space="preserve">
+    <value>Schreibe ASCII-Punktdatei (iPkt) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="GeoIPointList_WriteIpktSuccess" xml:space="preserve">
+    <value>%d Punkte geschrieben in ASCII-Punktdatei (iPkt) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
+  <data name="Domain_Label_AttKey1" xml:space="preserve">
+    <value>Attribut 1 Typ</value>
+  </data>
+  <data name="Domain_Label_AttKey2" xml:space="preserve">
+    <value>Attribut 2 Typ</value>
+  </data>
+  <data name="Domain_Label_AttValue1" xml:space="preserve">
+    <value>Attribut 1 Wert</value>
+  </data>
+  <data name="Domain_Label_AttValue2" xml:space="preserve">
+    <value>Attribut 2 Wert</value>
+  </data>
+  <data name="Domain_Label_CalcCode" xml:space="preserve">
+    <value>Berechnungs-Kode</value>
+  </data>
+  <data name="Domain_Label_CoordSys" xml:space="preserve">
+    <value>Koordinatensystem</value>
+    <comment>Coord System</comment>
+  </data>
+  <data name="Domain_Label_CoordType" xml:space="preserve">
+    <value>Koordinatentyp</value>
+  </data>
+  <data name="Domain_Label_Flags" xml:space="preserve">
+    <value>Kennzeichen</value>
+  </data>
+  <data name="Domain_Label_GraficsCode" xml:space="preserve">
+    <value>Grafik-Kode</value>
+  </data>
+  <data name="Domain_Label_GraficsDim" xml:space="preserve">
+    <value>Grafik-Dimension</value>
+  </data>
+  <data name="Domain_Label_GraficsEcc" xml:space="preserve">
+    <value>Grafik-Exzentrum</value>
+  </data>
+  <data name="Domain_Label_TimeStamp" xml:space="preserve">
+    <value>Zeitstempel</value>
+  </data>
+  <data name="Domain_Label_wh" xml:space="preserve">
+    <value>Gewicht Höhe</value>
+  </data>
+  <data name="Domain_Label_wp" xml:space="preserve">
+    <value>Gewicht Lage</value>
+  </data>
+  <data name="GeoIPointList_HintValidTimeStampFormat" xml:space="preserve">
+    <value>Beispiel für gültiges Format: %s</value>
+    <comment>Sample Time Stamp: String</comment>
+  </data>
+  <data name="GeoIPointList_InvalidFieldNotTimeStamp" xml:space="preserve">
+    <value>Das Feld '%s' hat kein gültiges Format (%s).</value>
+    <comment>Field Caption: String; Field String: String</comment>
+  </data>
 </root>

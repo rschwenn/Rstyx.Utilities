@@ -112,19 +112,16 @@ Public Class MainViewModel
             'Dim TcReader As TcFileReader
             
             Try
-                'Dim pt As New Collection(Of VEPoint)
-                'Logger.logInfo(TypeOf pt Is Collection(Of GeoPoint(Of Double)))
-                
                 Logger.logInfo("")
-                Dim pts As New GeoVEPointList()
+                Dim pts As New GeoIPointList()
                 pts.ShowParseErrorsInJedit = True
                 pts.CollectParseErrors = True
-                pts.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
-                'pts.readFromKvFile(Me.FilePath1)
-                pts.readFromKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
+                'pts.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
+                pts.readFromIpktFile(Me.FilePath1)
+                'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
                 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.kf")
                 Logger.logInfo(pts.ToString())
-                pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                pts.writeToIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 'pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 
@@ -151,12 +148,15 @@ Public Class MainViewModel
                 ''Logger.logInfo(StringUtils.sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
                 ''Logger.logInfo(StringUtils.sprintf("Nothing: '%6.3f'", Nothing))
                 '
-                'Dim TestText1 As String = "25082013"
-                'Dim TestDate As DateTime
-                ''Dim success As Boolean = DateTime.TryParse(TestText1, TestDate)
-                'Dim success As Boolean = DateTime.TryParseExact(TestText1, "ddMMyyyy", Nothing, Globalization.DateTimeStyles.None, TestDate)
-                'Logger.logInfo(TestDate.ToShortDateString())
-                'Logger.logInfo(TestDate.ToString("ddMMyyyy"))
+                ' 'Dim TestText1 As String = "25082013"
+                ' Dim TestDate As DateTime
+                ' Dim TestText1 As String = ""
+                ' 'Dim TestDate As Nullable(Of DateTime) = Nothing
+                ' ''Dim success As Boolean = DateTime.TryParse(TestText1, TestDate)
+                ' 'Dim success As Boolean = DateTime.TryParseExact(TestText1, "ddMMyyyy", Nothing, Globalization.DateTimeStyles.None, TestDate)
+                ' Dim success As Boolean = DateTime.TryParseExact(TestText1, "s", Nothing, Globalization.DateTimeStyles.None, TestDate)
+                ' Logger.logInfo(TestDate.ToShortDateString())
+                ' Logger.logInfo(TestDate.ToString("s"))
                 '
                 'Dim TestDouble As Double = 33
                 'Double.TryParse(Nothing , TestDouble)

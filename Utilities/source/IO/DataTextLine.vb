@@ -336,7 +336,15 @@ Namespace IO
                         End If
                     Else
                         ' Ensure field length doesn't exceeds Me.Data.
-                        Dim Length As Integer = If( (FieldDef.ColumnOrWord + FieldDef.Length) <= Me.Data.Length, FieldDef.Length, Me.Data.Length - FieldDef.ColumnOrWord)
+                        'Length = If( (FieldDef.ColumnOrWord + FieldDef.Length) <= Me.Data.Length, FieldDef.Length, Me.Data.Length - FieldDef.ColumnOrWord)
+                        Dim Length As Integer
+                        If (FieldDef.Length = Integer.MaxValue) Then
+                            Length = Me.Data.Length - FieldDef.ColumnOrWord
+                        ElseIf ((FieldDef.ColumnOrWord + FieldDef.Length) > Me.Data.Length) Then
+                            Length = Me.Data.Length - FieldDef.ColumnOrWord
+                        Else
+                            Length = FieldDef.Length
+                        End If
                         
                         ' Read field string.
                         FieldSource = New DataFieldSource(FieldDef.ColumnOrWord, Length, Me.Data.Substring(FieldDef.ColumnOrWord, Length))
