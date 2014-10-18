@@ -25,7 +25,7 @@ Namespace Domain
      ''' </para>
      ''' </remarks>
     Public Class GeoVEPointList
-        Inherits GeoPointListBase(Of Double, GeoVEPoint)
+        Inherits GeoPointListBase(Of GeoVEPoint)
         
         #Region "Private Fields"
             
@@ -93,7 +93,6 @@ Namespace Domain
     		            	
     		                Dim p As New GeoVEPoint()
     		                
-                            p.ID                 = getDoubleFromVEDouble(oBR.ReadDouble())
                             p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
                             p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
                             p.Z                  = getDoubleFromVEDouble(oBR.ReadDouble())
@@ -127,8 +126,16 @@ Namespace Domain
                                 _HeaderKF = p
                             Else
                                 Try
+                                    p.ID = oBR.ReadDouble().ToString()
                                     Me.VerifyConstraints(p)
                                     Me.Add(p)
+                                
+                                Catch ex As InvalidIDException
+                                    Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Error, ex.Message))
+                                    If (Not CollectParseErrors) Then
+                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoVEPointList_ReadBinaryParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    End If
+                                    
                                 Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                     Me.ParseErrors.Add(ex.ParseError)
                                     If (Not CollectParseErrors) Then
@@ -182,21 +189,24 @@ Namespace Domain
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
                         
                         Dim DataLine As DataTextLine = FileReader.DataCache(i)
+                        Dim FieldID  As DataField(Of String) = Nothing
                         
                         If (DataLine.HasData) Then
                             
                             Try
     		                    Dim p As New GeoVEPoint()
                                 
-                                Dim FieldID As DataField(Of Double) = DataLine.ParseField(RecDef.PointNo)
-                                Dim FieldY  As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
-                                Dim FieldX  As DataField(Of Double) = DataLine.ParseField(RecDef.X)
-                                Dim FieldZ  As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
-    		                    
-                                p.ID                 = getIDSmart(FieldID.Value)
-                                p.Y                  = FieldY.Value
-                                p.X                  = FieldX.Value
-                                p.Z                  = FieldZ.Value
+                                FieldID = DataLine.ParseField(RecDef.PointID)
+                                p.ID    = FieldID.Value
+                                
+                                Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
+                                Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
+                                Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
+                                
+                                p.Y            = FieldY.Value
+                                p.X            = FieldX.Value
+                                p.Z            = FieldZ.Value
+                                
                                 p.TrackPos.Kilometer = DataLine.ParseField(RecDef.Km).Value
                                 p.Info               = DataLine.ParseField(RecDef.PositionInfo).Value
                                 p.HeightInfo         = DataLine.ParseField(RecDef.HeightInfo).Value
@@ -216,6 +226,12 @@ Namespace Domain
                                 
                                 Me.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)
                                 Me.Add(p)
+                                
+                            Catch ex As InvalidIDException
+                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message))
+                                If (Not CollectParseErrors) Then
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoVEPointList_ReadKvParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                End If
                                 
                             Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                 Me.ParseErrors.Add(ex.ParseError)
@@ -281,7 +297,7 @@ Namespace Domain
                             If (Not Double.IsNaN(p.mh)) Then mh = CInt(p.mh)
                             Int32.TryParse(p.ObjectKey, ObjectKey)
                             
-                            oBW.Write(getVEDoubleFromDouble(p.ID))
+                            oBW.Write(p.IDToVEDouble())
                             oBW.Write(getVEDoubleFromDouble(p.Y))
                             oBW.Write(getVEDoubleFromDouble(p.X))
                             oBW.Write(getVEDoubleFromDouble(p.Z))
@@ -335,32 +351,10 @@ Namespace Domain
                 End Try
             End Sub
             
-            ' ''' <summary> Changes the point numbers according to a point change table. </summary>
-            '  ''' <param name="PointChangeTab"> Table with Point pairs (source => target). </param>
-            '  ''' <remarks></remarks>
-            ' Public Sub changePointNumbers(PointChangeTab As Dictionary(Of Double, Double))
-            '     Dim dblPointNo  As Double
-            '     Dim ChangeCount As Long = 0
-            '     
-            '     If (PointChangeTab.Count < 1) then
-            '         Logger.logInfo(Rstyx.Utilities.Resources.Messages.GeoVEPointList_EmptyPointChangeTab)
-            '     Else
-            '         For Each Point As GeoVEPoint In Me
-            '             dblPointNo = Math.Round(Point.ID, 5)
-            '             If (PointChangeTab.ContainsKey(dblPointNo)) Then
-            '                 Point.ID = PointChangeTab(dblPointNo)
-            '                 ChangeCount += 1
-            '             End If
-            '         Next
-            '         
-            '         Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoVEPointList_ChangePointNumbersSuccess, ChangeCount))
-            '     End If
-            ' End Sub
-            
             ''' <summary> Returns a list of all points in one KV formatted string. </summary>
             Public Function ToKV() As String
                 
-                Dim KvFmt As String = "%7.0f %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
+                Dim KvFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
                 Dim PointList As New System.Text.StringBuilder()
                 
                 ' Header lines.
@@ -380,7 +374,7 @@ Namespace Domain
                 ' Points.
                 For Each p As GeoVEPoint In Me
                     
-                    PointList.AppendLine(sprintf(KvFmt, P.ID * PointNoFactor, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
+                    PointList.AppendLine(sprintf(KvFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
                                 P.TrackPos.Kilometer.Value, P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
                                 P.Kind.TrimToMaxLength(4), P.TrackPos.TrackNo, P.TrackPos.RailsCode.TrimToMaxLength(1), P.HeightSys.TrimToMaxLength(3), P.mp, P.mh, 
                                 P.MarkHints.TrimToMaxLength(1), P.MarkType.TrimToMaxLength(3), P.sp.TrimToMaxLength(1), P.sh.TrimToMaxLength(1),
@@ -431,7 +425,7 @@ Namespace Domain
                 Public Sub New()
                     MyBase.New()
                     ' Column definitions are zero-ased!
-                    Me.PointNo      = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_PointID   , DataFieldPositionType.ColumnAndLength,   0,  7)
+                    Me.PointID      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_PointID   , DataFieldPositionType.ColumnAndLength,   0,  7)
                     Me.Y            = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Y         , DataFieldPositionType.ColumnAndLength,   9, 14, DataFieldOptions.ZeroAsNaN)
                     Me.X            = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_X         , DataFieldPositionType.ColumnAndLength,  24, 14, DataFieldOptions.ZeroAsNaN)
                     Me.Z            = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Z         , DataFieldPositionType.ColumnAndLength,  39,  9, DataFieldOptions.ZeroAsNaN)
@@ -454,7 +448,7 @@ Namespace Domain
                 End Sub
                 
                 #Region "Public Fields"
-                    Public PointNo      As DataFieldDefinition(Of Double)
+                    Public PointID      As DataFieldDefinition(Of String)
                     Public Y            As DataFieldDefinition(Of Double)
                     Public X            As DataFieldDefinition(Of Double)
                     Public Z            As DataFieldDefinition(Of Double)
@@ -488,30 +482,17 @@ Namespace Domain
                 Return IIf(VEDouble = 1.0E+40, Double.NaN, VEDouble)
             End Function
             
-            ''' <summary> Gets a normalized Double from a VE flavoured storage. </summary>
+            ''' <summary> Gets a Double for VE flavoured storage from a normalized Double. </summary>
              ''' <param name="NormDouble"> Double from VE file. </param>
              ''' <returns> Unchanged input value or 1.0E+40 if <paramref name="NormDouble"/> = <c>Double.NaN</c>. </returns>
             Private Function getVEDoubleFromDouble(NormDouble As Double) As Double
                 Return IIf(Double.IsNaN(NormDouble), 1.0E+40, NormDouble)
             End Function
             
-            ''' <summary> Gets point ID from a raw numeric ID. </summary>
-             ''' <param name="RawID"> Raw numeric ID. </param>
-             ''' <returns> Unchanged input value if <paramref name="RawID"/> is less than 100, otherwise <paramref name="RawID"/> / 100000; or 1.0E+40 if <paramref name="RawID"/> = <c>Double.NaN</c>. </returns>
-            Private Function getIDSmart(RawID As Double) As Double
-                Dim RetID As Double = RawID
-                If (Double.IsNaN(RawID)) Then
-                    RetID = 1.0E+40
-                ElseIf (RawID > 99.999995)
-                    RetID = RawID / PointNoFactor
-                End If
-                Return RetID
-            End Function
-            
             Private Function getDefaultKFHeader() As GeoVEPoint
                 Dim p As New GeoVEPoint()
                 
-                p.ID                 = getVEDoubleFromDouble(Double.NaN)
+                'p.ID  (defaults to Null, which is o.k. for the header)
                 p.HeightSys          = "R00"
                 p.Info               = "ERSION 7.0  R"
                 p.MarkHints          = "1"

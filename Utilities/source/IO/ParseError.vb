@@ -172,7 +172,49 @@ Namespace IO
             
         #End Region
         
-        #Region "Public Methods"
+        #Region "Static Factory Methods"
+            
+            ''' <summary> Ceates a new ParseError. Source information may come from a DataField. </summary>
+             ''' <param name="Level">       The degree of severity of the error. </param>
+             ''' <param name="LineNo">      The line number in the source file, starting at 1. Values less than 1 will be treated as Zero. </param>
+             ''' <param name="SourceField"> The parsed data field of point ID for precise error source hints. May be <see langword="null"/>. </param>
+             ''' <param name="Message">     The error Message. </param>
+             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath">    Full path of the source file. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is not greater than <paramref name="StartColumn"/>. </exception>
+            Public Shared Function Create(Of TSourceField)(Level       As ParseErrorLevel,
+                                                           LineNo      As Long,
+                                                           SourceField As DataField(Of TSourceField),
+                                                           Message     As String,
+                                                           Optional Hints    As String = Nothing,
+                                                           Optional FilePath As String = Nothing
+                                                          ) As ParseError
+                Dim RetValue As ParseError
+                
+                Dim StartCol As Integer = 0
+                Dim EndCol   As Integer = 0
+                
+                ' Check 
+                    If (LineNo > 0) Then
+                        If ((SourceField IsNot Nothing) AndAlso SourceField.HasSource) Then
+                            StartCol = SourceField.Source.Column
+                            EndCol   = SourceField.Source.Column + SourceField.Source.Length
+                        End If
+                        RetValue = New ParseError(Level, LineNo, StartCol, EndCol, Message, Hints, FilePath)
+                    Else
+                        RetValue = New ParseError(Level, Message, Hints, FilePath)
+                    End If
+                
+                Return RetValue
+            End Function
+            
+        #End Region
+        
+        #Region "Overrides"
             
             ''' <summary> Returns a formatted eror message (without column values and hints). </summary>
             Public Overrides Function ToString() As String

@@ -3,18 +3,14 @@ Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Text.RegularExpressions
 
+Imports Rstyx.Utilities.IO
+
 Namespace Domain
     
-    ''' <summary> Shortcut for a <see cref="GeoTcPoint(Of String)"/>, representing the most usual case: a string identifier. </summary>
-    Public Class GeoTcPoint
-        Inherits GeoTcPoint(Of String)
-    End Class
-    
     ''' <summary> Representation of a geodetic point with track geometry values. </summary>
-     ''' <typeparam name="TPointID"> Type of the Point ID. </typeparam>
      ''' <remarks></remarks>
-    Public Class GeoTcPoint(Of TPointID)
-        Inherits GeoPoint(Of TPointID)
+    Public Class GeoTcPoint
+        Inherits GeoPoint
         
         Implements IDTMatPoint
         Implements IPointAtTrackGeometry
@@ -27,8 +23,16 @@ Namespace Domain
         
         #Region "Constuctor"
             
-            ''' <summary> Creates a new GeoTcPoint. </summary>
+            ''' <summary> Creates a new <see cref="GeoTcPoint"/>. </summary>
             Public Sub New()
+            End Sub
+            
+            ''' <summary> Creates a new <see cref="GeoTcPoint"/> and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
+             ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
+            Public Sub New(SourcePoint As GeoPoint)
+                MyBase.New(SourcePoint)
             End Sub
             
         #End Region
@@ -147,7 +151,7 @@ Namespace Domain
         
         #Region "Public Methods"
             
-            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> to <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> if possible. </summary>
+            ''' <summary> Transforms <see cref="GeoTcPoint.Q"/> and <see cref="GeoTcPoint.HSOK"/> to <see cref="GeoTcPoint.QG"/> and <see cref="GeoTcPoint.HG"/> if possible. </summary>
              ''' <para>
              ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
              ''' </para>
@@ -177,7 +181,7 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> to <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> if possible. </summary>
+            ''' <summary> Transforms <see cref="GeoTcPoint.QG"/> and <see cref="GeoTcPoint.HG"/> to <see cref="GeoTcPoint.Q"/> and <see cref="GeoTcPoint.HSOK"/> if possible. </summary>
              ''' <remarks>
              ''' <para>
              ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
@@ -211,15 +215,15 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Parses actual cant value from <see cref=" GeoTcPoint(Of TPointID).Info"/> and maybe <see cref=" GeoTcPoint(Of TPointID).Comment"/> property. </summary>
-             ''' <param name="TryComment">     If <see langword="true"/> and no cant has been found in <see cref=" GeoTcPoint(Of TPointID).Info"/>, the <see cref=" GeoTcPoint(Of TPointID).Comment"/> will be parsed, too. </param>
+            ''' <summary> Parses actual cant value from <see cref=" GeoTcPoint.Info"/> and maybe <see cref=" GeoTcPoint.Comment"/> property. </summary>
+             ''' <param name="TryComment">     If <see langword="true"/> and no cant has been found in <see cref=" GeoTcPoint.Info"/>, the <see cref=" GeoTcPoint.Comment"/> will be parsed, too. </param>
              ''' <param name="Strict">         If <see langword="true"/>, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first integer number is used. </param>
              ''' <param name="Absolute">       If <see langword="true"/>, the parsed Cant value is always positive. </param>
-             ''' <param name="EditCantSource"> If <see langword="true"/>, the Cant pattern substring is removed from <see cref=" GeoTcPoint(Of TPointID).Info"/>. </param>
+             ''' <param name="EditCantSource"> If <see langword="true"/>, the Cant pattern substring is removed from <see cref=" GeoTcPoint.Info"/>. </param>
              ''' <returns> <see langword="true"/> on success. </returns>
              ''' <remarks> 
              ''' <para>
-             ''' The measured cant will be parsed from <see cref=" GeoTcPoint(Of TPointID).Info"/> following these rules:
+             ''' The measured cant will be parsed from <see cref=" GeoTcPoint.Info"/> following these rules:
              ''' </para>
              ''' <para>
              ''' Case 1: If the string "u= xxx" is found anywhere then "xxx" will be treated as measured cant.
@@ -229,7 +233,7 @@ Namespace Domain
              ''' then the first integer number will be used, if any.
              ''' </para>
              ''' <para>
-             ''' The found cant will be assigned to the <see cref=" GeoTcPoint(Of TPointID)"/><c>.ActualCant</c> property.
+             ''' The found cant will be assigned to the <see cref=" GeoTcPoint"/><c>.ActualCant</c> property.
              ''' </para>
              ''' </remarks>
             Public Function TryParseActualCant(Optional byVal TryComment As Boolean = False,
@@ -325,7 +329,7 @@ Namespace Domain
         
         #Region "Backup (Old Methods)"
             
-            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> to <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> if possible. </summary>
+            ''' <summary> Transforms <see cref="GeoTcPoint.Q"/> and <see cref="GeoTcPoint.HSOK"/> to <see cref="GeoTcPoint.QG"/> and <see cref="GeoTcPoint.HG"/> if possible. </summary>
              ''' <para>
              ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
              ''' </para>
@@ -352,7 +356,7 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Transforms <see cref="GeoTcPoint(Of TPointID).QG"/> and <see cref="GeoTcPoint(Of TPointID).HG"/> to <see cref="GeoTcPoint(Of TPointID).Q"/> and <see cref="GeoTcPoint(Of TPointID).HSOK"/> if possible. </summary>
+            ''' <summary> Transforms <see cref="GeoTcPoint.QG"/> and <see cref="GeoTcPoint.HG"/> to <see cref="GeoTcPoint.Q"/> and <see cref="GeoTcPoint.HSOK"/> if possible. </summary>
              ''' <remarks>
              ''' <para>
              ''' Sign of cant: Positive is treated as "normal", negative as "inverse".

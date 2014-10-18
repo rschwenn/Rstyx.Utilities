@@ -1190,11 +1190,56 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID fehlt bzw. is leer. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_MissingPointID() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_MissingPointID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Lagekoorinaten fehlen bei Punkt %s. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_MissingPosition() As String
             Get
                 Return ResourceManager.GetString("GeoPointConstraints_MissingPosition", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist nicht numerisch. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_PointIDNotNumeric() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_PointIDNotNumeric", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine reelle Zahl zwischen %.5f und %.5f. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_PointIDOutOfDblRange() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_PointIDOutOfDblRange", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine ganze Zahl zwischen %d und %d. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_PointIDOutOfIntRange() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_PointIDOutOfIntRange", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_PointIDToLong() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_PointIDToLong", resourceCulture)
             End Get
         End Property
         

@@ -187,6 +187,7 @@
     <Compile Include="source\_global\Extensions.vb" />
     <Compile Include="source\_global\GeoMath.vb" />
     <Compile Include="source\_global\Interfaces.vb" />
+    <Compile Include="source\_global\InvalidIDException.vb" />
     <Compile Include="source\_global\RegUtils.vb" />
     <Compile Include="source\_global\RemarkException.vb" />
     <Compile Include="source\_global\StringUtils.vb" />

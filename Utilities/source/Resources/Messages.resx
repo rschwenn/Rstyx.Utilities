@@ -926,4 +926,23 @@
     <value>Das Feld '%s' hat kein gültiges Format (%s).</value>
     <comment>Field Caption: String; Field String: String</comment>
   </data>
+  <data name="GeoPointConstraints_MissingPointID" xml:space="preserve">
+    <value>Punkt-ID fehlt bzw. is leer.</value>
+  </data>
+  <data name="GeoPointConstraints_PointIDNotNumeric" xml:space="preserve">
+    <value>Punkt-ID (%s) ist nicht numerisch.</value>
+    <comment>Point ID: String</comment>
+  </data>
+  <data name="GeoPointConstraints_PointIDOutOfDblRange" xml:space="preserve">
+    <value>Punkt-ID (%s) ist keine reelle Zahl zwischen %.5f und %.5f.</value>
+    <comment>Point ID: String; Min Point ID: Double; Max Point ID: Double</comment>
+  </data>
+  <data name="GeoPointConstraints_PointIDOutOfIntRange" xml:space="preserve">
+    <value>Punkt-ID (%s) ist keine ganze Zahl zwischen %d und %d.</value>
+    <comment>Point ID: String; Min Point ID: Integer; Max Point ID: Integer</comment>
+  </data>
+  <data name="GeoPointConstraints_PointIDToLong" xml:space="preserve">
+    <value>Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen.</value>
+    <comment>Point ID: String; Max Point Length: Integer</comment>
+  </data>
 </root>

@@ -31,21 +31,19 @@ Namespace Domain
     
     
     ''' <summary> A generic, keyed collection base class for GeoPoint's. </summary>
-     ''' <typeparam name="TPointID">  Type of Point ID. </typeparam>
-     ''' <typeparam name="Point">     Type of collection items. It has to be or inherit from the <see cref="GeoPoint(Of TPointID)"/> interface. </typeparam>
+     ''' <typeparam name="Point"> Type of collection items. It has to be or inherit from <see cref="GeoPoint"/>. </typeparam>
      ''' <remarks>
      ''' The key for the collection will always be the <b>ID</b> property of <b>TItem</b>.
      ''' <para>
      ''' <b>Features:</b>
      ''' <list type="bullet">
-     ''' <item><description> Basic suport for reading an ascii file. </description></item>
      ''' <item><description> Implements <see cref="IParseErrors"/> in order to support error handling. </description></item>
      ''' <item><description> Manipulation method for changing the point numbers according to a point change table. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public MustInherit Class GeoPointListBase(Of TPointID, Point As GeoPoint(Of TPointID))
-        Inherits IDCollection(Of TPointID, GeoPoint(Of TPointID))
+    Public MustInherit Class GeoPointListBase(Of Point As GeoPoint)
+        Inherits IDCollection(Of String, GeoPoint)
         Implements IParseErrors
         
         #Region "Private Fields"
@@ -121,18 +119,21 @@ Namespace Domain
         
         #Region "Methods"
             
-            ''' <summary> Changes the point numbers according to a point change table. </summary>
+            ''' <summary> Changes the point numbers of this list according to a point change table. </summary>
              ''' <param name="PointChangeTab"> Table with Point pairs (source => target). </param>
              ''' <remarks></remarks>
-            Public Sub changePointNumbers(PointChangeTab As Dictionary(Of TPointID, TPointID))
-                'Dim dblPointNo  As Double
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="PointChangeTab"/> is <see langword="null"/>. </exception>
+            Public Sub changePointNumbers(PointChangeTab As Dictionary(Of String, String))
+                
+                If (PointChangeTab Is Nothing) Then Throw New System.ArgumentNullException("PointChangeTab")
+                
                 Dim ChangeCount As Long = 0
                 
                 If (PointChangeTab.Count < 1) then
-                    Logger.logInfo(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyPointChangeTab)
+                    Logger.logWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyPointChangeTab)
                 Else
-                    For Each Point As GeoPoint(Of TPointID) In Me
-                        'dblPointNo = Math.Round(Point.ID, 5)
+                    For Each Point As GeoPoint In Me
+                        
                         If (PointChangeTab.ContainsKey(Point.ID)) Then
                             Point.ID = PointChangeTab(Point.ID)
                             ChangeCount += 1
@@ -157,7 +158,7 @@ Namespace Domain
             ''' <summary> Returns a list of all points in one string. </summary>
             Public Overrides Function ToString() As String
                 
-                Dim KvFmt As String = "%20s %15.5f%15.5f%10.4f  %-13s %-13s %-4s  %8s %8s %5.0f %5.0f  %5s %5s  %5s %5s  %-8s %7s"
+                Dim KvFmt As String = " %20s %15.5f%15.5f%10.4f  %-13s %-13s %-4s  %8s %8s %5.0f %5.0f  %5s %5s  %5s %5s  %-8s %7s"
                 Dim PointList As New System.Text.StringBuilder()
                 
                 ' Header lines.
@@ -175,9 +176,9 @@ Namespace Domain
                 End If
                 
                 ' Points.
-                For Each p As GeoPoint(Of TPointID) In Me
+                For Each p As GeoPoint In Me
                     
-                    PointList.AppendLine(sprintf(KvFmt, P.ID.ToString(), IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
+                    PointList.AppendLine(sprintf(KvFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
                                 P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
                                 P.Kind.TrimToMaxLength(4), P.CoordSys.TrimToMaxLength(8), P.HeightSys.TrimToMaxLength(8), P.mp, P.mh, 
                                 P.MarkHints.TrimToMaxLength(5), P.MarkType.TrimToMaxLength(5), P.sp.TrimToMaxLength(5), P.sh.TrimToMaxLength(5),
@@ -213,7 +214,7 @@ Namespace Domain
             End Function
             
             ''' <summary> Verifies that <paramref name="p"/> has a unique ID and also fulfills all given <see cref="Constraints"/>. </summary>
-             ''' <param name="Point"> The point to verify. It should has set it's <see cref="GeoPoint(Of TPointID).SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
+             ''' <param name="Point"> The point to verify. It should has set it's <see cref="GeoPoint.SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
              ''' <remarks>
              ''' If the list contained already a point with the ID of <paramref name="p"/>
              ''' or any of the <see cref="Constraints"/> is injured, a <see cref="ParseException"/> will be thrown.
@@ -222,15 +223,16 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
-            Protected Sub VerifyConstraints(Point As GeoPoint(Of TPointID))
+            Protected Sub VerifyConstraints(Point As GeoPoint)
                 Me.VerifyConstraints(Point, Nothing, Nothing, Nothing, Nothing)
             End Sub
             
             ''' <summary> Verifies that <paramref name="p"/> has a unique ID and also fulfills all given <see cref="Constraints"/>. </summary>
-             ''' <param name="Point">  The point to verify. It should has set it's <see cref="GeoPoint(Of TPointID).SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
-             ''' <param name="FieldX"> The parsed data field of X coordinate. May be <see langword="null"/>. </param>
-             ''' <param name="FieldY"> The parsed data field of X coordinate. May be <see langword="null"/>. </param>
-             ''' <param name="FieldZ"> The parsed data field of X coordinate. May be <see langword="null"/>. </param>
+             ''' <param name="Point">   The point to verify. It should has set it's <see cref="GeoPoint.SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
+             ''' <param name="FieldID"> The parsed data field of point ID. May be <see langword="null"/>. </param>
+             ''' <param name="FieldX">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
+             ''' <param name="FieldY">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
+             ''' <param name="FieldZ">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
              ''' <remarks>
              ''' If the list contained already a point with the ID of <paramref name="p"/>
              ''' or any of the <see cref="Constraints"/> is injured, a <see cref="ParseException"/> will be thrown.
@@ -239,8 +241,8 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
-            Protected Sub VerifyConstraints(Point   As GeoPoint(Of TPointID),
-                                            FieldID As DataField(Of TPointID),
+            Protected Sub VerifyConstraints(Point   As GeoPoint,
+                                            FieldID As DataField(Of String),
                                             FieldX  As DataField(Of Double),
                                             FieldY  As DataField(Of Double),
                                             FieldZ  As DataField(Of Double)
@@ -248,22 +250,19 @@ Namespace Domain
                 
                 If (Point  Is Nothing) Then Throw New System.ArgumentNullException("Point")
                 
-                Dim PointID  As String  = Point.ID.ToString()
+                Dim PointID  As String  = Point.ID
                 Dim StartCol As Integer = 0
-                Dim Length   As Integer = 0
+                Dim EndCol   As Integer = 0
                 
                 ' Unique Point ID
                 If (Me.Contains(Point.ID)) Then
-                    If ((Point.SourceLineNo > 0) AndAlso (FieldID IsNot Nothing) AndAlso FieldID.HasSource) Then
-                        Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
-                                                                Point.SourceLineNo,
-                                                                FieldID.Source.Column,
-                                                                FieldID.Source.Column + FieldID.Source.Length,
-                                                                sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_RepeatedPointID, PointID),
-                                                                Nothing))
-                    Else
-                        Throw New ParseException(New ParseError(ParseErrorLevel.[Error], sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_RepeatedPointID, PointID)))
-                    End If
+                    Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
+                                                               Point.SourceLineNo,
+                                                               FieldID,
+                                                               sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_RepeatedPointID, PointID),
+                                                               Nothing,
+                                                               Nothing
+                                                              ))
                 End If
                 
                 ' Position missing.
@@ -272,13 +271,13 @@ Namespace Domain
                         If ((Point.SourceLineNo > 0) AndAlso (FieldX IsNot Nothing) AndAlso (FieldY IsNot Nothing) AndAlso FieldX.HasSource AndAlso FieldY.HasSource) Then
                             If (FieldX.Source.Column < FieldY.Source.Column) Then
                                 StartCol = FieldX.Source.Column
-                                Length   = FieldY.Source.Column + FieldY.Source.Length
+                                EndCol   = FieldY.Source.Column + FieldY.Source.Length
                             Else
                                 StartCol = FieldY.Source.Column
-                                Length   = FieldX.Source.Column + FieldX.Source.Length
+                                EndCol   = FieldX.Source.Column + FieldX.Source.Length
                             End If
                             Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
-                                                                    Point.SourceLineNo, StartCol, Length,
+                                                                    Point.SourceLineNo, StartCol, EndCol,
                                                                     sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPosition, PointID),
                                                                     Nothing))
                         Else
@@ -290,16 +289,13 @@ Namespace Domain
                 ' Heigt missing.
                 If (Me.Constraints.HasFlag(GeoPointConstraints.KnownHeight)) Then
                     If (Double.IsNaN(Point.Z)) Then
-                        If ((Point.SourceLineNo > 0) AndAlso (FieldZ IsNot Nothing) AndAlso FieldZ.HasSource) Then
-                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
-                                                                    Point.SourceLineNo,
-                                                                    FieldZ.Source.Column,
-                                                                    FieldZ.Source.Column + FieldZ.Source.Length,
-                                                                    sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingHeight, PointID),
-                                                                    Nothing))
-                        Else
-                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingHeight, PointID)))
-                        End If
+                        Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
+                                                                   Point.SourceLineNo,
+                                                                   FieldZ,
+                                                                   sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingHeight, PointID),
+                                                                   Nothing,
+                                                                   Nothing
+                                                                  ))
                     End If
                 End If
             End Sub

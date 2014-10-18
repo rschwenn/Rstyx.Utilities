@@ -6,7 +6,7 @@
     Public Interface IIdentifiable(Of TKey)
         
         ''' <summary> An ID of a given Type. </summary>
-        Property ID()           As Tkey
+        Property ID() As Tkey
         
     End Interface
     

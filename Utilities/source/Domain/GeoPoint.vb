@@ -1,18 +1,14 @@
 ﻿
 Imports System
+Imports Rstyx.Utilities.IO
+Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
     
-    ''' <summary> Shortcut for a <see cref="GeoPoint(Of String)"/>, representing the most usual case: a string identifier. </summary>
-    Public Class GeoPoint
-        Inherits GeoPoint(Of String)
-    End Class
-    
     ''' <summary> Representation of a geodetic point including some point info. </summary>
-     ''' <typeparam name="TPointID"> Type of the Point ID. </typeparam>
      ''' <remarks></remarks>
-    Public Class GeoPoint(Of TPointID)
-        Implements IIdentifiable(Of TPointID)
+    Public Class GeoPoint
+        Implements IIdentifiable(Of String)
         Implements IGeoPointInfo
         Implements ICartesianCoordinates3D
         Implements IFileSource
@@ -29,12 +25,58 @@ Namespace Domain
             Public Sub New()
             End Sub
             
+            ''' <summary> Creates a new GeoPoint and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
+             ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
+            Public Sub New(SourcePoint As GeoPoint)
+                
+                If (SourcePoint IsNot Nothing) Then
+                    Me.ID              = SourcePoint.ID
+                    
+                    Me.Info            = SourcePoint.Info
+                    Me.HeightInfo      = SourcePoint.HeightInfo
+                    Me.Comment         = SourcePoint.Comment
+                    Me.Kind            = SourcePoint.Kind
+                    Me.MarkType        = SourcePoint.MarkType
+                    Me.MarkHints       = SourcePoint.MarkHints
+                    Me.ObjectKey       = SourcePoint.ObjectKey
+                    Me.Job             = SourcePoint.Job
+                    Me.TimeStamp       = SourcePoint.TimeStamp
+                    
+                    Me.X               = SourcePoint.X
+                    Me.Y               = SourcePoint.Y
+                    Me.Z               = SourcePoint.Z
+                    Me.mp              = SourcePoint.mp
+                    Me.mh              = SourcePoint.mh
+                    Me.wp              = SourcePoint.wp
+                    Me.wh              = SourcePoint.wh
+                    Me.sp              = SourcePoint.sp
+                    Me.sh              = SourcePoint.sh
+                    Me.CoordSys        = SourcePoint.CoordSys
+                    Me.HeightSys       = SourcePoint.HeightSys
+                    
+                    Me.SourceFileIndex = SourcePoint.SourceFileIndex
+                    Me.SourceLineNo    = SourcePoint.SourceLineNo
+                End If
+            End Sub
+            
         #End Region
         
         #Region "IIdentifiable Members"
             
+            Dim _ID As String = Nothing
+            
             ''' <inheritdoc/>
-            Public Property ID()    As TPointID = Nothing Implements IIdentifiable(Of TPointID).ID
+             ''' <exception cref="ParseException"> <paramref name="TargetID"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
+            Public Property ID() As String Implements IIdentifiable(Of String).ID
+            Get
+                Return _ID
+            End Get
+            Set(value As String)
+                _ID = Me.ParseID(value)
+            End Set
+        End Property
             
         #End Region
         
@@ -116,11 +158,39 @@ Namespace Domain
             
         #End Region
         
+        #Region "ID Validation"
+            
+            ''' <summary> Parses the given string as new <see cref="GeoPoint.ID"/> for this GeoPoint. </summary>
+             ''' <param name="TargetID"> The string which is intended to become the new point ID. It will be trimmed here. </param>
+             ''' <returns> The parsed ID. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' This method will be called when setting the <see cref="GeoPoint.ID"/> property.
+             ''' It allows for special format conversions and for validation of <paramref name="TargetID"/>.
+             ''' </para>
+             ''' <para>
+             ''' For the base class <see cref="GeoPoint"/>, this method returns the trimmed <paramref name="TargetID"/>
+             ''' and validation only complains about the ID, if it is <see langword="null"/>, empty or contains whitespace only.
+             ''' Derived classes should override this behavior to implement more restrictive constraints.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> <paramref name="TargetID"/> isn't a valid ID for this point. </exception>
+            Protected Overridable Function ParseID(TargetID As String) As String
+                
+                If (Me.ID.IsEmptyOrWhiteSpace()) Then
+                    Throw New InvalidIDException(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPointID)
+                End If
+                
+                Return TargetID.Trim()
+            End Function
+            
+        #End Region
+        
         #Region "Overrides"
             
             ''' <summary> Returns point ID and info. </summary>
             Public Overrides Function ToString() As String
-                Return Me.ID.ToString() & "  (" & Me.Info & ")"
+                Return Me.ID & "  (" & Me.Info & ")"
             End Function
             
         #End Region

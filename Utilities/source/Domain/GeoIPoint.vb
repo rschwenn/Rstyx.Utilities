@@ -1,23 +1,32 @@
 ﻿
 Imports Rstyx.Utilities.Domain
+Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
     
     ''' <summary> One single iPoint. </summary>
     Public Class GeoIPoint
-        Inherits GeoPoint(Of String)
+        Inherits GeoPoint
         
         #Region "Private Fields"
             
-            
+            Private MaxIDLength     As Integer = 20
             
         #End Region
         
         #Region "Constuctor"
             
-            ''' <summary> Creates a new, empty GeoIPoint. </summary>
+            ''' <summary> Creates a new, empty <see cref="GeoIPoint"/>. </summary>
             Public Sub New()
+            End Sub
+            
+            ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
+             ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
+            Public Sub New(SourcePoint As GeoPoint)
+                MyBase.New(SourcePoint)
             End Sub
             
         #End Region
@@ -58,9 +67,30 @@ Namespace Domain
         
         #Region "Overrides"
             
+            ''' <summary> Parses the given string as new <see cref="GeoPoint.ID"/> for this GeoPoint. </summary>
+             ''' <param name="TargetID"> The string which is intended to become the new point ID. It will be trimmed here. </param>
+             ''' <returns> The parsed ID. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' This method will be called when setting the <see cref="GeoPoint.ID"/> property.
+             ''' It allows for special format conversions and for validation of <paramref name="TargetID"/>.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> <paramref name="TargetID"/> is longer than 20 characters. </exception>
+            Protected Overrides Function ParseID(TargetID As String) As String
+                
+                Dim RetValue As String = MyBase.ParseID(TargetID)
+                
+                If (RetValue.Length > MaxIDLength) Then
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_PointIDToLong, RetValue, MaxIDLength))
+                End If
+                
+                Return RetValue
+            End Function
+            
             ''' <summary> Returns a very basic output of the point. </summary>
             Public Overrides Function ToString() As String
-                Return sprintf("%+21s %15.5f%15.5f%15.4f %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
+                Return sprintf(" %+20s %15.5f%15.5f%15.4f %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
             End Function
             
         #End Region

@@ -24,7 +24,7 @@ Namespace Domain
      ''' </para>
      ''' </remarks>
     Public Class GeoIPointList
-        Inherits GeoPointListBase(Of String, GeoIPoint)
+        Inherits GeoPointListBase(Of GeoIPoint)
         
         #Region "Private Fields"
             
@@ -88,19 +88,20 @@ Namespace Domain
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
                         
                         Dim DataLine As DataTextLine = FileReader.DataCache(i)
+                        Dim FieldID  As DataField(Of String) = Nothing
                         
                         If (DataLine.HasData) Then
-                            
                             Try
     		                    Dim p As New GeoIPoint()
                                 
-                                Dim FieldID    As DataField(Of String) = DataLine.ParseField(RecDef.PointID)
+                                FieldID = DataLine.ParseField(RecDef.PointID)
+                                p.ID    = FieldID.Value
+                                
                                 Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
                                 Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
                                 Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
                                 Dim FieldTime  As DataField(Of String) = DataLine.ParseField(RecDef.TimeStamp)
-    		                    
-                                p.ID           = FieldID.Value
+                                
                                 p.Y            = FieldY.Value
                                 p.X            = FieldX.Value
                                 p.Z            = FieldZ.Value
@@ -130,18 +131,23 @@ Namespace Domain
                                     If (success) Then
                                         p.TimeStamp = TimeStamp
                                     Else
-                                        Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
-                                                                                p.SourceLineNo,
-                                                                                FieldTime.Source.Column,
-                                                                                FieldTime.Source.Column + FieldTime.Source.Length,
-                                                                                sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
-                                                                                sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
-                                                                                Nothing))
+                                        Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
+                                                                                   DataLine.SourceLineNo,
+                                                                                   FieldTime,
+                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
+                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
+                                                                                   Nothing))
                                     End If
                                 End If
                                 
                                 Me.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)
                                 Me.Add(p)
+                                
+                            Catch ex As InvalidIDException
+                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message))
+                                If (Not CollectParseErrors) Then
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_ReadIpktParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                End If
                                 
                             Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                 Me.ParseErrors.Add(ex.ParseError)
