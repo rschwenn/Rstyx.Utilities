@@ -927,7 +927,7 @@
     <comment>Field Caption: String; Field String: String</comment>
   </data>
   <data name="GeoPointConstraints_MissingPointID" xml:space="preserve">
-    <value>Punkt-ID fehlt bzw. is leer.</value>
+    <value>Punkt-ID fehlt bzw. ist leer.</value>
   </data>
   <data name="GeoPointConstraints_PointIDNotNumeric" xml:space="preserve">
     <value>Punkt-ID (%s) ist nicht numerisch.</value>

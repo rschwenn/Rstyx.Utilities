@@ -31,7 +31,7 @@ Namespace Domain
     
     
     ''' <summary> A generic, keyed collection base class for GeoPoint's. </summary>
-     ''' <typeparam name="Point"> Type of collection items. It has to be or inherit from <see cref="GeoPoint"/>. </typeparam>
+     ''' <typeparam name="TGeoPoint"> Type of collection items. It has to be or inherit from <see cref="GeoPoint"/>. </typeparam>
      ''' <remarks>
      ''' The key for the collection will always be the <b>ID</b> property of <b>TItem</b>.
      ''' <para>
@@ -42,8 +42,9 @@ Namespace Domain
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public MustInherit Class GeoPointListBase(Of Point As GeoPoint)
-        Inherits IDCollection(Of String, GeoPoint)
+    Public Class GeoPointListBase(Of TGeoPoint As IGeoPoint)
+    'Public Class GeoPointListBase(Of TGeoPoint As {GeoPoint, New})
+        Inherits IDCollection(Of IGeoPoint)
         Implements IParseErrors
         
         #Region "Private Fields"
@@ -55,7 +56,7 @@ Namespace Domain
         #Region "Protected Fields"
             
             ''' <summary> This will be used for dealing with text data. </summary>
-            Protected LineStartCommentToken   As String = "#"
+            Protected Shared LineStartCommentToken   As String = "#"
             
         #End Region
         
@@ -64,6 +65,18 @@ Namespace Domain
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
                 Logger.logDebug("New(): GeoPointList instantiated")
+            End Sub
+            
+            ''' <summary> Creates a new GeoPointList and inititializes it's items from any given <see cref="IDCollection(Of IGeoPoint)"/>. </summary>
+             ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="InvalidIDException"> ID of at least one <paramref name="SourcePoint"/> isn't a valid ID for the target point. </exception>
+            Public Sub New(SourcePointList As IDCollection(Of IGeoPoint))
+                If (SourcePointList IsNot Nothing) Then
+                    For Each SourcePoint As IGeoPoint In SourcePointList
+                        Me.Add(SourcePoint)
+                    Next
+                End If
             End Sub
             
         #End Region

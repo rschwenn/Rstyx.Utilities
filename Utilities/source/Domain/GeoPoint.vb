@@ -8,10 +8,7 @@ Namespace Domain
     ''' <summary> Representation of a geodetic point including some point info. </summary>
      ''' <remarks></remarks>
     Public Class GeoPoint
-        Implements IIdentifiable(Of String)
-        Implements IGeoPointInfo
-        Implements ICartesianCoordinates3D
-        Implements IFileSource
+        Implements IGeoPoint
         
         #Region "Private Fields"
             
@@ -28,8 +25,8 @@ Namespace Domain
             ''' <summary> Creates a new GeoPoint and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
-             ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
-            Public Sub New(SourcePoint As GeoPoint)
+             ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
+            Public Sub New(SourcePoint As IGeoPoint)
                 
                 If (SourcePoint IsNot Nothing) Then
                     Me.ID              = SourcePoint.ID
@@ -177,7 +174,7 @@ Namespace Domain
              ''' <exception cref="InvalidIDException"> <paramref name="TargetID"/> isn't a valid ID for this point. </exception>
             Protected Overridable Function ParseID(TargetID As String) As String
                 
-                If (Me.ID.IsEmptyOrWhiteSpace()) Then
+                If (TargetID.IsEmptyOrWhiteSpace()) Then
                     Throw New InvalidIDException(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPointID)
                 End If
                 

@@ -11,7 +11,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private MaxIDLength     As Integer = 20
+            Private Shared MaxIDLength As Integer = 20
             
         #End Region
         
@@ -24,8 +24,8 @@ Namespace Domain
             ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
-             ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
-            Public Sub New(SourcePoint As GeoPoint)
+             ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
+            Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
             End Sub
             
@@ -90,7 +90,7 @@ Namespace Domain
             
             ''' <summary> Returns a very basic output of the point. </summary>
             Public Overrides Function ToString() As String
-                Return sprintf(" %+20s %15.5f%15.5f%15.4f %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
+                Return sprintf(" %+20s %15.5f%15.5f%15.4f  %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
             End Function
             
         #End Region

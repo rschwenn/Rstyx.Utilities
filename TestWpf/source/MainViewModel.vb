@@ -119,13 +119,17 @@ Public Class MainViewModel
                 'pts.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
                 pts.readFromIpktFile(Me.FilePath1)
                 'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
-                'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.kf")
+                'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 Logger.logInfo(pts.ToString())
-                pts.writeToIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
+                
+                Dim VEPktList As New GeoVEPointList(pts)
+                VEPktList.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                'pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                'pts.writeTo("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
                 'pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 
-                'Dim dtUTC As DateTime = DateTime.UtcNow
+                Dim dtUTC As DateTime = DateTime.UtcNow
                 'Logger.logInfo(dtUTC.ToLongDateString())
                 'Logger.logInfo(dtUTC.ToShortDateString())
                 'Logger.logInfo(dtUTC.ToLongTimeString())

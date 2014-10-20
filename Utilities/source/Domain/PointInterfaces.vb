@@ -3,6 +3,15 @@ Imports System
 
 Namespace Domain
     
+    ''' <summary> Representation of a geodetic point with string ID and including some point info. </summary>
+     ''' <remarks></remarks>
+    Public Interface IGeoPoint
+        Inherits IIdentifiable(Of String)
+        Inherits IGeoPointInfo
+        Inherits ICartesianCoordinates3D
+        Inherits IFileSource
+    End Interface
+    
     ''' <summary> A set of properties describing a geodetic point. </summary>
     Public Interface IGeoPointInfo
         

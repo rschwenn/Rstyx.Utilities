@@ -7,6 +7,7 @@ Imports System.Text
 
 Imports PGK.Extensions
 Imports Rstyx.Utilities
+Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
@@ -43,6 +44,19 @@ Namespace Domain
             Public Sub New()
                 LineStartCommentToken = "#"
                 Logger.logDebug("New(): GeoVEPointList instantiated")
+            End Sub
+            
+            ''' <summary> Creates a new GeoVEPointList and inititializes it's items from any given <see cref="IDCollection(Of IGeoPoint)"/>. </summary>
+             ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="InvalidIDException"> ID of at least one <paramref name="SourcePoint"/> isn't a valid ID for the target point. </exception>
+            Public Sub New(SourcePointList As IDCollection(Of IGeoPoint))
+                If (SourcePointList IsNot Nothing) Then
+                    For Each SourcePoint As IGeoPoint In SourcePointList
+                        Dim p As New GeoVEPoint(SourcePoint)
+                        Me.Add(p)
+                    Next
+                End If
             End Sub
             
         #End Region
@@ -92,7 +106,9 @@ Namespace Domain
     		            For i As Integer = 0 To PointCount
     		            	
     		                Dim p As New GeoVEPoint()
+                            Dim PointID As String
     		                
+                            PointID              = oBR.ReadDouble().ToString()
                             p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
                             p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
                             p.Z                  = getDoubleFromVEDouble(oBR.ReadDouble())
@@ -126,7 +142,7 @@ Namespace Domain
                                 _HeaderKF = p
                             Else
                                 Try
-                                    p.ID = oBR.ReadDouble().ToString()
+                                    p.ID = PointID
                                     Me.VerifyConstraints(p)
                                     Me.Add(p)
                                 
@@ -222,6 +238,7 @@ Namespace Domain
                                 p.sh                 = DataLine.ParseField(RecDef.sh).Value
                                 p.Job                = DataLine.ParseField(RecDef.Job).Value
                                 p.ObjectKey          = DataLine.ParseField(RecDef.ObjectKey).Value
+                                p.Comment            = DataLine.ParseField(RecDef.Comment).Value
                                 p.SourceLineNo       = DataLine.SourceLineNo
                                 
                                 Me.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)

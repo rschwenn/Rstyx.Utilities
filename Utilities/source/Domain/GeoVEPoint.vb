@@ -16,10 +16,10 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private MaxIDLength     As Integer = 7
-            Private PointNoFactor   As Integer = Pow(10, MaxIDLength - 2)
-            Private MinIntegerID    As Integer = 1
-            Private MaxIntegerID    As Integer = Pow(10, MaxIDLength) - 1
+            Private Shared MaxIDLength     As Integer = 7
+            Private Shared PointNoFactor   As Integer = Pow(10, MaxIDLength - 2)
+            Private Shared MinIntegerID    As Integer = 1
+            Private Shared MaxIntegerID    As Integer = Pow(10, MaxIDLength) - 1
             
         #End Region
         
@@ -32,8 +32,8 @@ Namespace Domain
             ''' <summary> Creates a new <see cref="GeoVEPoint"/> and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
-             ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
-            Public Sub New(SourcePoint As GeoPoint)
+             ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
+            Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
             End Sub
             

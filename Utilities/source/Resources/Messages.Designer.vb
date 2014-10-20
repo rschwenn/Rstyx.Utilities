@@ -1190,7 +1190,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID fehlt bzw. is leer. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID fehlt bzw. ist leer. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_MissingPointID() As String
             Get

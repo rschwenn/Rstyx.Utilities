@@ -7,6 +7,7 @@ Imports System.Text
 
 Imports PGK.Extensions
 Imports Rstyx.Utilities
+Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
@@ -30,7 +31,7 @@ Namespace Domain
             
             Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoIPointList")
             
-            Private iPktEncoding    As Encoding = Encoding.Default
+            Private Shared iPktEncoding    As Encoding = Encoding.Default
             
         #End Region
         
@@ -40,6 +41,19 @@ Namespace Domain
             Public Sub New()
                 LineStartCommentToken = "#"
                 Logger.logDebug("New(): GeoIPointList instantiated")
+            End Sub
+            
+            ''' <summary> Creates a new GeoIPointList and inititializes it's items from any given <see cref="IDCollection(Of IGeoPoint)"/>. </summary>
+             ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="InvalidIDException"> ID of at least one <paramref name="SourcePoint"/> isn't a valid ID for the target point. </exception>
+            Public Sub New(SourcePointList As IDCollection(Of IGeoPoint))
+                If (SourcePointList IsNot Nothing) Then
+                    For Each SourcePoint As IGeoPoint In SourcePointList
+                        Dim p As New GeoIPoint(SourcePoint)
+                        Me.Add(p)
+                    Next
+                End If
             End Sub
             
         #End Region
@@ -258,7 +272,7 @@ Namespace Domain
                 Dim PointList As New System.Text.StringBuilder()
                 
                 ' Header lines.
-                PointList.AppendLine("------------------------------------------------------------------------------------------------------------------------------------------------------")
+                PointList.AppendLine("--------------------------------------------------------------------------------------------------")
                 'If (Me.Header.Count > 0) Then
                 '    For Each HeaderLine As String In Me.Header
                 '        PointList.Append(LineStartCommentToken)
@@ -274,7 +288,7 @@ Namespace Domain
                 For Each p As GeoIPoint In Me
                     PointList.AppendLine(p.ToString())
                 Next
-                PointList.AppendLine("------------------------------------------------------------------------------------------------------------------------------------------------------")
+                PointList.AppendLine("--------------------------------------------------------------------------------------------------")
                 Return PointList.ToString()
             End Function
             
