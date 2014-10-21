@@ -2,61 +2,48 @@
 Imports System
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
-Imports System.IO
-Imports System.Text
 
-Imports PGK.Extensions
-Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Collections
-Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
     
-    ' ''' <summary> Constraints to point values that are required for a certain purpose. </summary>
-    ' <Flags>
-    ' Public Enum GeoPointConstraints As Integer
-    '     
-    '     ''' <summary> No constraints. </summary>
-    '     None = 0
-    '     
-    '     ''' <summary> The point's position has to be known, hence X and Y must not be <c>Double.NaN</c>. </summary>
-    '     KnownPosition = 1
-    '     
-    '     ''' <summary> The point's height has to be known, hence Z does must not be <c>Double.NaN</c>. </summary>
-    '     KnownHeight = 2
-    '     
-    ' End Enum
+    ''' <summary> Constraints to point values that are required for a certain purpose. </summary>
+    <Flags>
+    Public Enum GeoPointConstraints As Integer
+        
+        ''' <summary> No constraints. </summary>
+        None = 0
+        
+        ''' <summary> The point's position has to be known, hence X and Y must not be <c>Double.NaN</c>. </summary>
+        KnownPosition = 1
+        
+        ''' <summary> The point's height has to be known, hence Z does must not be <c>Double.NaN</c>. </summary>
+        KnownHeight = 2
+        
+    End Enum
     
     
-    ''' <summary> A generic, keyed collection base class for GeoPoint's. </summary>
-     ''' <typeparam name="TGeoPoint"> Type of collection items. It has to be or inherit from <see cref="GeoPoint"/>. </typeparam>
+    ''' <summary> A collection of GeoPoint's. </summary>
      ''' <remarks>
-     ''' The key for the collection will always be the <b>ID</b> property of <b>TItem</b>.
      ''' <para>
      ''' <b>Features:</b>
      ''' <list type="bullet">
-     ''' <item><description> Implements <see cref="IParseErrors"/> in order to support error handling. </description></item>
-     ''' <item><description> Manipulation method for changing the point numbers according to a point change table. </description></item>
+     ''' <item><description> The key for the collection will always be the <b>ID</b> property of <b>TItem</b>. </description></item>
+     ''' <item><description> Every collection item has to implement the <see cref="IGeoPoint"/> interface. There are no more restrictions. </description></item>
+     ''' <item><description> Manipulation method for changing the point ID's according to a point change table. </description></item>
+     ''' <item><description>  </description></item>
+     ''' <item><description>  </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public Class GeoPointListBase(Of TGeoPoint As IGeoPoint)
-    'Public Class GeoPointListBase(Of TGeoPoint As {GeoPoint, New})
+    Public Class GeoPointList
         Inherits IDCollection(Of IGeoPoint)
-        Implements IParseErrors
         
         #Region "Private Fields"
             
             Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPointList")
-            
-        #End Region
-        
-        #Region "Protected Fields"
-            
-            ''' <summary> This will be used for dealing with text data. </summary>
-            Protected Shared LineStartCommentToken   As String = "#"
             
         #End Region
         
@@ -71,7 +58,7 @@ Namespace Domain
              ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of at least one <paramref name="SourcePoint"/> isn't a valid ID for the target point. </exception>
-            Public Sub New(SourcePointList As IDCollection(Of IGeoPoint))
+            Public Sub New(SourcePointList As GeoPointList)
                 If (SourcePointList IsNot Nothing) Then
                     For Each SourcePoint As IGeoPoint In SourcePointList
                         Me.Add(SourcePoint)
@@ -85,8 +72,8 @@ Namespace Domain
             
             Private _Header As Collection(Of String)
             
-            ''' <summary> Gets or sets header text lines. </summary>
-             ''' <remarks> This is used for a text file. </remarks>
+            ''' <summary> Gets or sets header text lines for the list. </summary>
+             ''' <remarks> This may be used for a text file. </remarks>
             Public Property Header() As Collection(Of String)
                 Get
                     If _Header Is Nothing Then
@@ -100,34 +87,9 @@ Namespace Domain
             End Property
             
             ''' <summary> Determines logical constraints to be considered for the intended usage of points. Defaults to <c>None</c>. </summary>
-             ''' <remarks> If any of these contraints is injured while reading from file, a <see cref="ParseError"/> will be created. </remarks>
+             ''' <remarks> Used by <see cref="GeoPointList.VerifyConstraints"/>. </remarks>
             Public Property Constraints() As GeoPointConstraints
             
-        #End Region
-        
-        #Region "IParseErrors Members"
-            
-            Private _ParseErrors As ParseErrorCollection
-            
-            ''' <inheritdoc/>
-            Public Property ParseErrors() As ParseErrorCollection Implements IParseErrors.ParseErrors
-                Get
-                    If _ParseErrors Is Nothing Then
-                        _ParseErrors = New ParseErrorCollection()
-                    End If
-                    Return _ParseErrors
-                End Get
-                Set(value As ParseErrorCollection)
-                    _ParseErrors = value
-                End Set
-            End Property
-            
-            ''' <inheritdoc/>
-            Public Property CollectParseErrors() As Boolean = False Implements IParseErrors.CollectParseErrors
-            
-            ''' <inheritdoc/>
-            Public Property ShowParseErrorsInJedit() As Boolean = False Implements IParseErrors.ShowParseErrorsInJedit
-
         #End Region
         
         #Region "Methods"
@@ -161,23 +123,21 @@ Namespace Domain
         
         #Region "Overrides"
             
-            ''' <summary> Clears this collection as well as <see cref="GeoPointListBase.ParseErrors"/> and <see cref="GeoPointListBase.Header"/>. </summary>
+            ''' <summary> Clears this collection as well as the <see cref="GeoPointList.Header"/>. </summary>
             Protected Overrides Sub ClearItems()
                 MyBase.ClearItems()
-                Me.ParseErrors.Clear()
                 Me.Header.Clear()
             End Sub
             
             ''' <summary> Returns a list of all points in one string. </summary>
             Public Overrides Function ToString() As String
                 
-                Dim KvFmt As String = " %20s %15.5f%15.5f%10.4f  %-13s %-13s %-4s  %8s %8s %5.0f %5.0f  %5s %5s  %5s %5s  %-8s %7s"
+                Dim PointFmt  As String = " %20s %15.5f%15.5f%10.4f  %-13s %-13s %-4s  %8s %8s %5.0f %5.0f  %5s %5s  %5s %5s  %-8s %7s"
                 Dim PointList As New System.Text.StringBuilder()
                 
                 ' Header lines.
                 If (Me.Header.Count > 0) Then
                     For Each HeaderLine As String In Me.Header
-                        PointList.Append(LineStartCommentToken)
                         PointList.AppendLine(HeaderLine)
                     Next
                 Else
@@ -191,7 +151,7 @@ Namespace Domain
                 ' Points.
                 For Each p As GeoPoint In Me
                     
-                    PointList.AppendLine(sprintf(KvFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
+                    PointList.AppendLine(sprintf(PointFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
                                 P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
                                 P.Kind.TrimToMaxLength(4), P.CoordSys.TrimToMaxLength(8), P.HeightSys.TrimToMaxLength(8), P.mp, P.mh, 
                                 P.MarkHints.TrimToMaxLength(5), P.MarkType.TrimToMaxLength(5), P.sp.TrimToMaxLength(5), P.sh.TrimToMaxLength(5),
@@ -205,27 +165,6 @@ Namespace Domain
         
         #Region "Protected Members"
             
-            ''' <summary> Creates a byte array from a string. </summary>
-             ''' <param name="TheEncoding"> The encoding to use. </param>
-             ''' <param name="text">        Input string </param>
-             ''' <param name="Length">      Given length of the byte array to return. </param>
-             ''' <param name="FillChar">    If <paramref name="text"/> is shorter than <paramref name="Length"/>, it will be filled with this character. </param>
-             ''' <returns> A byte array with given <paramref name="Length"/>. </returns>
-             ''' <remarks> The input string will be trimmed to <paramref name="Length"/>. </remarks>
-            Protected Function GetByteArray(TheEncoding As Encoding, text As String, Length As Integer, FillChar As Char, Optional AdjustAtRight As Boolean = False) As Byte()
-                Dim TrimmedInput As String = text
-                If (TrimmedInput.Length > Length) Then
-                    TrimmedInput = text.Left(Length)
-                ElseIf (TrimmedInput.Length < Length) Then
-                    If (AdjustAtRight) Then
-                        TrimmedInput = text.PadLeft(Length, FillChar)
-                    Else
-                        TrimmedInput = text.PadRight(Length, FillChar)
-                    End If
-                End If
-                Return TheEncoding.GetBytes(TrimmedInput)
-            End Function
-            
             ''' <summary> Verifies that <paramref name="p"/> has a unique ID and also fulfills all given <see cref="Constraints"/>. </summary>
              ''' <param name="Point"> The point to verify. It should has set it's <see cref="GeoPoint.SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
              ''' <remarks>
@@ -236,7 +175,7 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
-            Protected Sub VerifyConstraints(Point As GeoPoint)
+            Public Sub VerifyConstraints(Point As GeoPoint)
                 Me.VerifyConstraints(Point, Nothing, Nothing, Nothing, Nothing)
             End Sub
             
@@ -254,12 +193,12 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
-            Protected Sub VerifyConstraints(Point   As GeoPoint,
-                                            FieldID As DataField(Of String),
-                                            FieldX  As DataField(Of Double),
-                                            FieldY  As DataField(Of Double),
-                                            FieldZ  As DataField(Of Double)
-                                           )
+            Public Sub VerifyConstraints(Point   As GeoPoint,
+                                         FieldID As DataField(Of String),
+                                         FieldX  As DataField(Of Double),
+                                         FieldY  As DataField(Of Double),
+                                         FieldZ  As DataField(Of Double)
+                                        )
                 
                 If (Point  Is Nothing) Then Throw New System.ArgumentNullException("Point")
                 

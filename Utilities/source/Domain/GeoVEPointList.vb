@@ -33,7 +33,6 @@ Namespace Domain
             Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoVEPointList")
             
             Private VEencoding      As Encoding = Encoding.Default
-            Private PointNoFactor   As Integer = 100000
             Private RecordLength    As Integer = 102
             
         #End Region

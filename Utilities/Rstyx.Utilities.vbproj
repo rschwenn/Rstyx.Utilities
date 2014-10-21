@@ -118,6 +118,7 @@
     <Compile Include="source\Domain\GeoIPoint.vb" />
     <Compile Include="source\Domain\GeoIPointList.vb" />
     <Compile Include="source\Domain\GeoPoint.vb" />
+    <Compile Include="source\Domain\GeoPointList.vb" />
     <Compile Include="source\Domain\GeoPointListBase.vb" />
     <Compile Include="source\Domain\GeoTcPoint.vb" />
     <Compile Include="source\Domain\GeoVEPoint.vb" />
