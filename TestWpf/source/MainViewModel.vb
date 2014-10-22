@@ -12,6 +12,7 @@ Imports System.Threading.Tasks
 
 Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Domain
+Imports Rstyx.Utilities.Domain.IO
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.UI.ViewModel
 
@@ -113,20 +114,21 @@ Public Class MainViewModel
             
             Try
                 Logger.logInfo("")
-                Dim pts As New GeoIPointList()
-                pts.ShowParseErrorsInJedit = True
-                pts.CollectParseErrors = True
-                'pts.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
-                pts.readFromIpktFile(Me.FilePath1)
-                'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
-                'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
-                Logger.logInfo(pts.ToString())
                 
-                Dim VEPktList As New GeoVEPointList(pts)
-                VEPktList.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                'pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                'pts.writeTo("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                'pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
+                Dim Reader As New iPktReader()
+                Reader.ShowParseErrorsInJedit = True
+                Reader.CollectParseErrors = True
+                Reader.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
+                Dim pts As GeoPointList = Reader.Load(Me.FilePath1)
+                ' 'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
+                ' 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
+                ' Logger.logInfo(pts.ToString())
+                ' 
+                ' Dim VEPktList As New GeoVEPointList(pts)
+                ' VEPktList.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                ' 'pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                ' 'pts.writeTo("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                ' 'pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 
                 Dim dtUTC As DateTime = DateTime.UtcNow

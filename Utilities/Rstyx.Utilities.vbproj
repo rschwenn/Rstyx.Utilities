@@ -116,14 +116,14 @@
     <Compile Include="source\Apps\AppInfo.vb" />
     <Compile Include="source\Apps\AppUtils.vb" />
     <Compile Include="source\Domain\GeoIPoint.vb" />
-    <Compile Include="source\Domain\GeoIPointList.vb" />
     <Compile Include="source\Domain\GeoPoint.vb" />
     <Compile Include="source\Domain\GeoPointList.vb" />
-    <Compile Include="source\Domain\GeoPointListBase.vb" />
+    <Compile Include="source\Domain\IO\GeoPointFileReader.vb" />
     <Compile Include="source\Domain\GeoTcPoint.vb" />
     <Compile Include="source\Domain\GeoVEPoint.vb" />
-    <Compile Include="source\Domain\GeoVEPointList.vb" />
     <Compile Include="source\Collections\IDCollection.vb" />
+    <Compile Include="source\Domain\IO\iPktReader.vb" />
+    <Compile Include="source\Domain\IO\KvReader.vb" />
     <Compile Include="source\Domain\Kilometer.vb" />
     <Compile Include="source\Domain\PointInterfaces.vb" />
     <Compile Include="source\Domain\PositionAtTopology.vb" />

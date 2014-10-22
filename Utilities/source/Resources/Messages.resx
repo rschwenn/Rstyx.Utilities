@@ -707,15 +707,15 @@
     <value>%d Punkte gelesen aus Verm.esn-Punktdatei (KF) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_ReadKvFailed" xml:space="preserve">
+  <data name="KvReader_LoadFailed" xml:space="preserve">
     <value>Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KV) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_ReadKvStart" xml:space="preserve">
+  <data name="KvReader_LoadStart" xml:space="preserve">
     <value>Lese ASCII-Punktdatei (KV) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_ReadKvSuccess" xml:space="preserve">
+  <data name="KvReader_LoadSuccess" xml:space="preserve">
     <value>%d Punkte gelesen aus ASCII-Punktdatei (KV) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
@@ -794,7 +794,7 @@
     <value>StreckenNr</value>
     <comment>Number of rail track</comment>
   </data>
-  <data name="GeoVEPointList_ReadKvParsingFailed" xml:space="preserve">
+  <data name="KvReader_LoadParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
@@ -847,19 +847,19 @@
   <data name="GeoIPointList_Label_iPktDefaultHeader2" xml:space="preserve">
     <value>#&lt;LfNr&gt;+BC+&lt;-OS-&gt;+GC+&lt;GDim&gt;+&lt;GExz&gt;+&lt;---Punktnummer----&gt;+&lt;K&gt;+&lt;-RechtsWert-&gt;+&lt;--HochWert--&gt;+&lt;----Höhe----&gt;+&lt;---Zeitstempel---&gt;+&lt;-KS-&gt;+&lt;--&gt;+&lt;GL&gt;+&lt;GH&gt;+&lt;---------Text----------&gt;+AT+&lt;-------Attribut--------&gt;+AT+&lt;-------Attribut--------&gt;+freie Daten...</value>
   </data>
-  <data name="GeoIPointList_ReadIpktFailed" xml:space="preserve">
+  <data name="iPktReader_LoadFailed" xml:space="preserve">
     <value>Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoIPointList_ReadIpktStart" xml:space="preserve">
+  <data name="iPktReader_LoadStart" xml:space="preserve">
     <value>Lese ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoIPointList_ReadIpktSuccess" xml:space="preserve">
+  <data name="iPktReader_LoadSuccess" xml:space="preserve">
     <value>%d Punkte gelesen aus ASCII-Punktdatei (iPkt) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
-  <data name="GeoIPointList_ReadIpktParsingFailed" xml:space="preserve">
+  <data name="iPktReader_LoadParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
@@ -918,11 +918,11 @@
   <data name="Domain_Label_wp" xml:space="preserve">
     <value>Gewicht Lage</value>
   </data>
-  <data name="GeoIPointList_HintValidTimeStampFormat" xml:space="preserve">
+  <data name="iPktReader_HintValidTimeStampFormat" xml:space="preserve">
     <value>Beispiel für gültiges Format: %s</value>
     <comment>Sample Time Stamp: String</comment>
   </data>
-  <data name="GeoIPointList_InvalidFieldNotTimeStamp" xml:space="preserve">
+  <data name="iPktReader_InvalidFieldNotTimeStamp" xml:space="preserve">
     <value>Das Feld '%s' hat kein gültiges Format (%s).</value>
     <comment>Field Caption: String; Field String: String</comment>
   </data>

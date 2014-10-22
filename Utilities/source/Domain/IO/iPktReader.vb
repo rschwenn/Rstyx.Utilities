@@ -1,37 +1,29 @@
 ﻿
 Imports System
-Imports System.Collections.Generic
-Imports System.Collections.ObjectModel
-Imports System.IO
-Imports System.Text
 
-Imports PGK.Extensions
-Imports Rstyx.Utilities
-Imports Rstyx.Utilities.Collections
-Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
 
-Namespace Domain
+Namespace Domain.IO
     
-    ''' <summary> The GeoIPointList is a List of GeoIPoint's and contains all related data and manipulation methods. </summary>
+    ''' <summary> A reader for iPkt GeoPoint files. </summary>
      ''' <remarks>
+     ''' .
      ''' <para>
      ''' <b>Features:</b>
      ''' <list type="bullet">
-     ''' <item><description> Property for accessing the Header. </description></item>
-     ''' <item><description> Methods for reading and writing the ascii ipkt file. </description></item>
+     ''' <item><description>  </description></item>
+     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointList"/>. </description></item>
+     ''' <item><description>  </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public Class GeoIPointList
-        Inherits GeoPointListBase(Of GeoIPoint)
+    Public Class iPktReader
+        Inherits GeoPointFileReader
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoIPointList")
-            
-            Private Shared iPktEncoding    As Encoding = Encoding.Default
+            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.iPktReader")
             
         #End Region
         
@@ -39,65 +31,40 @@ Namespace Domain
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
-                LineStartCommentToken = "#"
-                Logger.logDebug("New(): GeoIPointList instantiated")
-            End Sub
-            
-            ''' <summary> Creates a new GeoIPointList and inititializes it's items from any given <see cref="IDCollection(Of IGeoPoint)"/>. </summary>
-             ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
-             ''' <remarks></remarks>
-             ''' <exception cref="InvalidIDException"> ID of at least one <paramref name="SourcePoint"/> isn't a valid ID for the target point. </exception>
-            Public Sub New(SourcePointList As IDCollection(Of IGeoPoint))
-                If (SourcePointList IsNot Nothing) Then
-                    For Each SourcePoint As IGeoPoint In SourcePointList
-                        Dim p As New GeoIPoint(SourcePoint)
-                        Me.Add(p)
-                    Next
-                End If
+                Me.LineStartCommentToken = "#"
+                Logger.logDebug("New(): iPktReader instantiated")
             End Sub
             
         #End Region
         
-        #Region "Properties"
+        #Region "Overrides"
             
-            ' Private _HeaderKF  As GeoIPoint
-            ' 
-            ' ''' <summary> Gets or sets the Header of the binary point file. It returns the default header, if not changed before (i.e. read from binary file). </summary>
-            ' Public Property HeaderKF() As GeoIPoint
-            '     Get
-            '         If _HeaderKF Is Nothing Then
-            '             _HeaderKF = getDefaultKFHeader()
-            '         End If
-            '         Return _HeaderKF
-            '     End Get
-            '     Set(value As GeoIPoint)
-            '         _HeaderKF = value
-            '     End Set
-            ' End Property
-            
-        #End Region
-        
-        #Region "Methods"
-            
-            ''' <summary> Reads the ascii "iPkt" point file and fills the points collection. </summary>
+            ''' <summary> Reads the point file and fills the points collection. </summary>
              ''' <param name="FilePath"> File to read from. </param>
+             ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
              ''' <remarks>
-             ''' If this method fails, the points collection won't be cleared, so parse errors stay available."
+             ''' If this method fails, <see cref="GeoPointFileReader.ParseErrors"/> should provide the parse errors occurred."
              ''' </remarks>
-             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoIPointList.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFileReader.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Sub readFromIpktFile(FilePath As String)
+            Public Overrides Function Load(FilePath As String) As GeoPointList
+                
+                Dim PointList As New GeoPointList()
                 Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_ReadIpktStart, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadStart, FilePath))
                     
-                    Me.Clear()
+                    PointList.Clear()
                     Me.ParseErrors.FilePath = FilePath
-                    Dim RecDef As New RecDefIpkt()
+                    Dim RecDef As New RecDef()
                     
                     Dim FileReader As New DataTextFileReader()
-                    FileReader.LineStartCommentToken = LineStartCommentToken
-                    FileReader.Load(FilePath, Encoding:=iPktEncoding, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
-                    Me.Header = FileReader.Header
+                    FileReader.LineStartCommentToken = Me.LineStartCommentToken
+                    FileReader.LineEndCommentToken   = Me.LineEndCommentToken
+                    FileReader.SeparateHeader        = Me.SeparateHeader
+                    FileReader.Load(FilePath, Encoding:=Me.FileEncoding, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
+                    
+                    PointList.Header = FileReader.Header
+                    PointList.Constraints = Me.Constraints
                     
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
                         
@@ -148,25 +115,25 @@ Namespace Domain
                                         Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
                                                                                    DataLine.SourceLineNo,
                                                                                    FieldTime,
-                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
-                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
+                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
+                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
                                                                                    Nothing))
                                     End If
                                 End If
                                 
-                                Me.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)
-                                Me.Add(p)
+                                PointList.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)
+                                PointList.Add(p)
                                 
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message))
                                 If (Not CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_ReadIpktParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                                 
                             Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                 Me.ParseErrors.Add(ex.ParseError)
                                 If (Not CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_ReadIpktParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                             End Try
                         End If
@@ -174,130 +141,32 @@ Namespace Domain
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_ReadIpktParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                    ElseIf (Me.Count = 0) Then
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                    ElseIf (PointList.Count = 0) Then
                         Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                     End If
                     
-                    Logger.logDebug(Me.ToString())
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_ReadIpktSuccess, Me.Count, FilePath))
+                    Logger.logDebug(PointList.ToString())
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadSuccess, PointList.Count, FilePath))
                     
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_ReadIpktFailed, FilePath), ex)
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadFailed, FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
-                    If (ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
                 End Try
-            End Sub
-            
-            ''' <summary> Writes the ascii "iPkt" point file from the points collection. </summary>
-             ''' <param name="FilePath"> File to write. </param>
-             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Sub writeToIpktFile(FilePath As String)
-                Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_WriteIpktStart, FilePath))
-                    
-                    Using oSW As New StreamWriter(FilePath, append:=False, encoding:=iPktEncoding)
-                        oSW.Write(Me.ToIpkt())
-                    End Using
-                    
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_WriteIpktSuccess, Me.Count, FilePath))
-                    
-                Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.GeoIPointList_WriteIpktFailed, FilePath), ex)
-                End Try
-            End Sub
-            
-            ''' <summary> Returns a list of all points in one iPkt formatted string. </summary>
-            Public Function ToIpkt() As String
                 
-                Dim IpktFmt   As String = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
-                Dim PointList As New System.Text.StringBuilder()
-                
-                ' Header lines.
-                If (Me.Header.Count > 0) Then
-                    For Each HeaderLine As String In Me.Header
-                        PointList.Append(LineStartCommentToken)
-                        PointList.AppendLine(HeaderLine)
-                    Next
-                Else
-                    ' Default Header.
-                    PointList.AppendLine(Rstyx.Utilities.Resources.Messages.GeoIPointList_Label_iPktDefaultHeader1)
-                    PointList.AppendLine(Rstyx.Utilities.Resources.Messages.GeoIPointList_Label_iPktDefaultHeader2)
-                End If
-                
-                ' Points.
-                For i As Integer = 0 To Me.Count - 1
-                    
-                    Dim p As GeoIPoint = Me.Item(i)
-                    
-                    Dim TimeStamp As String = Nothing
-                    If (p.TimeStamp.HasValue) Then
-                        TimeStamp = p.TimeStamp.Value.ToString("s")
-                    End If
-                    
-                    PointList.AppendLine(sprintf(IpktFmt, i + 1,
-                                                 p.CalcCode.TrimToMaxLength(2),
-                                                 p.ObjectKey.TrimToMaxLength(6),
-                                                 p.GraficsCode.TrimToMaxLength(2),
-                                                 p.GraficsDim,
-                                                 p.GraficsEcc,
-                                                 p.ID.TrimToMaxLength(20),
-                                                 p.CoordType.TrimToMaxLength(3),
-                                                 p.Y, p.X, p.Z,
-                                                 sprintf("%19s", TimeStamp),
-                                                 p.CoordSys.TrimToMaxLength(6),
-                                                 p.Flags.TrimToMaxLength(4),
-                                                 p.wp, p.wh,
-                                                 p.Info.TrimToMaxLength(25),
-                                                 p.AttKey1.TrimToMaxLength(2),
-                                                 p.AttValue1.TrimToMaxLength(25),
-                                                 p.AttKey2.TrimToMaxLength(2),
-                                                 p.AttValue2.TrimToMaxLength(25),
-                                                 p.Comment
-                                                ))
-                Next
-                Return PointList.ToString()
-            End Function
-            
-        #End Region
-        
-        #Region "Overrides"
-            
-            ''' <summary> Returns a list of all points in one string. </summary>
-            Public Overrides Function ToString() As String
-                
-                Dim PointList As New System.Text.StringBuilder()
-                
-                ' Header lines.
-                PointList.AppendLine("--------------------------------------------------------------------------------------------------")
-                'If (Me.Header.Count > 0) Then
-                '    For Each HeaderLine As String In Me.Header
-                '        PointList.Append(LineStartCommentToken)
-                '        PointList.AppendLine(HeaderLine)
-                '    Next
-                'Else
-                '    ' Default Header.
-                '    PointList.AppendLine(Rstyx.Utilities.Resources.Messages.GeoIPointList_Label_iPktDefaultHeader1)
-                '    PointList.AppendLine(Rstyx.Utilities.Resources.Messages.GeoIPointList_Label_iPktDefaultHeader2)
-                'End If
-                
-                ' Points.
-                For Each p As GeoIPoint In Me
-                    PointList.AppendLine(p.ToString())
-                Next
-                PointList.AppendLine("--------------------------------------------------------------------------------------------------")
-                Return PointList.ToString()
+                Return PointList
             End Function
             
         #End Region
         
         #Region "Record Definitions"
             
-            ''' <summary> Definition of a Ipkt source record. </summary>
-            Protected Class RecDefIpkt
+            ''' <summary> Definition of a source record. </summary>
+            Protected Class RecDef
                 
                 ''' <summary> Initializes the field definition. </summary>
                 Public Sub New()
@@ -351,23 +220,6 @@ Namespace Domain
                 #End Region
             End Class
         
-        #End Region
-        
-        #Region "Private Members"
-            
-           '  ''' <summary> Gets point ID from a raw numeric ID. </summary>
-           '   ''' <param name="RawID"> Raw numeric ID. </param>
-           '   ''' <returns> Unchanged input value if <paramref name="RawID"/> is less than 100, otherwise <paramref name="RawID"/> / 100000; or 1.0E+40 if <paramref name="RawID"/> = <c>Double.NaN</c>. </returns>
-           '  Private Function getIDSmart(RawID As Double) As Double
-           '      Dim RetID As Double = RawID
-           '      If (Double.IsNaN(RawID)) Then
-           '          RetID = 1.0E+40
-           '      ElseIf (RawID > 99.999995)
-           '          RetID = RawID / PointIDFactor
-           '      End If
-           '      Return RetID
-           '  End Function
-            
         #End Region
         
     End Class

@@ -1082,24 +1082,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Beispiel für gültiges Format: %s ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_HintValidTimeStampFormat() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_HintValidTimeStampFormat", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; hat kein gültiges Format (%s). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_InvalidFieldNotTimeStamp() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_InvalidFieldNotTimeStamp", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die #123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890.... ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPointList_Label_iPktDefaultHeader1() As String
@@ -1114,42 +1096,6 @@ Namespace Resources
         Public Shared ReadOnly Property GeoIPointList_Label_iPktDefaultHeader2() As String
             Get
                 Return ResourceManager.GetString("GeoIPointList_Label_iPktDefaultHeader2", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_ReadIpktFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_ReadIpktFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_ReadIpktParsingFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_ReadIpktParsingFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_ReadIpktStart() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_ReadIpktStart", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (iPkt) &apos;%s&apos;.\n ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_ReadIpktSuccess() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_ReadIpktSuccess", resourceCulture)
             End Get
         End Property
         
@@ -1339,42 +1285,6 @@ Namespace Resources
         Public Shared ReadOnly Property GeoVEPointList_ReadBinarySuccess() As String
             Get
                 Return ResourceManager.GetString("GeoVEPointList_ReadBinarySuccess", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadKvFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadKvFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadKvParsingFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadKvParsingFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadKvStart() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadKvStart", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (KV) &apos;%s&apos;.\n ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadKvSuccess() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadKvSuccess", resourceCulture)
             End Get
         End Property
         
@@ -1577,11 +1487,101 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Beispiel für gültiges Format: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktReader_HintValidTimeStampFormat() As String
+            Get
+                Return ResourceManager.GetString("iPktReader_HintValidTimeStampFormat", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; hat kein gültiges Format (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktReader_InvalidFieldNotTimeStamp() As String
+            Get
+                Return ResourceManager.GetString("iPktReader_InvalidFieldNotTimeStamp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktReader_LoadFailed() As String
+            Get
+                Return ResourceManager.GetString("iPktReader_LoadFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktReader_LoadParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("iPktReader_LoadParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktReader_LoadStart() As String
+            Get
+                Return ResourceManager.GetString("iPktReader_LoadStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (iPkt) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktReader_LoadSuccess() As String
+            Get
+                Return ResourceManager.GetString("iPktReader_LoadSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Die Zeichenkette &apos;%s&apos; stellt keine gültige Kilomerschreibweise dar. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Kilometer_InvalidKilometerNotation() As String
             Get
                 Return ResourceManager.GetString("Kilometer_InvalidKilometerNotation", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvReader_LoadFailed() As String
+            Get
+                Return ResourceManager.GetString("KvReader_LoadFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvReader_LoadParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("KvReader_LoadParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvReader_LoadStart() As String
+            Get
+                Return ResourceManager.GetString("KvReader_LoadStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (KV) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvReader_LoadSuccess() As String
+            Get
+                Return ResourceManager.GetString("KvReader_LoadSuccess", resourceCulture)
             End Get
         End Property
         
