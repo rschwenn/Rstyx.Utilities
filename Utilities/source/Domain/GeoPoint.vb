@@ -60,6 +60,49 @@ Namespace Domain
             
         #End Region
         
+        #Region "IGeoPointConversions Members"
+            
+            ''' <summary> Returns a <see cref="GeoVEPoint"/> initialized with values of the implementing point. </summary>
+             ''' <remarks>
+             ''' If the implementing point is already a <see cref="GeoVEPoint"/>, then the same instance will be returned.
+             ''' Otherwise a new instance of <see cref="GeoVEPoint"/> will be created.
+             ''' </remarks>
+            Function AsGeoVEPoint() As GeoVEPoint Implements IGeoPointConversions.AsGeoVEPoint
+                If (TypeOf Me Is GeoVEPoint) Then
+                    Return Me
+                Else
+                    Return New GeoVEPoint(Me)
+                End If
+            End Function
+            
+            ''' <summary> Returns a <see cref="GeoIPoint"/> initialized with values of the implementing point. </summary>
+             ''' <remarks>
+             ''' If the implementing point is already a <see cref="GeoIPoint"/>, then the same instance will be returned.
+             ''' Otherwise a new instance of <see cref="GeoIPoint"/> will be created.
+             ''' </remarks>
+            Function AsGeoIPoint() As GeoIPoint Implements IGeoPointConversions.AsGeoIPoint
+                If (TypeOf Me Is GeoIPoint) Then
+                    Return Me
+                Else
+                    Return New GeoIPoint(Me)
+                End If
+            End Function
+            
+            ''' <summary> Returns a <see cref="GeoTcPoint"/> initialized with values of the implementing point. </summary>
+             ''' <remarks>
+             ''' If the implementing point is already a <see cref="GeoTcPoint"/>, then the same instance will be returned.
+             ''' Otherwise a new instance of <see cref="GeoTcPoint"/> will be created.
+             ''' </remarks>
+            Function AsGeoTcPoint() As GeoTcPoint Implements IGeoPointConversions.AsGeoTcPoint
+                If (TypeOf Me Is GeoTcPoint) Then
+                    Return Me
+                Else
+                    Return New GeoTcPoint(Me)
+                End If
+            End Function
+            
+        #End Region
+        
         #Region "IIdentifiable Members"
             
             Dim _ID As String = Nothing
@@ -68,13 +111,13 @@ Namespace Domain
              ''' <remarks> The setter fails if given ID isn't valid for this point type. </remarks>
              ''' <exception cref="ParseException"> <paramref name="TargetID"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
             Public Property ID() As String Implements IIdentifiable(Of String).ID
-            Get
-                Return _ID
-            End Get
-            Set(value As String)
-                _ID = Me.ParseID(value)
-            End Set
-        End Property
+                Get
+                    Return _ID
+                End Get
+                Set(value As String)
+                    _ID = Me.ParseID(value)
+                End Set
+            End Property
             
         #End Region
         

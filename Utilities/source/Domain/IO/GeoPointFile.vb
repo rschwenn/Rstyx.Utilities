@@ -48,25 +48,26 @@ Namespace Domain.IO
         
     End Enum
     
-    ''' <summary> The base class for reading GeoPoint files. </summary>
+    ''' <summary> The base class for reading and writing GeoPoint files. </summary>
      ''' <remarks>
-     ''' A derived class will be support reading exactly one discrete file type.
+     ''' A derived class will be support to read and write exactly one discrete file type.
      ''' <para>
      ''' <b>Features:</b>
      ''' <list type="bullet">
      ''' <item><description>  </description></item>
-     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointList"/>. </description></item>
+     ''' <item><description> The <see cref="GeoPointFile.Load"/> method reads the file and returnes the read points as <see cref="GeoPointList"/>. </description></item>
+     ''' <item><description> The <see cref="GeoPointFile.Store"/> method writes a given <see cref="GeoPointList"/> to the file. </description></item>
      ''' <item><description> Implements <see cref="IParseErrors"/> in order to support error handling. </description></item>
-     ''' <item><description> Provides the <see cref="GeoPointFileReader.Constraints"/> property in order to outline constraints violation in source file. </description></item>
+     ''' <item><description> Provides the <see cref="GeoPointFile.Constraints"/> property in order to outline constraints violation in source file. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public MustInherit Class GeoPointFileReader
+    Public MustInherit Class GeoPointFile
         Implements IParseErrors
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.GeoPointFileReader")
+            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.GeoPointFile")
             
         #End Region
         
@@ -74,35 +75,42 @@ Namespace Domain.IO
             
             ''' <summary> If this string is found at line start, the whole line will be treated as comment line. Defaults to <see langword="null"/>. </summary>
              ''' <remarks> If <see langword="null"/> or empty, comment lines won't be recognized. </remarks>
-            Protected LineStartCommentToken  As String = Nothing
+            Protected LineStartCommentToken As String = Nothing
             
             ''' <summary> If this string is found anywhere in the line, all following characters will be treated as line end comment. Defaults to <see langword="null"/>. </summary>
              ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
-            Protected LineEndCommentToken    As String = Nothing
+            Protected LineEndCommentToken   As String = Nothing
             
             ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="GeoPointList.Header"/>. Defaults to <see langword="true"/>. </summary>
-            Protected SeparateHeader         As Boolean = True
+            Protected SeparateHeader        As Boolean = True
             
-            ''' <summary> The encoding to use for reading the file. </summary>
-            Protected FileEncoding           As Encoding = Encoding.Default
+            ''' <summary> The encoding to use for the file. </summary>
+            Protected FileEncoding          As Encoding = Encoding.Default
             
+            ''' <summary> The default header lines for the file. </summary>
+            Protected ReadOnly DefaultHeader  As New Collection(Of String)
         #End Region
         
         #Region "Constuctors"
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
-                Logger.logDebug("New(): GeoPointFileReader instantiated")
+                Logger.logDebug("New(): GeoPointFile instantiated")
             End Sub
             
         #End Region
         
         #Region "Properties"
             
-           ''' <summary> Determines logical constraints to be considered for the intended usage of read points. Defaults to <c>None</c>. </summary>
+           ''' <summary> Determines logical constraints for the intended usage of points. Defaults to <c>None</c>. </summary>
             ''' <remarks>
-            ''' This value will be forwarded to <see cref="GeoPointList.Constraints"/> of the point list created by <see cref="GeoPointFileReader.Load"/>.
-            ''' If any of these contraints is injured while loading file, a <see cref="ParseError"/> will be created.
+            ''' <para>
+            ''' This property takes only effect when loading a file.
+            ''' </para>
+            ''' <para>
+            ''' This value will be forwarded to <see cref="GeoPointList.Constraints"/> of the point list created by <see cref="GeoPointFile.Load"/>.
+            ''' If any of these contraints is violated while loading the file, a <see cref="ParseError"/> will be created.
+            ''' </para>
             ''' </remarks>
            Public Property Constraints() As GeoPointConstraints
             
@@ -139,11 +147,17 @@ Namespace Domain.IO
              ''' <param name="FilePath"> File to read from. </param>
              ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
              ''' <remarks>
-             ''' If this method fails, <see cref="GeoPointFileReader.ParseErrors"/> should provide the parse errors occurred."
+             ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </remarks>
-             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFileReader.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public MustOverride Function Load(FilePath As String) As GeoPointList
+            
+            ''' <summary> Writes the points collection to the point file. </summary>
+             ''' <param name="PointList"> The points to store. </param>
+             ''' <param name="FilePath">  File to store the points into. </param>
+             ''' <exception cref="RemarkException"> Wraps any exception. </exception>
+            Public MustOverride Sub Store(PointList As GeoPointList, FilePath As String)
             
         #End Region
         
@@ -178,6 +192,27 @@ Namespace Domain.IO
                     End If
                 End If
                 Return TheEncoding.GetBytes(TrimmedInput)
+            End Function
+            
+            ''' <summary> Creates the header for the file to write. </summary>
+             ''' <param name="PointList"> The point list to get individual header lines from. </param>
+            Protected Overridable Function CreateFileHeader(PointList As GeoPointList) As StringBuilder
+                
+                Dim HeaderLines As New StringBuilder()
+                
+                ' Individual Header.
+                For Each HeaderLine As String In PointList.Header
+                    HeaderLines.Append(LineStartCommentToken)
+                    HeaderLines.AppendLine(HeaderLine)
+                Next
+                
+                ' Default Header.
+                For Each DefaultHeaderLine As String In Me.DefaultHeader
+                    HeaderLines.Append(LineStartCommentToken)
+                    HeaderLines.AppendLine(DefaultHeaderLine)
+                Next
+                
+                Return HeaderLines
             End Function
             
         #End Region

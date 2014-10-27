@@ -10,6 +10,33 @@ Namespace Domain
         Inherits IGeoPointInfo
         Inherits ICartesianCoordinates3D
         Inherits IFileSource
+        Inherits IGeoPointConversions
+    End Interface
+    
+    ''' <summary> A set of methods providing conversions between different point types. </summary>
+    Public Interface IGeoPointConversions
+        
+        ''' <summary> Returns a <see cref="GeoVEPoint"/> initialized with values of the implementing point. </summary>
+         ''' <remarks>
+         ''' If the implementing point is already a <see cref="GeoVEPoint"/>, then the same instance will be returned.
+         ''' Otherwise a new instance of <see cref="GeoVEPoint"/> will be created.
+         ''' </remarks>
+        Function AsGeoVEPoint() As GeoVEPoint
+        
+        ''' <summary> Returns a <see cref="GeoIPoint"/> initialized with values of the implementing point. </summary>
+         ''' <remarks>
+         ''' If the implementing point is already a <see cref="GeoIPoint"/>, then the same instance will be returned.
+         ''' Otherwise a new instance of <see cref="GeoIPoint"/> will be created.
+         ''' </remarks>
+        Function AsGeoIPoint() As GeoIPoint
+        
+        ''' <summary> Returns a <see cref="GeoTcPoint"/> initialized with values of the implementing point. </summary>
+         ''' <remarks>
+         ''' If the implementing point is already a <see cref="GeoTcPoint"/>, then the same instance will be returned.
+         ''' Otherwise a new instance of <see cref="GeoTcPoint"/> will be created.
+         ''' </remarks>
+        Function AsGeoTcPoint() As GeoTcPoint
+        
     End Interface
     
     ''' <summary> A set of properties describing a geodetic point. </summary>

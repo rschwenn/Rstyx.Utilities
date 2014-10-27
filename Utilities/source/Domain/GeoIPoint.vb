@@ -21,12 +21,29 @@ Namespace Domain
             Public Sub New()
             End Sub
             
-            ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
+            ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
+                
+                ' iPkt specials.
+                If (TypeOf SourcePoint Is GeoIPoint) Then
+                    
+                    Dim SourceIPoint As GeoIPoint = DirectCast(SourcePoint, GeoIPoint)
+                    
+                    Me.AttKey1     = SourceIPoint.AttKey1
+                    Me.AttKey2     = SourceIPoint.AttKey2
+                    Me.AttValue1   = SourceIPoint.AttValue1
+                    Me.AttValue2   = SourceIPoint.AttValue2
+                    Me.CalcCode    = SourceIPoint.CalcCode
+                    Me.CoordType   = SourceIPoint.CoordType
+                    Me.Flags       = SourceIPoint.Flags
+                    Me.GraficsCode = SourceIPoint.GraficsCode
+                    Me.GraficsDim  = SourceIPoint.GraficsDim
+                    Me.GraficsEcc  = SourceIPoint.GraficsEcc
+                End If
             End Sub
             
         #End Region

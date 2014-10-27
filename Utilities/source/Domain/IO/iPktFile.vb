@@ -18,12 +18,12 @@ Namespace Domain.IO
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public Class iPktReader
-        Inherits GeoPointFileReader
+    Public Class iPktFile
+        Inherits GeoPointFile
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.iPktReader")
+            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.iPktFile")
             
         #End Region
         
@@ -32,7 +32,7 @@ Namespace Domain.IO
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
                 Me.LineStartCommentToken = "#"
-                Logger.logDebug("New(): iPktReader instantiated")
+                Logger.logDebug("New(): iPktFile instantiated")
             End Sub
             
         #End Region
@@ -43,15 +43,15 @@ Namespace Domain.IO
              ''' <param name="FilePath"> File to read from. </param>
              ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
              ''' <remarks>
-             ''' If this method fails, <see cref="GeoPointFileReader.ParseErrors"/> should provide the parse errors occurred."
+             ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </remarks>
-             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFileReader.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Function Load(FilePath As String) As GeoPointList
                 
                 Dim PointList As New GeoPointList()
                 Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadStart, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, FilePath))
                     
                     PointList.Clear()
                     Me.ParseErrors.FilePath = FilePath
@@ -115,8 +115,8 @@ Namespace Domain.IO
                                         Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
                                                                                    DataLine.SourceLineNo,
                                                                                    FieldTime,
-                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
-                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
+                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
+                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
                                                                                    Nothing))
                                     End If
                                 End If
@@ -127,13 +127,13 @@ Namespace Domain.IO
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message))
                                 If (Not CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                                 
                             Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                 Me.ParseErrors.Add(ex.ParseError)
                                 If (Not CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                             End Try
                         End If
@@ -141,18 +141,18 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                     ElseIf (PointList.Count = 0) Then
                         Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                     End If
                     
                     Logger.logDebug(PointList.ToString())
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadSuccess, PointList.Count, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointList.Count, FilePath))
                     
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktReader_LoadFailed, FilePath), ex)
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
@@ -160,6 +160,15 @@ Namespace Domain.IO
                 
                 Return PointList
             End Function
+            
+            ''' <summary> Writes the points collection to the point file. </summary>
+             ''' <param name="PointList"> The points to store. </param>
+             ''' <param name="FilePath">  File to store the points into. </param>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
+            Public Overrides Sub Store(PointList As GeoPointList, FilePath As String)
+                
+            End Sub
             
         #End Region
         

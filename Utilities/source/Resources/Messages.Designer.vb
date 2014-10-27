@@ -1226,33 +1226,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die #                                                                                                                     Vermarkungsart ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_Label_KvDefaultHeader1() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_Label_KvDefaultHeader1", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die #                                                                                                 RiKz            StabilKz   |  LH-Status ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_Label_KvDefaultHeader2() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_Label_KvDefaultHeader2", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die # PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_Label_KvDefaultHeader3() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_Label_KvDefaultHeader3", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoVEPointList_ReadBinaryFailed() As String
@@ -1312,33 +1285,6 @@ Namespace Resources
         Public Shared ReadOnly Property GeoVEPointList_WriteBinarySuccess() As String
             Get
                 Return ResourceManager.GetString("GeoVEPointList_WriteBinarySuccess", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_WriteKvFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_WriteKvFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_WriteKvStart() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_WriteKvStart", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in ASCII-Punktdatei (KV) &apos;%s&apos;.\n ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_WriteKvSuccess() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_WriteKvSuccess", resourceCulture)
             End Get
         End Property
         
@@ -1489,54 +1435,54 @@ Namespace Resources
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Beispiel für gültiges Format: %s ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property iPktReader_HintValidTimeStampFormat() As String
+        Public Shared ReadOnly Property iPktFile_HintValidTimeStampFormat() As String
             Get
-                Return ResourceManager.GetString("iPktReader_HintValidTimeStampFormat", resourceCulture)
+                Return ResourceManager.GetString("iPktFile_HintValidTimeStampFormat", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; hat kein gültiges Format (%s). ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property iPktReader_InvalidFieldNotTimeStamp() As String
+        Public Shared ReadOnly Property iPktFile_InvalidFieldNotTimeStamp() As String
             Get
-                Return ResourceManager.GetString("iPktReader_InvalidFieldNotTimeStamp", resourceCulture)
+                Return ResourceManager.GetString("iPktFile_InvalidFieldNotTimeStamp", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property iPktReader_LoadFailed() As String
+        Public Shared ReadOnly Property iPktFile_LoadFailed() As String
             Get
-                Return ResourceManager.GetString("iPktReader_LoadFailed", resourceCulture)
+                Return ResourceManager.GetString("iPktFile_LoadFailed", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property iPktReader_LoadParsingFailed() As String
+        Public Shared ReadOnly Property iPktFile_LoadParsingFailed() As String
             Get
-                Return ResourceManager.GetString("iPktReader_LoadParsingFailed", resourceCulture)
+                Return ResourceManager.GetString("iPktFile_LoadParsingFailed", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property iPktReader_LoadStart() As String
+        Public Shared ReadOnly Property iPktFile_LoadStart() As String
             Get
-                Return ResourceManager.GetString("iPktReader_LoadStart", resourceCulture)
+                Return ResourceManager.GetString("iPktFile_LoadStart", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (iPkt) &apos;%s&apos;.\n ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property iPktReader_LoadSuccess() As String
+        Public Shared ReadOnly Property iPktFile_LoadSuccess() As String
             Get
-                Return ResourceManager.GetString("iPktReader_LoadSuccess", resourceCulture)
+                Return ResourceManager.GetString("iPktFile_LoadSuccess", resourceCulture)
             End Get
         End Property
         
@@ -1550,38 +1496,92 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die                                                                                                                      Vermarkungsart ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvFile_Label_DefaultHeader1() As String
+            Get
+                Return ResourceManager.GetString("KvFile_Label_DefaultHeader1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die                                                                                                  RiKz            StabilKz   |  LH-Status ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvFile_Label_DefaultHeader2() As String
+            Get
+                Return ResourceManager.GetString("KvFile_Label_DefaultHeader2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die  PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvFile_Label_DefaultHeader3() As String
+            Get
+                Return ResourceManager.GetString("KvFile_Label_DefaultHeader3", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property KvReader_LoadFailed() As String
+        Public Shared ReadOnly Property KvFile_LoadFailed() As String
             Get
-                Return ResourceManager.GetString("KvReader_LoadFailed", resourceCulture)
+                Return ResourceManager.GetString("KvFile_LoadFailed", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property KvReader_LoadParsingFailed() As String
+        Public Shared ReadOnly Property KvFile_LoadParsingFailed() As String
             Get
-                Return ResourceManager.GetString("KvReader_LoadParsingFailed", resourceCulture)
+                Return ResourceManager.GetString("KvFile_LoadParsingFailed", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property KvReader_LoadStart() As String
+        Public Shared ReadOnly Property KvFile_LoadStart() As String
             Get
-                Return ResourceManager.GetString("KvReader_LoadStart", resourceCulture)
+                Return ResourceManager.GetString("KvFile_LoadStart", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (KV) &apos;%s&apos;.\n ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property KvReader_LoadSuccess() As String
+        Public Shared ReadOnly Property KvFile_LoadSuccess() As String
             Get
-                Return ResourceManager.GetString("KvReader_LoadSuccess", resourceCulture)
+                Return ResourceManager.GetString("KvFile_LoadSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvFile_StoreFailed() As String
+            Get
+                Return ResourceManager.GetString("KvFile_StoreFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvFile_StoreStart() As String
+            Get
+                Return ResourceManager.GetString("KvFile_StoreStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in ASCII-Punktdatei (KV) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvFile_StoreSuccess() As String
+            Get
+                Return ResourceManager.GetString("KvFile_StoreSuccess", resourceCulture)
             End Get
         End Property
         

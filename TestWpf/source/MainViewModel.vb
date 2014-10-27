@@ -115,15 +115,53 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Dim Reader As New iPktReader()
-                Reader.ShowParseErrorsInJedit = True
+                Dim s1 As String = "text"
+                Dim s2 As String = "text"
+                Dim s3 As String = "text"
+                
+                Dim c1 As String = "text"
+                Dim c2 As String = c1
+                Dim c3 As String = c1
+                
+                Logger.logInfo(s1 is s2)
+                Logger.logInfo(c1 is s1)
+                Logger.logInfo(c1 is c2)
+                Logger.logInfo("")
+                
+                Dim iPkt  As New GeoIPoint()
+                Dim Pkt   As New GeoPoint()
+                'Pkt.ID    = "1234567"
+                Pkt.ID    = "y123456789"
+                Pkt .Info = "GVP 123-34d"
+                Pkt.Z     = 123.4567
+                iPkt.AttKey1 = "A1"
+                iPkt.ID    = "1234567"
+                'iPkt.ID    = "y123456789"
+                iPkt.Info = "GVP 123-34d"
+                iPkt.Z     = 123.4567
+                'Dim VePkt As GeoVEPoint = iPkt
+                'Dim VePkt As GeoVEPoint = CType(Pkt, GeoVEPoint)
+                Dim VePkt As GeoVEPoint = iPkt.AsGeoVEPoint()
+                
+                'Dim d As Double = Double.NaN + 555
+                
+                Logger.logInfo(VePkt.ToString())
+                
+                
+                Dim Reader As New iPktFile()
                 Reader.CollectParseErrors = True
-                Reader.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
+                Reader.ShowParseErrorsInJedit = True
+                'Reader.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
                 Dim pts As GeoPointList = Reader.Load(Me.FilePath1)
                 ' 'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
                 ' 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 ' Logger.logInfo(pts.ToString())
-                ' 
+                
+                Dim Writer As New KvFile()
+                Writer.CollectParseErrors = True
+                Writer.ShowParseErrorsInJedit = True
+                Writer.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                 
                 ' Dim VEPktList As New GeoVEPointList(pts)
                 ' VEPktList.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
                 ' 'pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")

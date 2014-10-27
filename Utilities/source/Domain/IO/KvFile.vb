@@ -1,4 +1,7 @@
 ﻿
+Imports System.Collections.ObjectModel
+Imports System.IO
+
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
 
@@ -16,12 +19,12 @@ Namespace Domain.IO
      ''' </list>
      ''' </para>
      ''' </remarks>
-    Public Class KvReader
-        Inherits GeoPointFileReader
+    Public Class KvFile
+        Inherits GeoPointFile
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KvReader")
+            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KvFile")
             
         #End Region
         
@@ -30,7 +33,14 @@ Namespace Domain.IO
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
                 Me.LineStartCommentToken = "#"
-                Logger.logDebug("New(): KvReader instantiated")
+                
+                'Me.DefaultHeader = New Collection(Of String)
+                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader1)
+                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader2)
+                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader3)
+                Me.DefaultHeader.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------")
+                
+                Logger.logDebug("New(): KvFile instantiated")
             End Sub
             
         #End Region
@@ -38,20 +48,20 @@ Namespace Domain.IO
         #Region "Overrides"
             
             ''' <summary> Reads the point file and fills the points collection. </summary>
-             ''' <param name="FilePath"> File to read from. </param>
+             ''' <param name="FilePath"> File to load the points from. </param>
              ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
              ''' <remarks>
-             ''' If this method fails, <see cref="GeoPointFileReader.ParseErrors"/> should provide the parse errors occurred."
+             ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </remarks>
-             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFileReader.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Function Load(FilePath As String) As GeoPointList
                 
                 Dim PointList As New GeoPointList()
                 Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvReader_LoadStart, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadStart, FilePath))
                     
-                    PointList.Clear()
+                    Me.ParseErrors.Clear()
                     Me.ParseErrors.FilePath = FilePath
                     Dim RecDef As New RecDef()
                     
@@ -61,7 +71,13 @@ Namespace Domain.IO
                     FileReader.SeparateHeader        = Me.SeparateHeader
                     FileReader.Load(FilePath, Encoding:=Me.FileEncoding, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
                     
-                    PointList.Header = FileReader.Header
+                    ' Store read header lines (only if they differ from the default ones).
+                    For Each HeadLine As String In FileReader.Header
+                        If (Not Me.DefaultHeader.Contains(HeadLine)) Then
+                            PointList.Header.Add(HeadLine)
+                        End If
+                    Next
+                    
                     PointList.Constraints = Me.Constraints
                     
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
@@ -108,13 +124,13 @@ Namespace Domain.IO
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message))
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                                 
                             Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                 Me.ParseErrors.Add(ex.ParseError)
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                             End Try
                         End If
@@ -122,18 +138,18 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                     ElseIf (PointList.Count = 0) Then
                         Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                     End If
                     
                     Logger.logDebug(PointList.ToString())
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvReader_LoadSuccess, PointList.Count, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadSuccess, PointList.Count, FilePath))
                     
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvReader_LoadFailed, FilePath), ex)
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadFailed, FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
@@ -141,6 +157,68 @@ Namespace Domain.IO
                 
                 Return PointList
             End Function
+            
+            ''' <summary> Writes the points collection to the point file. </summary>
+             ''' <param name="PointList"> The points to store. </param>
+             ''' <param name="FilePath">  File to store the points into. </param>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
+            Public Overrides Sub Store(PointList As GeoPointList, FilePath As String)
+                Try
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreStart, FilePath))
+                    
+                    Me.ParseErrors.Clear()
+                    Me.ParseErrors.FilePath = FilePath
+                    
+                    Dim KvFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
+                    
+                    Using oSW As New StreamWriter(FilePath, append:=False, encoding:=Me.FileEncoding)
+                        
+                        ' Header.
+                        Dim HeaderLines As String = Me.CreateFileHeader(PointList).ToString()
+                        If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.WriteLine(HeaderLines)
+                        
+                        ' Points.
+                        For Each SourcePoint As IGeoPoint In PointList
+                            
+                            Dim p As GeoVEPoint
+                            Try
+                                ' Convert point: This verifies the ID and provides all fields for writing.
+                                p = SourcePoint.AsGeoVEPoint()
+                                
+                                ' Write line.
+                                oSW.WriteLine(sprintf(KvFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
+                                            p.TrackPos.Kilometer.Value, P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
+                                            P.Kind.TrimToMaxLength(4), p.TrackPos.TrackNo, p.TrackPos.RailsCode.TrimToMaxLength(1), P.HeightSys.TrimToMaxLength(3), P.mp, P.mh, 
+                                            P.MarkHints.TrimToMaxLength(1), P.MarkType.TrimToMaxLength(3), P.sp.TrimToMaxLength(1), P.sh.TrimToMaxLength(1),
+                                            P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)))
+                                
+                            Catch ex As InvalidIDException
+                                Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, Nothing))
+                                If (Not Me.CollectParseErrors) Then
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                End If
+                                
+                            'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                            '    Me.ParseErrors.Add(ex.ParseError)
+                            '    If (Not Me.CollectParseErrors) Then
+                            '        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            '    End If
+                            End Try
+                        Next
+                    End Using
+                    
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreSuccess, PointList.Count, FilePath))
+                    
+                Catch ex As ParseException
+                    Throw
+                Catch ex as System.Exception
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreFailed, FilePath), ex)
+                Finally
+                    Me.ParseErrors.ToLoggingConsole()
+                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                End Try
+            End Sub
             
         #End Region
         

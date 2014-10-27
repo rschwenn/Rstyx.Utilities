@@ -118,12 +118,12 @@
     <Compile Include="source\Domain\GeoIPoint.vb" />
     <Compile Include="source\Domain\GeoPoint.vb" />
     <Compile Include="source\Domain\GeoPointList.vb" />
-    <Compile Include="source\Domain\IO\GeoPointFileReader.vb" />
+    <Compile Include="source\Domain\IO\GeoPointFile.vb" />
     <Compile Include="source\Domain\GeoTcPoint.vb" />
     <Compile Include="source\Domain\GeoVEPoint.vb" />
     <Compile Include="source\Collections\IDCollection.vb" />
-    <Compile Include="source\Domain\IO\iPktReader.vb" />
-    <Compile Include="source\Domain\IO\KvReader.vb" />
+    <Compile Include="source\Domain\IO\iPktFile.vb" />
+    <Compile Include="source\Domain\IO\KvFile.vb" />
     <Compile Include="source\Domain\Kilometer.vb" />
     <Compile Include="source\Domain\PointInterfaces.vb" />
     <Compile Include="source\Domain\PositionAtTopology.vb" />

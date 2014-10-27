@@ -27,12 +27,57 @@ Namespace Domain
             Public Sub New()
             End Sub
             
-            ''' <summary> Creates a new <see cref="GeoTcPoint"/> and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
+            ''' <summary> Creates a new <see cref="GeoTcPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
-             ''' <remarks></remarks>
+             ''' <remarks>  </remarks>
              ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
-            Public Sub New(SourcePoint As GeoPoint)
+            Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
+                
+                ' TC + KV specials.
+                If (TypeOf SourcePoint Is GeoTcPoint) Then
+                    
+                    Dim SourceTcPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
+                    
+                    Me.CantBase   = SourceTcPoint.CantBase
+                    Me.ActualCant = SourceTcPoint.ActualCant
+                    Me.G          = SourceTcPoint.G
+                    Me.H          = SourceTcPoint.H
+                    Me.HDGM       = SourceTcPoint.HDGM
+                    Me.HG         = SourceTcPoint.HG
+                    Me.HGS        = SourceTcPoint.HGS
+                    Me.HGT        = SourceTcPoint.HGT
+                    Me.HSOK       = SourceTcPoint.HSOK
+                    Me.Heb        = SourceTcPoint.Heb
+                    Me.Km         = SourceTcPoint.Km
+                    Me.L          = SourceTcPoint.L
+                    Me.LG         = SourceTcPoint.LG
+                    Me.NameOfDTM  = SourceTcPoint.NameOfDTM
+                    Me.Q          = SourceTcPoint.Q
+                    Me.QG         = SourceTcPoint.QG
+                    Me.QGS        = SourceTcPoint.QGS
+                    Me.QGT        = SourceTcPoint.QGT
+                    Me.QKm        = SourceTcPoint.QKm
+                    Me.QT         = SourceTcPoint.QT
+                    Me.R          = SourceTcPoint.R
+                    Me.RG         = SourceTcPoint.RG
+                    Me.Ra         = SourceTcPoint.Ra
+                    Me.Ri         = SourceTcPoint.Ri
+                    Me.St         = SourceTcPoint.St
+                    Me.TM         = SourceTcPoint.TM
+                    Me.TrackRef   = SourceTcPoint.TrackRef
+                    Me.Ueb        = SourceTcPoint.Ueb
+                    Me.V          = SourceTcPoint.V
+                    Me.ZDGM       = SourceTcPoint.ZDGM
+                    Me.ZLGS       = SourceTcPoint.ZLGS
+                    Me.ZSOK       = SourceTcPoint.ZSOK
+                
+                ElseIf (TypeOf SourcePoint Is GeoVEPoint) Then
+                    
+                    Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
+                    
+                    Me.Km = SourceVEPoint.TrackPos.Kilometer
+                End If
             End Sub
             
         #End Region
@@ -141,7 +186,7 @@ Namespace Domain
             
             ''' <inheritdoc/>
             ''' <remarks> This value defaults to 1.500. </remarks>
-            Property CantBase()             As Double = 1.500 Implements IPointAtTrackGeometry.CantBase
+            Public Property CantBase()      As Double = 1.500 Implements IPointAtTrackGeometry.CantBase
             
             
             ''' <inheritdoc/>
