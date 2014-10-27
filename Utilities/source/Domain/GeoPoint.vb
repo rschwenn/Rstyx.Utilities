@@ -53,7 +53,7 @@ Namespace Domain
                     Me.CoordSys        = SourcePoint.CoordSys
                     Me.HeightSys       = SourcePoint.HeightSys
                     
-                    Me.SourceFileIndex = SourcePoint.SourceFileIndex
+                    Me.SourcePath      = SourcePoint.SourcePath
                     Me.SourceLineNo    = SourcePoint.SourceLineNo
                 End If
             End Sub
@@ -192,10 +192,10 @@ Namespace Domain
         #Region "IFileSource Members"
             
             ''' <inheritdoc/>
-            Public Property SourceFileIndex()   As Long = -1 Implements IFileSource.SourceFileIndex
+            Public Property SourcePath()    As String = Nothing Implements IFileSource.SourcePath
             
             ''' <inheritdoc/>
-            Public Property SourceLineNo()      As Long = 0 Implements IFileSource.SourceLineNo
+            Public Property SourceLineNo()  As Long = 0 Implements IFileSource.SourceLineNo
             
         #End Region
         

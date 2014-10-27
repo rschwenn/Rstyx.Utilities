@@ -83,9 +83,9 @@ Namespace Domain.IO
                                 Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
                                 Dim FieldTime  As DataField(Of String) = DataLine.ParseField(RecDef.TimeStamp)
                                 
-                                p.Y            = FieldY.Value
-                                p.X            = FieldX.Value
-                                p.Z            = FieldZ.Value
+                                p.Y = FieldY.Value
+                                p.X = FieldX.Value
+                                p.Z = FieldZ.Value
                                 
                                 p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
                                 p.ObjectKey    = DataLine.ParseField(RecDef.ObjectKey  ).Value
@@ -103,6 +103,8 @@ Namespace Domain.IO
                                 p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
                                 p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
                                 p.Comment      = DataLine.ParseField(RecDef.Comment    ).Value
+                                
+                                p.SourcePath   = FilePath
                                 p.SourceLineNo = DataLine.SourceLineNo
                                 
                                 ' Parse time stamp if given (DataLine.ParseField is unable to do it).
@@ -117,7 +119,7 @@ Namespace Domain.IO
                                                                                    FieldTime,
                                                                                    sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
                                                                                    sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
-                                                                                   Nothing))
+                                                                                   FilePath))
                                     End If
                                 End If
                                 
@@ -125,7 +127,7 @@ Namespace Domain.IO
                                 PointList.Add(p)
                                 
                             Catch ex As InvalidIDException
-                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message))
+                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, FilePath))
                                 If (Not CollectParseErrors) Then
                                     Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If

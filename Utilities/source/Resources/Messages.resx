@@ -945,4 +945,8 @@
     <value>Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen.</value>
     <comment>Point ID: String; Max Point Length: Integer</comment>
   </data>
+  <data name="KvFile_StoreParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
 </root>

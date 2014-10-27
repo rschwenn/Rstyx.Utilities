@@ -236,12 +236,12 @@ Namespace Domain
     ''' <summary> Determines the source of a point in a file. </summary>
     Public Interface IFileSource
             
-        ''' <summary> An index into a list of source files (which may be mmaintained in a parent object). </summary>
-        Property SourceFileIndex()  As Long
+        ''' <summary> The path to the source file, this point has been read from. Defaults to <see langword="null"/>. </summary>
+        Property SourcePath()   As String
         
-        ''' <summary> Line number in source file, where the data has been read from. </summary>
+        ''' <summary> Line number in source file, this point has been read from. Defaults to Zero. </summary>
          ''' <remarks> When the source record is multi-line, then this points to the first line. </remarks>
-        Property SourceLineNo()     As Long
+        Property SourceLineNo() As Long
         
     End Interface
     

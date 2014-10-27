@@ -75,20 +75,20 @@ Namespace Domain.IO
             
             ''' <summary> If this string is found at line start, the whole line will be treated as comment line. Defaults to <see langword="null"/>. </summary>
              ''' <remarks> If <see langword="null"/> or empty, comment lines won't be recognized. </remarks>
-            Protected LineStartCommentToken As String = Nothing
+            Protected LineStartCommentToken     As String = Nothing
             
             ''' <summary> If this string is found anywhere in the line, all following characters will be treated as line end comment. Defaults to <see langword="null"/>. </summary>
              ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
-            Protected LineEndCommentToken   As String = Nothing
+            Protected LineEndCommentToken       As String = Nothing
             
             ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="GeoPointList.Header"/>. Defaults to <see langword="true"/>. </summary>
-            Protected SeparateHeader        As Boolean = True
+            Protected SeparateHeader            As Boolean = True
             
             ''' <summary> The encoding to use for the file. </summary>
-            Protected FileEncoding          As Encoding = Encoding.Default
+            Protected FileEncoding              As Encoding = Encoding.Default
             
             ''' <summary> The default header lines for the file. </summary>
-            Protected ReadOnly DefaultHeader  As New Collection(Of String)
+            Protected ReadOnly DefaultHeader    As New Collection(Of String)
         #End Region
         
         #Region "Constuctors"
@@ -158,16 +158,6 @@ Namespace Domain.IO
              ''' <param name="FilePath">  File to store the points into. </param>
              ''' <exception cref="RemarkException"> Wraps any exception. </exception>
             Public MustOverride Sub Store(PointList As GeoPointList, FilePath As String)
-            
-        #End Region
-        
-        #Region "Overrides"
-            
-            ' ''' <summary> Returns a list of all points in one string. </summary>
-            'Public Overrides Function ToString() As String
-            '    
-            '    Return PointList.ToString()
-            'End Function
             
         #End Region
         

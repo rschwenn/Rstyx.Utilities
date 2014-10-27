@@ -115,19 +115,6 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Dim s1 As String = "text"
-                Dim s2 As String = "text"
-                Dim s3 As String = "text"
-                
-                Dim c1 As String = "text"
-                Dim c2 As String = c1
-                Dim c3 As String = c1
-                
-                Logger.logInfo(s1 is s2)
-                Logger.logInfo(c1 is s1)
-                Logger.logInfo(c1 is c2)
-                Logger.logInfo("")
-                
                 Dim iPkt  As New GeoIPoint()
                 Dim Pkt   As New GeoPoint()
                 'Pkt.ID    = "1234567"
@@ -158,7 +145,7 @@ Public Class MainViewModel
                 ' Logger.logInfo(pts.ToString())
                 
                 Dim Writer As New KvFile()
-                Writer.CollectParseErrors = True
+                'Writer.CollectParseErrors = True
                 Writer.ShowParseErrorsInJedit = True
                 Writer.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
                  

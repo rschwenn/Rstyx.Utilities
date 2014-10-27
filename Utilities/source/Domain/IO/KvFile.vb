@@ -96,9 +96,9 @@ Namespace Domain.IO
                                 Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
                                 Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
                                 
-                                p.Y            = FieldY.Value
-                                p.X            = FieldX.Value
-                                p.Z            = FieldZ.Value
+                                p.Y = FieldY.Value
+                                p.X = FieldX.Value
+                                p.Z = FieldZ.Value
                                 
                                 p.TrackPos.Kilometer = DataLine.ParseField(RecDef.Km).Value
                                 p.Info               = DataLine.ParseField(RecDef.PositionInfo).Value
@@ -116,13 +116,15 @@ Namespace Domain.IO
                                 p.Job                = DataLine.ParseField(RecDef.Job).Value
                                 p.ObjectKey          = DataLine.ParseField(RecDef.ObjectKey).Value
                                 p.Comment            = DataLine.ParseField(RecDef.Comment).Value
+                                
+                                p.SourcePath         = FilePath
                                 p.SourceLineNo       = DataLine.SourceLineNo
                                 
                                 PointList.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)
                                 PointList.Add(p)
                                 
                             Catch ex As InvalidIDException
-                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message))
+                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, FilePath))
                                 If (Not Me.CollectParseErrors) Then
                                     Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
@@ -168,7 +170,6 @@ Namespace Domain.IO
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreStart, FilePath))
                     
                     Me.ParseErrors.Clear()
-                    Me.ParseErrors.FilePath = FilePath
                     
                     Dim KvFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
                     
@@ -181,10 +182,9 @@ Namespace Domain.IO
                         ' Points.
                         For Each SourcePoint As IGeoPoint In PointList
                             
-                            Dim p As GeoVEPoint
                             Try
                                 ' Convert point: This verifies the ID and provides all fields for writing.
-                                p = SourcePoint.AsGeoVEPoint()
+                                Dim p As GeoVEPoint = SourcePoint.AsGeoVEPoint()
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(KvFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
@@ -194,9 +194,9 @@ Namespace Domain.IO
                                             P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)))
                                 
                             Catch ex As InvalidIDException
-                                Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, Nothing))
+                                Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                                 
                             'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
@@ -207,6 +207,11 @@ Namespace Domain.IO
                             End Try
                         Next
                     End Using
+                    
+                    ' Throw exception if parsing errors has been collected.
+                    If (Me.ParseErrors.HasErrors) Then
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                    End If
                     
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreSuccess, PointList.Count, FilePath))
                     

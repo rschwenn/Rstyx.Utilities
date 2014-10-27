@@ -1262,6 +1262,7 @@ Namespace Domain
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
+                                    p.SourcePath   = Block.Source.FilePath
                                     p.SourceLineNo = SplitLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
@@ -1431,6 +1432,7 @@ Namespace Domain
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
+                                    p.SourcePath   = Block.Source.FilePath
                                     p.SourceLineNo = SplitLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
@@ -1542,7 +1544,7 @@ Namespace Domain
                 
                 If (SplitLines Is Nothing)  Then Throw New System.ArgumentNullException("SplitLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
-                If (Block Is Nothing) Then  Throw New System.ArgumentNullException("Block")
+                If (Block Is Nothing)       Then Throw New System.ArgumentNullException("Block")
                 
                 Dim SplittedLine    As DataTextLine
                 Dim FullLine        As String

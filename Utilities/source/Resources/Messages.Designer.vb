@@ -1568,6 +1568,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KvFile_StoreParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("KvFile_StoreParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (KV) &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KvFile_StoreStart() As String

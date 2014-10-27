@@ -216,7 +216,7 @@ Namespace IO
         
         #Region "Overrides"
             
-            ''' <summary> Returns a formatted eror message (without column values and hints). </summary>
+            ''' <summary> Returns a formatted error message (without column values and hints). </summary>
             Public Overrides Function ToString() As String
                 Dim RetValue As String = String.Empty
                 
