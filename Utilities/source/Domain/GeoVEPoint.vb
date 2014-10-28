@@ -81,7 +81,7 @@ Namespace Domain
             ''' <summary> Gets a Double for VE flavoured storage from this point's ID. </summary>
              ''' <returns> Me.ID / PointNoFactor or 1.0E+40 if ID is still <see langword="null"/>. </returns>
             Public Function IDToVEDouble() As Double
-                Return IIf(Me.ID.IsEmptyOrWhiteSpace(), 1.0E+40, CDbl(Me.ID) / PointNoFactor)
+                Return If(Me.ID.IsEmptyOrWhiteSpace(), 1.0E+40, CDbl(Me.ID) / PointNoFactor)
             End Function
             
         #End Region

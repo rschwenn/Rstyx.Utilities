@@ -171,7 +171,7 @@ Namespace Domain.IO
                     
                     Me.ParseErrors.Clear()
                     
-                    Dim KvFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
+                    Dim PointFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
                     
                     Using oSW As New StreamWriter(FilePath, append:=False, encoding:=Me.FileEncoding)
                         
@@ -186,12 +186,15 @@ Namespace Domain.IO
                                 ' Convert point: This verifies the ID and provides all fields for writing.
                                 Dim p As GeoVEPoint = SourcePoint.AsGeoVEPoint()
                                 
+                                'PointList.VerifyConstraints(p)
+                                
                                 ' Write line.
-                                oSW.WriteLine(sprintf(KvFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
-                                            p.TrackPos.Kilometer.Value, P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
-                                            P.Kind.TrimToMaxLength(4), p.TrackPos.TrackNo, p.TrackPos.RailsCode.TrimToMaxLength(1), P.HeightSys.TrimToMaxLength(3), P.mp, P.mh, 
-                                            P.MarkHints.TrimToMaxLength(1), P.MarkType.TrimToMaxLength(3), P.sp.TrimToMaxLength(1), P.sh.TrimToMaxLength(1),
-                                            P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)))
+                                oSW.WriteLine(sprintf(PointFmt, P.ID, If(Double.IsNaN(P.Y), 0, P.Y), If(Double.IsNaN(P.X), 0, P.X), If(Double.IsNaN(P.Z), 0, P.Z),
+                                              p.TrackPos.Kilometer.Value, P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
+                                              P.Kind.TrimToMaxLength(4), p.TrackPos.TrackNo, p.TrackPos.RailsCode.TrimToMaxLength(1), P.HeightSys.TrimToMaxLength(3), P.mp, P.mh, 
+                                              P.MarkHints.TrimToMaxLength(1), P.MarkType.TrimToMaxLength(3), P.sp.TrimToMaxLength(1), P.sh.TrimToMaxLength(1),
+                                              P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)
+                                             ))
                                 
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
@@ -199,11 +202,11 @@ Namespace Domain.IO
                                     Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                                 
-                            'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
-                            '    Me.ParseErrors.Add(ex.ParseError)
-                            '    If (Not Me.CollectParseErrors) Then
-                            '        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                            '    End If
+                            Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                                Me.ParseErrors.Add(ex.ParseError)
+                                If (Not Me.CollectParseErrors) Then
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                End If
                             End Try
                         Next
                     End Using

@@ -863,15 +863,15 @@
     <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
-  <data name="GeoIPointList_WriteIpktFailed" xml:space="preserve">
+  <data name="iPktFile_StoreFailed" xml:space="preserve">
     <value>Fehler beim Schreiben der ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoIPointList_WriteIpktStart" xml:space="preserve">
+  <data name="iPktFile_StoreStart" xml:space="preserve">
     <value>Schreibe ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoIPointList_WriteIpktSuccess" xml:space="preserve">
+  <data name="iPktFile_StoreSuccess" xml:space="preserve">
     <value>%d Punkte geschrieben in ASCII-Punktdatei (iPkt) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
@@ -947,6 +947,10 @@
   </data>
   <data name="KvFile_StoreParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="iPktFile_StoreParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
 </root>

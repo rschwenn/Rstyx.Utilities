@@ -1100,33 +1100,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_WriteIpktFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_WriteIpktFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_WriteIpktStart() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_WriteIpktStart", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in ASCII-Punktdatei (iPkt) &apos;%s&apos;.\n ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoIPointList_WriteIpktSuccess() As String
-            Get
-                Return ResourceManager.GetString("GeoIPointList_WriteIpktSuccess", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Höhe fehlt bei Punkt %s. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_MissingHeight() As String
@@ -1483,6 +1456,42 @@ Namespace Resources
         Public Shared ReadOnly Property iPktFile_LoadSuccess() As String
             Get
                 Return ResourceManager.GetString("iPktFile_LoadSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_StoreFailed() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_StoreFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_StoreParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_StoreParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (iPkt) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_StoreStart() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_StoreStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in ASCII-Punktdatei (iPkt) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_StoreSuccess() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_StoreSuccess", resourceCulture)
             End Get
         End Property
         

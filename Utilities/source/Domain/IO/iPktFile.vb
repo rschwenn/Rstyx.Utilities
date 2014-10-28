@@ -1,5 +1,7 @@
 ﻿
 Imports System
+Imports System.Collections.ObjectModel
+Imports System.IO
 
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
@@ -169,7 +171,82 @@ Namespace Domain.IO
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Sub Store(PointList As GeoPointList, FilePath As String)
-                
+                Try
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, FilePath))
+                    
+                    Me.ParseErrors.Clear()
+                    
+                    Dim PointFmt As String = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    
+                    Using oSW As New StreamWriter(FilePath, append:=False, encoding:=Me.FileEncoding)
+                        
+                        ' Header.
+                        Dim HeaderLines As String = Me.CreateFileHeader(PointList).ToString()
+                        If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.WriteLine(HeaderLines)
+                        
+                        ' Points.
+                        For i As Integer = 0 To PointList.Count - 1
+                            
+                            Dim SourcePoint As GeoIPoint = PointList.Item(i)
+                            
+                            Try
+                                ' Convert point: This verifies the ID and provides all fields for writing.
+                                Dim p As GeoIPoint = SourcePoint.AsGeoIPoint()
+                    
+                                Dim TimeStamp As String = If(p.TimeStamp.HasValue, p.TimeStamp.Value.ToString("s"), Nothing)
+                                
+                                ' Write line.
+                                oSW.WriteLine(sprintf(PointFmt, i + 1,
+                                                      p.CalcCode.TrimToMaxLength(2),
+                                                      p.ObjectKey.TrimToMaxLength(6),
+                                                      p.GraficsCode.TrimToMaxLength(2),
+                                                      p.GraficsDim,
+                                                      p.GraficsEcc,
+                                                      p.ID.TrimToMaxLength(20),
+                                                      p.CoordType.TrimToMaxLength(3),
+                                                      p.Y, p.X, p.Z,
+                                                      sprintf("%19s", TimeStamp),
+                                                      p.CoordSys.TrimToMaxLength(6),
+                                                      p.Flags.TrimToMaxLength(4),
+                                                      p.wp, p.wh,
+                                                      p.Info.TrimToMaxLength(25),
+                                                      p.AttKey1.TrimToMaxLength(2),
+                                                      p.AttValue1.TrimToMaxLength(25),
+                                                      p.AttKey2.TrimToMaxLength(2),
+                                                      p.AttValue2.TrimToMaxLength(25),
+                                                      p.Comment
+                                                     ))
+                                
+                            Catch ex As InvalidIDException
+                                Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
+                                If (Not Me.CollectParseErrors) Then
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                End If
+                                
+                            'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                            '    Me.ParseErrors.Add(ex.ParseError)
+                            '    If (Not Me.CollectParseErrors) Then
+                            '        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            '    End If
+                            End Try
+                        Next
+                    End Using
+                    
+                    ' Throw exception if parsing errors has been collected.
+                    If (Me.ParseErrors.HasErrors) Then
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                    End If
+                    
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreSuccess, PointList.Count, FilePath))
+                    
+                Catch ex As ParseException
+                    Throw
+                Catch ex as System.Exception
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreFailed, FilePath), ex)
+                Finally
+                    Me.ParseErrors.ToLoggingConsole()
+                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                End Try
             End Sub
             
         #End Region

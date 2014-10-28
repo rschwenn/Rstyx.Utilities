@@ -151,11 +151,12 @@ Namespace Domain
                 ' Points.
                 For Each p As GeoPoint In Me
                     
-                    PointList.AppendLine(sprintf(PointFmt, P.ID, IIf(Double.IsNaN(P.Y), 0, P.Y), IIf(Double.IsNaN(P.X), 0, P.X), IIf(Double.IsNaN(P.Z), 0, P.Z),
-                                P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
-                                P.Kind.TrimToMaxLength(4), P.CoordSys.TrimToMaxLength(8), P.HeightSys.TrimToMaxLength(8), P.mp, P.mh, 
-                                P.MarkHints.TrimToMaxLength(5), P.MarkType.TrimToMaxLength(5), P.sp.TrimToMaxLength(5), P.sh.TrimToMaxLength(5),
-                                P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)))
+                    PointList.AppendLine(sprintf(PointFmt, P.ID, If(Double.IsNaN(P.Y), 0, P.Y), If(Double.IsNaN(P.X), 0, P.X), If(Double.IsNaN(P.Z), 0, P.Z),
+                                         P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
+                                         P.Kind.TrimToMaxLength(4), P.CoordSys.TrimToMaxLength(8), P.HeightSys.TrimToMaxLength(8), P.mp, P.mh, 
+                                         P.MarkHints.TrimToMaxLength(5), P.MarkType.TrimToMaxLength(5), P.sp.TrimToMaxLength(5), P.sh.TrimToMaxLength(5),
+                                         P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)
+                                        ))
                 Next
                 'PointList.AppendLine("------------------------------------------------------------------------------------------------------------------------------------------------------")
                 Return PointList.ToString()
