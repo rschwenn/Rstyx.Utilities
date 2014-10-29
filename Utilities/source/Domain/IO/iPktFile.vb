@@ -125,7 +125,7 @@ Namespace Domain.IO
                                     End If
                                 End If
                                 
-                                PointList.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)
+                                PointList.VerifyConstraints(p, FieldX, FieldY, FieldZ)
                                 PointList.Add(p)
                                 
                             Catch ex As InvalidIDException

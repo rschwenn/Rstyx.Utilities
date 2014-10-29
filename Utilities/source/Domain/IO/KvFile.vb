@@ -120,7 +120,7 @@ Namespace Domain.IO
                                 p.SourcePath         = FilePath
                                 p.SourceLineNo       = DataLine.SourceLineNo
                                 
-                                PointList.VerifyConstraints(p, FieldID, FieldX, FieldY, FieldZ)
+                                PointList.VerifyConstraints(p, FieldX, FieldY, FieldZ)
                                 PointList.Add(p)
                                 
                             Catch ex As InvalidIDException
@@ -180,11 +180,16 @@ Namespace Domain.IO
                         If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.WriteLine(HeaderLines)
                         
                         ' Points.
+                        Dim CheckIDList As New GeoPointList()
+                        
                         For Each SourcePoint As IGeoPoint In PointList
                             
                             Try
                                 ' Convert point: This verifies the ID and provides all fields for writing.
                                 Dim p As GeoVEPoint = SourcePoint.AsGeoVEPoint()
+                                
+                                ' Check for uniqe ID (since Point ID may have changed while converting to VE point).
+                                CheckIDList.Add(p)
                                 
                                 'PointList.VerifyConstraints(p)
                                 

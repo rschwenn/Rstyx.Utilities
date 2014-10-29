@@ -164,7 +164,7 @@ Namespace Domain
             
         #End Region
         
-        #Region "Protected Members"
+        #Region "Constraints Verifying"
             
             ''' <summary> Verifies that <paramref name="p"/> has a unique ID and also fulfills all given <see cref="Constraints"/>. </summary>
              ''' <param name="Point"> The point to verify. It should has set it's <see cref="GeoPoint.SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
@@ -177,25 +177,22 @@ Namespace Domain
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
             Public Sub VerifyConstraints(Point As GeoPoint)
-                Me.VerifyConstraints(Point, Nothing, Nothing, Nothing, Nothing)
+                Me.VerifyConstraints(Point, Nothing, Nothing, Nothing)
             End Sub
             
-            ''' <summary> Verifies that <paramref name="p"/> has a unique ID and also fulfills all given <see cref="Constraints"/>. </summary>
+            ''' <summary> Verifies that <paramref name="p"/> fulfills all given <see cref="Constraints"/>. </summary>
              ''' <param name="Point">   The point to verify. It should has set it's <see cref="GeoPoint.SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
-             ''' <param name="FieldID"> The parsed data field of point ID. May be <see langword="null"/>. </param>
              ''' <param name="FieldX">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
              ''' <param name="FieldY">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
              ''' <param name="FieldZ">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
              ''' <remarks>
-             ''' If the list contained already a point with the ID of <paramref name="p"/>
-             ''' or any of the <see cref="Constraints"/> is injured, a <see cref="ParseException"/> will be thrown.
+             ''' If any of the <see cref="Constraints"/> is injured for <paramref name="p"/>, a <see cref="ParseException"/> will be thrown.
              ''' In this case, a <see cref="ParseError"/> will be created and delivered with the <see cref="ParseException"/>.
              ''' The <see cref="ParseError"/> will contain error source information if available.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
             Public Sub VerifyConstraints(Point   As GeoPoint,
-                                         FieldID As DataField(Of String),
                                          FieldX  As DataField(Of Double),
                                          FieldY  As DataField(Of Double),
                                          FieldZ  As DataField(Of Double)
@@ -206,17 +203,6 @@ Namespace Domain
                 Dim PointID  As String  = Point.ID
                 Dim StartCol As Integer = 0
                 Dim EndCol   As Integer = 0
-                
-                ' Unique Point ID.
-                If (Me.Contains(Point.ID)) Then
-                    Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
-                                                               Point.SourceLineNo,
-                                                               FieldID,
-                                                               sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_RepeatedPointID, PointID),
-                                                               Nothing,
-                                                               Nothing
-                                                              ))
-                End If
                 
                 ' Position missing.
                 If (Me.Constraints.HasFlag(GeoPointConstraints.KnownPosition)) Then

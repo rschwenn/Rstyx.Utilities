@@ -1163,15 +1163,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) trit wiederholt auf. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoPointConstraints_RepeatedPointID() As String
-            Get
-                Return ResourceManager.GetString("GeoPointConstraints_RepeatedPointID", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punktnummern geändert. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointList_ChangePointNumbersSuccess() As String
@@ -1402,6 +1393,24 @@ Namespace Resources
         Public Shared ReadOnly Property Global_ValueNotGreaterThanZero() As String
             Get
                 Return ResourceManager.GetString("Global_ValueNotGreaterThanZero", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die ID fehlt bzw. ist leer. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property IDCollection_MissingID() As String
+            Get
+                Return ResourceManager.GetString("IDCollection_MissingID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) trit wiederholt auf. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property IDCollection_RepeatedID() As String
+            Get
+                Return ResourceManager.GetString("IDCollection_RepeatedID", resourceCulture)
             End Get
         End Property
         

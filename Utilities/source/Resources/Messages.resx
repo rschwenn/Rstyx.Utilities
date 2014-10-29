@@ -821,9 +821,9 @@
     <value> PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr</value>
     <comment>Default Header Line #3 for KV file</comment>
   </data>
-  <data name="GeoPointConstraints_RepeatedPointID" xml:space="preserve">
-    <value>Punkt-ID (%s) trit wiederholt auf.</value>
-    <comment>Point ID: String</comment>
+  <data name="IDCollection_RepeatedID" xml:space="preserve">
+    <value>ID (%s) trit wiederholt auf.</value>
+    <comment>Collection Element ID: String</comment>
   </data>
   <data name="GeoPointConstraints_MissingHeight" xml:space="preserve">
     <value>Höhe fehlt bei Punkt %s.</value>
@@ -952,5 +952,8 @@
   <data name="iPktFile_StoreParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (iPkt) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="IDCollection_MissingID" xml:space="preserve">
+    <value>ID fehlt bzw. ist leer.</value>
   </data>
 </root>

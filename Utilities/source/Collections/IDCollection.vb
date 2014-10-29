@@ -1,6 +1,8 @@
 ﻿
 Imports System.Collections.Generic
 
+Imports Rstyx.Utilities.StringUtils
+
 Namespace Collections
     
     ''' <summary> Shortcut for a <see cref="IDCollection(Of String, TItem)"/>, representing the most usual case: objects with a string identifier. </summary>
@@ -63,6 +65,23 @@ Namespace Collections
                 If (Item IsNot Nothing) Then Key = Item.ID
                 Return Key
             End Function
+            
+            ''' <summary> This is called by <see cref="IDCollection(Of String, TItem).Add"/> and changes it's default behavior. </summary>
+             ''' <param name="Index"> Collection index. </param>
+             ''' <param name="Item">  The item to add. </param>
+             ''' <remarks>            Checks if <paramref name="Item"/> is <see langword="null"/> or if it's <c>ID</c> property already exists in this list. </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Item"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> is less than 0, or greater than <see cref="KeyedCollectionBase(Of TKey, TItem).Count"/>. </exception>
+             ''' <exception cref="InvalidIDException"> <paramref name="Item"/>.<c>ID</c> is empty or does already exist. </exception>
+            Protected Overrides Sub InsertItem(Index As Integer, Item As TItem)
+                
+                If (Item Is Nothing) Then Throw New System.ArgumentNullException("Item")
+
+                If (Item.ID.ToString().IsEmptyOrWhiteSpace()) Then Throw New InvalidIDException(Rstyx.Utilities.Resources.Messages.IDCollection_MissingID)
+                If (MyClass.Contains(Item.ID))                Then Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.IDCollection_RepeatedID, Item.ID.ToString()))
+                
+                MyBase.InsertItem(Index, Item)
+            End Sub
             
         #End Region
         
