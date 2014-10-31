@@ -1069,6 +1069,42 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Werte im gedrehten Gleissystem erforderlich ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointConstraints_KnownCantedRailsSystem() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointConstraints_KnownCantedRailsSystem", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe erforderlich ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointConstraints_KnownHeight() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointConstraints_KnownHeight", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lagekoordinaten erforderlich ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointConstraints_KnownPosition() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointConstraints_KnownPosition", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointConstraints_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointConstraints_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die eindeutig ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Normal() As String

@@ -678,10 +678,11 @@
   <data name="PositionAtTrack_Label_Side" xml:space="preserve">
     <value>Seite</value>
   </data>
-  <data name="TcFileReader_Constraints_MissingCantedRailsSystem" xml:space="preserve">
-    <value>Werte im gedrehten Gleissystem können nicht bestimmt werden.</value>
+  <data name="GeoPointConstraints_MissingCantedRailsSystem" xml:space="preserve">
+    <value>Werte im gedrehten Gleissystem sind nicht verfügbar bzw. können nicht bestimmt werden bei Punkt %s.</value>
+    <comment>Point ID: String</comment>
   </data>
-  <data name="TcFileReader_Constraints_MissingCantSign" xml:space="preserve">
+  <data name="GeoPointConstraints_Hint_MissingCantSign" xml:space="preserve">
     <value>Das Vorzeichen der Überhöhung kann nicht bestimmt werden, weil der Radius Null ist.</value>
   </data>
   <data name="TcFileReader_MissingID" xml:space="preserve">
@@ -695,15 +696,15 @@
     <value>Höhensystem:     %s</value>
     <comment>Height System: String</comment>
   </data>
-  <data name="GeoVEPointList_ReadBinaryFailed" xml:space="preserve">
+  <data name="KfFile_LoadFailed" xml:space="preserve">
     <value>Fehler beim Lesen der Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_ReadBinaryStart" xml:space="preserve">
+  <data name="KfFile_LoadStart" xml:space="preserve">
     <value>Lese Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_ReadBinarySuccess" xml:space="preserve">
+  <data name="KfFile_LoadSuccess" xml:space="preserve">
     <value>%d Punkte gelesen aus Verm.esn-Punktdatei (KF) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
@@ -719,15 +720,15 @@
     <value>%d Punkte gelesen aus ASCII-Punktdatei (KV) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_WriteBinaryFailed" xml:space="preserve">
+  <data name="KfFile_StoreFailed" xml:space="preserve">
     <value>Fehler beim Schreiben der Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_WriteBinaryStart" xml:space="preserve">
+  <data name="KfFile_StoreStart" xml:space="preserve">
     <value>Schreibe Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="GeoVEPointList_WriteBinarySuccess" xml:space="preserve">
+  <data name="KfFile_StoreSuccess" xml:space="preserve">
     <value>%d Punkte geschrieben in Verm.esn-Punktdatei (KF) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
@@ -837,7 +838,7 @@
     <value>%s: %s</value>
     <comment>ErrorLevel: String; Error Message: String</comment>
   </data>
-  <data name="GeoVEPointList_ReadBinaryParsingFailed" xml:space="preserve">
+  <data name="KfFile_LoadParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Analysieren der Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
@@ -929,19 +930,19 @@
   <data name="GeoPointConstraints_MissingPointID" xml:space="preserve">
     <value>Punkt-ID fehlt bzw. ist leer.</value>
   </data>
-  <data name="GeoPointConstraints_PointIDNotNumeric" xml:space="preserve">
+  <data name="GeoPointConstraints_IDNotNumeric" xml:space="preserve">
     <value>Punkt-ID (%s) ist nicht numerisch.</value>
     <comment>Point ID: String</comment>
   </data>
-  <data name="GeoPointConstraints_PointIDOutOfDblRange" xml:space="preserve">
+  <data name="GeoPointConstraints_IDOutOfDblRange" xml:space="preserve">
     <value>Punkt-ID (%s) ist keine reelle Zahl zwischen %.5f und %.5f.</value>
     <comment>Point ID: String; Min Point ID: Double; Max Point ID: Double</comment>
   </data>
-  <data name="GeoPointConstraints_PointIDOutOfIntRange" xml:space="preserve">
+  <data name="GeoPointConstraints_IDOutOfIntRange" xml:space="preserve">
     <value>Punkt-ID (%s) ist keine ganze Zahl zwischen %d und %d.</value>
     <comment>Point ID: String; Min Point ID: Integer; Max Point ID: Integer</comment>
   </data>
-  <data name="GeoPointConstraints_PointIDToLong" xml:space="preserve">
+  <data name="GeoPointConstraints_IDToLong" xml:space="preserve">
     <value>Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen.</value>
     <comment>Point ID: String; Max Point Length: Integer</comment>
   </data>
@@ -955,5 +956,28 @@
   </data>
   <data name="IDCollection_MissingID" xml:space="preserve">
     <value>ID fehlt bzw. ist leer.</value>
+  </data>
+  <data name="GeoPointConstraints_Hint_MissingField" xml:space="preserve">
+    <value>'%s' ist unbekannt</value>
+    <comment>Field Name: String</comment>
+  </data>
+  <data name="GeoPointConstraints_Hint_MissingTrackValues" xml:space="preserve">
+    <value>Für diesen Punkt sind keine Trassenbezogenen Werte verfügbar.</value>
+  </data>
+  <data name="iPktFile_Label_DefaultHeader1" xml:space="preserve">
+    <value>123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890....</value>
+    <comment>Default Header Line #1 for iPkt file</comment>
+  </data>
+  <data name="iPktFile_Label_DefaultHeader2" xml:space="preserve">
+    <value>&lt;LfNr&gt;+BC+&lt;-OS-&gt;+GC+&lt;GDim&gt;+&lt;GExz&gt;+&lt;---Punktnummer----&gt;+&lt;K&gt;+&lt;-RechtsWert-&gt;+&lt;--HochWert--&gt;+&lt;----Höhe----&gt;+&lt;---Zeitstempel---&gt;+&lt;-KS-&gt;+&lt;--&gt;+&lt;GL&gt;+&lt;GH&gt;+&lt;---------Text----------&gt;+AT+&lt;-------Attribut--------&gt;+AT+&lt;-------Attribut--------&gt;+freie Daten...</value>
+    <comment>Default Header Line #2 for iPkt file</comment>
+  </data>
+  <data name="iPktFile_Label_DefaultHeader3" xml:space="preserve">
+    <value>---------+------+--+------+------+--------------------+---+--------------+--------------+--------------+-------------------+------+----+----+----+-------------------------+--+-------------------------+--+-------------------------+---------------</value>
+    <comment>Default Header Line #3 for iPkt file</comment>
+  </data>
+  <data name="KfFile_StoreParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Schreiben der Verm.esn-Punktdatei (KF) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
   </data>
 </root>

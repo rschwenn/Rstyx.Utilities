@@ -117,7 +117,7 @@ Namespace Domain
                 ' Verify given ID.
                 If ((Not success) OrElse Double.IsNaN(DoubleID)) Then
                     success = False
-                    Message = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_PointIDNotNumeric, RetValue)
+                    Message = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDNotNumeric, RetValue)
                 Else
                     Dim MinDoubleID As Double  = MinIntegerID
                     Dim MaxDoubleID As Double  = MaxIntegerID
@@ -126,7 +126,7 @@ Namespace Domain
                     
                     If ((DoubleID < MinDoubleID) OrElse (DoubleID > MaxDoubleID)) Then
                         success = False
-                        Message = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_PointIDOutOfIntRange, RetValue, MinIntegerID, MaxIntegerID)
+                        Message = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDOutOfIntRange, RetValue, MinIntegerID, MaxIntegerID)
                     End If
                 End If
                 If (Not success) Then Throw New InvalidIDException(Message)

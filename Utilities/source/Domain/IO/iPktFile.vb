@@ -34,6 +34,11 @@ Namespace Domain.IO
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
                 Me.LineStartCommentToken = "#"
+                
+                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader1)
+                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader2)
+                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader3)
+                
                 Logger.logDebug("New(): iPktFile instantiated")
             End Sub
             
@@ -57,7 +62,7 @@ Namespace Domain.IO
                     
                     PointList.Clear()
                     Me.ParseErrors.FilePath = FilePath
-                    Dim RecDef As New RecDef()
+                    Dim RecDef As New RecordDefinition()
                     
                     Dim FileReader As New DataTextFileReader()
                     FileReader.LineStartCommentToken = Me.LineStartCommentToken
@@ -65,7 +70,12 @@ Namespace Domain.IO
                     FileReader.SeparateHeader        = Me.SeparateHeader
                     FileReader.Load(FilePath, Encoding:=Me.FileEncoding, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
                     
-                    PointList.Header = FileReader.Header
+                    ' Store read header lines (only if they differ from the default ones).
+                    For Each HeadLine As String In FileReader.Header
+                        If (Not Me.DefaultHeader.Contains(HeadLine)) Then
+                            PointList.Header.Add(HeadLine)
+                        End If
+                    Next
                     
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
                         
@@ -181,12 +191,12 @@ Namespace Domain.IO
                         
                         ' Header.
                         Dim HeaderLines As String = Me.CreateFileHeader(PointList).ToString()
-                        If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.WriteLine(HeaderLines)
+                        If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                         
                         ' Points.
                         For i As Integer = 0 To PointList.Count - 1
                             
-                            Dim SourcePoint As GeoIPoint = PointList.Item(i)
+                            Dim SourcePoint As IGeoPoint = PointList.Item(i)
                             
                             Try
                                 ' Convert point: This verifies the ID and provides all fields for writing.
@@ -253,7 +263,7 @@ Namespace Domain.IO
         #Region "Record Definitions"
             
             ''' <summary> Definition of a source record. </summary>
-            Protected Class RecDef
+            Protected Class RecordDefinition
                 
                 ''' <summary> Initializes the field definition. </summary>
                 Public Sub New()
@@ -274,12 +284,12 @@ Namespace Domain.IO
                     Me.Flags        = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Flags      , DataFieldPositionType.ColumnAndLength, 132,  4, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.wp           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_wp         , DataFieldPositionType.ColumnAndLength, 137,  4, DataFieldOptions.NotRequired)
                     Me.wh           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_wh         , DataFieldPositionType.ColumnAndLength, 142,  4, DataFieldOptions.NotRequired)
-                    Me.Info         = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Info       , DataFieldPositionType.ColumnAndLength, 147, 25, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                    Me.Info         = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Info       , DataFieldPositionType.ColumnAndLength, 147, 25, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                     Me.AttKey1      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttKey1    , DataFieldPositionType.ColumnAndLength, 173,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.AttValue1    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttValue1  , DataFieldPositionType.ColumnAndLength, 176, 25, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.AttKey2      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttKey2    , DataFieldPositionType.ColumnAndLength, 202,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.AttValue2    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttValue2  , DataFieldPositionType.ColumnAndLength, 205, 25, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.Comment      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Comment    , DataFieldPositionType.ColumnAndLength, 231, Integer.MaxValue, DataFieldOptions.NotRequired)
+                    Me.Comment      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Comment    , DataFieldPositionType.ColumnAndLength, 231, Integer.MaxValue, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                 End Sub
                 
                 #Region "Public Fields"

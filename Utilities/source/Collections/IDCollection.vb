@@ -25,12 +25,12 @@ Namespace Collections
         #End Region
     End Class
     
-    ''' <summary>  A generic, ready for use keyed collection for all objects that implement the <see cref="IIdentifiable(Of TKey)"/> interface. </summary>
+    ''' <summary>  A generic, ready for use sorted keyed collection for all objects that implement the <see cref="IIdentifiable(Of TKey)"/> interface. </summary>
      ''' <typeparam name="TKey">  Type of collection keys. It's the type of the item's <see cref="IIdentifiable(Of TKey).ID"/> property. </typeparam>
      ''' <typeparam name="TItem"> Type of collection items. It has to implement the <see cref="IIdentifiable(Of TKey)"/> interface. </typeparam>
      ''' <remarks> The key for the collection will always be the <b>ID</b> property of <b>TItem</b>. </remarks>
     Public Class IDCollection(Of TKey, TItem As IIdentifiable(Of TKey))
-        Inherits Rstyx.Utilities.Collections.KeyedCollectionBase(Of TKey, TItem)
+        Inherits Rstyx.Utilities.Collections.SortedKeyedCollectionBase(Of TKey, TItem)
         
         #Region "Private Fields"
             
@@ -47,7 +47,7 @@ Namespace Collections
             
             ''' <summary> Creates a new IDCollection, initiated with items of <paramref name="InitialMembers"/>. </summary>
             Public Sub New(InitialMembers As IEnumerable(Of IIdentifiable(Of TKey)))
-                MyBase.New()
+                Me.New()
                 For Each NewItem As IIdentifiable(Of TKey) In InitialMembers
                     Me.Add(NewItem)
                 Next

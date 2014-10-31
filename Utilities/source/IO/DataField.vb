@@ -43,8 +43,11 @@ Namespace IO
         ''' <summary> Determines that a string field will be trimmed. </summary>
         Trim = 32
         
+        ''' <summary> Determines that a string field will be trimmed at it's end only. </summary>
+        TrimEnd = 64
+        
         ''' <summary> Determines that, for a target type of <c>Double</c> or <c>Kilometer</c>, a value of zero will be treated as <c>Double.NaN</c>. </summary>
-        ZeroAsNaN = 64
+        ZeroAsNaN = 128
         
     End Enum
     

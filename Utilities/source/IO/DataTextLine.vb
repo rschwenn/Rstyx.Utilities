@@ -298,6 +298,7 @@ Namespace IO
                 Dim OptionNonNumericAsNaN           As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.NonNumericAsNaN)
                 Dim OptionNotRequired               As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.NotRequired)
                 Dim OptionTrim                      As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.Trim)
+                Dim OptionTrimEnd                   As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.TrimEnd)
                 Dim OptionZeroAsNaN                 As Boolean = FieldDef.Options.HasFlag(DataFieldOptions.ZeroAsNaN)
                 
                 ' Assign default field value. This will be returned if parsing failes or the field is missing.
@@ -380,7 +381,8 @@ Namespace IO
                         
                         Case TypeString
                             
-                            If (OptionTrim) Then FieldString = FieldString.Trim()
+                            If (OptionTrim)    Then FieldString = FieldString.Trim()
+                            If (OptionTrimEnd) Then FieldString = FieldString.TrimEnd()
                             FieldValue = Convert.ChangeType(FieldString, TargetType)
                             
                         Case TypeInteger

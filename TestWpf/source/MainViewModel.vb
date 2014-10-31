@@ -132,28 +132,24 @@ Public Class MainViewModel
                 
                 'Dim d As Double = Double.NaN + 555
                 
-                Logger.logInfo(VePkt.ToString())
+                'Logger.logInfo(VePkt.ToString())
                 
                 
-                Dim Reader As New iPktFile()
-                Reader.CollectParseErrors = True
-                Reader.ShowParseErrorsInJedit = True
-                'Reader.Constraints = GeoPointConstraints.KnownPosition + GeoPointConstraints.KnownHeight
-                Dim pts As GeoPointList = Reader.Load(Me.FilePath1)
+                'Dim Reader As New iPktFile()
+                Dim KV As New KvFile()
+                Dim KF As New KfFile()
+                Dim iP As New iPktFile()
+                KV.CollectParseErrors = True
+                KV.ShowParseErrorsInJedit = True
+                iP.ShowParseErrorsInJedit = True
+                KF.ShowParseErrorsInJedit = True
+                'Reader.Constraints = GeoPointConstraints.KnownCantedRailsSystem 
+                Dim pts As GeoPointList = iP.Load(Me.FilePath1)
                 ' 'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
                 ' 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 ' Logger.logInfo(pts.ToString())
                 
-                Dim Writer As New KvFile()
-                'Writer.CollectParseErrors = True
-                Writer.ShowParseErrorsInJedit = True
-                Writer.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                 
-                ' Dim VEPktList As New GeoVEPointList(pts)
-                ' VEPktList.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                ' 'pts.writeToKvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                ' 'pts.writeTo("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                ' 'pts.writeToBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
+                KF.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 
                 Dim dtUTC As DateTime = DateTime.UtcNow

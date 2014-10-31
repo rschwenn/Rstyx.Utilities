@@ -9,7 +9,7 @@ Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
     
-    ''' <summary> A collection of GeoPoint's. </summary>
+    ''' <summary> A sorted collection of GeoPoint's. </summary>
      ''' <remarks>
      ''' <para>
      ''' <b>Features:</b>
@@ -35,6 +35,9 @@ Namespace Domain
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
+                ' Init a new SortedKeyedCollection: 1. ignoring case when checking for key equality, 2. sorting keys alphanumeric.
+                'MyBase.New(System.StringComparer.InvariantCultureIgnoreCase)
+                MyBase.KeyComparer = New Rstyx.Utilities.Collections.AlphanumericComparer(IgnoreCase:=True)
                 Logger.logDebug("New(): GeoPointList instantiated")
             End Sub
             
@@ -43,6 +46,7 @@ Namespace Domain
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of at least one <paramref name="SourcePoint"/> isn't a valid ID for the target point. </exception>
             Public Sub New(SourcePointList As GeoPointList)
+                Me.New()
                 If (SourcePointList IsNot Nothing) Then
                     For Each SourcePoint As IGeoPoint In SourcePointList
                         Me.Add(SourcePoint)

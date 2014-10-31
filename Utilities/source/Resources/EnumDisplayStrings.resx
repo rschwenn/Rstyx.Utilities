@@ -591,4 +591,16 @@
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcConstraints_None" xml:space="preserve">
     <value>keine</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointConstraints_KnownCantedRailsSystem" xml:space="preserve">
+    <value>Werte im gedrehten Gleissystem erforderlich</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointConstraints_KnownHeight" xml:space="preserve">
+    <value>Höhe erforderlich</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointConstraints_KnownPosition" xml:space="preserve">
+    <value>Lagekoordinaten erforderlich</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointConstraints_None" xml:space="preserve">
+    <value>keine</value>
+  </data>
 </root>

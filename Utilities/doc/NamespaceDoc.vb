@@ -36,6 +36,15 @@
         End Class
     End Namespace
     
+    Namespace Domain.IO
+        ''' <summary>
+        ''' I/O for Business objects etc (domain layer).
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
     Namespace IO
         ''' <summary>
         ''' General-purpose development utilities for input/output.
@@ -54,6 +63,15 @@
         End Class
     End Namespace
     
+    Namespace Resources
+        ''' <summary>
+        ''' Resources for this assembly (Enum display strings, Messages, Labels).
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
     Namespace UI
         ''' <summary>
         ''' General-purpose development utilities for dealing with WPF driven UI.
@@ -65,7 +83,7 @@
     
     Namespace UI.Binding
         ''' <summary>
-        ''' WPF binding releted utilities.
+        ''' WPF binding related utilities.
         ''' </summary>
         <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
         Class NamespaceDoc

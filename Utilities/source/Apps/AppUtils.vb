@@ -497,7 +497,7 @@ Namespace Apps
                     CEditExe = String.Empty
                     Logger.logDebug("getAppPathCrimsonEditor(): Programmdatei von Crimson Editor im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.findFile(AppName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
-                    If (fi.IsNotNull()) Then CEditExe = fi.FullName
+                    If (fi IsNot Nothing) Then CEditExe = fi.FullName
                 end if
                 
                 ' Result
@@ -538,7 +538,7 @@ Namespace Apps
                 If (UEditExe.IsEmptyOrWhiteSpace()) Then
                     Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.findFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
-                    If (fi.IsNotNull()) Then UEditExe = fi.FullName
+                    If (fi IsNot Nothing) Then UEditExe = fi.FullName
                 End if
                 
                 ' Result
@@ -563,18 +563,18 @@ Namespace Apps
                 ' Search in %JAVA_HOME%
                 Logger.logDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen in %JAVA_HOME%.")
                 _JAVA_HOME = Environment.GetEnvironmentVariable("JAVA_HOME")
-                If (_JAVA_HOME.isNull()) Then
+                If (_JAVA_HOME Is Nothing) Then
                     _JAVA_HOME = String.Empty
                 Else
                     fi = IO.FileUtils.findFile(AppNames, _JAVA_HOME, ";", SearchOption.TopDirectoryOnly)
-                    If (fi.IsNotNull()) Then JavaExe = fi.FullName
+                    If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End If
                 
                 ' Search dafault Java in %PATH%
                 If (JavaExe.IsEmptyOrWhiteSpace()) Then
                     Logger.logDebug("getJavaEnvironment(): Programmdatei der Java-Standardinstallation im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.findFile(AppNames, Environment.GetEnvironmentVariable("PATH"), ";", SearchOption.TopDirectoryOnly)
-                    If (fi.IsNotNull()) Then JavaExe = fi.FullName
+                    If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End if
                 
                 ' Default app for .jar files
@@ -587,7 +587,7 @@ Namespace Apps
                 'if (JavaExe.IsEmptyOrWhiteSpace()) Then
                 '    Logger.logDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %PROGRAMFILES%.")
                 '    fi = IO.FileUtils.findFile(AppNames, Environment.GetEnvironmentVariable("PROGRAMFILES"), ";", SearchOption.AllDirectories)
-                '    If (fi.IsNotNull()) Then JavaExe = fi.FullName
+                '    If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 'end if
                 
                 ' Result
@@ -614,7 +614,7 @@ Namespace Apps
                 
                 ' Search in %JEDIT_HOME%
                 _JEDIT_HOME = Environment.GetEnvironmentVariable("JEDIT_HOME")
-                If (_JEDIT_HOME.IsNull()) Then
+                If (_JEDIT_HOME Is Nothing) Then
                     _JEDIT_HOME = String.Empty
                     Logger.logDebug("getJEditEnvironment(): Umgebungsvariable %JEDIT_HOME% existiert nicht. => Suche weiter in Konfiguration")
                 Else
@@ -663,13 +663,13 @@ Namespace Apps
                 If (not Success) Then
                     Logger.logDebug("getJEditEnvironment(): jEdit.jar im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.findFile(JarName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
-                    If (fi.IsNotNull()) Then jEditJar = fi.FullName
+                    If (fi IsNot Nothing) Then jEditJar = fi.FullName
                 End if
                 
                 
                 ' jEdit settings directory
                 _JEDIT_SETTINGS = Environment.GetEnvironmentVariable("JEDIT_SETTINGS")
-                If (_JEDIT_SETTINGS.IsNull()) Then
+                If (_JEDIT_SETTINGS Is Nothing) Then
                     _JEDIT_SETTINGS = String.Empty
                 Else
                     _JEDIT_SETTINGS = _JEDIT_SETTINGS.ReplaceWith("\\+$", "")

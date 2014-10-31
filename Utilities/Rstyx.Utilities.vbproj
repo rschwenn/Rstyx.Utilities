@@ -123,6 +123,7 @@
     <Compile Include="source\Domain\GeoVEPoint.vb" />
     <Compile Include="source\Collections\IDCollection.vb" />
     <Compile Include="source\Domain\IO\iPktFile.vb" />
+    <Compile Include="source\Domain\IO\KfFile.vb" />
     <Compile Include="source\Domain\IO\KvFile.vb" />
     <Compile Include="source\Domain\Kilometer.vb" />
     <Compile Include="source\Domain\PointInterfaces.vb" />
@@ -150,7 +151,7 @@
     <Compile Include="source\IO\ParseErrorCollection.vb" />
     <Compile Include="source\IO\ParseException.vb" />
     <Compile Include="source\IO\DataTextLine.vb" />
-    <Compile Include="source\Domain\TcFileReader.vb" />
+    <Compile Include="source\Domain\IO\TcFileReader.vb" />
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

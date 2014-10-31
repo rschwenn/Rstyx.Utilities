@@ -1100,6 +1100,78 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Vorzeichen der Überhöhung kann nicht bestimmt werden, weil der Radius Null ist. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_Hint_MissingCantSign() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_Hint_MissingCantSign", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die &apos;%s&apos; ist unbekannt ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_Hint_MissingField() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_Hint_MissingField", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Für diesen Punkt sind keine Trassenbezogenen Werte verfügbar. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_Hint_MissingTrackValues() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_Hint_MissingTrackValues", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist nicht numerisch. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_IDNotNumeric() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_IDNotNumeric", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine reelle Zahl zwischen %.5f und %.5f. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_IDOutOfDblRange() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_IDOutOfDblRange", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine ganze Zahl zwischen %d und %d. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_IDOutOfIntRange() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_IDOutOfIntRange", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_IDToLong() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_IDToLong", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Werte im gedrehten Gleissystem sind nicht verfügbar bzw. können nicht bestimmt werden bei Punkt %s. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointConstraints_MissingCantedRailsSystem() As String
+            Get
+                Return ResourceManager.GetString("GeoPointConstraints_MissingCantedRailsSystem", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Höhe fehlt bei Punkt %s. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_MissingHeight() As String
@@ -1127,42 +1199,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist nicht numerisch. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoPointConstraints_PointIDNotNumeric() As String
-            Get
-                Return ResourceManager.GetString("GeoPointConstraints_PointIDNotNumeric", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine reelle Zahl zwischen %.5f und %.5f. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoPointConstraints_PointIDOutOfDblRange() As String
-            Get
-                Return ResourceManager.GetString("GeoPointConstraints_PointIDOutOfDblRange", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine ganze Zahl zwischen %d und %d. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoPointConstraints_PointIDOutOfIntRange() As String
-            Get
-                Return ResourceManager.GetString("GeoPointConstraints_PointIDOutOfIntRange", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoPointConstraints_PointIDToLong() As String
-            Get
-                Return ResourceManager.GetString("GeoPointConstraints_PointIDToLong", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punktnummern geändert. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointList_ChangePointNumbersSuccess() As String
@@ -1186,69 +1222,6 @@ Namespace Resources
         Public Shared ReadOnly Property GeoPointList_NoPoints() As String
             Get
                 Return ResourceManager.GetString("GeoPointList_NoPoints", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadBinaryFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadBinaryFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadBinaryParsingFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadBinaryParsingFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Lese Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadBinaryStart() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadBinaryStart", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus Verm.esn-Punktdatei (KF) &apos;%s&apos;.\n ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_ReadBinarySuccess() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_ReadBinarySuccess", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_WriteBinaryFailed() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_WriteBinaryFailed", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_WriteBinaryStart() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_WriteBinaryStart", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in Verm.esn-Punktdatei (KF) &apos;%s&apos;.\n ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property GeoVEPointList_WriteBinarySuccess() As String
-            Get
-                Return ResourceManager.GetString("GeoVEPointList_WriteBinarySuccess", resourceCulture)
             End Get
         End Property
         
@@ -1406,7 +1379,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) trit wiederholt auf. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die ID (%s) trit wiederholt auf. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property IDCollection_RepeatedID() As String
             Get
@@ -1429,6 +1402,33 @@ Namespace Resources
         Public Shared ReadOnly Property iPktFile_InvalidFieldNotTimeStamp() As String
             Get
                 Return ResourceManager.GetString("iPktFile_InvalidFieldNotTimeStamp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die 123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890.... ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_Label_DefaultHeader1() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_Label_DefaultHeader1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die &lt;LfNr&gt;+BC+&lt;-OS-&gt;+GC+&lt;GDim&gt;+&lt;GExz&gt;+&lt;---Punktnummer----&gt;+&lt;K&gt;+&lt;-RechtsWert-&gt;+&lt;--HochWert--&gt;+&lt;----Höhe----&gt;+&lt;---Zeitstempel---&gt;+&lt;-KS-&gt;+&lt;--&gt;+&lt;GL&gt;+&lt;GH&gt;+&lt;---------Text----------&gt;+AT+&lt;-------Attribut--------&gt;+AT+&lt;-------Attribut--------&gt;+freie Daten... ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_Label_DefaultHeader2() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_Label_DefaultHeader2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die ---------+------+--+------+------+--------------------+---+--------------+--------------+--------------+-------------------+------+----+----+----+-------------------------+--+-------------------------+--+-------------------------+--------------- ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_Label_DefaultHeader3() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_Label_DefaultHeader3", resourceCulture)
             End Get
         End Property
         
@@ -1501,6 +1501,78 @@ Namespace Resources
         Public Shared ReadOnly Property iPktFile_StoreSuccess() As String
             Get
                 Return ResourceManager.GetString("iPktFile_StoreSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_LoadFailed() As String
+            Get
+                Return ResourceManager.GetString("KfFile_LoadFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_LoadParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("KfFile_LoadParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_LoadStart() As String
+            Get
+                Return ResourceManager.GetString("KfFile_LoadStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus Verm.esn-Punktdatei (KF) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_LoadSuccess() As String
+            Get
+                Return ResourceManager.GetString("KfFile_LoadSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_StoreFailed() As String
+            Get
+                Return ResourceManager.GetString("KfFile_StoreFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Schreiben der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_StoreParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("KfFile_StoreParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_StoreStart() As String
+            Get
+                Return ResourceManager.GetString("KfFile_StoreStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in Verm.esn-Punktdatei (KF) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_StoreSuccess() As String
+            Get
+                Return ResourceManager.GetString("KfFile_StoreSuccess", resourceCulture)
             End Get
         End Property
         
@@ -1888,24 +1960,6 @@ Namespace Resources
         Public Shared ReadOnly Property TcBlockType_MissingVersion() As String
             Get
                 Return ResourceManager.GetString("TcBlockType_MissingVersion", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Werte im gedrehten Gleissystem können nicht bestimmt werden. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property TcFileReader_Constraints_MissingCantedRailsSystem() As String
-            Get
-                Return ResourceManager.GetString("TcFileReader_Constraints_MissingCantedRailsSystem", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Vorzeichen der Überhöhung kann nicht bestimmt werden, weil der Radius Null ist. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property TcFileReader_Constraints_MissingCantSign() As String
-            Get
-                Return ResourceManager.GetString("TcFileReader_Constraints_MissingCantSign", resourceCulture)
             End Get
         End Property
         

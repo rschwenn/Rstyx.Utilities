@@ -99,7 +99,7 @@ Namespace Domain
                 Dim RetValue As String = MyBase.ParseID(TargetID)
                 
                 If (RetValue.Length > MaxIDLength) Then
-                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_PointIDToLong, RetValue, MaxIDLength))
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDToLong, RetValue, MaxIDLength))
                 End If
                 
                 Return RetValue

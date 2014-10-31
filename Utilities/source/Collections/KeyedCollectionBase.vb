@@ -24,8 +24,6 @@ Namespace Collections
         
         Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.KeyedCollectionBase")
         
-        Private _KeyComparer  As IComparer(Of TKey) = Nothing
-        
         ''' <summary>  Initializes the KeyedCollection with a default <see cref="System.Collections.Generic.IEqualityComparer(Of TKey)"/>. </summary>
         Protected Sub New()
             MyBase.New()

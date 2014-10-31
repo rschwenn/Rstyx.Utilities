@@ -17,6 +17,10 @@ Namespace Domain
         
         ''' <summary> The point's height has to be known, hence Z does must not be <c>Double.NaN</c>. </summary>
         KnownHeight = 2
+                
+        ''' <summary> Values in canted rails system are required. </summary>
+         ''' <remarks> This requires a point that implements the <see cref="IPointAtTrackGeometry"/>. </remarks>
+        KnownCantedRailsSystem = 4
         
     End Enum
     
@@ -313,6 +317,46 @@ Namespace Domain
                                                                    Nothing,
                                                                    Me.SourcePath
                                                                   ))
+                    End If
+                End If
+                                    
+                ' Canted Rails System missing.
+                If (Constraints.HasFlag(GeoPointConstraints.KnownCantedRailsSystem)) Then
+                    
+                    Dim Missing As Boolean = False
+                    Dim Hints   As String  = Nothing
+                    
+                    If (Not TypeOf Me Is IPointAtTrackGeometry) Then
+                        Missing = True
+                        Hints   = Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingTrackValues
+                    Else
+                        Dim tp As GeoTcPoint = Me.AsGeoTcPoint()
+                        
+                        If (Double.IsNaN(tp.QG) OrElse Double.IsNaN(tp.HG)) Then
+                            Missing = True
+                            If (Double.IsNaN(tp.HSOK)) Then
+                                Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK)
+                            ElseIf (Double.IsNaN(tp.Ueb)) Then
+                                Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb)
+                            ElseIf (Double.IsNaN(tp.Ra)) Then
+                                Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ra)
+                            ElseIf (tp.Ra.EqualsAlmost(0, 0.001)) Then
+                                Hints = Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingCantSign
+                            End If
+                        End If
+                    End If
+                    
+                    If (Missing) Then
+                        If (Me.SourceLineNo > 0) Then
+                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
+                                                                    Me.SourceLineNo, 0, 0,
+                                                                    sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingCantedRailsSystem, PointID),
+                                                                    Hints,
+                                                                    Me.SourcePath
+                                                                   ))
+                        Else
+                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingCantedRailsSystem, PointID)))
+                        End If
                     End If
                 End If
             End Sub
