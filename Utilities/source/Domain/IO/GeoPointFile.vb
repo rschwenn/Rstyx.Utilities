@@ -108,7 +108,6 @@ Namespace Domain.IO
             ''' This property takes only effect when loading a file.
             ''' </para>
             ''' <para>
-            ''' This value will be forwarded to <see cref="GeoPointList.Constraints"/> of the point list created by <see cref="GeoPointFile.Load"/>.
             ''' If any of these contraints is violated while loading the file, a <see cref="ParseError"/> will be created.
             ''' </para>
             ''' </remarks>

@@ -66,7 +66,6 @@ Namespace Domain.IO
                     FileReader.Load(FilePath, Encoding:=Me.FileEncoding, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
                     
                     PointList.Header = FileReader.Header
-                    PointList.Constraints = Me.Constraints
                     
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
                         
@@ -125,7 +124,7 @@ Namespace Domain.IO
                                     End If
                                 End If
                                 
-                                PointList.VerifyConstraints(p, FieldX, FieldY, FieldZ)
+                                p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
                                 PointList.Add(p)
                                 
                             Catch ex As InvalidIDException

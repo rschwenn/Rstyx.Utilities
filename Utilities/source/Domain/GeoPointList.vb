@@ -9,22 +9,6 @@ Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
     
-    ''' <summary> Constraints to point values that are required for a certain purpose. </summary>
-    <Flags>
-    Public Enum GeoPointConstraints As Integer
-        
-        ''' <summary> No constraints. </summary>
-        None = 0
-        
-        ''' <summary> The point's position has to be known, hence X and Y must not be <c>Double.NaN</c>. </summary>
-        KnownPosition = 1
-        
-        ''' <summary> The point's height has to be known, hence Z does must not be <c>Double.NaN</c>. </summary>
-        KnownHeight = 2
-        
-    End Enum
-    
-    
     ''' <summary> A collection of GeoPoint's. </summary>
      ''' <remarks>
      ''' <para>
@@ -85,10 +69,6 @@ Namespace Domain
                     _Header = value
                 End Set
             End Property
-            
-            ''' <summary> Determines logical constraints to be considered for the intended usage of points. Defaults to <c>None</c>. </summary>
-             ''' <remarks> Used by <see cref="GeoPointList.VerifyConstraints"/>. </remarks>
-            Public Property Constraints() As GeoPointConstraints
             
         #End Region
         
@@ -161,83 +141,6 @@ Namespace Domain
                 'PointList.AppendLine("------------------------------------------------------------------------------------------------------------------------------------------------------")
                 Return PointList.ToString()
             End Function
-            
-        #End Region
-        
-        #Region "Constraints Verifying"
-            
-            ''' <summary> Verifies that <paramref name="p"/> has a unique ID and also fulfills all given <see cref="Constraints"/>. </summary>
-             ''' <param name="Point"> The point to verify. It should has set it's <see cref="GeoPoint.SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
-             ''' <remarks>
-             ''' If the list contained already a point with the ID of <paramref name="p"/>
-             ''' or any of the <see cref="Constraints"/> is injured, a <see cref="ParseException"/> will be thrown.
-             ''' In this case, a <see cref="ParseError"/> will be created and delivered with the <see cref="ParseException"/>.
-             ''' The <see cref="ParseError"/> will contain error source information if available.
-             ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
-            Public Sub VerifyConstraints(Point As GeoPoint)
-                Me.VerifyConstraints(Point, Nothing, Nothing, Nothing)
-            End Sub
-            
-            ''' <summary> Verifies that <paramref name="p"/> fulfills all given <see cref="Constraints"/>. </summary>
-             ''' <param name="Point">   The point to verify. It should has set it's <see cref="GeoPoint.SourceLineNo"/> to suport creation of a <see cref="ParseError"/>. </param>
-             ''' <param name="FieldX">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
-             ''' <param name="FieldY">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
-             ''' <param name="FieldZ">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
-             ''' <remarks>
-             ''' If any of the <see cref="Constraints"/> is injured for <paramref name="p"/>, a <see cref="ParseException"/> will be thrown.
-             ''' In this case, a <see cref="ParseError"/> will be created and delivered with the <see cref="ParseException"/>.
-             ''' The <see cref="ParseError"/> will contain error source information if available.
-             ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="Point"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="ParseException"> At least one constraint is injured. </exception>
-            Public Sub VerifyConstraints(Point   As GeoPoint,
-                                         FieldX  As DataField(Of Double),
-                                         FieldY  As DataField(Of Double),
-                                         FieldZ  As DataField(Of Double)
-                                        )
-                
-                If (Point  Is Nothing) Then Throw New System.ArgumentNullException("Point")
-                
-                Dim PointID  As String  = Point.ID
-                Dim StartCol As Integer = 0
-                Dim EndCol   As Integer = 0
-                
-                ' Position missing.
-                If (Me.Constraints.HasFlag(GeoPointConstraints.KnownPosition)) Then
-                    If (Double.IsNaN(Point.X) OrElse Double.IsNaN(Point.Y)) Then
-                        If ((Point.SourceLineNo > 0) AndAlso (FieldX IsNot Nothing) AndAlso (FieldY IsNot Nothing) AndAlso FieldX.HasSource AndAlso FieldY.HasSource) Then
-                            If (FieldX.Source.Column < FieldY.Source.Column) Then
-                                StartCol = FieldX.Source.Column
-                                EndCol   = FieldY.Source.Column + FieldY.Source.Length
-                            Else
-                                StartCol = FieldY.Source.Column
-                                EndCol   = FieldX.Source.Column + FieldX.Source.Length
-                            End If
-                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
-                                                                    Point.SourceLineNo, StartCol, EndCol,
-                                                                    sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPosition, PointID),
-                                                                    Nothing))
-                        Else
-                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPosition, PointID)))
-                        End If
-                    End If
-                End If
-                
-                ' Heigt missing.
-                If (Me.Constraints.HasFlag(GeoPointConstraints.KnownHeight)) Then
-                    If (Double.IsNaN(Point.Z)) Then
-                        Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
-                                                                   Point.SourceLineNo,
-                                                                   FieldZ,
-                                                                   sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingHeight, PointID),
-                                                                   Nothing,
-                                                                   Nothing
-                                                                  ))
-                    End If
-                End If
-            End Sub
             
         #End Region
         

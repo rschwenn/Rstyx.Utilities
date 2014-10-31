@@ -78,8 +78,6 @@ Namespace Domain.IO
                         End If
                     Next
                     
-                    PointList.Constraints = Me.Constraints
-                    
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
                         
                         Dim DataLine As DataTextLine = FileReader.DataCache(i)
@@ -120,7 +118,7 @@ Namespace Domain.IO
                                 p.SourcePath         = FilePath
                                 p.SourceLineNo       = DataLine.SourceLineNo
                                 
-                                PointList.VerifyConstraints(p, FieldX, FieldY, FieldZ)
+                                p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
                                 PointList.Add(p)
                                 
                             Catch ex As InvalidIDException
@@ -191,15 +189,28 @@ Namespace Domain.IO
                                 ' Check for uniqe ID (since Point ID may have changed while converting to VE point).
                                 CheckIDList.Add(p)
                                 
-                                'PointList.VerifyConstraints(p)
-                                
                                 ' Write line.
-                                oSW.WriteLine(sprintf(PointFmt, P.ID, If(Double.IsNaN(P.Y), 0, P.Y), If(Double.IsNaN(P.X), 0, P.X), If(Double.IsNaN(P.Z), 0, P.Z),
-                                              p.TrackPos.Kilometer.Value, P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
-                                              P.Kind.TrimToMaxLength(4), p.TrackPos.TrackNo, p.TrackPos.RailsCode.TrimToMaxLength(1), P.HeightSys.TrimToMaxLength(3), P.mp, P.mh, 
-                                              P.MarkHints.TrimToMaxLength(1), P.MarkType.TrimToMaxLength(3), P.sp.TrimToMaxLength(1), P.sh.TrimToMaxLength(1),
-                                              P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)
-                                             ))
+                                oSW.WriteLine(sprintf(PointFmt,
+                                                      P.ID,
+                                                      If(Double.IsNaN(P.Y), 0, P.Y),
+                                                      If(Double.IsNaN(P.X), 0, P.X),
+                                                      If(Double.IsNaN(P.Z), 0, P.Z),
+                                                      p.TrackPos.Kilometer.Value,
+                                                      P.Info.TrimToMaxLength(13),
+                                                      P.HeightInfo.TrimToMaxLength(13),
+                                                      P.Kind.TrimToMaxLength(4),
+                                                      p.TrackPos.TrackNo,
+                                                      p.TrackPos.RailsCode.TrimToMaxLength(1),
+                                                      P.HeightSys.TrimToMaxLength(3),
+                                                      P.mp,
+                                                      P.mh, 
+                                                      P.MarkHints.TrimToMaxLength(1),
+                                                      P.MarkType.TrimToMaxLength(3),
+                                                      P.sp.TrimToMaxLength(1),
+                                                      P.sh.TrimToMaxLength(1),
+                                                      P.Job.TrimToMaxLength(8),
+                                                      P.ObjectKey.TrimToMaxLength(7)
+                                                     ))
                                 
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
@@ -207,11 +218,11 @@ Namespace Domain.IO
                                     Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                 End If
                                 
-                            Catch ex As ParseException When (ex.ParseError IsNot Nothing)
-                                Me.ParseErrors.Add(ex.ParseError)
-                                If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                End If
+                            'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                            '    Me.ParseErrors.Add(ex.ParseError)
+                            '    If (Not Me.CollectParseErrors) Then
+                            '        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            '    End If
                             End Try
                         Next
                     End Using
