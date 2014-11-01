@@ -115,24 +115,11 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Dim iPkt  As New GeoIPoint()
-                Dim Pkt   As New GeoPoint()
-                'Pkt.ID    = "1234567"
-                Pkt.ID    = "y123456789"
-                Pkt .Info = "GVP 123-34d"
-                Pkt.Z     = 123.4567
-                iPkt.AttKey1 = "A1"
-                iPkt.ID    = "1234567"
-                'iPkt.ID    = "y123456789"
-                iPkt.Info = "GVP 123-34d"
-                iPkt.Z     = 123.4567
-                'Dim VePkt As GeoVEPoint = iPkt
-                'Dim VePkt As GeoVEPoint = CType(Pkt, GeoVEPoint)
-                Dim VePkt As GeoVEPoint = iPkt.AsGeoVEPoint()
+                Dim KmA As New Kilometer("10 + 333.0")
+                Dim KmB As New Kilometer(2.222)
+                Dim KmC As Kilometer = KmB - KmA
                 
-                'Dim d As Double = Double.NaN + 555
-                
-                'Logger.logInfo(VePkt.ToString())
+                'Logger.logInfo(KmC.ToString())
                 
                 
                 'Dim Reader As New iPktFile()
@@ -149,7 +136,7 @@ Public Class MainViewModel
                 ' 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 ' Logger.logInfo(pts.ToString())
                 
-                KF.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
+                'KF.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 
                 Dim dtUTC As DateTime = DateTime.UtcNow
