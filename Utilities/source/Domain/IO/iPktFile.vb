@@ -1,6 +1,7 @@
 ﻿
 Imports System
-Imports System.Collections.ObjectModel
+Imports System.Collections.Generic
+'Imports System.Collections.ObjectModel
 Imports System.IO
 
 Imports Rstyx.Utilities.IO
@@ -15,7 +16,7 @@ Namespace Domain.IO
      ''' <b>Features:</b>
      ''' <list type="bullet">
      ''' <item><description>  </description></item>
-     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointList"/>. </description></item>
+     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointOpenList"/>. </description></item>
      ''' <item><description>  </description></item>
      ''' </list>
      ''' </para>
@@ -48,21 +49,23 @@ Namespace Domain.IO
             
             ''' <summary> Reads the point file and fills the points collection. </summary>
              ''' <param name="FilePath"> File to read from. </param>
-             ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
+             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
              ''' <remarks>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Function Load(FilePath As String) As GeoPointList
+            Public Overrides Function Load(FilePath As String) As GeoPointOpenList
                 
-                Dim PointList As New GeoPointList()
+                Dim PointList As New GeoPointOpenList()
                 Try 
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, FilePath))
                     
-                    PointList.Clear()
+                    Me.IDCheckList.Clear()
+                    Me.ParseErrors.Clear()
                     Me.ParseErrors.FilePath = FilePath
-                    Dim RecDef As New RecordDefinition()
+                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
+                    Dim RecDef   As New RecordDefinition()
                     
                     Dim FileReader As New DataTextFileReader()
                     FileReader.LineStartCommentToken = Me.LineStartCommentToken
@@ -134,6 +137,7 @@ Namespace Domain.IO
                                     End If
                                 End If
                                 
+                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                 p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
                                 PointList.Add(p)
                                 
@@ -179,13 +183,16 @@ Namespace Domain.IO
              ''' <param name="FilePath">  File to store the points into. </param>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Sub Store(PointList As GeoPointList, FilePath As String)
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, FilePath))
                     
                     Me.ParseErrors.Clear()
+                    Me.IDCheckList.Clear()
                     
-                    Dim PointFmt As String = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim PointFmt   As String = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim PointCount As Integer = 0
+                    Dim UniqueID   As Boolean = True  ' iGeo ignores all but the first point with same ID => hence don't write more than once.
                     
                     Using oSW As New StreamWriter(FilePath, append:=False, encoding:=Me.FileEncoding)
                         
@@ -194,18 +201,19 @@ Namespace Domain.IO
                         If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                         
                         ' Points.
-                        For i As Integer = 0 To PointList.Count - 1
-                            
-                            Dim SourcePoint As IGeoPoint = PointList.Item(i)
-                            
+                        For Each SourcePoint As IGeoPoint In PointList
                             Try
                                 ' Convert point: This verifies the ID and provides all fields for writing.
                                 Dim p As GeoIPoint = SourcePoint.AsGeoIPoint()
-                    
+                                
+                                ' Check for unique ID.
+                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
+                                
+                                PointCount += 1
                                 Dim TimeStamp As String = If(p.TimeStamp.HasValue, p.TimeStamp.Value.ToString("s"), Nothing)
                                 
                                 ' Write line.
-                                oSW.WriteLine(sprintf(PointFmt, i + 1,
+                                oSW.WriteLine(sprintf(PointFmt, PointCount,
                                                       p.CalcCode.TrimToMaxLength(2),
                                                       p.ObjectKey.TrimToMaxLength(6),
                                                       p.GraficsCode.TrimToMaxLength(2),
@@ -246,7 +254,7 @@ Namespace Domain.IO
                         Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreSuccess, PointList.Count, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreSuccess, PointCount, FilePath))
                     
                 Catch ex As ParseException
                     Throw

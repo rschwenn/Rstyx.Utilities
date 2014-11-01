@@ -131,21 +131,11 @@ Public Class MainViewModel
                 KV.ShowParseErrorsInJedit = True
                 iP.ShowParseErrorsInJedit = True
                 KF.ShowParseErrorsInJedit = True
-                'Reader.Constraints = GeoPointConstraints.KnownCantedRailsSystem 
-                Dim pts As GeoPointList = iP.Load(Me.FilePath1)
-                ' 'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
-                ' 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
-                ' Logger.logInfo(pts.ToString())
+                'KV.Constraints = GeoPointConstraints.UniqueID 
+                'Dim pts As GeoPointList = iP.Load(Me.FilePath1)
+                Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
                 
-                Dim p    As New GeoPoint()
-                Dim iPkt As New GeoIPoint()
-                Dim VEP  As New GeoVEPoint()
-                'Dim IsIEnumerable As Boolean = pts.GetType().IsImplementing(GetType(IEnumerable(Of GeoPoint)))
-                'Dim IsIEnumerable As Boolean = pts.GetType().IsImplementing(GetType(System.Collections.IEnumerable))
-                Dim IsIEnumerable As Boolean = (TypeOf pts Is IEnumerable(Of IGeoPoint))
-                'Dim IsIEnumerable As Boolean = (TypeOf pts Is KeyedCollection(Of String, IGeoPoint))
-                'pts.
-                
+                KV.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
                 'KF.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 

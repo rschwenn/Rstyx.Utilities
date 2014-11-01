@@ -1,4 +1,5 @@
 ﻿
+Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
 
@@ -14,7 +15,7 @@ Namespace Domain.IO
      ''' <b>Features:</b>
      ''' <list type="bullet">
      ''' <item><description>  </description></item>
-     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointList"/>. </description></item>
+     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointOpenList"/>. </description></item>
      ''' <item><description>  </description></item>
      ''' </list>
      ''' </para>
@@ -48,21 +49,23 @@ Namespace Domain.IO
             
             ''' <summary> Reads the point file and fills the points collection. </summary>
              ''' <param name="FilePath"> File to load the points from. </param>
-             ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
+             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
              ''' <remarks>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Function Load(FilePath As String) As GeoPointList
+            Public Overrides Function Load(FilePath As String) As GeoPointOpenList
                 
-                Dim PointList As New GeoPointList()
+                Dim PointList As New GeoPointOpenList()
                 Try 
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadStart, FilePath))
                     
+                    Me.IDCheckList.Clear()
                     Me.ParseErrors.Clear()
                     Me.ParseErrors.FilePath = FilePath
-                    Dim RecDef As New RecordDefinition()
+                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
+                    Dim RecDef   As New RecordDefinition()
                     
                     Dim FileReader As New DataTextFileReader()
                     FileReader.LineStartCommentToken = Me.LineStartCommentToken
@@ -117,6 +120,7 @@ Namespace Domain.IO
                                 p.SourcePath         = FilePath
                                 p.SourceLineNo       = DataLine.SourceLineNo
                                 
+                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                 p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
                                 PointList.Add(p)
                                 
@@ -160,15 +164,25 @@ Namespace Domain.IO
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
              ''' <param name="FilePath">  File to store the points into. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="PointList"/> is a <see cref="GeoPointList"/> then
+             ''' it's ensured that the point ID's written to the file are unique.
+             ''' Otherwise point ID's may be not unique.
+             ''' </para>
+             ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Sub Store(PointList As GeoPointList, FilePath As String)
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreStart, FilePath))
                     
                     Me.ParseErrors.Clear()
+                    Me.IDCheckList.Clear()
                     
-                    Dim PointFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s %-s"
+                    Dim PointFmt   As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s %-s"
+                    Dim PointCount As Integer = 0
+                    Dim UniqueID   As Boolean = (TypeOf PointList Is GeoPointList)
                     
                     Using oSW As New StreamWriter(FilePath, append:=False, encoding:=Me.FileEncoding)
                         
@@ -176,17 +190,13 @@ Namespace Domain.IO
                         Dim HeaderLines As String = Me.CreateFileHeader(PointList).ToString()
                         If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                         
-                        ' Points.
-                        Dim CheckIDList As New GeoPointList()
-                        
                         For Each SourcePoint As IGeoPoint In PointList
-                            
                             Try
                                 ' Convert point: This verifies the ID and provides all fields for writing.
                                 Dim p As GeoVEPoint = SourcePoint.AsGeoVEPoint()
                                 
-                                ' Check for uniqe ID (since Point ID may have changed while converting to VE point).
-                                CheckIDList.Add(p)
+                                ' Check for unique ID, if PointList is unique (since Point ID may have changed while converting to VE point).
+                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
@@ -211,6 +221,7 @@ Namespace Domain.IO
                                                       P.ObjectKey.TrimToMaxLength(7),
                                                       p.Comment
                                                      ))
+                                PointCount += 1
                                 
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
@@ -232,7 +243,7 @@ Namespace Domain.IO
                         Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreSuccess, PointList.Count, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreSuccess, PointCount, FilePath))
                     
                 Catch ex As ParseException
                     Throw

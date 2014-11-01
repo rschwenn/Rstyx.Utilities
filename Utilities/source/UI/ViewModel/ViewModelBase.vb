@@ -118,7 +118,7 @@ Namespace UI.ViewModel
                             Catch ex As Exception
                                 ' Gets here if CommandRaiseMethod is ambiguous.
                                 System.Diagnostics.Trace.WriteLine(ex)
-                                System.Diagnostics.Trace.WriteLine("RaiseCanExecuteChangedForAll(): 'CommandRaiseMethod' isn't uniqe, or error in event handling.")
+                                System.Diagnostics.Trace.WriteLine("RaiseCanExecuteChangedForAll(): 'CommandRaiseMethod' isn't unique, or error in event handling.")
                             End Try
                         Next
                     Catch ex As System.Exception

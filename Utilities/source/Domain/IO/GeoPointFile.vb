@@ -55,8 +55,8 @@ Namespace Domain.IO
      ''' <b>Features:</b>
      ''' <list type="bullet">
      ''' <item><description>  </description></item>
-     ''' <item><description> The <see cref="GeoPointFile.Load"/> method reads the file and returnes the read points as <see cref="GeoPointList"/>. </description></item>
-     ''' <item><description> The <see cref="GeoPointFile.Store"/> method writes a given <see cref="GeoPointList"/> to the file. </description></item>
+     ''' <item><description> The <see cref="GeoPointFile.Load"/> method reads the file and returnes the read points as <see cref="GeoPointOpenList"/>. </description></item>
+     ''' <item><description> The <see cref="GeoPointFile.Store"/> method writes a given <see cref="IEnumerable(Of IGeoPoint)"/> to the file. </description></item>
      ''' <item><description> Implements <see cref="IParseErrors"/> in order to support error handling. </description></item>
      ''' <item><description> Provides the <see cref="GeoPointFile.Constraints"/> property in order to outline constraints violation in source file. </description></item>
      ''' </list>
@@ -81,7 +81,7 @@ Namespace Domain.IO
              ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
             Protected LineEndCommentToken       As String = Nothing
             
-            ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="GeoPointList.Header"/>. Defaults to <see langword="true"/>. </summary>
+            ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="GeoPointOpenList.Header"/>. Defaults to <see langword="true"/>. </summary>
             Protected SeparateHeader            As Boolean = True
             
             ''' <summary> The encoding to use for the file. </summary>
@@ -89,6 +89,9 @@ Namespace Domain.IO
             
             ''' <summary> The default header lines for the file. </summary>
             Protected ReadOnly DefaultHeader    As New Collection(Of String)
+            
+            ''' <summary> The default header lines for the file. </summary>
+            Protected ReadOnly IDCheckList      As New Dictionary(Of String, String)
         #End Region
         
         #Region "Constuctors"
@@ -144,19 +147,29 @@ Namespace Domain.IO
             
             ''' <summary> Reads the point file and fills the points collection. </summary>
              ''' <param name="FilePath"> File to read from. </param>
-             ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
+             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
              ''' <remarks>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public MustOverride Function Load(FilePath As String) As GeoPointList
+            Public MustOverride Function Load(FilePath As String) As GeoPointOpenList
+            
+            'Public MustOverride Function Load(Of TResult As Collection(Of IGeoPoint))(FilePath As String) As Collection(Of IGeoPoint)
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
              ''' <param name="FilePath">  File to store the points into. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="PointList"/> is a <see cref="GeoPointList"/> then
+             ''' it's ensured that the point ID's written to the file are unique.
+             ''' Otherwise point ID's may be not unique.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any exception. </exception>
-            Public MustOverride Sub Store(PointList As GeoPointList, FilePath As String)
+            Public MustOverride Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
             
         #End Region
         
@@ -185,15 +198,22 @@ Namespace Domain.IO
             
             ''' <summary> Creates the header for the file to write. </summary>
              ''' <param name="PointList"> The point list to get individual header lines from. </param>
-            Protected Overridable Function CreateFileHeader(PointList As GeoPointList) As StringBuilder
+            Protected Overridable Function CreateFileHeader(PointList As IEnumerable(Of IGeoPoint)) As StringBuilder
                 
                 Dim HeaderLines As New StringBuilder()
                 
                 ' Individual Header.
-                For Each HeaderLine As String In PointList.Header
-                    HeaderLines.Append(LineStartCommentToken)
-                    HeaderLines.AppendLine(HeaderLine)
-                Next
+                If (TypeOf PointList Is GeoPointList) Then
+                    For Each HeaderLine As String In DirectCast(PointList, GeoPointList).Header
+                        HeaderLines.Append(LineStartCommentToken)
+                        HeaderLines.AppendLine(HeaderLine)
+                    Next
+                ElseIf (TypeOf PointList Is GeoPointOpenList) Then
+                    For Each HeaderLine As String In DirectCast(PointList, GeoPointOpenList).Header
+                        HeaderLines.Append(LineStartCommentToken)
+                        HeaderLines.AppendLine(HeaderLine)
+                    Next
+                End If
                 
                 ' Default Header.
                 For Each DefaultHeaderLine As String In Me.DefaultHeader
@@ -203,6 +223,17 @@ Namespace Domain.IO
                 
                 Return HeaderLines
             End Function
+            
+            ''' <summary> Verifies that the given <paramref name="ID"/> doesn't occurs repeated since last clearing of <see cref="GeoPointFile.IDCheckList"/>. </summary>
+             ''' <param name="ID"> The ID to check. </param>
+             ''' <exception cref="InvalidIDException"> The given <paramref name="ID"/> does already exist. </exception>
+            Protected Sub VerifyUniqueID(ID As String)
+                If (IDCheckList.ContainsKey(ID)) Then
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.IDCollection_RepeatedID, ID))
+                Else
+                    IDCheckList.Add(ID, String.Empty)
+                End If
+            End Sub
             
         #End Region
         

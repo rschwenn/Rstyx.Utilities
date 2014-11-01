@@ -1,5 +1,6 @@
 ﻿
 Imports System
+Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
 
@@ -15,7 +16,7 @@ Namespace Domain.IO
      ''' <b>Features:</b>
      ''' <list type="bullet">
      ''' <item><description>  </description></item>
-     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointList"/>. </description></item>
+     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointOpenList"/>. </description></item>
      ''' <item><description>  </description></item>
      ''' </list>
      ''' </para>
@@ -63,7 +64,7 @@ Namespace Domain.IO
             
             ''' <summary> Reads the point file and fills the points collection. </summary>
              ''' <param name="FilePath"> File to load the points from. </param>
-             ''' <returns> All read points as <see cref="GeoPointList"/>. </returns>
+             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
              ''' <remarks>
              ''' <para>
              ''' The first point represents the file header. It will be read as each other point and stored in <see cref="KfFile.HeaderKF"/>.
@@ -74,14 +75,16 @@ Namespace Domain.IO
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Function Load(FilePath As String) As GeoPointList
+            Public Overrides Function Load(FilePath As String) As GeoPointOpenList
                 
-                Dim PointList As New GeoPointList()
+                Dim PointList As New GeoPointOpenList()
                 Try 
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, FilePath))
                     
+                    Me.IDCheckList.Clear()
                     Me.ParseErrors.Clear()
                     Me.ParseErrors.FilePath = FilePath
+                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
                     
                     Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
     		            
@@ -131,6 +134,7 @@ Namespace Domain.IO
                             Else
                                 Try
                                     p.ID = PointID
+                                    If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                     p.VerifyConstraints(Me.Constraints)
                                     PointList.Add(p)
                                     
@@ -177,7 +181,11 @@ Namespace Domain.IO
              ''' <param name="FilePath">  File to store the points into. </param>
              ''' <remarks>
              ''' <para>
-             ''' <see cref="KfFile.HeaderKF"/> will be stored as the first point.
+             ''' It's ensured that the point ID's written to the file are unique.
+             ''' If there is at least one repeated or an invalid ID, this method fails with an exception.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="KfFile.HeaderKF"/> will be stored as the first record.
              ''' </para>
              ''' <para>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
@@ -185,73 +193,35 @@ Namespace Domain.IO
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Sub Store(PointList As GeoPointList, FilePath As String)
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, FilePath))
                     
                     Me.ParseErrors.Clear()
+                    Me.IDCheckList.Clear()
+                    
+                    Dim PointCount As Integer = 0
+                    Dim UniqueID   As Boolean = True  ' General Constraint for KF: Ensure unique ID.
                     
                     Using oBW As New BinaryWriter(File.Open(FilePath, FileMode.Create, FileAccess.Write), FileEncoding)
                         
-                        Dim CheckIDList As New GeoPointList()
-                        
                         oBW.BaseStream.Seek(0, SeekOrigin.Begin)
                         
-                        ' Write header and points.
-                        For i As Integer = -1 To PointList.Count - 1
-                            
-                            Dim SourcePoint As IGeoPoint = Nothing
-                            Dim p           As GeoVEPoint = Nothing
-                            
+                        ' Write Header.
+                        WriteRecord(oBW, Me.HeaderKF)
+                        
+                        ' Write Points.
+                        For Each SourcePoint As IGeoPoint In PointList
                             Try
-                                If (i = -1) Then
-                                    p = Me.HeaderKF
-                                Else
-                                    ' Convert point: This verifies the ID and provides all fields for writing.
-                                    SourcePoint = PointList.Item(i)
-                                    p = SourcePoint.AsGeoVEPoint()
-                                    
-                                    ' Check for uniqe ID (since Point ID may have changed while converting to VE point).
-                                    CheckIDList.Add(p)
-                                End If
+                                ' Convert point: This verifies the ID and provides all fields for writing.
+                                Dim p As GeoVEPoint = SourcePoint.AsGeoVEPoint()
                                 
-                                ' Conversions.
-                                Dim MarkType    As Byte = 0
-                                Dim mp          As Int16 = 0
-                                Dim mh          As Int16 = 0
-                                Dim ObjectKey   As Int32 = 0
+                                ' Check for unique ID.
+                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                 
-                                Byte.TryParse(p.MarkType, MarkType)
-                                If (Not Double.IsNaN(p.mp)) Then mp = CInt(p.mp)
-                                If (Not Double.IsNaN(p.mh)) Then mh = CInt(p.mh)
-                                Int32.TryParse(p.ObjectKey, ObjectKey)
-                                
-                                oBW.Write(p.IDToVEDouble())
-                                oBW.Write(getVEDoubleFromDouble(p.Y))
-                                oBW.Write(getVEDoubleFromDouble(p.X))
-                                oBW.Write(getVEDoubleFromDouble(p.Z))
-                                oBW.Write(getVEDoubleFromDouble(p.TrackPos.Kilometer.Value))
-                                
-                                oBW.Write(CByte(Asc(p.PositionPreInfo)))
-                                oBW.Write(GetByteArray(FileEncoding, p.Info, 13, " "c))
-                                oBW.Write(CByte(Asc(p.PositionPostInfo)))
-                                
-                                oBW.Write(CByte(Asc(p.HeightPreInfo)))
-                                oBW.Write(GetByteArray(FileEncoding, p.HeightInfo, 13, " "c))
-                                oBW.Write(CByte(Asc(p.HeightPostInfo)))
-                                
-                                oBW.Write(GetByteArray(FileEncoding, p.Kind, 4, " "c))
-                                oBW.Write(MarkType)
-                                oBW.Write(mp)
-                                oBW.Write(mh)
-                                oBW.Write(ObjectKey)
-                                oBW.Write(GetByteArray(FileEncoding, p.MarkHints, 1, " "c))
-                                oBW.Write(GetByteArray(FileEncoding, p.HeightSys, 3, " "c))
-                                oBW.Write(GetByteArray(FileEncoding, p.Job, 8, " "c))
-                                oBW.Write(If(p.sp.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.sp))))
-                                oBW.Write(If(p.sh.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.sh))))
-                                oBW.Write(GetByteArray(FileEncoding, CStr(p.TrackPos.TrackNo), 4, " "c, AdjustAtRight:=True))
-                                oBW.Write(If(p.TrackPos.RailsCode.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.TrackPos.RailsCode))))
+                                ' Write Point.
+                                WriteRecord(oBW, p)
+                                PointCount += 1
                                 
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
@@ -267,7 +237,7 @@ Namespace Domain.IO
                         Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointList.Count, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, FilePath))
                     
                 Catch ex As ParseException
                     Throw
@@ -297,6 +267,7 @@ Namespace Domain.IO
                 Return If(Double.IsNaN(NormDouble), 1.0E+40, NormDouble)
             End Function
             
+            ''' <summary> Gets the default header record for KF. </summary>
             Private Function getDefaultKFHeader() As GeoVEPoint
                 Dim p As New GeoVEPoint()
                 
@@ -313,6 +284,48 @@ Namespace Domain.IO
                 
                 Return p
             End Function
+            
+            ''' <summary> Writes one record to KF. </summary>
+            Private Sub WriteRecord(oBW As BinaryWriter, p As GeoVEPoint)
+                
+                ' Conversions.
+                Dim MarkType    As Byte = 0
+                Dim mp          As Int16 = 0
+                Dim mh          As Int16 = 0
+                Dim ObjectKey   As Int32 = 0
+                
+                Byte.TryParse(p.MarkType, MarkType)
+                If (Not Double.IsNaN(p.mp)) Then mp = CInt(p.mp)
+                If (Not Double.IsNaN(p.mh)) Then mh = CInt(p.mh)
+                Int32.TryParse(p.ObjectKey, ObjectKey)
+                
+                oBW.Write(p.IDToVEDouble())
+                oBW.Write(getVEDoubleFromDouble(p.Y))
+                oBW.Write(getVEDoubleFromDouble(p.X))
+                oBW.Write(getVEDoubleFromDouble(p.Z))
+                oBW.Write(getVEDoubleFromDouble(p.TrackPos.Kilometer.Value))
+                
+                oBW.Write(CByte(Asc(p.PositionPreInfo)))
+                oBW.Write(GetByteArray(FileEncoding, p.Info, 13, " "c))
+                oBW.Write(CByte(Asc(p.PositionPostInfo)))
+                
+                oBW.Write(CByte(Asc(p.HeightPreInfo)))
+                oBW.Write(GetByteArray(FileEncoding, p.HeightInfo, 13, " "c))
+                oBW.Write(CByte(Asc(p.HeightPostInfo)))
+                
+                oBW.Write(GetByteArray(FileEncoding, p.Kind, 4, " "c))
+                oBW.Write(MarkType)
+                oBW.Write(mp)
+                oBW.Write(mh)
+                oBW.Write(ObjectKey)
+                oBW.Write(GetByteArray(FileEncoding, p.MarkHints, 1, " "c))
+                oBW.Write(GetByteArray(FileEncoding, p.HeightSys, 3, " "c))
+                oBW.Write(GetByteArray(FileEncoding, p.Job, 8, " "c))
+                oBW.Write(If(p.sp.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.sp))))
+                oBW.Write(If(p.sh.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.sh))))
+                oBW.Write(GetByteArray(FileEncoding, CStr(p.TrackPos.TrackNo), 4, " "c, AdjustAtRight:=True))
+                oBW.Write(If(p.TrackPos.RailsCode.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.TrackPos.RailsCode))))
+            End Sub
             
         #End Region
         

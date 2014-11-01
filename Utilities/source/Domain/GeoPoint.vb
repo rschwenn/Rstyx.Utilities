@@ -22,6 +22,9 @@ Namespace Domain
          ''' <remarks> This requires a point that implements the <see cref="IPointAtTrackGeometry"/>. </remarks>
         KnownCantedRailsSystem = 4
         
+        ''' <summary> The point's ID has to be unique in a given list of points. </summary>
+        UniqueID = 8
+        
     End Enum
     
     
@@ -279,7 +282,6 @@ Namespace Domain
                                          FieldY      As DataField(Of Double),
                                          FieldZ      As DataField(Of Double)
                                         )
-                
                 Dim PointID  As String  = Me.ID
                 Dim StartCol As Integer = 0
                 Dim EndCol   As Integer = 0
