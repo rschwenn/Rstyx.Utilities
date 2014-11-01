@@ -44,7 +44,7 @@ Namespace Domain.IO
             
             Private _HeaderKF  As GeoVEPoint
             
-            ''' <summary> Gets or sets the Header of the binary point file. It returns the default header, if not changed before (i.e. read from binary file). </summary>
+            ''' <summary> Gets or sets the Header of the file, which represents the first file record. It returns the default header, if not changed before (i.e. read from binary file). </summary>
             Public Property HeaderKF() As GeoVEPoint
                 Get
                     If _HeaderKF Is Nothing Then

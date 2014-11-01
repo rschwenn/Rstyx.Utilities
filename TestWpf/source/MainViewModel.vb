@@ -5,12 +5,13 @@ Imports System.Collections.ObjectModel
 Imports System.Data
 Imports System.Data.OleDb
 Imports System.Data.DataTableExtensions
-'Imports System.Linq
+Imports System.Linq
 Imports System.Math
 Imports System.IO
 Imports System.Threading.Tasks
 
 Imports Rstyx.Utilities
+Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.Domain.IO
 Imports Rstyx.Utilities.IO
@@ -135,6 +136,15 @@ Public Class MainViewModel
                 ' 'pts.readFromIpktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Beispiel.ky")
                 ' 'pts.readFromBinaryFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 ' Logger.logInfo(pts.ToString())
+                
+                Dim p    As New GeoPoint()
+                Dim iPkt As New GeoIPoint()
+                Dim VEP  As New GeoVEPoint()
+                'Dim IsIEnumerable As Boolean = pts.GetType().IsImplementing(GetType(IEnumerable(Of GeoPoint)))
+                'Dim IsIEnumerable As Boolean = pts.GetType().IsImplementing(GetType(System.Collections.IEnumerable))
+                Dim IsIEnumerable As Boolean = (TypeOf pts Is IEnumerable(Of IGeoPoint))
+                'Dim IsIEnumerable As Boolean = (TypeOf pts Is KeyedCollection(Of String, IGeoPoint))
+                'pts.
                 
                 'KF.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
