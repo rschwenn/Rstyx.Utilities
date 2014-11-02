@@ -206,7 +206,7 @@ Namespace Domain.IO
                                       BufferSize As Integer
                                      ) As GeoPointOpenList
                 Try
-                    Dim SplittedLine    As DataTextLine
+                    Dim DataLine        As DataTextLine
                     Dim kvp             As KeyValuePair(Of String, String)
                     Dim SourceBlock     As TcSourceBlockInfo
                     Dim TcBlock         As TcBlock
@@ -226,12 +226,12 @@ Namespace Domain.IO
                     ' Find and store source block beginnings (still without EndIndex, Version and Format).
                     For i As Integer = 0 To FileReader.DataCache.Count - 1
                         
-                        SplittedLine = FileReader.DataCache(i)
+                        DataLine = FileReader.DataCache(i)
                         
-                        If (SplittedLine.IsCommentLine) Then
+                        If (DataLine.IsCommentLine) Then
                             ' Comment line: Look for output header of iGeo and iTrassePC.
-                            If (SplittedLine.HasComment) Then
-                                kvp = splitHeaderLineIGeo(SplittedLine.Comment)
+                            If (DataLine.HasComment) Then
+                                kvp = splitHeaderLineIGeo(DataLine.Comment)
                                 If (kvp.Key IsNot Nothing) Then
                                     If ((kvp.Key = "Programm") AndAlso ((kvp.Value = "iTrassePC") Or (kvp.Value = "iGeo"))) Then
                                         ' Create and store source block info.
@@ -245,9 +245,9 @@ Namespace Domain.IO
                                     End If
                                 End If
                             End If
-                        ElseIf (SplittedLine.HasData) Then
+                        ElseIf (DataLine.HasData) Then
                             ' Line contains data and maybe line end comment.
-                            If (SplittedLine.Data.IsMatchingTo("^Trassenumformung\s+|^Umformung\s+")) Then
+                            If (DataLine.Data.IsMatchingTo("^Trassenumformung\s+|^Umformung\s+")) Then
                                 SourceBlock = New TcSourceBlockInfo()
                                 SourceBlock.BlockType.Program = TcBlockProgram.VermEsn
                                 SourceBlock.StartIndex = findStartOfBlock(FileReader.DataCache, i)
@@ -961,43 +961,43 @@ Namespace Domain.IO
             End Sub
             
             ''' <summary> Finds the start line of a given block. </summary>
-             ''' <param name="SplitLines">        The data cache holding the block of interest. </param>
-             ''' <param name="CurrentStartIndex"> Index into <paramref name="SplitLines"/> determining the line containing "Programm:..." or "[Trassen]umformung". </param>
-             ''' <returns> Index into <paramref name="SplitLines"/> determining the line that should be the first line of the given block. </returns>
+             ''' <param name="DataLines">        The data cache holding the block of interest. </param>
+             ''' <param name="CurrentStartIndex"> Index into <paramref name="DataLines"/> determining the line containing "Programm:..." or "[Trassen]umformung". </param>
+             ''' <returns> Index into <paramref name="DataLines"/> determining the line that should be the first line of the given block. </returns>
              ''' <remarks> 
              ''' Search backwards for block start.
              ''' All (and only) comment lines before the current line will belong to the block.
              ''' BUT: Avoid including a preceeding empty block of iGeo and iTrassePC by looking for matching tokens.
              ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
-            Private Function findStartOfBlock(SplitLines As Collection(Of DataTextLine), CurrentStartIndex As Integer) As Integer
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
+            Private Function findStartOfBlock(DataLines As Collection(Of DataTextLine), CurrentStartIndex As Integer) As Integer
                 
-                If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
+                If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 
                 Dim RetValue            As Integer = 0
                 Dim FoundStart          As Boolean = False
                 Dim k                   As Integer = CurrentStartIndex - 1
                 Dim kvp                 As KeyValuePair(Of String, String)
-                Dim PrevSplitLine       As DataTextLine
+                Dim PrevDataLine        As DataTextLine
                 Dim SearchTerminators() As String = {"Überhöhungsband", "Gradiente", "Km-Linie", "Achse", "Checksumme"}
                 
                 Do While ((k > -1) AndAlso (Not FoundStart))
                     
-                    PrevSplitLine = SplitLines(k)
+                    PrevDataLine = DataLines(k)
                     
-                    If (Not PrevSplitLine.IsCommentLine) Then
+                    If (Not PrevDataLine.IsCommentLine) Then
                         ' No comment line.
                         FoundStart = True
                         RetValue = k + 1
-                    ElseIf (PrevSplitLine.HasComment) Then
+                    ElseIf (PrevDataLine.HasComment) Then
                         ' Comment line which isn't empty.
-                        If (PrevSplitLine.Comment.Trim().IsMatchingTo("^-+|^PktNr")) Then
+                        If (PrevDataLine.Comment.Trim().IsMatchingTo("^-+|^PktNr")) Then
                             FoundStart = True
                             RetValue = k + 1
                         End If
                         
                         If (Not FoundStart) Then
-                            kvp = splitHeaderLineIGeo(PrevSplitLine.Comment)
+                            kvp = splitHeaderLineIGeo(PrevDataLine.Comment)
                             If (kvp.Key IsNot Nothing) Then
                                 If (kvp.Key.ContainsAny(SearchTerminators)) Then
                                     FoundStart = True
@@ -1134,9 +1134,9 @@ Namespace Domain.IO
             End Function
             
             ''' <summary> Reads a block of Verm.esn output ("Umformung"). </summary>
-             ''' <param name="SplitLines">  The data cache holding the block of interest. </param>
-             ''' <param name="SourceBlock"> Determines the block type and it's position in <paramref name="SplitLines"/>. </param>
-             ''' <returns> The complete <see cref="TcBlock"/> read from <paramref name="SplitLines"/>. </returns>
+             ''' <param name="DataLines">  The data cache holding the block of interest. </param>
+             ''' <param name="SourceBlock"> Determines the block type and it's position in <paramref name="DataLines"/>. </param>
+             ''' <returns> The complete <see cref="TcBlock"/> read from <paramref name="DataLines"/>. </returns>
              ''' <remarks>
              ''' <list type="bullet">
              ''' <listheader> <description> <b>Hints:</b> </description></listheader>
@@ -1145,11 +1145,11 @@ Namespace Domain.IO
              ''' <item> The Points collection (<see cref="TcFileReader.Blocks"/>.<see cref="TcFileReader.TcBlock.Points"/>) may be empty. </item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
-            Private Function readBlockVermEsn(SplitLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
+            Private Function readBlockVermEsn(DataLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
                 
-                If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
+                If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 
                 Logger.logDebug(sprintf(" Reading Verm.esn TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
@@ -1158,7 +1158,7 @@ Namespace Domain.IO
                 Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
                 
                 ' Parse header.
-                findBlockMetaDataVermEsn(SplitLines, SourceBlock, Block)
+                findBlockMetaDataVermEsn(DataLines, SourceBlock, Block)
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
@@ -1171,7 +1171,7 @@ Namespace Domain.IO
                         Dim ID1    As String = Nothing
                         Dim DoubleIDField As DataField(Of Double) = Nothing
                         Dim LastRecEmpty  As Boolean = False
-                        Dim SplitLine     As DataTextLine = Nothing
+                        Dim DataLine      As DataTextLine = Nothing
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - RecLen)
                             Try
@@ -1181,9 +1181,9 @@ Namespace Domain.IO
                                 Else
                                     RecIdx += RecLen
                                 End If
-                                SplitLine = SplitLines(RecIdx)
+                                DataLine = DataLines(RecIdx)
                                 
-                                If (Not SplitLine.HasData) Then
+                                If (Not DataLine.HasData) Then
                                     LastRecEmpty = True
                                 Else
                                     LastRecEmpty = False
@@ -1195,52 +1195,52 @@ Namespace Domain.IO
                                     
                                     ' Cartesian coordinates line.
                                     If (Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) Then
-                                        ID2  = sprintf("%d", SplitLine.ParseField(RecDef.ID).Value * RecDef.ID_Factor)
-                                        p.Y  = SplitLine.ParseField(RecDef.Y).Value
-                                        p.X  = SplitLine.ParseField(RecDef.X).Value
-                                        p.Z  = SplitLine.ParseField(RecDef.Z).Value
+                                        ID2  = sprintf("%d", DataLine.ParseField(RecDef.ID).Value * RecDef.ID_Factor)
+                                        p.Y  = DataLine.ParseField(RecDef.Y).Value
+                                        p.X  = DataLine.ParseField(RecDef.X).Value
+                                        p.Z  = DataLine.ParseField(RecDef.Z).Value
                                         p.CoordSys = Block.TrackRef.CoordSys
-                                        Com2 = SplitLine.ParseField(RecDef.Com2).Value.Trim()
-                                        If (RecDef.St IsNot Nothing) Then p.St = SplitLine.ParseField(RecDef.St).Value
+                                        Com2 = DataLine.ParseField(RecDef.Com2).Value.Trim()
+                                        If (RecDef.St IsNot Nothing) Then p.St = DataLine.ParseField(RecDef.St).Value
                                         
                                         ' Get second line of this record.
-                                        SplitLine = SplitLines(RecIdx + 1)
-                                        If (Not SplitLine.HasData) Then Throw New ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingSecondLine, Nothing))
+                                        DataLine = DataLines(RecIdx + 1)
+                                        If (Not DataLine.HasData) Then Throw New ParseException(New ParseError(ParseErrorLevel.Error, DataLine.SourceLineNo, 0, 0, Rstyx.Utilities.Resources.Messages.TcFileReader_MissingSecondLine, Nothing))
                                     End If
                                     
                                     ' Track coordinates line.
                                     ' Point-ID.
-                                    DoubleIDField = SplitLine.ParseField(RecDef.ID)
+                                    DoubleIDField = DataLine.ParseField(RecDef.ID)
                                     ID1 = sprintf("%d", DoubleIDField.Value * RecDef.ID_Factor)
                                     p.ID = ID1
                                     If ((Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) AndAlso (Not (p.ID = ID2))) Then
-                                        Throw New ParseException(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleIDField.Source.Column, DoubleIDField.Source.Column + DoubleIDField.Source.Length, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
+                                        Throw New ParseException(New ParseError(ParseErrorLevel.Error, DataLine.SourceLineNo, DoubleIDField.Source.Column, DoubleIDField.Source.Column + DoubleIDField.Source.Length, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
                                     End If
                                     
                                     ' Track values.
-                                    p.Q    = SplitLine.ParseField(RecDef.Q).Value
-                                    p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
-                                    p.Ri   = SplitLine.ParseField(RecDef.Ri).Value / RHO
-                                    p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value / 1000
-                                    p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
-                                    p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value * (-1)
-                                    p.QKm  = SplitLine.ParseField(RecDef.QKm).Value
+                                    p.Q    = DataLine.ParseField(RecDef.Q).Value
+                                    p.Ra   = DataLine.ParseField(RecDef.Ra).Value
+                                    p.Ri   = DataLine.ParseField(RecDef.Ri).Value / RHO
+                                    p.Ueb  = DataLine.ParseField(RecDef.Ueb).Value / 1000
+                                    p.ZSOK = DataLine.ParseField(RecDef.ZSOK).Value
+                                    p.HSOK = DataLine.ParseField(RecDef.HSOK).Value * (-1)
+                                    p.QKm  = DataLine.ParseField(RecDef.QKm).Value
                                     
                                     If (Not Double.IsNaN(p.QKm)) Then
-                                        p.Km = SplitLine.ParseField(RecDef.Km).Value
+                                        p.Km = DataLine.ParseField(RecDef.Km).Value
                                     Else
-                                        p.St = SplitLine.ParseField(RecDef.Km).Value
+                                        p.St = DataLine.ParseField(RecDef.Km).Value
                                     End If
                                     
                                     ' Point info.
-                                    p.Info = SplitLine.ParseField(RecDef.Com).Value.Trim()
+                                    p.Info = DataLine.ParseField(RecDef.Com).Value.Trim()
                                     If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = Com2
-                                    'If (SplitLine.HasComment) Then p.Comment = SplitLine.Comment
+                                    'If (DataLine.HasComment) Then p.Comment = DataLine.Comment
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
                                     p.SourcePath   = Block.Source.FilePath
-                                    p.SourceLineNo = SplitLine.SourceLineNo
+                                    p.SourceLineNo = DataLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Calculate values not having read.
@@ -1259,7 +1259,7 @@ Namespace Domain.IO
                                 
                             Catch ex As InvalidIDException
                                 'Dim FieldID As New DataField(Of String)(ID1, DoubleIDField.Source, DoubleIDField.ParseError, DoubleIDField.Definition)
-                                Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Error, SplitLine.SourceLineNo, DoubleIDField.Source.Column, DoubleIDField.Source.Column + DoubleIDField.Source.Length,  ex.Message, Nothing, Block.Source.FilePath))
+                                Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Error, DataLine.SourceLineNo, DoubleIDField.Source.Column, DoubleIDField.Source.Column + DoubleIDField.Source.Length,  ex.Message, Nothing, Block.Source.FilePath))
                                 If (Not Me.CollectParseErrors) Then
                                     Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Block.Source.FilePath))
                                 End If
@@ -1283,9 +1283,9 @@ Namespace Domain.IO
             End Function
             
             ''' <summary> Reads a block of iGeo/iTrassePC output (A0, A1, A5). </summary>
-             ''' <param name="SplitLines">  The data cache holding the block of interest. </param>
-             ''' <param name="SourceBlock"> Determines the block type and it's position in <paramref name="SplitLines"/>. </param>
-             ''' <returns> The complete <see cref="TcBlock"/> read from <paramref name="SplitLines"/>. </returns>
+             ''' <param name="DataLines">  The data cache holding the block of interest. </param>
+             ''' <param name="SourceBlock"> Determines the block type and it's position in <paramref name="DataLines"/>. </param>
+             ''' <returns> The complete <see cref="TcBlock"/> read from <paramref name="DataLines"/>. </returns>
              ''' <remarks>
              ''' <list type="bullet">
              ''' <listheader> <description> <b>Hints:</b> </description></listheader>
@@ -1294,11 +1294,11 @@ Namespace Domain.IO
              ''' <item> The Block's Points collection (<see cref="TcFileReader.Blocks"/>.<see cref="TcFileReader.TcBlock.Points"/>) may be empty. </item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
-            Private Function readBlockIGeo(SplitLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
+            Private Function readBlockIGeo(DataLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
                 
-                If (SplitLines Is Nothing) Then Throw New System.ArgumentNullException("SplitLines")
+                If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 
                 Logger.logDebug(sprintf(" Reading iGeo/iTrassePC TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
@@ -1307,7 +1307,7 @@ Namespace Domain.IO
                 Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
                 
                 ' Parse header.
-                findBlockMetaDataIGeo(SplitLines, SourceBlock, Block)
+                findBlockMetaDataIGeo(DataLines, SourceBlock, Block)
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
@@ -1316,7 +1316,7 @@ Namespace Domain.IO
                     If (SourceBlock.HasData) Then
                         Dim RecDef    As TcRecordDefinitionIGeo = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionIGeo)
                         Dim RecIdx    As Integer = SourceBlock.DataStartIndex - 1
-                        Dim SplitLine As DataTextLine = Nothing
+                        Dim DataLine  As DataTextLine = Nothing
                         Dim FieldID   As DataField(Of String) = Nothing
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - 1)
@@ -1324,11 +1324,11 @@ Namespace Domain.IO
                                 ' Switch to next record.
                                 RecIdx += 1
                                 
-                                If (SplitLines(RecIdx).HasData) Then
+                                If (DataLines(RecIdx).HasData) Then
                                     
-                                    SplitLine = New DataTextLine(SplitLines(RecIdx).Data, LineStartCommentToken:="#", LineEndCommentToken:="#")
-                                    SplitLine.SourceLineNo = SplitLines(RecIdx).SourceLineNo
-                                    SplitLine.FieldDelimiter = RecDef.Delimiter
+                                    DataLine = New DataTextLine(DataLines(RecIdx).Data, LineStartCommentToken:="#", LineEndCommentToken:="#")
+                                    DataLine.SourceLineNo = DataLines(RecIdx).SourceLineNo
+                                    DataLine.FieldDelimiter = RecDef.Delimiter
                                     
                                     Dim UebL     As Double = Double.NaN
                                     Dim UebR     As Double = Double.NaN
@@ -1336,75 +1336,75 @@ Namespace Domain.IO
                                     Dim p        As New GeoTcPoint()
                                     
                                     ' ID
-                                    FieldID = SplitLine.ParseField(RecDef.ID) 
+                                    FieldID = DataLine.ParseField(RecDef.ID) 
                                     p.ID    = FieldID.Value
                                     
                                     ' Cartesian coordinates.
-                                    Dim FieldY As DataField(Of Double) = SplitLine.ParseField(RecDef.Y)
-                                    Dim FieldX As DataField(Of Double) = SplitLine.ParseField(RecDef.X)
-                                    Dim FieldZ As DataField(Of Double) = SplitLine.ParseField(RecDef.Z)
+                                    Dim FieldY As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
+                                    Dim FieldX As DataField(Of Double) = DataLine.ParseField(RecDef.X)
+                                    Dim FieldZ As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
                                     
                                     p.Y    = FieldY.Value
                                     p.X    = FieldX.Value
                                     p.Z    = FieldZ.Value
                                     
                                     ' Track values.
-                                    p.St   = SplitLine.ParseField(RecDef.St).Value
-                                    p.Km   = SplitLine.ParseField(RecDef.Km).Value
-                                    p.Q    = SplitLine.ParseField(RecDef.Q).Value
-                                    p.H    = SplitLine.ParseField(RecDef.H).Value
-                                    p.HSOK = SplitLine.ParseField(RecDef.HSOK).Value
+                                    p.St   = DataLine.ParseField(RecDef.St).Value
+                                    p.Km   = DataLine.ParseField(RecDef.Km).Value
+                                    p.Q    = DataLine.ParseField(RecDef.Q).Value
+                                    p.H    = DataLine.ParseField(RecDef.H).Value
+                                    p.HSOK = DataLine.ParseField(RecDef.HSOK).Value
                                     
-                                    p.QG   = SplitLine.ParseField(RecDef.QG).Value
-                                    p.HG   = SplitLine.ParseField(RecDef.HG).Value
+                                    p.QG   = DataLine.ParseField(RecDef.QG).Value
+                                    p.HG   = DataLine.ParseField(RecDef.HG).Value
                                     
-                                    UebL   = SplitLine.ParseField(RecDef.UebL).Value
-                                    UebR   = SplitLine.ParseField(RecDef.UebR).Value
-                                    p.Ueb  = SplitLine.ParseField(RecDef.Ueb).Value
-                                    p.Heb  = SplitLine.ParseField(RecDef.Heb).Value
+                                    UebL   = DataLine.ParseField(RecDef.UebL).Value
+                                    UebR   = DataLine.ParseField(RecDef.UebR).Value
+                                    p.Ueb  = DataLine.ParseField(RecDef.Ueb).Value
+                                    p.Heb  = DataLine.ParseField(RecDef.Heb).Value
                                     
-                                    p.G    = SplitLine.ParseField(RecDef.G).Value
-                                    p.Ri   = SplitLine.ParseField(RecDef.Ri).Value
-                                    p.Ra   = SplitLine.ParseField(RecDef.Ra).Value
+                                    p.G    = DataLine.ParseField(RecDef.G).Value
+                                    p.Ri   = DataLine.ParseField(RecDef.Ri).Value
+                                    p.Ra   = DataLine.ParseField(RecDef.Ra).Value
                                     
-                                    p.V    = SplitLine.ParseField(RecDef.V).Value
-                                    p.R    = SplitLine.ParseField(RecDef.R).Value
-                                    p.L    = SplitLine.ParseField(RecDef.L).Value
+                                    p.V    = DataLine.ParseField(RecDef.V).Value
+                                    p.R    = DataLine.ParseField(RecDef.R).Value
+                                    p.L    = DataLine.ParseField(RecDef.L).Value
                                     
-                                    p.HDGM = SplitLine.ParseField(RecDef.HDGM).Value
-                                    p.ZDGM = SplitLine.ParseField(RecDef.ZDGM).Value
+                                    p.HDGM = DataLine.ParseField(RecDef.HDGM).Value
+                                    p.ZDGM = DataLine.ParseField(RecDef.ZDGM).Value
                                     
-                                    p.Tm   = SplitLine.ParseField(RecDef.Tm).Value
-                                    p.QT   = SplitLine.ParseField(RecDef.QT).Value
+                                    p.Tm   = DataLine.ParseField(RecDef.Tm).Value
+                                    p.QT   = DataLine.ParseField(RecDef.QT).Value
 
-                                    p.ZSOK = SplitLine.ParseField(RecDef.ZSOK).Value
-                                    p.ZLGS = SplitLine.ParseField(RecDef.ZLGS).Value
+                                    p.ZSOK = DataLine.ParseField(RecDef.ZSOK).Value
+                                    p.ZLGS = DataLine.ParseField(RecDef.ZLGS).Value
 
-                                    p.RG   = SplitLine.ParseField(RecDef.RG).Value
-                                    p.LG   = SplitLine.ParseField(RecDef.LG).Value
-                                    p.QGT  = SplitLine.ParseField(RecDef.QGT).Value
-                                    p.HGT  = SplitLine.ParseField(RecDef.HGT).Value
-                                    p.QGS  = SplitLine.ParseField(RecDef.QGS).Value
-                                    p.HGS  = SplitLine.ParseField(RecDef.HGS).Value
+                                    p.RG   = DataLine.ParseField(RecDef.RG).Value
+                                    p.LG   = DataLine.ParseField(RecDef.LG).Value
+                                    p.QGT  = DataLine.ParseField(RecDef.QGT).Value
+                                    p.HGT  = DataLine.ParseField(RecDef.HGT).Value
+                                    p.QGS  = DataLine.ParseField(RecDef.QGS).Value
+                                    p.HGS  = DataLine.ParseField(RecDef.HGS).Value
                                     
                                     ' Kilometer Status.
                                     If (Not Double.IsNaN(p.Km.Value)) Then
-                                        Dim KmStat As KilometerStatus = SplitLine.ParseField(RecDef.KmStatus).Value
+                                        Dim KmStat As KilometerStatus = DataLine.ParseField(RecDef.KmStatus).Value
                                         If (Not KmStat = KilometerStatus.Unknown) Then
                                             p.Km = New Kilometer(p.Km.TDBValue, KmStat)
                                         End If
                                     End If
                                     
                                     ' Point info and comment.
-                                    p.Info    = SplitLine.ParseField(RecDef.Text).Value
-                                    p.Comment = SplitLine.ParseField(RecDef.Comment).Value
-                                    If (p.Comment.IsEmptyOrWhiteSpace() AndAlso SplitLine.HasComment) Then p.Comment = SplitLine.Comment
+                                    p.Info    = DataLine.ParseField(RecDef.Text).Value
+                                    p.Comment = DataLine.ParseField(RecDef.Comment).Value
+                                    If (p.Comment.IsEmptyOrWhiteSpace() AndAlso DataLine.HasComment) Then p.Comment = DataLine.Comment
                                     If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
                                     p.SourcePath   = Block.Source.FilePath
-                                    p.SourceLineNo = SplitLine.SourceLineNo
+                                    p.SourceLineNo = DataLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Resolve Ambiguities.
@@ -1474,7 +1474,7 @@ Namespace Domain.IO
                                 End If
                                 
                             Catch ex As InvalidIDException
-                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], SplitLine.SourceLineNo, FieldID, ex.Message, Nothing, Block.Source.FilePath))
+                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, Block.Source.FilePath))
                                 If (Not Me.CollectParseErrors) Then
                                     Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Block.Source.FilePath))
                                 End If
@@ -1498,19 +1498,19 @@ Namespace Domain.IO
             End Function
             
             ''' <summary> Finds meta data of a block of Verm.esn output ("Umformung"), especially block type and geometry reference info and first data line. </summary>
-             ''' <param name="SplitLines">     [In]  The data cache holding the block of interest. </param>
-             ''' <param name="SourceBlock">    [In/Out] Info about block source in <paramref name="SplitLines"/>. </param>
+             ''' <param name="DataLines">     [In]  The data cache holding the block of interest. </param>
+             ''' <param name="SourceBlock">    [In/Out] Info about block source in <paramref name="DataLines"/>. </param>
              ''' <param name="Block">          [Out] The TcBlock to fill with info. </param>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
-            Private Sub findBlockMetaDataVermEsn(ByRef SplitLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+            Private Sub findBlockMetaDataVermEsn(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
-                If (SplitLines Is Nothing)  Then Throw New System.ArgumentNullException("SplitLines")
+                If (DataLines Is Nothing)   Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 If (Block Is Nothing)       Then Throw New System.ArgumentNullException("Block")
                 
-                Dim SplittedLine    As DataTextLine
+                Dim DataLine        As DataTextLine
                 Dim FullLine        As String
                 Dim Pattern         As String
                 Dim PathName        As String
@@ -1522,22 +1522,22 @@ Namespace Domain.IO
                 Block.BlockType.Program  = SourceBlock.BlockType.Program
                 
                 Block.Source.FilePath    = Me.FilePath
-                Block.Source.StartLineNo = SplitLines(SourceBlock.StartIndex).SourceLineNo
-                Block.Source.EndLineNo   = SplitLines(SourceBlock.EndIndex).SourceLineNo
+                Block.Source.StartLineNo = DataLines(SourceBlock.StartIndex).SourceLineNo
+                Block.Source.EndLineNo   = DataLines(SourceBlock.EndIndex).SourceLineNo
                 
                 Logger.logDebug(" Find meta data of Verm.esn TC output block:")
                 
                 Do
-                    SplittedLine = SplitLines(i)
+                    DataLine = DataLines(i)
                     
-                    If (SplittedLine.IsCommentLine) Then
-                        If (SplittedLine.HasComment) Then
+                    If (DataLine.IsCommentLine) Then
+                        If (DataLine.HasComment) Then
                             If (Comment.Length > 0) Then Comment.AppendLine()
-                            Comment.Append(SplittedLine.Comment)
+                            Comment.Append(DataLine.Comment)
                         End If
                     Else
                         
-                        FullLine = SplittedLine.getFullLine()
+                        FullLine = DataLine.getFullLine()
                         
                         If (Not FullLine.IsMatchingTo("^ ?[0-9]")) Then
                             ' Header line.
@@ -1624,10 +1624,10 @@ Namespace Domain.IO
                             ' Determine sub format.
                             If (FormatFound) Then
                                 Block.BlockType.SubFormat = TcBlockSubFormat.OneLine
-                                If ((i < SourceBlock.EndIndex) AndAlso (SplitLines(i + 1).HasData)) Then
+                                If ((i < SourceBlock.EndIndex) AndAlso (DataLines(i + 1).HasData)) Then
                                     Dim IDLength As Integer = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn).ID.Length
-                                    Dim ID1      As String  = SplittedLine.Data.Left(IDLength)
-                                    Dim ID2      As String  = SplitLines(i + 1).Data.Left(IDLength)
+                                    Dim ID1      As String  = DataLine.Data.Left(IDLength)
+                                    Dim ID2      As String  = DataLines(i + 1).Data.Left(IDLength)
                                     If (ID1 = ID2) Then
                                         Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine
                                     End If
@@ -1645,28 +1645,28 @@ Namespace Domain.IO
                 Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
                 Logger.logDebug(sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
-                If (SourceBlock.HasData) Then Logger.logDebug(sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
+                If (SourceBlock.HasData) Then Logger.logDebug(sprintf("  First Data Line      : %d", DataLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
             ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A0, A1, A5), especially block type and geometry reference info and first data line. </summary>
-             ''' <param name="SplitLines">     [In]  The data cache holding the block of interest. </param>
-             ''' <param name="SourceBlock">    [In/Out] Info about block source in <paramref name="SplitLines"/>. </param>
+             ''' <param name="DataLines">     [In]  The data cache holding the block of interest. </param>
+             ''' <param name="SourceBlock">    [In/Out] Info about block source in <paramref name="DataLines"/>. </param>
              ''' <param name="Block">          [Out] The TcBlock to fill with info. </param>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="SplitLines"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
-            Private Sub findBlockMetaDataIGeo(ByRef SplitLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+            Private Sub findBlockMetaDataIGeo(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
-                If (SplitLines Is Nothing)  Then Throw New System.ArgumentNullException("SplitLines")
+                If (DataLines Is Nothing)   Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 If (Block Is Nothing)       Then Throw New System.ArgumentNullException("Block")
                 
-                Dim SplittedLine        As DataTextLine
-                Dim Comment             As New StringBuilder()
-                Dim FormatFound         As Boolean = False
-                Dim CommentEnd          As Boolean = False
-                Dim kvp                 As KeyValuePair(Of String, String)
-                Dim i                   As Integer = SourceBlock.StartIndex
+                Dim DataLine     As DataTextLine
+                Dim Comment      As New StringBuilder()
+                Dim FormatFound  As Boolean = False
+                Dim CommentEnd   As Boolean = False
+                Dim kvp          As KeyValuePair(Of String, String)
+                Dim i            As Integer = SourceBlock.StartIndex
                 
                 ' Supported Format strings.
                 Const Fmt_A0 = "A0 : Alles EDV"
@@ -1677,18 +1677,18 @@ Namespace Domain.IO
                 Block.BlockType.Version  = TcBlockVersion.Current
                 
                 Block.Source.FilePath    = Me.FilePath
-                Block.Source.StartLineNo = SplitLines(SourceBlock.StartIndex).SourceLineNo
-                Block.Source.EndLineNo   = SplitLines(SourceBlock.EndIndex).SourceLineNo
+                Block.Source.StartLineNo = DataLines(SourceBlock.StartIndex).SourceLineNo
+                Block.Source.EndLineNo   = DataLines(SourceBlock.EndIndex).SourceLineNo
                 
                 Logger.logDebug(" Find meta data of iGeo TC output block:")
                 
                 Do
-                    SplittedLine = SplitLines(i)
+                    DataLine = DataLines(i)
                     
-                    If (SplittedLine.IsCommentLine) Then
+                    If (DataLine.IsCommentLine) Then
                         ' Comment line: Look for Comment and output header of iGeo and iTrassePC.
-                        If (SplittedLine.HasComment) Then
-                            kvp = splitHeaderLineIGeo(SplittedLine.Comment)
+                        If (DataLine.HasComment) Then
+                            kvp = splitHeaderLineIGeo(DataLine.Comment)
                             If (kvp.Key IsNot Nothing) Then
                                 Select Case kvp.Key
                                     
@@ -1731,7 +1731,7 @@ Namespace Domain.IO
                             
                             If (Not CommentEnd) Then
                                 If (Comment.Length > 0) Then Comment.AppendLine()
-                                Comment.Append(SplittedLine.Comment)
+                                Comment.Append(DataLine.Comment)
                             End If
                         End If
                     Else
@@ -1757,7 +1757,7 @@ Namespace Domain.IO
                 Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
                 Logger.logDebug(sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
-                If (SourceBlock.HasData) Then Logger.logDebug(sprintf("  First Data Line      : %d", SplitLines(SourceBlock.DataStartIndex).SourceLineNo))
+                If (SourceBlock.HasData) Then Logger.logDebug(sprintf("  First Data Line      : %d", DataLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
             ''' <summary> Sets the definitions for Verm.esn source records. </summary>
