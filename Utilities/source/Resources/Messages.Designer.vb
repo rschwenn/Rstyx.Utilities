@@ -2009,6 +2009,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der Trassenkoordinaten (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_LoadParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_LoadParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus Datei mit Trassenkoordinaten &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_LoadSuccess() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_LoadSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID fehlt. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcFileReader_MissingID() As String
@@ -2032,15 +2050,6 @@ Namespace Resources
         Public Shared ReadOnly Property TcFileReader_NoPoints() As String
             Get
                 Return ResourceManager.GetString("TcFileReader_NoPoints", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der Trassenkoordinaten (%s). ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property TcFileReader_ParsingFailed() As String
-            Get
-                Return ResourceManager.GetString("TcFileReader_ParsingFailed", resourceCulture)
             End Get
         End Property
         

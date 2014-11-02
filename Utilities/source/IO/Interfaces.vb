@@ -16,7 +16,7 @@ Namespace IO
              ''' </remarks>
             Property CollectParseErrors() As Boolean
             
-            ''' <summary> Determines if parse errors should be shown in jEdit after parsing. Defaults to <see langword="false"/>. </summary>
+            ''' <summary> Determines if parse errors should be shown in jEdit after parsing. Defaults to <see langword="true"/>. </summary>
             Property ShowParseErrorsInJedit() As Boolean
         
     End Interface

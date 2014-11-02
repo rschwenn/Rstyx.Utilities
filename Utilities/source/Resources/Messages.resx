@@ -368,10 +368,6 @@
     <value>=&gt; Datei mit Trassenkoordinaten enthält keine Punkte (%s).</value>
     <comment>File Name: String</comment>
   </data>
-  <data name="TcFileReader_ParsingFailed" xml:space="preserve">
-    <value>Es sind %d Fehler aufgetreten beim Analysieren der Trassenkoordinaten (%s).</value>
-    <comment>Error Count: Integer; File Name: String</comment>
-  </data>
   <data name="DataTextLine_EmptyDataLine" xml:space="preserve">
     <value>Zeile %d enthält keine Daten.</value>
     <comment>Line Number: Integer</comment>
@@ -979,5 +975,13 @@
   <data name="KfFile_StoreParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Schreiben der Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="TcFileReader_LoadParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Analysieren der Trassenkoordinaten (%s).</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="TcFileReader_LoadSuccess" xml:space="preserve">
+    <value>%d Punkte gelesen aus Datei mit Trassenkoordinaten '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
   </data>
 </root>

@@ -56,7 +56,7 @@ Namespace Domain.IO
      ''' <list type="bullet">
      ''' <item><description>  </description></item>
      ''' <item><description> The <see cref="GeoPointFile.Load"/> method reads the file and returnes the read points as <see cref="GeoPointOpenList"/>. </description></item>
-     ''' <item><description> The <see cref="GeoPointFile.Store"/> method writes a given <see cref="IEnumerable(Of IGeoPoint)"/> to the file. </description></item>
+     ''' <item><description> The <see cref="GeoPointFile.Store"/> method writes any given <see cref="IEnumerable(Of IGeoPoint)"/> to the file. </description></item>
      ''' <item><description> Implements <see cref="IParseErrors"/> in order to support error handling. </description></item>
      ''' <item><description> Provides the <see cref="GeoPointFile.Constraints"/> property in order to outline constraints violation in source file. </description></item>
      ''' </list>
@@ -108,10 +108,12 @@ Namespace Domain.IO
            ''' <summary> Determines logical constraints for the intended usage of points. Defaults to <c>None</c>. </summary>
             ''' <remarks>
             ''' <para>
-            ''' This property takes only effect when loading a file.
+            ''' If any of these contraints is violated while loading (and only while loading) the file, a <see cref="ParseError"/> will be created.
             ''' </para>
             ''' <para>
-            ''' If any of these contraints is violated while loading the file, a <see cref="ParseError"/> will be created.
+            ''' If the <see cref="GeoPointOpenList"/> returned by <see cref="GeoPointFile.Load"/> is intended to be converted by <see cref="AsGeoPointList"/>
+            ''' it's recommendable to specify the <see cref="GeoPointConstraints.UniqueID"/> flag. This way ID verifying will be done
+            ''' by <see cref="GeoPointFile.Load"/> automatically and error tracking is more verbose (incl. error display in jEdit).
             ''' </para>
             ''' </remarks>
            Public Property Constraints() As GeoPointConstraints
@@ -139,7 +141,7 @@ Namespace Domain.IO
             Public Property CollectParseErrors() As Boolean = False Implements IParseErrors.CollectParseErrors
             
             ''' <inheritdoc/>
-            Public Property ShowParseErrorsInJedit() As Boolean = False Implements IParseErrors.ShowParseErrorsInJedit
+            Public Property ShowParseErrorsInJedit() As Boolean = True Implements IParseErrors.ShowParseErrorsInJedit
 
         #End Region
         
@@ -154,8 +156,6 @@ Namespace Domain.IO
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public MustOverride Function Load(FilePath As String) As GeoPointOpenList
-            
-            'Public MustOverride Function Load(Of TResult As Collection(Of IGeoPoint))(FilePath As String) As Collection(Of IGeoPoint)
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
