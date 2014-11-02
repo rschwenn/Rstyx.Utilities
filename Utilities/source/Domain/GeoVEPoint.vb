@@ -1,4 +1,5 @@
 ﻿
+Imports System
 Imports System.Math
 
 Imports Rstyx.Utilities.Domain
@@ -9,32 +10,54 @@ Namespace Domain
     
     ''' <summary> One single VE point. </summary>
     ''' <remarks>
-    ''' The <see cref="GeoPoint.ID"/> is maintained as String representation of an integer with maximum length of 7 digits.
+    ''' The <see cref="GeoPoint.ID"/> is maintained as String representation of an integer with a configurable maximum length.
     ''' </remarks>
     Public Class GeoVEPoint
         Inherits GeoPoint
         
-        #Region "Private Fields"
+        #Region "ID Definition Fields"
             
-            Private Shared MaxIDLength     As Integer = 7
-            Private Shared PointNoFactor   As Integer = Pow(10, MaxIDLength - 2)
-            Private Shared MinIntegerID    As Integer = 1
-            Private Shared MaxIntegerID    As Integer = Pow(10, MaxIDLength) - 1
+            Public    ReadOnly MaxIDLength   As Integer
+            
+            Protected ReadOnly PointNoFactor As Integer
+            Protected ReadOnly MinIntegerID  As Integer
+            Protected ReadOnly MaxIntegerID  As Integer
             
         #End Region
         
         #Region "Constuctor"
             
-            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/>. </summary>
+            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of <b>7</b>. </summary>
             Public Sub New()
+                Me.MaxIDLength   = 7
+                Me.PointNoFactor = Pow(10, MaxIDLength - 2)
+                Me.MinIntegerID  = 1
+                Me.MaxIntegerID  = Pow(10, MaxIDLength) - 1
             End Sub
             
-            ''' <summary> Creates a new <see cref="GeoVEPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
+            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a given Value for <see cref="GeoVEPoint.MaxIDLength"/>. </summary>
+             ''' <param name="MaxIDLength"> The maximum supported length resp. digits for the point ID. </param>
+             ''' <remarks>  </remarks>
+             ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> doesn't equals 6 or 7. </exception>
+            Public Sub New(MaxIDLength As Integer)
+                
+                If ((MaxIDLength < 6) OrElse (MaxIDLength > 7)) Then Throw New ArgumentOutOfRangeException("MaxIDLength")
+                
+                Me.MaxIDLength   = MaxIDLength
+                Me.PointNoFactor = Pow(10, MaxIDLength - 2)
+                Me.MinIntegerID  = 1
+                Me.MaxIntegerID  = Pow(10, MaxIDLength) - 1
+            End Sub
+            
+            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of <b>7</b>
+            ''' and inititializes it's properties from a given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
-                MyBase.New(SourcePoint)
+                
+                Me.New()
+                Me.GetPropsFromIGeoPoint(SourcePoint)
                 
                 ' KV + TC specials.
                 If (TypeOf SourcePoint Is GeoVEPoint) Then

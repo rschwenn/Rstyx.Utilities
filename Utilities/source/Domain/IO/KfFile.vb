@@ -84,7 +84,7 @@ Namespace Domain.IO
                     Me.IDCheckList.Clear()
                     Me.ParseErrors.Clear()
                     Me.ParseErrors.FilePath = FilePath
-                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
+                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     
                     Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
     		            

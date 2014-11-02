@@ -828,6 +828,7 @@ Namespace Domain.IO
             ''' <summary> Base Definition of a TC source record. </summary>
             Protected MustInherit Class TcRecordDefinition
                 
+                Public ID   As DataFieldDefinition(Of String)
                 Public Y    As DataFieldDefinition(Of Double)
                 Public X    As DataFieldDefinition(Of Double)
                 Public Z    As DataFieldDefinition(Of Double)
@@ -899,7 +900,6 @@ Namespace Domain.IO
                 
                 Public Delimiter As Char = " "c
                 
-                Public ID       As DataFieldDefinition(Of String)
                 Public KmStatus As DataFieldDefinition(Of KilometerStatus)
                 Public H        As DataFieldDefinition(Of Double)
                 Public QG       As DataFieldDefinition(Of Double)
@@ -930,9 +930,8 @@ Namespace Domain.IO
             Protected Class TcRecordDefinitionVermEsn
                 Inherits TcRecordDefinition
                 
-                Public ID_Factor As Integer
+                Public ID_Length As Integer
                 
-                Public ID       As DataFieldDefinition(Of Double)
                 Public Com      As DataFieldDefinition(Of String)
                 Public Com2     As DataFieldDefinition(Of String)
                 Public QKm      As DataFieldDefinition(Of Double)
@@ -1154,8 +1153,11 @@ Namespace Domain.IO
                 
                 Logger.logDebug(sprintf(" Reading Verm.esn TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
                 
-                Dim Block    As New TcBlock()
-                Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
+                Dim Block            As New TcBlock()
+                Dim UniqueID         As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                Dim UniqueIDPerBlock As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock) AndAlso (Not Constraints.HasFlag(GeoPointConstraints.UniqueID)))
+                
+                If (UniqueIDPerBlock) Then Me.IDCheckList.Clear()
                 
                 ' Parse header.
                 findBlockMetaDataVermEsn(DataLines, SourceBlock, Block)
@@ -1165,13 +1167,14 @@ Namespace Domain.IO
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
-                        Dim RecDef As TcRecordDefinitionVermEsn = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn)
-                        Dim RecLen As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
-                        Dim RecIdx As Integer = SourceBlock.DataStartIndex - RecLen
-                        Dim ID1    As String = Nothing
-                        Dim DoubleIDField As DataField(Of Double) = Nothing
+                        Dim RecDef        As TcRecordDefinitionVermEsn = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn)
+                        Dim RecLen        As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
+                        Dim RecIdx        As Integer = SourceBlock.DataStartIndex - RecLen
+                        Dim ID1           As String = Nothing
+                        Dim FieldID       As DataField(Of String) = Nothing
                         Dim LastRecEmpty  As Boolean = False
                         Dim DataLine      As DataTextLine = Nothing
+                        Dim VEPoint       As New GeoVEPoint(RecDef.ID_Length)
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - RecLen)
                             Try
@@ -1195,10 +1198,12 @@ Namespace Domain.IO
                                     
                                     ' Cartesian coordinates line.
                                     If (Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) Then
-                                        ID2  = sprintf("%d", DataLine.ParseField(RecDef.ID).Value * RecDef.ID_Factor)
-                                        p.Y  = DataLine.ParseField(RecDef.Y).Value
-                                        p.X  = DataLine.ParseField(RecDef.X).Value
-                                        p.Z  = DataLine.ParseField(RecDef.Z).Value
+                                        FieldID    = DataLine.ParseField(RecDef.ID)
+                                        VEPoint.ID = FieldID.Value  ' Verify ID format.
+                                        ID2 = VEPoint.ID
+                                        p.Y = DataLine.ParseField(RecDef.Y).Value
+                                        p.X = DataLine.ParseField(RecDef.X).Value
+                                        p.Z = DataLine.ParseField(RecDef.Z).Value
                                         p.CoordSys = Block.TrackRef.CoordSys
                                         Com2 = DataLine.ParseField(RecDef.Com2).Value.Trim()
                                         If (RecDef.St IsNot Nothing) Then p.St = DataLine.ParseField(RecDef.St).Value
@@ -1210,11 +1215,11 @@ Namespace Domain.IO
                                     
                                     ' Track coordinates line.
                                     ' Point-ID.
-                                    DoubleIDField = DataLine.ParseField(RecDef.ID)
-                                    ID1 = sprintf("%d", DoubleIDField.Value * RecDef.ID_Factor)
-                                    p.ID = ID1
+                                    FieldID    = DataLine.ParseField(RecDef.ID)
+                                    VEPoint.ID = FieldID.Value  ' Verify ID format.
+                                    p.ID       = VEPoint.ID
                                     If ((Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) AndAlso (Not (p.ID = ID2))) Then
-                                        Throw New ParseException(New ParseError(ParseErrorLevel.Error, DataLine.SourceLineNo, DoubleIDField.Source.Column, DoubleIDField.Source.Column + DoubleIDField.Source.Length, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing))
+                                        Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing, Me.FilePath))
                                     End If
                                     
                                     ' Track values.
@@ -1258,8 +1263,7 @@ Namespace Domain.IO
                                 End If
                                 
                             Catch ex As InvalidIDException
-                                'Dim FieldID As New DataField(Of String)(ID1, DoubleIDField.Source, DoubleIDField.ParseError, DoubleIDField.Definition)
-                                Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Error, DataLine.SourceLineNo, DoubleIDField.Source.Column, DoubleIDField.Source.Column + DoubleIDField.Source.Length,  ex.Message, Nothing, Block.Source.FilePath))
+                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, Me.FilePath))
                                 If (Not Me.CollectParseErrors) Then
                                     Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Block.Source.FilePath))
                                 End If
@@ -1303,8 +1307,11 @@ Namespace Domain.IO
                 
                 Logger.logDebug(sprintf(" Reading iGeo/iTrassePC TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
                 
-                Dim Block    As New TcBlock()
-                Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
+                Dim Block            As New TcBlock()
+                Dim UniqueID         As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                Dim UniqueIDPerBlock As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock) AndAlso (Not Constraints.HasFlag(GeoPointConstraints.UniqueID)))
+                
+                If (UniqueIDPerBlock) Then Me.IDCheckList.Clear()
                 
                 ' Parse header.
                 findBlockMetaDataIGeo(DataLines, SourceBlock, Block)
@@ -1771,8 +1778,8 @@ Namespace Domain.IO
                 BlockType.Format  = TcBlockFormat.THW
                 BlockType.Version = TcBlockVersion.Outdated
                 VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
-                    .ID_Factor = 10000,
-                    .ID   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
+                    .ID_Length = 6,
+                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 7),
                     _
                     .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
@@ -1831,8 +1838,8 @@ Namespace Domain.IO
                 BlockType.Format  = TcBlockFormat.THW
                 BlockType.Version = TcBlockVersion.Current
                 VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
-                    .ID_Factor  = 100000,
-                    .ID   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
+                    .ID_Length  = 7,
+                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 8),
                     _
                     .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
@@ -1890,8 +1897,8 @@ Namespace Domain.IO
                 BlockType.Format  = TcBlockFormat.D3
                 BlockType.Version = TcBlockVersion.Outdated
                 VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
-                    .ID_Factor  = 10000,
-                    .ID   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
+                    .ID_Length  = 6,
+                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 7),
                     _
                     .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
@@ -1950,8 +1957,8 @@ Namespace Domain.IO
                 BlockType.Format  = TcBlockFormat.D3
                 BlockType.Version = TcBlockVersion.Current
                 VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
-                    .ID_Factor  = 100000,
-                    .ID   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
+                    .ID_Length  = 7,
+                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 8),
                     _
                     .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,

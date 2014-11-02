@@ -91,7 +91,7 @@ Namespace Domain
             Protected Overrides Sub InsertItem(Index As Integer, Item As IGeoPoint)
                 
                 If (Item Is Nothing) Then Throw New System.ArgumentNullException("Item")
-
+                
                 ' <exception cref="InvalidIDException"> <paramref name="Item"/>.<c>ID</c> is empty. </exception>
                 'If (Item.ID.ToString().IsEmptyOrWhiteSpace()) Then Throw New InvalidIDException(Rstyx.Utilities.Resources.Messages.IDCollection_MissingID)
                 

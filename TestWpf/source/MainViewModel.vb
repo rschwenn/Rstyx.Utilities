@@ -130,7 +130,7 @@ Public Class MainViewModel
                 Dim TC As New TcFileReader()
                 'KV.CollectParseErrors = True
                 'TC.ShowParseErrorsInJedit = False
-                'TC.Constraints = GeoPointConstraints.KnownHeight  
+                TC.Constraints = GeoPointConstraints.UniqueID
                 'TC.CollectParseErrors = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
                 'Dim pts As GeoPointList = iP.Load(Me.FilePath1)
@@ -139,10 +139,10 @@ Public Class MainViewModel
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'TC.Load(Me.FilePath1)
-                Dim pts As GeoPointList = TC.Load(Me.FilePath1).AsGeoPointList()
+                Dim pts As GeoPointOpenList = TC.Load(Me.FilePath1)
                 
                 'KV.Store(TC.AllPoints, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                'KF.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
+                'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 
                 Dim dtUTC As DateTime = DateTime.UtcNow

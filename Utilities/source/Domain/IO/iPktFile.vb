@@ -64,7 +64,7 @@ Namespace Domain.IO
                     Me.IDCheckList.Clear()
                     Me.ParseErrors.Clear()
                     Me.ParseErrors.FilePath = FilePath
-                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID))
+                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     Dim RecDef   As New RecordDefinition()
                     
                     Dim FileReader As New DataTextFileReader()

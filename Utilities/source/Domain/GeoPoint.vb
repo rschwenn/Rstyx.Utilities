@@ -22,8 +22,11 @@ Namespace Domain
          ''' <remarks> This requires a point that implements the <see cref="IPointAtTrackGeometry"/>. </remarks>
         KnownCantedRailsSystem = 4
         
-        ''' <summary> The point's ID has to be unique in a given list of points. </summary>
+        ''' <summary> The point's ID has to be unique in a list of points. </summary>
         UniqueID = 8
+        
+        ''' <summary> The point's ID has to be unique inside a block of points (<see cref="Rstyx.Utilities.Domain.IO.TcFileReader.Blocks"/>). </summary>
+        UniqueIDPerBlock = 16
         
     End Enum
     
@@ -45,11 +48,62 @@ Namespace Domain
             Public Sub New()
             End Sub
             
-            ''' <summary> Creates a new GeoPoint and inititializes it's properties from any given <see cref="GeoPoint"/>. </summary>
+            ''' <summary> Creates a new GeoPoint and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
+               GetPropsFromIGeoPoint(SourcePoint)
+            End Sub
+            
+        #End Region
+        
+        #Region "IGeoPointConversions Members"
+            
+            ''' <summary> Returns a <see cref="GeoVEPoint"/> initialized with values of the implementing point. </summary>
+             ''' <remarks>
+             ''' If the implementing point is already a <see cref="GeoVEPoint"/>, then the same instance will be returned.
+             ''' Otherwise a new instance of <see cref="GeoVEPoint"/> will be created.
+             ''' </remarks>
+            Public Function AsGeoVEPoint() As GeoVEPoint Implements IGeoPointConversions.AsGeoVEPoint
+                If (TypeOf Me Is GeoVEPoint) Then
+                    Return Me
+                Else
+                    Return New GeoVEPoint(Me)
+                End If
+            End Function
+            
+            ''' <summary> Returns a <see cref="GeoIPoint"/> initialized with values of the implementing point. </summary>
+             ''' <remarks>
+             ''' If the implementing point is already a <see cref="GeoIPoint"/>, then the same instance will be returned.
+             ''' Otherwise a new instance of <see cref="GeoIPoint"/> will be created.
+             ''' </remarks>
+            Public Function AsGeoIPoint() As GeoIPoint Implements IGeoPointConversions.AsGeoIPoint
+                If (TypeOf Me Is GeoIPoint) Then
+                    Return Me
+                Else
+                    Return New GeoIPoint(Me)
+                End If
+            End Function
+            
+            ''' <summary> Returns a <see cref="GeoTcPoint"/> initialized with values of the implementing point. </summary>
+             ''' <remarks>
+             ''' If the implementing point is already a <see cref="GeoTcPoint"/>, then the same instance will be returned.
+             ''' Otherwise a new instance of <see cref="GeoTcPoint"/> will be created.
+             ''' </remarks>
+            Public Function AsGeoTcPoint() As GeoTcPoint Implements IGeoPointConversions.AsGeoTcPoint
+                If (TypeOf Me Is GeoTcPoint) Then
+                    Return Me
+                Else
+                    Return New GeoTcPoint(Me)
+                End If
+            End Function
+            
+            ''' <summary> Sets this point's <see cref="IGeoPoint"/> properties from a given <see cref="IGeoPoint"/>. </summary>
+             ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
+            Protected Sub GetPropsFromIGeoPoint(SourcePoint As IGeoPoint)
                 
                 If (SourcePoint IsNot Nothing) Then
                     Me.ID              = SourcePoint.ID
@@ -80,49 +134,6 @@ Namespace Domain
                     Me.SourceLineNo    = SourcePoint.SourceLineNo
                 End If
             End Sub
-            
-        #End Region
-        
-        #Region "IGeoPointConversions Members"
-            
-            ''' <summary> Returns a <see cref="GeoVEPoint"/> initialized with values of the implementing point. </summary>
-             ''' <remarks>
-             ''' If the implementing point is already a <see cref="GeoVEPoint"/>, then the same instance will be returned.
-             ''' Otherwise a new instance of <see cref="GeoVEPoint"/> will be created.
-             ''' </remarks>
-            Function AsGeoVEPoint() As GeoVEPoint Implements IGeoPointConversions.AsGeoVEPoint
-                If (TypeOf Me Is GeoVEPoint) Then
-                    Return Me
-                Else
-                    Return New GeoVEPoint(Me)
-                End If
-            End Function
-            
-            ''' <summary> Returns a <see cref="GeoIPoint"/> initialized with values of the implementing point. </summary>
-             ''' <remarks>
-             ''' If the implementing point is already a <see cref="GeoIPoint"/>, then the same instance will be returned.
-             ''' Otherwise a new instance of <see cref="GeoIPoint"/> will be created.
-             ''' </remarks>
-            Function AsGeoIPoint() As GeoIPoint Implements IGeoPointConversions.AsGeoIPoint
-                If (TypeOf Me Is GeoIPoint) Then
-                    Return Me
-                Else
-                    Return New GeoIPoint(Me)
-                End If
-            End Function
-            
-            ''' <summary> Returns a <see cref="GeoTcPoint"/> initialized with values of the implementing point. </summary>
-             ''' <remarks>
-             ''' If the implementing point is already a <see cref="GeoTcPoint"/>, then the same instance will be returned.
-             ''' Otherwise a new instance of <see cref="GeoTcPoint"/> will be created.
-             ''' </remarks>
-            Function AsGeoTcPoint() As GeoTcPoint Implements IGeoPointConversions.AsGeoTcPoint
-                If (TypeOf Me Is GeoTcPoint) Then
-                    Return Me
-                Else
-                    Return New GeoTcPoint(Me)
-                End If
-            End Function
             
         #End Region
         
@@ -289,13 +300,15 @@ Namespace Domain
                 ' Position missing.
                 If (Constraints.HasFlag(GeoPointConstraints.KnownPosition)) Then
                     If (Double.IsNaN(Me.X) OrElse Double.IsNaN(Me.Y)) Then
-                        If ((Me.SourceLineNo > 0) AndAlso (FieldX IsNot Nothing) AndAlso (FieldY IsNot Nothing) AndAlso FieldX.HasSource AndAlso FieldY.HasSource) Then
-                            If (FieldX.Source.Column < FieldY.Source.Column) Then
-                                StartCol = FieldX.Source.Column
-                                EndCol   = FieldY.Source.Column + FieldY.Source.Length
-                            Else
-                                StartCol = FieldY.Source.Column
-                                EndCol   = FieldX.Source.Column + FieldX.Source.Length
+                        If (Me.SourceLineNo > 0) Then
+                            If ((FieldX IsNot Nothing) AndAlso (FieldY IsNot Nothing) AndAlso FieldX.HasSource AndAlso FieldY.HasSource) Then
+                                If (FieldX.Source.Column < FieldY.Source.Column) Then
+                                    StartCol = FieldX.Source.Column
+                                    EndCol   = FieldY.Source.Column + FieldY.Source.Length
+                                Else
+                                    StartCol = FieldY.Source.Column
+                                    EndCol   = FieldX.Source.Column + FieldX.Source.Length
+                                End If
                             End If
                             Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
                                                                     Me.SourceLineNo, StartCol, EndCol,
