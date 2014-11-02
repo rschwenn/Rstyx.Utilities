@@ -127,15 +127,19 @@ Public Class MainViewModel
                 Dim KV As New KvFile()
                 Dim KF As New KfFile()
                 Dim iP As New iPktFile()
+                Dim TC As New TcFileReader()
                 KV.CollectParseErrors = True
                 KV.ShowParseErrorsInJedit = True
                 iP.ShowParseErrorsInJedit = True
                 KF.ShowParseErrorsInJedit = True
+                'TC.ShowParseErrorsInJedit = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
                 'Dim pts As GeoPointList = iP.Load(Me.FilePath1)
-                Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
+                'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
+                'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
+                TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 
-                KV.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                'KV.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
                 'KF.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kf")
                 
                 
