@@ -15,9 +15,9 @@ Namespace Domain
      ''' <b>Features:</b>
      ''' <list type="bullet">
      ''' <item><description> Every collection item has to implement the <see cref="IGeoPoint"/> interface. There are no more restrictions. </description></item>
-     ''' <item><description> Every <see cref="IGeoPoint.ID"/> is allowed (even empty ID). </description></item>
+     ''' <item><description> Multiple point's of the list may have the same <see cref="IGeoPoint.ID"/>. </description></item>
      ''' <item><description> Manipulation method for changing the point ID's according to a point change table. </description></item>
-     ''' <item><description>  </description></item>
+     ''' <item><description> The <see cref="GeoPointOpenList.Header"/> property can carry some text information related to the list. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
@@ -140,6 +140,41 @@ Namespace Domain
                 'PointList.AppendLine("------------------------------------------------------------------------------------------------------------------------------------------------------")
                 Return PointList.ToString()
             End Function
+            
+        #End Region
+        
+        #Region "Public Methods"
+            
+            ''' <summary> Changes point ID's inside this list according to a ID change table. </summary>
+             ''' <param name="IDChangeTab"> Table with Point ID pairs (source => target). </param>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="IDChangeTab"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="InvalidIDException"> Attempt to assign an ID of invalid format. </exception>
+            Public Sub ChangeIDs(IDChangeTab As Dictionary(Of String, String))
+                
+                If (IDChangeTab Is Nothing) Then Throw New System.ArgumentNullException("PointChangeTab")
+                
+                Dim SourcePoint As IGeoPoint = Nothing
+                Try
+                    Dim ChangeCount As Long = 0
+                    
+                    If (IDChangeTab.Count < 1) then
+                        Logger.logWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyIDChangeTab)
+                    Else
+                        For i As Integer = 0 To Me.Count
+                            
+                            SourcePoint = Me.Item(i)
+                            
+                            If (IDChangeTab.ContainsKey(SourcePoint.ID)) Then
+                                SourcePoint.ID = IDChangeTab(SourcePoint.ID)
+                                ChangeCount += 1
+                            End If
+                        Next
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDSuccess, ChangeCount))
+                    End If
+                Catch ex As InvalidIDException
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDInvalidID, SourcePoint.ID, ex.Message))
+                End Try
+            End Sub
             
         #End Region
         

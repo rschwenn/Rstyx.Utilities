@@ -1105,6 +1105,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die eindeutige ID erforderlich ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointConstraints_UniqueID() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointConstraints_UniqueID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die eindeutige ID je Block erforderlich ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointConstraints_UniqueIDPerBlock() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointConstraints_UniqueIDPerBlock", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die eindeutig ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Normal() As String
@@ -1330,11 +1348,29 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehlenden Wert als &quot;0&quot; ansehen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_MissingAsZero() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_MissingAsZero", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_None() As String
             Get
                 Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Nicht numerischen Wert als Zahl 0.0 ansehen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_NonNumericAsNaN() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_NonNumericAsNaN", resourceCulture)
             End Get
         End Property
         
@@ -1357,6 +1393,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zeichenkette am Ende trimmen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_TrimEnd() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldOptions_TrimEnd", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Zahl 0.0 als nicht definiert ansehen ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_ZeroAsNaN() As String
@@ -1371,6 +1416,15 @@ Namespace Resources
         Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldPositionType_ColumnAndLength() As String
             Get
                 Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldPositionType_ColumnAndLength", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Feld wird ignoriert ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldPositionType_Ignore() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldPositionType_Ignore", resourceCulture)
             End Get
         End Property
         

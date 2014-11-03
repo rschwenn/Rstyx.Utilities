@@ -139,10 +139,17 @@ Public Class MainViewModel
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'TC.Load(Me.FilePath1)
-                Dim pts As GeoPointOpenList = TC.Load(Me.FilePath1)
+                Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
+                'pts("7946800").ID = "1234"
+                'pts("7946811").ID = "946811"
+                
+                'Dim OldPoint As IGeoPoint = pts(0)
+                'Dim NewPoint As Object = Activator.CreateInstance(OldPoint.GetType(), OldPoint)
+                'Dim NewPoint As IGeoPoint = DirectCast(Activator.CreateInstance(OldPoint.GetType(), OldPoint), IGeoPoint)
+                'NewPoint.ID = "777777777777"
                 
                 'KV.Store(TC.AllPoints, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
+                iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 
                 Dim dtUTC As DateTime = DateTime.UtcNow

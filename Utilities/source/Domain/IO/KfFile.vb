@@ -9,18 +9,7 @@ Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain.IO
     
-    ''' <summary> A reader for KF GeoPoint files (VE Binary). </summary>
-     ''' <remarks>
-     ''' .
-     ''' <para>
-     ''' <b>Features:</b>
-     ''' <list type="bullet">
-     ''' <item><description>  </description></item>
-     ''' <item><description> The read points will be returned by the Load method as <see cref="GeoPointOpenList"/>. </description></item>
-     ''' <item><description>  </description></item>
-     ''' </list>
-     ''' </para>
-     ''' </remarks>
+    ''' <summary> A reader and writer for KF GeoPoint files (VE Binary) - see <see cref="GeoPointFile"/>. </summary>
     Public Class KfFile
         Inherits GeoPointFile
         

@@ -603,4 +603,22 @@
   <data name="Rstyx_Utilities_Domain_GeoPointConstraints_None" xml:space="preserve">
     <value>keine</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointConstraints_UniqueID" xml:space="preserve">
+    <value>eindeutige ID erforderlich</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointConstraints_UniqueIDPerBlock" xml:space="preserve">
+    <value>eindeutige ID je Block erforderlich</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_MissingAsZero" xml:space="preserve">
+    <value>Fehlenden Wert als "0" ansehen</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_NonNumericAsNaN" xml:space="preserve">
+    <value>Nicht numerischen Wert als Zahl 0.0 ansehen</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldOptions_TrimEnd" xml:space="preserve">
+    <value>Zeichenkette am Ende trimmen</value>
+  </data>
+  <data name="Rstyx_Utilities_IO_DataFieldPositionType_Ignore" xml:space="preserve">
+    <value>Feld wird ignoriert</value>
+  </data>
 </root>

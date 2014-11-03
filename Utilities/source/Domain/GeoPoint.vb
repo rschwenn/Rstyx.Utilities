@@ -15,7 +15,7 @@ Namespace Domain
         ''' <summary> The point's position has to be known, hence X and Y must not be <c>Double.NaN</c>. </summary>
         KnownPosition = 1
         
-        ''' <summary> The point's height has to be known, hence Z does must not be <c>Double.NaN</c>. </summary>
+        ''' <summary> The point's height has to be known, hence Z must not be <c>Double.NaN</c>. </summary>
         KnownHeight = 2
                 
         ''' <summary> Values in canted rails system are required. </summary>
@@ -25,7 +25,7 @@ Namespace Domain
         ''' <summary> The point's ID has to be unique in a list of points. </summary>
         UniqueID = 8
         
-        ''' <summary> The point's ID has to be unique inside a block of points (<see cref="Rstyx.Utilities.Domain.IO.TcFileReader.Blocks"/>). </summary>
+        ''' <summary> The point's ID has to be unique inside a block of points (see <see cref="Rstyx.Utilities.Domain.IO.TcFileReader.Blocks"/>). </summary>
         UniqueIDPerBlock = 16
         
     End Enum

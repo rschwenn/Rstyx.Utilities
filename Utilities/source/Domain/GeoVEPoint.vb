@@ -17,10 +17,16 @@ Namespace Domain
         
         #Region "ID Definition Fields"
             
+            ''' <summary> Gets the maximum length of <see cref="GeoPoint.ID"/> as determined at instantiation. </summary>
             Public    ReadOnly MaxIDLength   As Integer
             
+            ''' <summary> Gets the factor that converts a double <see cref="GeoPoint.ID"/> into an integer one (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
             Protected ReadOnly PointNoFactor As Integer
+            
+            ''' <summary> Gets the minimal integer <see cref="GeoPoint.ID"/> (always <b>1</b>). </summary>
             Protected ReadOnly MinIntegerID  As Integer
+            
+            ''' <summary> Gets the maximum integer <see cref="GeoPoint.ID"/> (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
             Protected ReadOnly MaxIntegerID  As Integer
             
         #End Region

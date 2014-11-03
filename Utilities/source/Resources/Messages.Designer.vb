@@ -1199,20 +1199,29 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Änderung der Punkt-ID (%s) fehlgeschlagen: Neue %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointList_ChangeIDInvalidID() As String
+            Get
+                Return ResourceManager.GetString("GeoPointList_ChangeIDInvalidID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punktnummern geändert. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property GeoPointList_ChangePointNumbersSuccess() As String
+        Public Shared ReadOnly Property GeoPointList_ChangeIDSuccess() As String
             Get
-                Return ResourceManager.GetString("GeoPointList_ChangePointNumbersSuccess", resourceCulture)
+                Return ResourceManager.GetString("GeoPointList_ChangeIDSuccess", resourceCulture)
             End Get
         End Property
         
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Zuordnungstabelle ist leer =&gt; nichts zu tun. ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property GeoPointList_EmptyPointChangeTab() As String
+        Public Shared ReadOnly Property GeoPointList_EmptyIDChangeTab() As String
             Get
-                Return ResourceManager.GetString("GeoPointList_EmptyPointChangeTab", resourceCulture)
+                Return ResourceManager.GetString("GeoPointList_EmptyIDChangeTab", resourceCulture)
             End Get
         End Property
         

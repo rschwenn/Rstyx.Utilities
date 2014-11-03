@@ -54,7 +54,6 @@ Namespace Domain.IO
      ''' <para>
      ''' <b>Features:</b>
      ''' <list type="bullet">
-     ''' <item><description>  </description></item>
      ''' <item><description> The <see cref="GeoPointFile.Load"/> method reads the file and returnes the read points as <see cref="GeoPointOpenList"/>. </description></item>
      ''' <item><description> The <see cref="GeoPointFile.Store"/> method writes any given <see cref="IEnumerable(Of IGeoPoint)"/> to the file. </description></item>
      ''' <item><description> Implements <see cref="IParseErrors"/> in order to support error handling. </description></item>
