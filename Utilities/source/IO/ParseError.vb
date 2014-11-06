@@ -18,10 +18,13 @@ Namespace IO
         
     #End Region
     
-    ''' <summary> Represents an error that has been occurred while parsing a text file. </summary>
+    ''' <summary>
+    ''' Represents an error that has been occurred while parsing a text file,
+    ''' or while verifying logical constraints of an arbitrary file.
+    ''' </summary>
      ''' <remarks>
-     ''' The error holds at least an severity level and message.
-     ''' Optional are source field information stored, that enables to highlight the error source in the source text file.
+     ''' The error holds at least a severity level and a message.
+     ''' Optional for text files is source field information stored, that enables to highlight the error source in the source text file.
      ''' </remarks>
     Public Class ParseError
         

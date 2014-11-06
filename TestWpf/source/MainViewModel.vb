@@ -116,11 +116,7 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Dim KmA As New Kilometer("10 + 333.0")
-                Dim KmB As New Kilometer(2.222)
-                Dim KmC As Kilometer = KmB - KmA
-                
-                'Logger.logInfo(KmC.ToString())
+                'Logger.logInfo(Round(Double.NaN, 2).ToString())
                 
                 
                 'Dim Reader As New iPktFile()
@@ -133,13 +129,13 @@ Public Class MainViewModel
                 TC.Constraints = GeoPointConstraints.UniqueID
                 'TC.CollectParseErrors = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
-                'Dim pts As GeoPointList = iP.Load(Me.FilePath1)
+                Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
                 'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'TC.Load(Me.FilePath1)
-                Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
+                'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
                 'pts("7946800").ID = "1234"
                 'pts("7946811").ID = "946811"
                 

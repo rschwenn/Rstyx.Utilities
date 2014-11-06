@@ -17,12 +17,13 @@ Namespace Domain
      ''' <item><description> Every collection item has to implement the <see cref="IGeoPoint"/> interface. There are no more restrictions. </description></item>
      ''' <item><description> Multiple point's of the list may have the same <see cref="IGeoPoint.ID"/>. </description></item>
      ''' <item><description> Manipulation method for changing the point ID's according to a point change table. </description></item>
-     ''' <item><description> The <see cref="GeoPointOpenList.Header"/> property can carry some text information related to the list. </description></item>
+     ''' <item><description> The <see cref="IHeader.Header"/> property can carry some text information related to the list. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
     Public Class GeoPointOpenList
-        Inherits Collection(Of IGeoPoint)
+        Inherits   Collection(Of IGeoPoint)
+        Implements IHeader
         
         #Region "Private Fields"
             
@@ -66,7 +67,7 @@ Namespace Domain
             
             ''' <summary> Gets or sets header text lines for the list. </summary>
              ''' <remarks> This may be used for a text file. </remarks>
-            Public Property Header() As Collection(Of String)
+            Public Property Header() As Collection(Of String) Implements IHeader.Header
                 Get
                     If _Header Is Nothing Then
                         _Header = New Collection(Of String)

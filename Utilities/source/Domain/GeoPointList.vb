@@ -18,12 +18,13 @@ Namespace Domain
      ''' <item><description> The key for the keyed collection is the <see cref="IGeoPoint.ID"/> property of their items. </description></item>
      ''' <item><description> Every <see cref="IGeoPoint.ID"/> has to be unique in the list. </description></item>
      ''' <item><description> Manipulation method for changing the point ID's according to a point change table. </description></item>
-     ''' <item><description> The <see cref="GeoPointOpenList.Header"/> property can carry some text information related to the list. </description></item>
+     ''' <item><description> The <see cref="IHeader.Header"/> property can carry some text information related to the list. </description></item>
      ''' </list>
      ''' </para>
      ''' </remarks>
     Public Class GeoPointList
         Inherits IDCollection(Of IGeoPoint)
+        Implements IHeader
         
         #Region "Private Fields"
             
@@ -70,7 +71,7 @@ Namespace Domain
             
             ''' <summary> Gets or sets header text lines for the list. </summary>
              ''' <remarks> This may be used for a text file. </remarks>
-            Public Property Header() As Collection(Of String)
+            Public Property Header() As Collection(Of String) Implements IHeader.Header
                 Get
                     If _Header Is Nothing Then
                         _Header = New Collection(Of String)

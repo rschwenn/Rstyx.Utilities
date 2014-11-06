@@ -1,8 +1,10 @@
 ﻿
+Imports System.Collections.ObjectModel
+
 Namespace IO
     
     ''' <summary> Defines properties for handling parse errors. </summary>
-     ''' <remarks> This interface should be implemented by a class that is able to (read and) parse a text file. </remarks>
+     ''' <remarks> This interface should be implemented by a class that is able to read a file and can parse and check it's content. </remarks>
     Public Interface IParseErrors
             
             ''' <summary> Provides access to the errors occurred while parsing the file. </summary>
@@ -18,6 +20,14 @@ Namespace IO
             
             ''' <summary> Determines if parse errors should be shown in jEdit after parsing. Defaults to <see langword="true"/>. </summary>
             Property ShowParseErrorsInJedit() As Boolean
+        
+    End Interface
+    
+    ''' <summary> Defines an interface for maintaining simple text header meta data. </summary>
+    Public Interface IHeader
+            
+            ''' <summary> Holds text header lines. Defaults to an empty collection. </summary>
+            Property Header() As Collection(Of String)
         
     End Interface
     

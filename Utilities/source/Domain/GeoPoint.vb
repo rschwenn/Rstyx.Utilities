@@ -143,7 +143,7 @@ Namespace Domain
             
             ''' <summary> The point ID (It will be verified while setting it). </summary>
              ''' <remarks> The setter fails if given ID isn't valid for this point type. </remarks>
-             ''' <exception cref="ParseException"> <paramref name="TargetID"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
+             ''' <exception cref="InvalidIDException"> The value to set as ID isn't a valid ID for this point. </exception>
             Public Property ID() As String Implements IIdentifiable(Of String).ID
                 Get
                     Return _ID

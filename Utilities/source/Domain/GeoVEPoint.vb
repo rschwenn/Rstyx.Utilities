@@ -18,16 +18,16 @@ Namespace Domain
         #Region "ID Definition Fields"
             
             ''' <summary> Gets the maximum length of <see cref="GeoPoint.ID"/> as determined at instantiation. </summary>
-            Public    ReadOnly MaxIDLength   As Integer
+            Public ReadOnly MaxIDLength   As Integer
             
             ''' <summary> Gets the factor that converts a double <see cref="GeoPoint.ID"/> into an integer one (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
-            Protected ReadOnly PointNoFactor As Integer
+            Public ReadOnly PointNoFactor As Integer
             
             ''' <summary> Gets the minimal integer <see cref="GeoPoint.ID"/> (always <b>1</b>). </summary>
-            Protected ReadOnly MinIntegerID  As Integer
+            Public ReadOnly MinIntegerID  As Integer
             
             ''' <summary> Gets the maximum integer <see cref="GeoPoint.ID"/> (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
-            Protected ReadOnly MaxIntegerID  As Integer
+            Public ReadOnly MaxIntegerID  As Integer
             
         #End Region
         
@@ -111,6 +111,18 @@ Namespace Domain
              ''' <returns> Me.ID / PointNoFactor or 1.0E+40 if ID is still <see langword="null"/>. </returns>
             Public Function IDToVEDouble() As Double
                 Return If(Me.ID.IsEmptyOrWhiteSpace(), 1.0E+40, CDbl(Me.ID) / PointNoFactor)
+            End Function
+            
+            ''' <summary> Gets a Single for VE flavoured storage from this point's ID. </summary>
+             ''' <returns> Me.ID / PointNoFactor or Zero if ID is still <see langword="null"/>. </returns>
+            Public Function IDToVESingle() As Single
+                Return If(Me.ID.IsEmptyOrWhiteSpace(), 0.0, CSng(Me.ID) / PointNoFactor)
+            End Function
+            
+            ''' <summary> Gets an Int32 for VE flavoured storage from this point's ID. </summary>
+             ''' <returns> Me.ID or Zero if ID is still <see langword="null"/>. </returns>
+            Public Function IDToVEInt32() As Int32
+                Return If(Me.ID.IsEmptyOrWhiteSpace(), 0, CInt(Me.ID))
             End Function
             
         #End Region
