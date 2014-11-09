@@ -70,9 +70,8 @@ Namespace Domain.IO
                 Try 
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, FilePath))
                     
-                    Me.IDCheckList.Clear()
-                    Me.ParseErrors.Clear()
-                    Me.ParseErrors.FilePath = FilePath
+                    Me.Reset(FilePath)
+                    
                     Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     
                     Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
@@ -186,8 +185,7 @@ Namespace Domain.IO
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, FilePath))
                     
-                    Me.ParseErrors.Clear()
-                    Me.IDCheckList.Clear()
+                    Me.Reset(Nothing)
                     
                     Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = True  ' General Constraint for KF: Ensure unique ID.

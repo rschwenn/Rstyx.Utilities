@@ -55,10 +55,8 @@ Namespace Domain
                     For Each SourcePoint As IGeoPoint In SourcePointList
                         Me.Add(SourcePoint)
                     Next
-                    If (TypeOf SourcePointList Is GeoPointList) Then
-                        Me.Header = DirectCast(SourcePointList, GeoPointList).Header
-                    ElseIf (TypeOf SourcePointList Is GeoPointOpenList) Then
-                        Me.Header = DirectCast(SourcePointList, GeoPointOpenList).Header
+                    If (TypeOf SourcePointList Is IHeader) Then
+                        Me.Header = DirectCast(SourcePointList, IHeader).Header
                     End If
                 End If
             End Sub

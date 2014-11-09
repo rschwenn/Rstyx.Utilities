@@ -21,6 +21,7 @@ Namespace IO
      ''' </remarks>
     Public MustInherit Class DataFile
         Implements IParseErrors
+        Implements IHeader
         
         #Region "Private Fields"
             
@@ -60,6 +61,8 @@ Namespace IO
         
         #Region "Properties"
             
+            ''' <summary> Gets or sets the Header lines of the text file. </summary>
+            Public Property Header() As Collection(Of String) Implements IHeader.Header
             
         #End Region
         
@@ -135,6 +138,14 @@ Namespace IO
                 
                 Return HeaderLines
             End Function
+            
+            ''' <summary> Restets this <see cref="DataFile"/> and re-initializes it with a new file path. </summary>
+             ''' <param name="Path"> The File path for <see cref="ParseErrorCollection.FilePath"/>. May be <see langword="null"/>. </param>
+            Protected Overridable Sub Reset(Path As String)
+                Me.Header.Clear()
+                Me.ParseErrors.Clear()
+                Me.ParseErrors.FilePath = Path
+            End Sub
             
         #End Region
         

@@ -165,7 +165,7 @@ Namespace IO
                 Using oSR As New System.IO.StreamReader(Path, Encoding, DetectEncodingFromByteOrderMarks, BufferSize)
                     
                     Dim CurrentLine     As String
-                    Dim SplittedLine    As DataTextLine
+                    Dim DataLine        As DataTextLine
                     Dim CheckHeaderLine As Boolean = Me.SeparateHeader
                     Dim IsHeaderLine    As Boolean = False
                     Dim FileIndex       As Integer = Me.FilePaths.Count
@@ -178,30 +178,30 @@ Namespace IO
                         CurrentLine = oSR.ReadLine()
                         
                         _TotalLinesCount += 1
-                        SplittedLine = New DataTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
-                        SplittedLine.SourceLineNo = _TotalLinesCount
-                        SplittedLine.SourceFileIndex = FileIndex
+                        DataLine = New DataTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
+                        DataLine.SourceLineNo = _TotalLinesCount
+                        DataLine.SourceFileIndex = FileIndex
                         
                         ' Process header.
                         If (CheckHeaderLine) Then
-                            If (SplittedLine.IsCommentLine) Then
+                            If (DataLine.IsCommentLine) Then
                                 IsHeaderLine = True
-                                _Header.Add(SplittedLine.Comment)
+                                _Header.Add(DataLine.Comment)
                             Else
                                 CheckHeaderLine = False
                                 IsHeaderLine = False
                             End If
                         End If
                         
-                        ' Process data lines
+                        ' Process data lines.
                         If (Not IsHeaderLine) Then
-                            _DataCache.Add(SplittedLine)
-                            '
-                            If (SplittedLine.IsEmpty) Then
+                            _DataCache.Add(DataLine)
+                            
+                            If (DataLine.IsEmpty) Then
                                 _EmptyLinesCount += 1
-                            ElseIf (SplittedLine.IsCommentLine) Then
+                            ElseIf (DataLine.IsCommentLine) Then
                                 _CommentLinesCount += 1
-                            ElseIf (SplittedLine.HasData) Then
+                            ElseIf (DataLine.HasData) Then
                                 _DataLinesCount += 1
                             End If
                         End If

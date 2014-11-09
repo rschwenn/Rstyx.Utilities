@@ -33,7 +33,7 @@ Namespace IO.CSV
     ''' Represents a reader that provides fast, non-cached, forward-only access to CSV data.  
     ''' </summary>
     ''' <remarks>
-    ''' <para> Original: <a href="http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader" /> </para>
+    ''' <para> Original: http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader </para>
     ''' <para> I have converted the code to VB and removed IReader and IEnumerable interfaces (sorry). </para>
     ''' </remarks>
     Public Partial Class CsvReader

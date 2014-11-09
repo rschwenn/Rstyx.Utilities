@@ -57,7 +57,6 @@ Namespace Domain.IO
             Private iGeoRecordDefinitions       As New Dictionary(Of String, TcRecordDefinitionIGeo)     ' Key = getKeyForRecordDefinition(TcBlockType)
             
             Private _Blocks                     As New Collection(Of TcBlock)
-            Private _Header                     As New Collection(Of String)
             Private _FilePath                   As String
             Private _ParseErrors                As New ParseErrorCollection()
             
@@ -118,14 +117,6 @@ Namespace Domain.IO
                 Public ReadOnly Property FilePath() As String
                     Get
                         Return _FilePath
-                    End Get
-                End Property
-                
-                ''' <summary> Returns the Header lines of the text file. </summary>
-                 ''' <remarks> These are all leading comment lines that don't seem to belong to an output block of iTrassePC. </remarks>
-                Public ReadOnly Property Header() As Collection(Of String)
-                    Get
-                        Return _Header
                     End Get
                 End Property
                 
@@ -317,7 +308,7 @@ Namespace Domain.IO
             End Function
             
             ''' <summary> Resets this <see cref="TcFileReader"/>. </summary>
-            Public Sub Reset()
+            Public Overloads Sub Reset()
                 Me.Reset(Nothing)
             End Sub
             
@@ -941,18 +932,15 @@ Namespace Domain.IO
         
         #Region "Private Members"
             
-            ''' <summary> Restets this <see cref="TcFileReader"/> and re-initializes it whith a new file path. </summary>
+            ''' <summary> Restets this <see cref="TcFileReader"/> and re-initializes it with a new file path. </summary>
              ''' <param name="Path"> The complete path to the data text file to be read. </param>
-            Private Sub Reset(Path As String)
-                ' Clear results.
+            Protected Overrides Sub Reset(Path As String)
+                MyBase.Reset(Path)
                 SourceBlocks.Clear()
-                Me.Header.Clear()
                 Me.Blocks.Clear()
-                Me.ParseErrors.Clear()
                 Me.IDCheckList.Clear()
                 
                 ' Set file path.
-                Me.ParseErrors.FilePath = Path
                 _FilePath = Path
                 
                 ' Clear statistics.

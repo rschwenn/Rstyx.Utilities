@@ -50,9 +50,8 @@ Namespace Domain.IO
                 Try 
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, FilePath))
                     
-                    Me.IDCheckList.Clear()
-                    Me.ParseErrors.Clear()
-                    Me.ParseErrors.FilePath = FilePath
+                    Me.Reset(FilePath)
+                    
                     Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     Dim RecDef   As New RecordDefinition()
                     
@@ -69,9 +68,8 @@ Namespace Domain.IO
                         End If
                     Next
                     
-                    For i As Integer = 0 To FileReader.DataCache.Count - 1
+                    For Each DataLine As DataTextLine In FileReader.DataCache
                         
-                        Dim DataLine As DataTextLine = FileReader.DataCache(i)
                         Dim FieldID  As DataField(Of String) = Nothing
                         
                         If (DataLine.HasData) Then
@@ -176,8 +174,7 @@ Namespace Domain.IO
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, FilePath))
                     
-                    Me.ParseErrors.Clear()
-                    Me.IDCheckList.Clear()
+                    Me.Reset(Nothing)
                     
                     Dim PointFmt   As String = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
                     Dim PointCount As Integer = 0

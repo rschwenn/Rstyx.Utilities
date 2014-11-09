@@ -144,6 +144,17 @@ Namespace Domain.IO
             
         #End Region
         
+        #Region "Protected Overrides"
+            
+            ''' <summary> Restets this <see cref="DataFile"/> and re-initializes it with a new file path. </summary>
+             ''' <param name="Path"> The complete path to the data text file to be read. </param>
+            Protected Overrides Sub Reset(Path As String)
+                MyBase.Reset(Path)
+                Me.IDCheckList.Clear()
+            End Sub
+            
+        #End Region
+        
     End Class
     
 End Namespace
