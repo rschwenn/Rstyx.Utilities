@@ -17,6 +17,9 @@ Namespace Domain
         
         #Region "ID Definition Fields"
             
+            ''' <summary> Gets the default maximum length of <see cref="GeoPoint.ID"/>. </summary>
+            Public Shared ReadOnly DefaultMaxIDLength As Integer = 7
+            
             ''' <summary> Gets the maximum length of <see cref="GeoPoint.ID"/> as determined at instantiation. </summary>
             Public ReadOnly MaxIDLength   As Integer
             
@@ -33,9 +36,9 @@ Namespace Domain
         
         #Region "Constuctor"
             
-            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of <b>7</b>. </summary>
+            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of <see cref="GeoVEPoint.DefaultMaxIDLength"/>. </summary>
             Public Sub New()
-                Me.MaxIDLength   = 7
+                Me.MaxIDLength   = DefaultMaxIDLength
                 Me.PointNoFactor = Pow(10, MaxIDLength - 2)
                 Me.MinIntegerID  = 1
                 Me.MaxIntegerID  = Pow(10, MaxIDLength) - 1
@@ -55,8 +58,9 @@ Namespace Domain
                 Me.MaxIntegerID  = Pow(10, MaxIDLength) - 1
             End Sub
             
-            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of <b>7</b>
-            ''' and inititializes it's properties from a given <see cref="IGeoPoint"/>. </summary>
+            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of
+            ''' <see cref="GeoVEPoint.DefaultMaxIDLength"/> and inititializes it's properties from a given <see cref="IGeoPoint"/>.
+            ''' </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
@@ -105,7 +109,7 @@ Namespace Domain
             
         #End Region
                 
-        #Region "Methods"
+        #Region "Instance Methods"
             
             ''' <summary> Gets a Double for VE flavoured storage from this point's ID. </summary>
              ''' <returns> Me.ID / PointNoFactor or 1.0E+40 if ID is still <see langword="null"/>. </returns>
@@ -125,8 +129,48 @@ Namespace Domain
                 Return If(Me.ID.IsEmptyOrWhiteSpace(), 0, CInt(Me.ID))
             End Function
             
+            ''' <summary> Gets a decimal string representation from this point's ID. </summary>
+             ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is still <see langword="null"/>. </returns>
+            Public Function FormatID() As String
+                Return If(Me.ID.IsEmptyOrWhiteSpace(), String.Empty, sprintf("%." & CStr(MaxIDLength + 1) & "f", CDbl(Me.ID) / PointNoFactor))
+            End Function
+            
         #End Region
-
+        
+        #Region "Static Methods"
+            
+            ''' <summary> Gets the usual (decimal) VE notation from a given ID. </summary>
+             ''' <param name="ID"> The point ID to format. May be <see langword="null"/>. </param>
+             ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is <see langword="null"/>. </returns>
+             ''' <exception cref="InvalidIDException"> <paramref name="ID"/> isn't a valid ID for this point. </exception>
+            Public Shared Function FormatID(ID As String) As String
+                Dim RetID As String = ID
+                If (ID.IsNotEmptyOrWhiteSpace()) Then
+                    Dim VEPoint As New GeoVEPoint()
+                    VEPoint.ID = ID
+                    RetID = VEPoint.FormatID()
+                End If
+                Return RetID
+            End Function
+            
+            ''' <summary> Gets the usual (decimal) VE notation from a given ID. </summary>
+             ''' <param name="ID"> The point ID to format. May be <see langword="null"/>. </param>
+             ''' <param name="MaxIDLength"> The maximum supported length resp. digits for the point ID. </param>
+             ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is <see langword="null"/>. </returns>
+             ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> doesn't equals 6 or 7. </exception>
+             ''' <exception cref="InvalidIDException"> <paramref name="ID"/> isn't a valid ID for this point. </exception>
+            Public Shared Function FormatID(ID As String, MaxIDLength As Integer) As String
+                Dim RetID As String = ID
+                If (ID.IsNotEmptyOrWhiteSpace()) Then
+                    Dim VEPoint As New GeoVEPoint(MaxIDLength)
+                    VEPoint.ID = ID
+                    RetID = VEPoint.FormatID()
+                End If
+                Return RetID
+            End Function
+            
+        #End Region
+        
         #Region "Overrides"
             
             ''' <summary> Parses the given string as new <see cref="GeoPoint.ID"/> for this GeoPoint. </summary>

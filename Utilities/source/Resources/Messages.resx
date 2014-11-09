@@ -800,7 +800,7 @@
     <comment>File Name: String</comment>
   </data>
   <data name="GeoPointList_ChangeIDSuccess" xml:space="preserve">
-    <value>=&gt; %d Punktnummern geändert.</value>
+    <value>=&gt; %d Punkt-ID's geändert.</value>
     <comment>Point Count: Integer</comment>
   </data>
   <data name="GeoPointList_EmptyIDChangeTab" xml:space="preserve">

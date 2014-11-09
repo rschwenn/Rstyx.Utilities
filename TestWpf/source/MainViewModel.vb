@@ -116,6 +116,9 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
+                Dim RawID As String = Me.Textbox 
+                Dim p As New GeoVEPoint()
+                p.ID = RawID
                 'Logger.logInfo(Round(Double.NaN, 2).ToString())
                 
                 
@@ -129,7 +132,7 @@ Public Class MainViewModel
                 TC.Constraints = GeoPointConstraints.UniqueID
                 'TC.CollectParseErrors = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
-                Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
+                'Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
                 'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
@@ -145,7 +148,7 @@ Public Class MainViewModel
                 'NewPoint.ID = "777777777777"
                 
                 'KV.Store(TC.AllPoints, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
-                iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
+                'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 
                 Dim dtUTC As DateTime = DateTime.UtcNow

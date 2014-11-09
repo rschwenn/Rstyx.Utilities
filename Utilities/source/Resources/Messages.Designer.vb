@@ -1208,7 +1208,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punktnummern geändert. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punkt-ID&apos;s geändert. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointList_ChangeIDSuccess() As String
             Get

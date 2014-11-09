@@ -186,8 +186,10 @@ Namespace Domain.IO
                     Using oSW As New StreamWriter(FilePath, append:=False, encoding:=Me.FileEncoding)
                         
                         ' Header.
-                        Dim HeaderLines As String = Me.CreateFileHeader(PointList).ToString()
-                        If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
+                        If (TypeOf PointList Is IHeader) Then
+                            Dim HeaderLines As String = Me.CreateFileHeader(PointList).ToString()
+                            If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
+                        End If
                         
                         ' Points.
                         For Each SourcePoint As IGeoPoint In PointList
