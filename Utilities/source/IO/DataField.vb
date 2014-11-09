@@ -37,7 +37,7 @@ Namespace IO
         ''' <summary> Determines that, for a numeric target type, a non-numeric value will be treated as "unknown", hence <c>Double.NaN</c> resp. default value (Zero). </summary>
         NonNumericAsNaN = 8
         
-        ''' <summary> Determines that the field isn't required to be found in the source string. This way a missing field won't lead parsing to fail. </summary>
+        ''' <summary> Determines that the field or it's value isn't required to be found in the source string. This way a missing field value won't lead parsing to fail. </summary>
         NotRequired = 16
         
         ''' <summary> Determines that a string field will be trimmed. </summary>

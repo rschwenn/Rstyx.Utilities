@@ -5,6 +5,7 @@ Imports System.Globalization
 Imports System.Runtime.InteropServices
 
 Imports Rstyx.Utilities.Domain
+Imports Rstyx.Utilities.StringUtils
 
 Namespace IO
     
@@ -254,10 +255,10 @@ Namespace IO
                                                          ) As Boolean
                 Dim TargetType  As Type = GetType(TFieldValue)
                 If (Not ((TargetType Is GetType(String)) OrElse (TargetType Is GetType(Integer)) OrElse (TargetType Is GetType(Long)) OrElse (TargetType Is GetType(Double)) OrElse (TargetType Is GetType(Kilometer)) OrElse TargetType.IsEnum)) Then
-                    Throw New System.ArgumentException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_InvalidTypeArgument, TargetType.Name), "TFieldValue")
+                    Throw New System.ArgumentException(sprintf(Rstyx.Utilities.Resources.Messages.Global_InvalidTypeArgument, TargetType.Name), "TFieldValue")
                 End If
                 If (FieldDef Is Nothing) Then Throw New System.ArgumentNullException("FieldDef")
-                If (Not Me.HasData) Then Throw New System.InvalidOperationException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_EmptyDataLine, Me.SourceLineNo))
+                If (Not Me.HasData) Then Throw New System.InvalidOperationException(sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_EmptyDataLine, Me.SourceLineNo))
                 
                 ' Default values.
                 Const DefaultString     As String      = ""
@@ -280,7 +281,7 @@ Namespace IO
                 Dim FieldHasValue   As Boolean = False
                 Dim FieldSource     As DataFieldSource = Nothing
                 Dim FieldValue      As TFieldValue = Nothing
-                Dim ParseError      As ParseError = Nothing
+                Dim oParseError     As ParseError = Nothing
                 Dim TargetTypeName  As String = TargetType.Name
                 
                 ' Helper objects of every supported type.
@@ -319,21 +320,36 @@ Namespace IO
                     FieldSource = New DataFieldSource(0, 1, "0")  ' Dummy.
                     
                 ElseIf (FieldDef.PositionType = DataFieldPositionType.WordNumber) Then
+                    
                     If (FieldDef.ColumnOrWord > Me.Words.Count) Then
                         If (Not OptionNotRequired) Then
                             success = False
-                            ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
+                            oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
                         End If
                     Else
                         FieldSource = Me.Words(FieldDef.ColumnOrWord - 1)
-                        FieldHasValue = True
+                        
+                        ' Check for existent value.
+                        If (OptionTrim OrElse OptionTrimEnd) Then
+                            FieldHasValue = FieldSource.Value.IsNotEmptyOrWhiteSpace()
+                        Else
+                            FieldHasValue = FieldSource.Value.IsNotEmpty()
+                        End If
+                        
+                        If (Not FieldHasValue) Then
+                            If (Not OptionNotRequired) Then
+                                success = False
+                                oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldSource.Column, FieldSource.Column + FieldSource.Length, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
+                            End If
+                        End If
                     End If
                     
                 ElseIf (FieldDef.PositionType = DataFieldPositionType.ColumnAndLength) Then
+                    
                     If (Not (FieldDef.ColumnOrWord < Me.Data.Length)) Then
                         If (Not OptionNotRequired) Then
                             success = False
-                            ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord, FieldDef.Length), Nothing)
+                            oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord, FieldDef.Length), Nothing)
                         End If
                     Else
                         ' Ensure field length doesn't exceeds Me.Data.
@@ -351,13 +367,17 @@ Namespace IO
                         FieldSource = New DataFieldSource(FieldDef.ColumnOrWord, Length, Me.Data.Substring(FieldDef.ColumnOrWord, Length))
                         
                         ' Check for existent value.
-                        If (FieldSource.Value.IsEmptyOrWhiteSpace()) Then
+                        If (OptionTrim OrElse OptionTrimEnd) Then
+                            FieldHasValue = FieldSource.Value.IsNotEmptyOrWhiteSpace()
+                        Else
+                            FieldHasValue = FieldSource.Value.IsNotEmpty()
+                        End If
+                        
+                        If (Not FieldHasValue) Then
                             If (Not OptionNotRequired) Then
                                 success = False
-                                ParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord + 1, FieldDef.Length), Nothing)
+                                oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord + 1, FieldDef.Length), Nothing)
                             End If
-                        Else
-                            FieldHasValue = True
                         End If
                     End If
                 End If
@@ -366,7 +386,7 @@ Namespace IO
                 If (Not FieldHasValue) Then
                     If (OptionMissingAsZero) Then
                         FieldSource   = New DataFieldSource(0, 1, "0")  ' Dummy.
-                        ParseError    = Nothing
+                        oParseError    = Nothing
                         FieldHasValue = True
                         success       = True
                     End If
@@ -398,17 +418,17 @@ Namespace IO
                             success = Integer.TryParse(FieldString, FieldInteger)
                             
                             If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
-                                ParseError = New ParseError(ParseErrorLevel.Error, 
+                                oParseError = New ParseError(ParseErrorLevel.Error, 
                                                             Me.SourceLineNo,
                                                             FieldSource.Column,
                                                             FieldSource.Column + FieldSource.Length,
-                                                            StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotInteger, FieldDef.Caption, Integer.MinValue, Integer.MaxValue, FieldSource.Value),
+                                                            sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotInteger, FieldDef.Caption, Integer.MinValue, Integer.MaxValue, FieldSource.Value),
                                                             Nothing
                                                            )
                             Else
                                 If ((Not success) AndAlso OptionNonNumericAsNaN) Then
                                     FieldInteger = DefaultInteger
-                                    ParseError   = Nothing
+                                    oParseError   = Nothing
                                     success      = True
                                 End If
                                 'If (OptionZeroAsNaN AndAlso (FieldInteger = 0)) Then FieldInteger = DefaultInteger
@@ -429,17 +449,17 @@ Namespace IO
                             success = Long.TryParse(FieldString, FieldLong)
                             
                             If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
-                                ParseError = New ParseError(ParseErrorLevel.Error, 
+                                oParseError = New ParseError(ParseErrorLevel.Error, 
                                                             Me.SourceLineNo,
                                                             FieldSource.Column,
                                                             FieldSource.Column + FieldSource.Length,
-                                                            StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotLong, FieldDef.Caption, Long.MinValue, Long.MaxValue, FieldSource.Value),
+                                                            sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotLong, FieldDef.Caption, Long.MinValue, Long.MaxValue, FieldSource.Value),
                                                             Nothing
                                                            )
                             Else
                                 If ((Not success) AndAlso OptionNonNumericAsNaN) Then
                                     FieldLong = DefaultLong
-                                    ParseError   = Nothing
+                                    oParseError   = Nothing
                                     success      = True
                                 End If
                                 'If (OptionZeroAsNaN AndAlso (FieldLong = 0)) Then FieldLong = DefaultLong
@@ -469,17 +489,17 @@ Namespace IO
                             End If
                             
                             If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
-                                ParseError = New ParseError(ParseErrorLevel.Error, 
+                                oParseError = New ParseError(ParseErrorLevel.Error, 
                                                             Me.SourceLineNo,
                                                             FieldSource.Column,
                                                             FieldSource.Column + FieldSource.Length,
-                                                            StringUtils.sprintf(MessageFmt, FieldDef.Caption, FieldSource.Value),
+                                                            sprintf(MessageFmt, FieldDef.Caption, FieldSource.Value),
                                                             Nothing
                                                            )
                             Else
                                 If ((Not success) AndAlso OptionNonNumericAsNaN) Then
                                     FieldDouble = Double.NaN
-                                    ParseError  = Nothing
+                                    oParseError  = Nothing
                                     success     = True
                                 End If
                                 If (OptionZeroAsNaN AndAlso (FieldDouble = 0.0)) Then FieldDouble = Double.NaN
@@ -501,17 +521,17 @@ Namespace IO
                             success = FieldKilometer.TryParse(FieldString)
                             
                             If ((Not success) AndAlso (Not OptionNonNumericAsNaN)) Then
-                                ParseError = New ParseError(ParseErrorLevel.Error,
+                                oParseError = New ParseError(ParseErrorLevel.Error,
                                                             Me.SourceLineNo,
                                                             FieldSource.Column,
                                                             FieldSource.Column + FieldSource.Length,
-                                                            StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer, FieldDef.Caption, FieldSource.Value),
+                                                            sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer, FieldDef.Caption, FieldSource.Value),
                                                             Nothing
                                                            )
                             Else
                                 If ((Not success) AndAlso OptionNonNumericAsNaN) Then
                                     ' Already there: FieldKilometer.Value = Double.NaN
-                                    ParseError  = Nothing
+                                    oParseError  = Nothing
                                     success     = True
                                 End If
                                 If (OptionZeroAsNaN AndAlso (FieldKilometer.Value = 0.0)) Then FieldKilometer = DefaultKilometer
@@ -534,12 +554,12 @@ Namespace IO
                                     For Each Value As Integer In [Enum].GetValues(TargetType)
                                         ValidValues &= ", " & CStr(Value)
                                     Next
-                                    ParseError = New ParseError(ParseErrorLevel.Error,
+                                    oParseError = New ParseError(ParseErrorLevel.Error,
                                                                 Me.SourceLineNo,
                                                                 FieldSource.Column,
                                                                 FieldSource.Column + FieldSource.Length,
-                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotEnumMember, FieldDef.Caption, FieldSource.Value),
-                                                                StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_ValidValues, ValidValues),
+                                                                sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotEnumMember, FieldDef.Caption, FieldSource.Value),
+                                                                sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_ValidValues, ValidValues),
                                                                 Nothing
                                                                )
                                 End Try
@@ -550,7 +570,7 @@ Namespace IO
                 End If
                 
                 ' Create the DataField.
-                Result = New DataField(Of TFieldValue)(FieldValue, FieldSource, ParseError, FieldDef)
+                Result = New DataField(Of TFieldValue)(FieldValue, FieldSource, oParseError, FieldDef)
                 
                 Return success
             End Function
@@ -648,7 +668,11 @@ Namespace IO
                             RetValue.Add(New DataFieldSource(Match.Index, Match.Length, Match.Value))
                         Next
                     Else
-                        WordRegEx = "[^" & Me.FieldDelimiter & "]+"
+                        ' ********************************************************************************************************************
+                        ' TODO: GetWords() can't recognize empty fields, because two subsequent delimiters are treated as part of field value.
+                        ' ********************************************************************************************************************
+                        WordRegEx = "[^" & Me.FieldDelimiter & "]+"  ' Doesn't find an empty field at line start.
+                        'WordRegEx = "[^" & Me.FieldDelimiter & "]*" ' Always find an empty field at line end, which isn't there.
                         
                         ' Ensure last field will be considerd even if it's empty (hence Me.Data ends with delimiter).
                         Dim DataTuned As String = Me.Data & " "

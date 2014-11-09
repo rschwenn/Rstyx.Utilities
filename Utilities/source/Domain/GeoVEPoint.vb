@@ -132,7 +132,7 @@ Namespace Domain
             ''' <summary> Gets a decimal string representation from this point's ID. </summary>
              ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is still <see langword="null"/>. </returns>
             Public Function FormatID() As String
-                Return If(Me.ID.IsEmptyOrWhiteSpace(), String.Empty, sprintf("%." & CStr(MaxIDLength + 1) & "f", CDbl(Me.ID) / PointNoFactor))
+                Return If(Me.ID.IsEmptyOrWhiteSpace(), String.Empty, sprintf("%." & CStr(MaxIDLength - 2) & "f", CDbl(Me.ID) / PointNoFactor))
             End Function
             
         #End Region

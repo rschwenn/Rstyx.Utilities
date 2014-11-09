@@ -254,7 +254,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (Spalte %d, Länge %d). ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht oder ist leer (Spalte %d, Länge %d). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DataTextLine_MissingField() As String
             Get
@@ -263,7 +263,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht (%d. Feld). ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Das Feld &apos;%s&apos; existiert nicht oder ist leer (%d. Feld). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DataTextLine_MissingWord() As String
             Get
