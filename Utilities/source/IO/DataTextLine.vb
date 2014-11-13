@@ -330,7 +330,7 @@ Namespace IO
                         FieldSource = Me.Words(FieldDef.ColumnOrWord - 1)
                         
                         ' Check for existent value.
-                        If (OptionTrim OrElse OptionTrimEnd) Then
+                        If (OptionTrim OrElse OptionTrimEnd OrElse (Not (TargetType Is TypeString))) Then
                             FieldHasValue = FieldSource.Value.IsNotEmptyOrWhiteSpace()
                         Else
                             FieldHasValue = FieldSource.Value.IsNotEmpty()
@@ -367,7 +367,7 @@ Namespace IO
                         FieldSource = New DataFieldSource(FieldDef.ColumnOrWord, Length, Me.Data.Substring(FieldDef.ColumnOrWord, Length))
                         
                         ' Check for existent value.
-                        If (OptionTrim OrElse OptionTrimEnd) Then
+                        If (OptionTrim OrElse OptionTrimEnd OrElse (Not (TargetType Is TypeString))) Then
                             FieldHasValue = FieldSource.Value.IsNotEmptyOrWhiteSpace()
                         Else
                             FieldHasValue = FieldSource.Value.IsNotEmpty()
