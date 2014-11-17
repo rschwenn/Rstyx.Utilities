@@ -17,7 +17,7 @@ Imports Rstyx.Utilities.Validation
 
 Namespace Domain.IO
     
-    ''' <summary>  Represents a reader that can read and cache points with track geometry coordinates (TC) of a text file using <see cref="DataTextFileReader"/>. </summary>
+    ''' <summary>  Represents a reader that can read and cache points with track geometry coordinates (TC) from a text file. </summary>
      ''' <remarks>
      ''' <list type="bullet">
      ''' <listheader> <b>General Features :</b> </listheader>
@@ -57,15 +57,10 @@ Namespace Domain.IO
             Private iGeoRecordDefinitions       As New Dictionary(Of String, TcRecordDefinitionIGeo)     ' Key = getKeyForRecordDefinition(TcBlockType)
             
             Private _Blocks                     As New Collection(Of TcBlock)
-            Private _FilePath                   As String
-            Private _ParseErrors                As New ParseErrorCollection()
             
             Private Const RHO                   As Double = 200 / Math.PI
             Private Const DoublePipeMask        As String = "D1o2u3b4l5e6P7i8p9e0"
             
-            Private _CommentLinesCount          As Long
-            Private _DataLinesCount             As Long
-            Private _EmptyLinesCount            As Long
             Private _TotalLinesCount            As Long
             
         #End Region
@@ -74,6 +69,10 @@ Namespace Domain.IO
             
             ''' <summary> Creates a new instance of TCFileReader with default settings. </summary>
             Public Sub New()
+                ' Don't recognize a header because the general logic doesn't match to TC file.
+                Me.SeparateHeader = False
+                Me.LineStartCommentToken = "#"
+                
                 setRecordDefinitionsVermEsn()
                 setRecordDefinitionsIGeo()
             End Sub
@@ -83,8 +82,8 @@ Namespace Domain.IO
              ''' <param name="StationAsKilometer"> If <see langword="true"/> the station value may be used also as kilometer. </param>
              ''' <exception cref="System.ArgumentException"> <paramref name="CantBase"/> isn't > 0. </exception>
             Public Sub New(CantBase As Double, StationAsKilometer As Boolean)
-                
-                If (Not (CantBase > 0)) Then  Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.Global_ValueNotGreaterThanZero, "CantBase")
+                Me.New()
+                If (Not (CantBase > 0)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.Global_ValueNotGreaterThanZero, "CantBase")
                 
                 Me.CantBase = CantBase
                 Me.StationAsKilometer = StationAsKilometer
@@ -107,53 +106,20 @@ Namespace Domain.IO
             #Region "Results"
                 
                 ''' <summary> Returns the list of found TC blocks with points. </summary>
+                 ''' <remarks> The file will be read if it hasn't been yet. </remarks>
                 Public ReadOnly Property Blocks() As Collection(Of TcBlock)
                     Get
+                        If (IsFilePathChanged) Then
+                            Me.Load()
+                            IsFilePathChanged = False
+                        End If
                         Return _Blocks
-                    End Get
-                End Property
-                
-                ''' <summary> Returns the path to the last read file. </summary>
-                Public ReadOnly Property FilePath() As String
-                    Get
-                        Return _FilePath
-                    End Get
-                End Property
-                
-                Public ReadOnly Iterator Property AllPoints As IEnumerable(Of GeoTcPoint)
-                    Get
-                        For Each Block As TcBlock In Me.Blocks
-                            For Each p As GeoTcPoint In Block.Points
-                                Yield p
-                            Next
-                        Next
                     End Get
                 End Property
                 
             #End Region
             
             #Region "Statistics"
-                
-                ''' <summary> Returns the count of comment lines. </summary>
-                Public ReadOnly Property CommentLinesCount() As Long
-                    Get
-                        Return _CommentLinesCount
-                    End Get
-                End Property
-                
-                ''' <summary> Returns the count of lines containing data. </summary>
-                Public ReadOnly Property DataLinesCount() As Long
-                    Get
-                        Return _DataLinesCount
-                    End Get
-                End Property
-                
-                ''' <summary> Returns the count of empty lines. </summary>
-                Public ReadOnly Property EmptyLinesCount() As Long
-                    Get
-                        Return _EmptyLinesCount
-                    End Get
-                End Property
                 
                 ''' <summary> Returns the total count of read points (in all blocks). </summary>
                 Public ReadOnly Property TotalPointCount() As Long
@@ -172,52 +138,28 @@ Namespace Domain.IO
         
         #Region "Public Members"
             
-            ''' <summary> Loads the file using specified settings for the used <see cref="StreamReader"/>. </summary>
-             ''' <param name="Path">                             The complete path to the data text file to be read. </param>
-             ''' <param name="Encoding">                         The character encoding to use. </param>
-             ''' <param name="DetectEncodingFromByteOrderMarks"> Indicates whether to look for byte order marks at the beginning of the file. </param>
-             ''' <param name="BufferSize">                       The minimum buffer size, in number of 16-bit characters. </param>
-             ''' <returns> All read points of all <see cref="TcFileReader.Blocks"/> as flat list. See <b>remarks</b> for details. </returns>
+            ''' <summary> Loads the file. </summary>
              ''' <remarks>
-             ''' The loaded data will be provided well structured by the <see cref="TcFileReader.Blocks"/> and <see cref="TcFileReader.Header"/>
+             ''' The loaded data will be provided structured by the <see cref="TcFileReader.Blocks"/> and <see cref="TcFileReader.Header"/>
              ''' properties, which are cleared before. Same for <see cref="TcFileReader.ParseErrors"/>.
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
-             ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>
-             ''' <exception cref="System.IO.DirectoryNotFoundException"> The specified path is invalid, such as being on an unmapped drive. </exception>
-             ''' <exception cref="System.NotSupportedException">         <paramref name="Path"/> includes an incorrect or invalid syntax for file name, directory name, or volume label. </exception>
-             ''' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero. </exception>
-             ''' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
-             ''' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
              ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="TcFileReader.ParseErrors"/> isn't empty. </exception>
-            Public Overloads Function Load(Path As String,
-                                      Encoding As Encoding,
-                                      DetectEncodingFromByteOrderMarks As Boolean,
-                                      BufferSize As Integer
-                                     ) As GeoPointOpenList
+             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
+            Public Sub Load()
                 Try
+                    Logger.logDebug(sprintf("Load TC file '%s'", Me.FilePath))
+                    
                     Dim DataLine        As DataTextLine
                     Dim kvp             As KeyValuePair(Of String, String)
                     Dim SourceBlock     As TcSourceBlockInfo
                     Dim TcBlock         As TcBlock
                     Dim BlockCount      As Integer = 0
                     
-                    ' Read the file and cache pre-split lines. Don't recognize a header because the general logic doesn't match to TC file.
-                    Logger.logDebug(sprintf("Load TC file '%s'", Path))
-                    Dim FileReader As New DataTextFileReader()
-                    FileReader.SeparateHeader = False
-                    FileReader.LineStartCommentToken = "#"
-                    FileReader.Load(Path, Encoding, DetectEncodingFromByteOrderMarks, BufferSize)
-                    
-                    ' Reset results and settings.
-                    Me.Reset(Path)
-                    
                     Logger.logDebug(" Looking for block beginnings...")
-                    ' Find and store source block beginnings (still without EndIndex, Version and Format).
-                    For i As Integer = 0 To FileReader.DataCache.Count - 1
+                    ' Read file. Find and store source block beginnings (still without EndIndex, Version and Format).
+                    For i As Integer = 0 To Me.DataLineBuffer.Count - 1
                         
-                        DataLine = FileReader.DataCache(i)
+                        DataLine = Me.DataLineBuffer(i)
                         
                         If (DataLine.IsCommentLine) Then
                             ' Comment line: Look for output header of iGeo and iTrassePC.
@@ -229,7 +171,7 @@ Namespace Domain.IO
                                         SourceBlock = New TcSourceBlockInfo()
                                         SourceBlock.BlockType.Version = TcBlockVersion.Current
                                         SourceBlock.BlockType.Program = If((kvp.Value = "iGeo"), TcBlockProgram.iGeo, TcBlockProgram.iTrassePC)
-                                        SourceBlock.StartIndex = findStartOfBlock(FileReader.DataCache, i)
+                                        SourceBlock.StartIndex = findStartOfBlock(Me.DataLineBuffer, i)
                                         SourceBlocks.Add(SourceBlock)
                                         BlockCount += 1
                                         Logger.logDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
@@ -241,7 +183,7 @@ Namespace Domain.IO
                             If (DataLine.Data.IsMatchingTo("^Trassenumformung\s+|^Umformung\s+")) Then
                                 SourceBlock = New TcSourceBlockInfo()
                                 SourceBlock.BlockType.Program = TcBlockProgram.VermEsn
-                                SourceBlock.StartIndex = findStartOfBlock(FileReader.DataCache, i)
+                                SourceBlock.StartIndex = findStartOfBlock(Me.DataLineBuffer, i)
                                 SourceBlocks.Add(SourceBlock)
                                 BlockCount += 1
                                 Logger.logDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
@@ -252,7 +194,7 @@ Namespace Domain.IO
                     ' Store block end lines (the line before the next block start).
                     For i As Integer = 0 To SourceBlocks.Count - 1
                         If (i = (SourceBlocks.Count - 1)) Then
-                            SourceBlocks(i).EndIndex = FileReader.DataCache.Count - 1
+                            SourceBlocks(i).EndIndex = Me.DataLineBuffer.Count - 1
                         Else
                             SourceBlocks(i).EndIndex = SourceBlocks(i + 1).StartIndex - 1
                         End If
@@ -260,12 +202,12 @@ Namespace Domain.IO
                     
                     Logger.logDebug(" Looking for file header...")
                     ' Find and store file header lines (all comment lines from file start until the first non comment line or block start).
-                    Dim MaxIndexToLook As Integer = If((SourceBlocks.Count > 0), SourceBlocks(0).StartIndex - 1, FileReader.DataCache.Count - 1)
+                    Dim MaxIndexToLook As Integer = If((SourceBlocks.Count > 0), SourceBlocks(0).StartIndex - 1, Me.DataLineBuffer.Count - 1)
                     For i As Integer = 0 To MaxIndexToLook
-                        If (Not FileReader.DataCache(i).IsCommentLine) Then
+                        If (Not Me.DataLineBuffer(i).IsCommentLine) Then
                             Exit For
                         Else
-                            Me.Header.Add(FileReader.DataCache(i).Comment)
+                            Me.Header.Add(Me.DataLineBuffer(i).Comment)
                         End If
                     Next
                     
@@ -276,11 +218,11 @@ Namespace Domain.IO
                         Select Case SourceBlocks(i).BlockType.Program
                             
                             Case TcBlockProgram.VermEsn
-                                TcBlock = readBlockVermEsn(FileReader.DataCache, SourceBlocks(i))
+                                TcBlock = readBlockVermEsn(Me.DataLineBuffer, SourceBlocks(i))
                                 If (TcBlock.IsValid) Then Me.Blocks.Add(TcBlock)
                                 
                             Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
-                                TcBlock = readBlockIGeo(FileReader.DataCache, SourceBlocks(i))
+                                TcBlock = readBlockIGeo(Me.DataLineBuffer, SourceBlocks(i))
                                 If (TcBlock.IsValid) Then Me.Blocks.Add(TcBlock)
                         End Select
                     Next
@@ -303,9 +245,7 @@ Namespace Domain.IO
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
                 End Try
-                
-                Return New GeoPointOpenList(Me.AllPoints)
-            End Function
+            End Sub
             
             ''' <summary> Resets this <see cref="TcFileReader"/>. </summary>
             Public Overloads Sub Reset()
@@ -793,19 +733,19 @@ Namespace Domain.IO
             End Class
             
             
-            ''' <summary> Info regarding source of every found TC block inside the internal <see cref="DataTextFileReader.DataCache"/>. </summary>
+            ''' <summary> Info regarding source of every found TC block inside the internal <see cref="DataFile.DataLineBuffer"/>. </summary>
             Protected Class TcSourceBlockInfo
                 
                 ''' <summary> Type of TC block. Only Program is determined yet! </summary>
                 Public BlockType        As New TcBlockType()
                 
-                ''' <summary> Index into <see cref="DataTextFileReader.DataCache"/> representing the first line of this block. </summary>
+                ''' <summary> Index into <see cref="DataFile.DataLineBuffer"/> representing the first line of this block. </summary>
                 Public StartIndex       As Integer = -1
                 
-                ''' <summary> Index into <see cref="DataTextFileReader.DataCache"/> representing the first DATA line of this block. </summary>
+                ''' <summary> Index into <see cref="DataFile.DataLineBuffer"/> representing the first DATA line of this block. </summary>
                 Public DataStartIndex   As Integer = -1
                 
-                ''' <summary> Index into <see cref="DataTextFileReader.DataCache"/> representing the last line of this block. </summary>
+                ''' <summary> Index into <see cref="DataFile.DataLineBuffer"/> representing the last line of this block. </summary>
                 Public EndIndex         As Integer = -1
                 
                 ''' <summary> Tells if the first DATA line of this block has been found. </summary>
@@ -941,7 +881,7 @@ Namespace Domain.IO
                 Me.IDCheckList.Clear()
                 
                 ' Set file path.
-                _FilePath = Path
+                Me.FilePath = Path
                 
                 ' Clear statistics.
                 
@@ -2252,18 +2192,25 @@ Namespace Domain.IO
         
         #Region "GeoPointFile Overrides Stub"
             
-            ''' <summary> Reads the point file and fills the points collection. </summary>
-             ''' <param name="FilePath"> File to read from. </param>
+            ''' <summary> Reads the point file and provides the points as (not lazy established) enumerable. </summary>
              ''' <returns> All read points of all <see cref="TcFileReader.Blocks"/> as flat list. See <b>remarks</b> for details. </returns>
              ''' <remarks>
-             ''' The loaded data will be provided well structured by the <see cref="TcFileReader.Blocks"/> and <see cref="TcFileReader.Header"/>
-             ''' properties, which are cleared before. Same for <see cref="TcFileReader.ParseErrors"/>.
+             ''' The file will be read if it hasn't been yet
+             ''' <para>
+             ''' This method is for convenience only - see <see cref="TcFileReader.Load"/>.
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Function Load(FilePath As String) As GeoPointOpenList
-                Return Me.Load(FilePath, FileEncoding, DetectEncodingFromByteOrderMarks:=True, BufferSize:=1024)
-            End Function
+            Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
+                Get
+                    For Each Block As TcBlock In Me.Blocks
+                        For Each p As GeoTcPoint In Block.Points
+                            Yield p
+                        Next
+                    Next
+                End Get
+            End Property
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>

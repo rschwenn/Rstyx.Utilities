@@ -200,6 +200,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Keine Zeichenkodierung für Dateiperation angegeben. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataFile_MissingEncoding() As String
+            Get
+                Return ResourceManager.GetString("DataFile_MissingEncoding", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Keinen Dateipfad für Dateiperation angegeben. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DataFile_MissingFilePath() As String
+            Get
+                Return ResourceManager.GetString("DataFile_MissingFilePath", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Zeile %d enthält keine Daten. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DataTextLine_EmptyDataLine() As String

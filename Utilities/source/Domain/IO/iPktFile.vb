@@ -36,134 +36,125 @@ Namespace Domain.IO
         
         #Region "Overrides"
             
-            ''' <summary> Reads the point file and fills the points collection. </summary>
-             ''' <param name="FilePath"> File to read from. </param>
-             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
+            ''' <summary> Reads the point file and provides the points as lazy established enumerable. </summary>
+             ''' <returns> All points of <see cref="DataFile.FilePath"/> as lazy established enumerable. </returns>
              ''' <remarks>
+             ''' <para>
+             ''' If a file header is recognized it will be stored in <see cref="GeoPointFile.Header"/> property before yielding the first point.
+             ''' </para>
+             ''' <para>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Function Load(FilePath As String) As GeoPointOpenList
-                
-                Dim PointList As New GeoPointOpenList()
-                Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, FilePath))
-                    
-                    Me.Reset(FilePath)
-                    
-                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
-                    Dim RecDef   As New RecordDefinition()
-                    
-                    Dim FileReader As New DataTextFileReader()
-                    FileReader.LineStartCommentToken = Me.LineStartCommentToken
-                    FileReader.LineEndCommentToken   = Me.LineEndCommentToken
-                    FileReader.SeparateHeader        = Me.SeparateHeader
-                    FileReader.Load(FilePath, Encoding:=Me.FileEncoding, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
-                    
-                    ' Store read header lines (only if they differ from the default ones).
-                    For Each HeadLine As String In FileReader.Header
-                        If (Not Me.DefaultHeader.Contains(HeadLine)) Then
-                            PointList.Header.Add(HeadLine)
-                        End If
-                    Next
-                    
-                    For Each DataLine As DataTextLine In FileReader.DataCache
+            Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
+                Get
+                    Try 
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, FilePath))
                         
-                        Dim FieldID  As DataField(Of String) = Nothing
+                        Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                        Dim RecDef      As New RecordDefinition()
+                        Dim PointCount  As Integer = 0
                         
-                        If (DataLine.HasData) Then
-                            Try
-    		                    Dim p As New GeoIPoint()
-                                
-                                FieldID = DataLine.ParseField(RecDef.PointID)
-                                p.ID    = FieldID.Value
-                                
-                                Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
-                                Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
-                                Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
-                                Dim FieldTime  As DataField(Of String) = DataLine.ParseField(RecDef.TimeStamp)
-                                
-                                p.Y = FieldY.Value
-                                p.X = FieldX.Value
-                                p.Z = FieldZ.Value
-                                
-                                p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
-                                p.ObjectKey    = DataLine.ParseField(RecDef.ObjectKey  ).Value
-                                p.GraficsCode  = DataLine.ParseField(RecDef.GraficsCode).Value
-                                p.GraficsDim   = DataLine.ParseField(RecDef.GraficsDim ).Value
-                                p.GraficsEcc   = DataLine.ParseField(RecDef.GraficsEcc ).Value
-                                p.CoordType    = DataLine.ParseField(RecDef.CoordType  ).Value
-                                p.CoordSys     = DataLine.ParseField(RecDef.CoordSys   ).Value
-                                p.Flags        = DataLine.ParseField(RecDef.Flags      ).Value
-                                p.wp           = DataLine.ParseField(RecDef.wp         ).Value
-                                p.wh           = DataLine.ParseField(RecDef.wh         ).Value
-                                p.Info         = DataLine.ParseField(RecDef.Info       ).Value
-                                p.AttKey1      = DataLine.ParseField(RecDef.AttKey1    ).Value
-                                p.AttValue1    = DataLine.ParseField(RecDef.AttValue1  ).Value
-                                p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
-                                p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
-                                p.Comment      = DataLine.ParseField(RecDef.Comment    ).Value
-                                
-                                p.SourcePath   = FilePath
-                                p.SourceLineNo = DataLine.SourceLineNo
-                                
-                                ' Parse time stamp if given (DataLine.ParseField is unable to do it).
-                                If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
-                                    Dim TimeStamp As DateTime
-                                    Dim success   As Boolean = DateTime.TryParseExact(FieldTime.Value, "s", Nothing, Globalization.DateTimeStyles.None, TimeStamp)
-                                    If (success) Then
-                                        p.TimeStamp = TimeStamp
-                                    Else
-                                        Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
-                                                                                   DataLine.SourceLineNo,
-                                                                                   FieldTime,
-                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
-                                                                                   sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
-                                                                                   FilePath))
+                        For Each DataLine As DataTextLine In Me.DataLineStream
+                            
+                            Dim FieldID  As DataField(Of String) = Nothing
+                            
+                            If (DataLine.HasData) Then
+                                Try
+    		                        Dim p As New GeoIPoint()
+                                    
+                                    FieldID = DataLine.ParseField(RecDef.PointID)
+                                    p.ID    = FieldID.Value
+                                    
+                                    Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
+                                    Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
+                                    Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
+                                    Dim FieldTime  As DataField(Of String) = DataLine.ParseField(RecDef.TimeStamp)
+                                    
+                                    p.Y = FieldY.Value
+                                    p.X = FieldX.Value
+                                    p.Z = FieldZ.Value
+                                    
+                                    p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
+                                    p.ObjectKey    = DataLine.ParseField(RecDef.ObjectKey  ).Value
+                                    p.GraficsCode  = DataLine.ParseField(RecDef.GraficsCode).Value
+                                    p.GraficsDim   = DataLine.ParseField(RecDef.GraficsDim ).Value
+                                    p.GraficsEcc   = DataLine.ParseField(RecDef.GraficsEcc ).Value
+                                    p.CoordType    = DataLine.ParseField(RecDef.CoordType  ).Value
+                                    p.CoordSys     = DataLine.ParseField(RecDef.CoordSys   ).Value
+                                    p.Flags        = DataLine.ParseField(RecDef.Flags      ).Value
+                                    p.wp           = DataLine.ParseField(RecDef.wp         ).Value
+                                    p.wh           = DataLine.ParseField(RecDef.wh         ).Value
+                                    p.Info         = DataLine.ParseField(RecDef.Info       ).Value
+                                    p.AttKey1      = DataLine.ParseField(RecDef.AttKey1    ).Value
+                                    p.AttValue1    = DataLine.ParseField(RecDef.AttValue1  ).Value
+                                    p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
+                                    p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
+                                    p.Comment      = DataLine.ParseField(RecDef.Comment    ).Value
+                                    
+                                    p.SourcePath   = FilePath
+                                    p.SourceLineNo = DataLine.SourceLineNo
+                                    
+                                    ' Parse time stamp if given (DataLine.ParseField is unable to do it).
+                                    If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
+                                        Dim TimeStamp As DateTime
+                                        Dim success   As Boolean = DateTime.TryParseExact(FieldTime.Value, "s", Nothing, Globalization.DateTimeStyles.None, TimeStamp)
+                                        If (success) Then
+                                            p.TimeStamp = TimeStamp
+                                        Else
+                                            Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
+                                                                                       DataLine.SourceLineNo,
+                                                                                       FieldTime,
+                                                                                       sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
+                                                                                       sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
+                                                                                       FilePath))
+                                        End If
                                     End If
-                                End If
-                                
-                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
-                                p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
-                                PointList.Add(p)
-                                
-                            Catch ex As InvalidIDException
-                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, FilePath))
-                                If (Not CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                End If
-                                
-                            Catch ex As ParseException When (ex.ParseError IsNot Nothing)
-                                Me.ParseErrors.Add(ex.ParseError)
-                                If (Not CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                End If
-                            End Try
+                                    
+                                    If (UniqueID) Then Me.VerifyUniqueID(p.ID)
+                                    p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
+                                    PointCount += 1
+                                    
+                                    Yield p
+                                    
+                                Catch ex As InvalidIDException
+                                    Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, FilePath))
+                                    If (Not CollectParseErrors) Then
+                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    End If
+                                    
+                                Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                                    Me.ParseErrors.Add(ex.ParseError)
+                                    If (Not CollectParseErrors) Then
+                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    End If
+                                End Try
+                            End If
+                        Next
+                        
+                        ' Throw exception if parsing errors has been collected.
+                        If (Me.ParseErrors.HasErrors) Then
+                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                        ElseIf (PointCount = 0) Then
+                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                         End If
-                    Next
-                    
-                    ' Throw exception if parsing errors has been collected.
-                    If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                    ElseIf (PointList.Count = 0) Then
-                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
-                    End If
-                    
-                    Logger.logDebug(PointList.ToString())
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointList.Count, FilePath))
-                    
-                Catch ex As ParseException
-                    Throw
-                Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, FilePath), ex)
-                Finally
-                    Me.ParseErrors.ToLoggingConsole()
-                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
-                End Try
+                        
+                        'Logger.logDebug(PointList.ToString())
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointCount, FilePath))
+                        
+                    Catch ex As ParseException
+                        Throw
+                    Catch ex as System.Exception
+                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, FilePath), ex)
+                    Finally
+                        Me.ParseErrors.ToLoggingConsole()
+                        If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                    End Try
+                End Get
+            End Property
                 
-                Return PointList
-            End Function
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>

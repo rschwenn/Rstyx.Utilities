@@ -51,12 +51,11 @@ Namespace Domain.IO
         
         #Region "Overrides"
             
-            ''' <summary> Reads the point file and fills the points collection. </summary>
-             ''' <param name="FilePath"> File to load the points from. </param>
-             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
+            ''' <summary> Reads the point file and provides the points as lazy established enumerable. </summary>
+             ''' <returns> All points of <see cref="DataFile.FilePath"/> as lazy established enumerable. </returns>
              ''' <remarks>
              ''' <para>
-             ''' The first point represents the file header. It will be read as each other point and stored in <see cref="KfFile.HeaderKF"/>.
+             ''' If a file header is recognized it will be stored in <see cref="GeoPointFile.Header"/> property before yielding the first point.
              ''' </para>
              ''' <para>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
@@ -64,105 +63,104 @@ Namespace Domain.IO
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Function Load(FilePath As String) As GeoPointOpenList
-                
-                Dim PointList As New GeoPointOpenList()
-                Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, FilePath))
-                    
-                    Me.Reset(FilePath)
-                    
-                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
-                    
-                    Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
-    		            
-                        oBR.BaseStream.Seek(0, SeekOrigin.Begin)
+            Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
+                Get
+                    Try 
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, FilePath))
                         
-    		            ' Points count.
-    		            Dim PointCount As Integer = CInt(oBR.BaseStream.Length / RecordLength) - 1
+                        Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+ 		                Dim PointCount  As Integer = 0
                         
-    		            ' Read header and points.
-    		            For i As Integer = 0 To PointCount
-    		            	
-    		                Dim p As New GeoVEPoint()
-                            Dim PointID As String
+                        Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
     		                
-                            PointID              = oBR.ReadDouble().ToString()
-                            p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
-                            p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
-                            p.Z                  = getDoubleFromVEDouble(oBR.ReadDouble())
-                            p.TrackPos.Kilometer = New Kilometer(getDoubleFromVEDouble(oBR.ReadDouble()))
+                            oBR.BaseStream.Seek(0, SeekOrigin.Begin)
                             
-                            p.PositionPreInfo    = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
-                            p.Info               = Trim(FileEncoding.GetString(oBR.ReadBytes(13)))
-                            p.PositionPostInfo   = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
+    		                ' Points count.
+    		                Dim KfPointCount As Integer = CInt(oBR.BaseStream.Length / RecordLength) - 1
                             
-                            p.HeightPreInfo      = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
-                            p.HeightInfo         = Trim(FileEncoding.GetString(oBR.ReadBytes(13)))
-                            p.HeightPostInfo     = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
-                            
-                            p.Kind               = Trim(FileEncoding.GetString(oBR.ReadBytes(4)))
-                            p.MarkType           = CStr(oBR.ReadByte)
-                            p.mp                 = CDbl(oBR.ReadInt16())
-                            p.mh                 = CDbl(oBR.ReadInt16())
-                            p.ObjectKey          = oBR.ReadInt32()
-                            p.MarkHints          = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))  ' Stability Code
-                            p.HeightSys          = Trim(FileEncoding.GetString(oBR.ReadBytes(3)))
-                            p.Job                = Trim(FileEncoding.GetString(oBR.ReadBytes(8)))
-                            p.sp                 = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))
-                            p.sh                 = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))
-                            
-                            Dim TrackNo As String = Trim(FileEncoding.GetString(oBR.ReadBytes(4)))
-                            Integer.TryParse(TrackNo, p.TrackPos.TrackNo)
-                            
-                            p.TrackPos.RailsCode = FileEncoding.GetString(oBR.ReadBytes(1))
-                            
-                            If (i = 0) Then
-                                Me.HeaderKF = p
-                            Else
-                                Try
-                                    p.ID = PointID
-                                    If (UniqueID) Then Me.VerifyUniqueID(p.ID)
-                                    p.VerifyConstraints(Me.Constraints)
-                                    PointList.Add(p)
-                                    
-                                Catch ex As InvalidIDException
-                                    Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Error, ex.Message))
-                                    If (Not CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                    End If
-                                    
-                                Catch ex As ParseException When (ex.ParseError IsNot Nothing)
-                                    Me.ParseErrors.Add(ex.ParseError)
-                                    If (Not CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                    End If
-                                End Try
-                            End If
-    		            Next
-                    End Using
-                    
-                    ' Throw exception if parsing errors (constraints) has been collected.
-                    If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                    ElseIf (PointList.Count = 0) Then
-                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
-                    End If
-                    
-                    Logger.logDebug(PointList.ToString())
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadSuccess, PointList.Count, FilePath))
-                    
-                Catch ex As ParseException
-                    Throw
-                Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadFailed, FilePath), ex)
-                Finally
-                    Me.ParseErrors.ToLoggingConsole()
-                    'If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
-                End Try
-                
-                Return PointList
-            End Function
+    		                ' Read header and points.
+    		                For i As Integer = 0 To KfPointCount
+    		                	
+    		                    Dim p As New GeoVEPoint()
+                                Dim PointID As String
+    		                    
+                                PointID              = oBR.ReadDouble().ToString()
+                                p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
+                                p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
+                                p.Z                  = getDoubleFromVEDouble(oBR.ReadDouble())
+                                p.TrackPos.Kilometer = New Kilometer(getDoubleFromVEDouble(oBR.ReadDouble()))
+                                
+                                p.PositionPreInfo    = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                p.Info               = Trim(FileEncoding.GetString(oBR.ReadBytes(13)))
+                                p.PositionPostInfo   = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                
+                                p.HeightPreInfo      = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                p.HeightInfo         = Trim(FileEncoding.GetString(oBR.ReadBytes(13)))
+                                p.HeightPostInfo     = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                
+                                p.Kind               = Trim(FileEncoding.GetString(oBR.ReadBytes(4)))
+                                p.MarkType           = CStr(oBR.ReadByte)
+                                p.mp                 = CDbl(oBR.ReadInt16())
+                                p.mh                 = CDbl(oBR.ReadInt16())
+                                p.ObjectKey          = oBR.ReadInt32()
+                                p.MarkHints          = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))  ' Stability Code
+                                p.HeightSys          = Trim(FileEncoding.GetString(oBR.ReadBytes(3)))
+                                p.Job                = Trim(FileEncoding.GetString(oBR.ReadBytes(8)))
+                                p.sp                 = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                p.sh                 = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                
+                                Dim TrackNo As String = Trim(FileEncoding.GetString(oBR.ReadBytes(4)))
+                                Integer.TryParse(TrackNo, p.TrackPos.TrackNo)
+                                
+                                p.TrackPos.RailsCode = FileEncoding.GetString(oBR.ReadBytes(1))
+                                
+                                If (i = 0) Then
+                                    Me.HeaderKF = p
+                                Else
+                                    Try
+                                        p.ID = PointID
+                                        If (UniqueID) Then Me.VerifyUniqueID(p.ID)
+                                        p.VerifyConstraints(Me.Constraints)
+                                        PointCount += 1
+                                        
+                                        Yield p
+                                        
+                                    Catch ex As InvalidIDException
+                                        Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Error, ex.Message))
+                                        If (Not CollectParseErrors) Then
+                                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                        End If
+                                        
+                                    Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                                        Me.ParseErrors.Add(ex.ParseError)
+                                        If (Not CollectParseErrors) Then
+                                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                        End If
+                                    End Try
+                                End If
+    		                Next
+                        End Using
+                        
+                        ' Throw exception if parsing errors (constraints) has been collected.
+                        If (Me.ParseErrors.HasErrors) Then
+                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                        ElseIf (PointCount = 0) Then
+                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
+                        End If
+                        
+                        'Logger.logDebug(PointList.ToString())
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadSuccess, PointCount, FilePath))
+                        
+                    Catch ex As ParseException
+                        Throw
+                    Catch ex as System.Exception
+                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadFailed, FilePath), ex)
+                    Finally
+                        Me.ParseErrors.ToLoggingConsole()
+                        'If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                    End Try
+                End Get
+            End Property
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>

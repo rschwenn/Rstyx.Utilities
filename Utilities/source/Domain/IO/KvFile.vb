@@ -36,117 +36,107 @@ Namespace Domain.IO
         
         #Region "Overrides"
             
-            ''' <summary> Reads the point file and fills the points collection. </summary>
-             ''' <param name="FilePath"> File to load the points from. </param>
-             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
+            ''' <summary> Reads the point file and provides the points as lazy established enumerable. </summary>
+             ''' <returns> All points of <see cref="DataFile.FilePath"/> as lazy established enumerable. </returns>
              ''' <remarks>
+             ''' <para>
+             ''' If a file header is recognized it will be stored in <see cref="GeoPointFile.Header"/> property before yielding the first point.
+             ''' </para>
+             ''' <para>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Function Load(FilePath As String) As GeoPointOpenList
-                
-                Dim PointList As New GeoPointOpenList()
-                Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadStart, FilePath))
-                    
-                    Me.Reset(FilePath)
-                    
-                    Dim UniqueID As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
-                    Dim RecDef   As New RecordDefinition()
-                    
-                    Dim FileReader As New DataTextFileReader()
-                    FileReader.LineStartCommentToken = Me.LineStartCommentToken
-                    FileReader.LineEndCommentToken   = Me.LineEndCommentToken
-                    FileReader.SeparateHeader        = Me.SeparateHeader
-                    FileReader.Load(FilePath, Encoding:=Me.FileEncoding, DetectEncodingFromByteOrderMarks:=False, BufferSize:=1024)
-                    
-                    ' Store read header lines (only if they differ from the default ones).
-                    For Each HeadLine As String In FileReader.Header
-                        If (Not Me.DefaultHeader.Contains(HeadLine)) Then
-                            PointList.Header.Add(HeadLine)
-                        End If
-                    Next
-                    
-                    For Each DataLine As DataTextLine In FileReader.DataCache
+            Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
+                Get
+                    Try 
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadStart, FilePath))
                         
-                        Dim FieldID As DataField(Of String) = Nothing
+                        Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                        Dim RecDef      As New RecordDefinition()
+                        Dim PointCount  As Integer = 0
                         
-                        If (DataLine.HasData) Then
-                            Try
-    		                    Dim p As New GeoVEPoint()
-                                
-                                FieldID = DataLine.ParseField(RecDef.PointID)
-                                p.ID    = FieldID.Value
-                                
-                                Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
-                                Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
-                                Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
-                                
-                                p.Y = FieldY.Value
-                                p.X = FieldX.Value
-                                p.Z = FieldZ.Value
-                                
-                                p.TrackPos.Kilometer = DataLine.ParseField(RecDef.Km).Value
-                                p.Info               = DataLine.ParseField(RecDef.PositionInfo).Value
-                                p.HeightInfo         = DataLine.ParseField(RecDef.HeightInfo).Value
-                                p.Kind               = DataLine.ParseField(RecDef.PointKind).Value
-                                p.TrackPos.TrackNo   = DataLine.ParseField(RecDef.TrackNo).Value
-                                p.TrackPos.RailsCode = DataLine.ParseField(RecDef.RailsCode).Value
-                                p.HeightSys          = DataLine.ParseField(RecDef.HeightSys).Value
-                                p.mp                 = DataLine.ParseField(RecDef.mp).Value
-                                p.mh                 = DataLine.ParseField(RecDef.mh).Value
-                                p.MarkHints          = DataLine.ParseField(RecDef.MarkHints).Value  ' Stability Code
-                                p.MarkType           = DataLine.ParseField(RecDef.MarkType).Value
-                                p.sp                 = DataLine.ParseField(RecDef.sp).Value
-                                p.sh                 = DataLine.ParseField(RecDef.sh).Value
-                                p.Job                = DataLine.ParseField(RecDef.Job).Value
-                                p.ObjectKey          = DataLine.ParseField(RecDef.ObjectKey).Value
-                                p.Comment            = DataLine.ParseField(RecDef.Comment).Value
-                                
-                                p.SourcePath         = FilePath
-                                p.SourceLineNo       = DataLine.SourceLineNo
-                                
-                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
-                                p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
-                                PointList.Add(p)
-                                
-                            Catch ex As InvalidIDException
-                                Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, FilePath))
-                                If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                End If
-                                
-                            Catch ex As ParseException When (ex.ParseError IsNot Nothing)
-                                Me.ParseErrors.Add(ex.ParseError)
-                                If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                End If
-                            End Try
+                        For Each DataLine As DataTextLine In Me.DataLineStream
+                            
+                            Dim FieldID As DataField(Of String) = Nothing
+                            
+                            If (DataLine.HasData) Then
+                                Try
+    		                        Dim p As New GeoVEPoint()
+                                    
+                                    FieldID = DataLine.ParseField(RecDef.PointID)
+                                    p.ID    = FieldID.Value
+                                    
+                                    Dim FieldY As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
+                                    Dim FieldX As DataField(Of Double) = DataLine.ParseField(RecDef.X)
+                                    Dim FieldZ As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
+                                    
+                                    p.Y = FieldY.Value
+                                    p.X = FieldX.Value
+                                    p.Z = FieldZ.Value
+                                    
+                                    p.TrackPos.Kilometer = DataLine.ParseField(RecDef.Km).Value
+                                    p.Info               = DataLine.ParseField(RecDef.PositionInfo).Value
+                                    p.HeightInfo         = DataLine.ParseField(RecDef.HeightInfo).Value
+                                    p.Kind               = DataLine.ParseField(RecDef.PointKind).Value
+                                    p.TrackPos.TrackNo   = DataLine.ParseField(RecDef.TrackNo).Value
+                                    p.TrackPos.RailsCode = DataLine.ParseField(RecDef.RailsCode).Value
+                                    p.HeightSys          = DataLine.ParseField(RecDef.HeightSys).Value
+                                    p.mp                 = DataLine.ParseField(RecDef.mp).Value
+                                    p.mh                 = DataLine.ParseField(RecDef.mh).Value
+                                    p.MarkHints          = DataLine.ParseField(RecDef.MarkHints).Value  ' Stability Code
+                                    p.MarkType           = DataLine.ParseField(RecDef.MarkType).Value
+                                    p.sp                 = DataLine.ParseField(RecDef.sp).Value
+                                    p.sh                 = DataLine.ParseField(RecDef.sh).Value
+                                    p.Job                = DataLine.ParseField(RecDef.Job).Value
+                                    p.ObjectKey          = DataLine.ParseField(RecDef.ObjectKey).Value
+                                    p.Comment            = DataLine.ParseField(RecDef.Comment).Value
+                                    
+                                    p.SourcePath         = FilePath
+                                    p.SourceLineNo       = DataLine.SourceLineNo
+                                    
+                                    If (UniqueID) Then Me.VerifyUniqueID(p.ID)
+                                    p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
+                                    PointCount += 1
+                                    
+                                    Yield p
+                                    
+                                Catch ex As InvalidIDException
+                                    Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, FilePath))
+                                    If (Not Me.CollectParseErrors) Then
+                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    End If
+                                    
+                                Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                                    Me.ParseErrors.Add(ex.ParseError)
+                                    If (Not Me.CollectParseErrors) Then
+                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    End If
+                                End Try
+                            End If
+                        Next
+                        
+                        ' Throw exception if parsing errors has been collected.
+                        If (Me.ParseErrors.HasErrors) Then
+                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                        ElseIf (PointCount = 0) Then
+                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                         End If
-                    Next
-                    
-                    ' Throw exception if parsing errors has been collected.
-                    If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                    ElseIf (PointList.Count = 0) Then
-                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
-                    End If
-                    
-                    Logger.logDebug(PointList.ToString())
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadSuccess, PointList.Count, FilePath))
-                    
-                Catch ex As ParseException
-                    Throw
-                Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadFailed, FilePath), ex)
-                Finally
-                    Me.ParseErrors.ToLoggingConsole()
-                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
-                End Try
-                
-                Return PointList
-            End Function
+                        
+                        'Logger.logDebug(PointList.ToString())
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadSuccess, PointCount, FilePath))
+                        
+                    Catch ex As ParseException
+                        Throw
+                    Catch ex as System.Exception
+                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadFailed, FilePath), ex)
+                    Finally
+                        Me.ParseErrors.ToLoggingConsole()
+                        If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                    End Try
+                End Get
+            End Property
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>

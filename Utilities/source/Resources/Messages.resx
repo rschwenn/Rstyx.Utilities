@@ -988,4 +988,10 @@
     <value>Änderung der Punkt-ID (%s) fehlgeschlagen: Neue %s</value>
     <comment>Source Point ID: String; Base Error Message: String</comment>
   </data>
+  <data name="DataFile_MissingEncoding" xml:space="preserve">
+    <value>Keine Zeichenkodierung für Dateiperation angegeben.</value>
+  </data>
+  <data name="DataFile_MissingFilePath" xml:space="preserve">
+    <value>Keinen Dateipfad für Dateiperation angegeben.</value>
+  </data>
 </root>

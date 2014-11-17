@@ -7,11 +7,11 @@ Namespace IO
     
     ''' <summary>  Represents a reader that can read and cache one or more whole data text files. </summary>
      ''' <remarks> The file(s) could be separated into header and data. Each source line will be pre-splitted into data and comment. </remarks>
-    Public Class DataTextFileReader
+    Public Class DataTextFileReaderDeprecated
         
         #Region "Private Fields"
             
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataTextFileReader")
+            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataTextFileReaderDeprecated")
             
             Private _Header     As New Collection(Of String)
             Private _DataCache  As New Collection(Of DataTextLine)
@@ -26,11 +26,11 @@ Namespace IO
         
         #Region "Constructors"
             
-            ''' <summary> Creates a new instance of DataTextFileReader with default settings. </summary>
+            ''' <summary> Creates a new instance of DataTextFileReaderDeprecated with default settings. </summary>
             Public Sub New()
             End Sub
             
-            ''' <summary> Creates a new instance of DataTextFileReader with specified settings. </summary>
+            ''' <summary> Creates a new instance of DataTextFileReaderDeprecated with specified settings. </summary>
              ''' <param name="LineStartCommentToken"> A string preluding a comment line. May be <see langword="null"/>. </param>
              ''' <param name="LineEndCommentToken">   A string preluding a comment at line end. May be <see langword="null"/>. </param>
              ''' <param name="SeparateHeader">        If <see langword="true"/>, leading comment lines will be separated from the data. </param>
@@ -55,7 +55,7 @@ Namespace IO
                  ''' <remarks> If <see langword="null"/> or empty, comments at line end won't be recognized. </remarks>
                 Public Property LineEndCommentToken() As String = Nothing
                 
-                ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="DataTextFileReader.Header"/>. Defaults to <see langword="true"/>. </summary>
+                ''' <summary> If <see langword="true"/>, leading comment lines will be separated from the data and provided as the <see cref="DataTextFileReaderDeprecated.Header"/>. Defaults to <see langword="true"/>. </summary>
                 Public Property SeparateHeader() As Boolean = True
                 
             #End Region
@@ -128,7 +128,7 @@ Namespace IO
              ''' The default settings for <see cref="StreamReader"/> are: UTF-8, not detect encoding, buffersize 1024.
              ''' </para>
              ''' <para>
-             ''' The loaded data will be appended to the <see cref="DataTextFileReader.DataCache"/> and  <see cref="DataTextFileReader.Header"/> properties.
+             ''' The loaded data will be appended to the <see cref="DataTextFileReaderDeprecated.DataCache"/> and  <see cref="DataTextFileReaderDeprecated.Header"/> properties.
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
@@ -148,7 +148,7 @@ Namespace IO
              ''' <param name="Encoding">                         The character encoding to use. </param>
              ''' <param name="DetectEncodingFromByteOrderMarks"> Indicates whether to look for byte order marks at the beginning of the file. </param>
              ''' <param name="BufferSize">                       The minimum buffer size, in number of 16-bit characters. </param>
-             ''' <remarks> The loaded data will be appended to the <see cref="DataTextFileReader.DataCache"/> and  <see cref="DataTextFileReader.Header"/> properties. </remarks>
+             ''' <remarks> The loaded data will be appended to the <see cref="DataTextFileReaderDeprecated.DataCache"/> and  <see cref="DataTextFileReaderDeprecated.Header"/> properties. </remarks>
              ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
              ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>

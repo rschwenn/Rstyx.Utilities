@@ -116,13 +116,11 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Dim RawID As String = Me.Textbox 
-                Dim p As New GeoVEPoint()
-                p.ID = RawID
-                'Logger.logInfo(Round(Double.NaN, 2).ToString())
+                Dim TestFile As New DataFile(Me.FilePath1)
+                For Each line As DataTextLine In TestFile.DataLineStream
+                    
+                Next
                 
-                
-                'Dim Reader As New iPktFile()
                 Dim KV As New KvFile()
                 Dim KF As New KfFile()
                 Dim iP As New iPktFile()
@@ -130,7 +128,7 @@ Public Class MainViewModel
                 'KV.CollectParseErrors = True
                 'TC.ShowParseErrorsInJedit = False
                 TC.Constraints = GeoPointConstraints.UniqueID
-                'TC.CollectParseErrors = True
+                TC.CollectParseErrors = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
                 'Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
                 'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)

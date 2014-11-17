@@ -53,7 +53,7 @@ Namespace Domain.IO
      ''' <para>
      ''' <b>Features:</b>
      ''' <list type="bullet">
-     ''' <item><description> The <see cref="GeoPointFile.Load"/> method reads the file and returnes the read points as <see cref="GeoPointOpenList"/>. </description></item>
+     ''' <item><description> The <see cref="GeoPointFile.PointStream"/> property reads the file and returnes the read points as lazy established <see cref="IEnumerable(Of IGeoPoint)"/>. </description></item>
      ''' <item><description> The <see cref="GeoPointFile.Store"/> method writes any given <see cref="IEnumerable(Of IGeoPoint)"/> to the file. </description></item>
      ''' <item><description> Provides the <see cref="GeoPointFile.Constraints"/> property in order to outline constraints violation in source file. </description></item>
      ''' </list>
@@ -92,9 +92,9 @@ Namespace Domain.IO
             ''' If any of these contraints is violated while loading (and only while loading) the file, a <see cref="ParseError"/> will be created.
             ''' </para>
             ''' <para>
-            ''' If the <see cref="GeoPointOpenList"/> returned by <see cref="GeoPointFile.Load"/> is intended to be converted by <see cref="AsGeoPointList"/>
-            ''' it's recommendable to specify the <see cref="GeoPointConstraints.UniqueID"/> flag. This way ID verifying will be done
-            ''' by <see cref="GeoPointFile.Load"/> automatically and error tracking is more verbose (incl. error display in jEdit).
+            ''' If the <see cref="IEnumerable(Of IGeoPoint)"/> returned by <see cref="GeoPointFile.PointStream"/> is intended to be converted to a <see cref="GeoPointList"/>
+            ''' it's recommended to specify the <see cref="GeoPointConstraints.UniqueID"/> flag. This way ID verifying will be done
+            ''' by <see cref="GeoPointFile.PointStream"/> automatically and error tracking is more verbose (incl. error display in jEdit).
             ''' </para>
             ''' </remarks>
            Public Property Constraints() As GeoPointConstraints
@@ -103,15 +103,19 @@ Namespace Domain.IO
         
         #Region "Methods"
             
-            ''' <summary> Reads the point file and fills the points collection. </summary>
-             ''' <param name="FilePath"> File to read from. </param>
-             ''' <returns> All read points as <see cref="GeoPointOpenList"/>. </returns>
+            ''' <summary> Reads the point file and provides the points as lazy established enumerable. </summary>
+             ''' <returns> All points of <see cref="DataFile.FilePath"/> as lazy established enumerable. </returns>
              ''' <remarks>
+             ''' <para>
+             ''' If a file header is recognized it will be stored in <see cref="DataFile.Header"/> property before yielding the first point.
+             ''' </para>
+             ''' <para>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public MustOverride Function Load(FilePath As String) As GeoPointOpenList
+            Public ReadOnly MustOverride Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
@@ -147,9 +151,9 @@ Namespace Domain.IO
         #Region "Protected Overrides"
             
             ''' <summary> Restets this <see cref="DataFile"/> and re-initializes it with a new file path. </summary>
-             ''' <param name="Path"> The complete path to the data text file to be read. </param>
-            Protected Overrides Sub Reset(Path As String)
-                MyBase.Reset(Path)
+             ''' <param name="FilePath"> The complete path to the data text file to be read. </param>
+            Protected Overrides Sub Reset(FilePath As String)
+                MyBase.Reset(FilePath)
                 Me.IDCheckList.Clear()
             End Sub
             

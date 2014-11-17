@@ -45,7 +45,7 @@ Namespace Domain
             ''' <summary> Creates a new GeoPointList and inititializes it's items from any given <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
              ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
              ''' <remarks>
-             ''' If <paramref name="SourcePointList"/> is of type <see cref="GeoPointList"/> or <see cref="GeoPointOpenList"/>
+             ''' If <paramref name="SourcePointList"/> is of type <see cref="IHeader"/>
              ''' the <see cref="GeoPointList.Header"/> will be set, too.
              ''' </remarks>
              ''' <exception cref="InvalidIDException"> There are at least two <paramref name="SourcePoint"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
@@ -57,6 +57,22 @@ Namespace Domain
                     Next
                     If (TypeOf SourcePointList Is IHeader) Then
                         Me.Header = DirectCast(SourcePointList, IHeader).Header
+                    End If
+                End If
+            End Sub
+            
+            ''' <summary> Creates a new GeoPointList and inititializes it's items from any given <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
+             ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
+             ''' <param name="Header">          An object providing the header for this list. May be <see langword="null"/>. </param>
+             ''' <exception cref="InvalidIDException"> There are at least two <paramref name="SourcePoint"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
+            Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint), Header As IHeader)
+                Me.New()
+                If (SourcePointList IsNot Nothing) Then
+                    For Each SourcePoint As IGeoPoint In SourcePointList
+                        Me.Add(SourcePoint)
+                    Next
+                    If (Header IsNot Nothing) Then
+                        Me.Header = Header.Header
                     End If
                 End If
             End Sub
