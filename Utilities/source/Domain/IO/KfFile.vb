@@ -28,6 +28,13 @@ Namespace Domain.IO
                 Logger.logDebug("New(): KfFile instantiated")
             End Sub
             
+            ''' <summary> Creates a new instance with a given file path. </summary>
+             ''' <param name="FilePath"> The file path of the file to be read or write. May be <see langword="null"/>. </param>
+            Public Sub New(FilePath As String)
+                Me.New()
+                Me.FilePath = FilePath
+            End Sub
+            
         #End Region
         
         #Region "Properties"

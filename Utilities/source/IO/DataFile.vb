@@ -41,10 +41,9 @@ Namespace IO
             End Sub
             
             ''' <summary> Creates a new instance with a given file path. </summary>
-             ''' <param name="FilePath"> The file path of the data file to be read or write. </param>
+             ''' <param name="FilePath"> The file path of the data file to be read or write. May be <see langword="null"/>. </param>
             Public Sub New(FilePath As String)
-                _FilePath = FilePath
-                IsFilePathChanged = True
+                Me.FilePath = FilePath
                 Logger.logDebug("New(): DataFile instantiated for file: " & FilePath)
             End Sub
             
@@ -98,8 +97,21 @@ Namespace IO
         
         #Region "IHeader Members"
             
+            Dim _Header As Collection(Of String) = Nothing
+            
             ''' <summary> Gets or sets the Header lines of the text file. </summary>
+            ''' <remarks> The Getter never returns <see langword="null"/>. </remarks>
             Public Property Header() As Collection(Of String) Implements IHeader.Header
+                Get
+                    If (_Header Is Nothing) Then
+                        _Header = New Collection(Of String)
+                    End If
+                    Return _Header
+                End Get
+                Set(Value As Collection(Of String))
+                    _Header = Value
+                End Set
+            End Property
             
         #End Region
         
@@ -150,7 +162,7 @@ Namespace IO
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     If (Me.FileEncoding Is Nothing)        Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingEncoding)
                     
-                    Me.Reset (Me.FilePath)
+                    Me.Reset(Me.FilePath)
                     
                     Using oSR As New System.IO.StreamReader(Me.FilePath, Me.FileEncoding, Me.DetectEncodingFromByteOrderMarks, Me.BufferSize)
                         
@@ -168,14 +180,14 @@ Namespace IO
                             LineCount += 1
                             DataLine = New DataTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
                             DataLine.SourceLineNo = LineCount
-                            DataLine.SourceFileIndex = Me.FilePath
+                            DataLine.SourcePath   = Me.FilePath
                             
                             ' Store header.
                             If (CheckHeaderLine) Then
                                 If (DataLine.IsCommentLine) Then
                                     IsHeaderLine = True
                                     If (Not Me.DefaultHeader.Contains(DataLine.Comment)) Then
-                                        _Header.Add(DataLine.Comment)
+                                        Me.Header.Add(DataLine.Comment)
                                     End If
                                 Else
                                     CheckHeaderLine = False
@@ -196,34 +208,38 @@ Namespace IO
             
             ''' <summary> Returns the buffered data lines of the whole text file. </summary>
              ''' <remarks>
-             ''' If the buffer is empty or <see cref="DataFile.FilePath"/> has changed after last invoking this property,
-             ''' the file will be read.
+             ''' This property never returns <see langword="null"/>.
+             ''' This collection is empty until <see cref="DataFile.Load"/> has been invoked successfully
+             ''' and it will be cleared by <see cref="DataFile.Reset"/> and <see cref="DataFile.DataLineStream"/>.
              ''' </remarks>
-            Public Property DataLineBuffer() As Collection(Of DataTextLine)
+            Public ReadOnly Property DataLineBuffer() As Collection(Of DataTextLine)
                 Get
-                    If (IsFilePathChanged OrElse (_DataLineBuffer Is Nothing)) Then
+                    If (_DataLineBuffer Is Nothing) Then
                         _DataLineBuffer = New Collection(Of DataTextLine)
-                        For Each DataLine As DataTextLine In Me.DataLineStream
-                            _DataLineBuffer.Add(DataLine)
-                        Next
-                        IsFilePathChanged = False
                     End If
                     Return _DataLineBuffer
                 End Get
-                Set(Value As Collection(Of DataTextLine))
-                    _DataLineBuffer = Value
-                End Set
             End Property
+            
+            ''' <summary> Loads the whole file into the <see cref="DataFile.DataLineBuffer"/>. </summary>
+            ''' <remarks> Derived classes can override this method and provide the read data via different buffer properties. </remarks>
+            Public Overridable Sub Load()
+                For Each DataLine As DataTextLine In Me.DataLineStream
+                    Me.DataLineBuffer.Add(DataLine)
+                Next
+                IsFilePathChanged = False
+            End Sub
             
         #End Region
         
         #Region "Protected Members"
             
             ''' <summary> Creates a byte array from a string. </summary>
-             ''' <param name="TheEncoding"> The encoding to use. </param>
-             ''' <param name="text">        Input string </param>
-             ''' <param name="Length">      Given length of the byte array to return. </param>
-             ''' <param name="FillChar">    If <paramref name="text"/> is shorter than <paramref name="Length"/>, it will be filled with this character. </param>
+             ''' <param name="TheEncoding">   The encoding to use. </param>
+             ''' <param name="text">          Input string </param>
+             ''' <param name="Length">        Given length of the byte array to return. </param>
+             ''' <param name="FillChar">      If <paramref name="text"/> is shorter than <paramref name="Length"/>, it will be filled with this character. </param>
+             ''' <param name="AdjustAtRight"> If <see langword="true"/> the <paramref name="FillChar"/>'s will be inserted left, otherwise right. </param>
              ''' <returns> A byte array with given <paramref name="Length"/>. </returns>
              ''' <remarks> The input string will be trimmed to <paramref name="Length"/>. </remarks>
             Protected Function GetByteArray(TheEncoding As Encoding, text As String, Length As Integer, FillChar As Char, Optional AdjustAtRight As Boolean = False) As Byte()
@@ -262,10 +278,10 @@ Namespace IO
             End Function
             
             ''' <summary> Resets data in this <see cref="DataFile"/> and re-initializes it with a new file path. </summary>
-             ''' <param name="FilePath"> The File path for <see cref="ParseErrorCollection.FilePath"/>. May be <see langword="null"/>. </param>
+             ''' <param name="FilePath"> The File path for <see cref="ParseErrorCollection.FilePath"/>. May be <see langword="null"/>, which is usefull for writing a file. </param>
             Protected Overridable Sub Reset(FilePath As String)
-                _DataLineBuffer = Nothing
-                Me.Header.Clear()
+                Me.DataLineBuffer.Clear()
+                Me.Header = Nothing
                 Me.ParseErrors.Clear()
                 Me.ParseErrors.FilePath = FilePath
             End Sub

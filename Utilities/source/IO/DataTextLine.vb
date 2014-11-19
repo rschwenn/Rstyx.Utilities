@@ -75,11 +75,11 @@ Namespace IO
             ''' <summary> A string preluding a comment at line end. May be <see langword="null"/>. </summary>
             Public ReadOnly LineEndCommentToken     As String
             
-            ''' <summary> The line number in the source file. </summary>
+            ''' <summary> The line number in the source file. Defaults to 1. </summary>
             Public SourceLineNo                     As Integer = 1
             
-            ''' <summary> An index into a list of source files (which may be mmaintained in a parent object). </summary>
-            Public SourceFileIndex                  As Integer
+            ''' <summary> The path to the source file, this data line has been read from. Defaults to <see langword="null"/>. </summary>
+            Public SourcePath                       As String
             
         #End Region
         

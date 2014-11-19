@@ -116,36 +116,32 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Dim TestFile As New DataFile(Me.FilePath1)
-                For Each line As DataTextLine In TestFile.DataLineStream
-                    
-                Next
+                'Dim TestFile As New DataFile(Me.FilePath1)
+                'TestFile.Load()
+                'TestFile.Load()
+                'For Each DataLine As DataTextLine In TestFile.DataLineBuffer
+                '    Logger.logInfo(DataLine.Data)
+                'Next
                 
-                Dim KV As New KvFile()
-                Dim KF As New KfFile()
-                Dim iP As New iPktFile()
-                Dim TC As New TcFileReader()
+                Dim KV As New KvFile(Me.FilePath1)
+                Dim KF As New KfFile(Me.FilePath1)
+                Dim iP As New iPktFile(Me.FilePath1)
+                Dim TC As New TcFileReader(Me.FilePath1)
+                'TC.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0"
+                'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'KV.CollectParseErrors = True
                 'TC.ShowParseErrorsInJedit = False
-                TC.Constraints = GeoPointConstraints.UniqueID
-                TC.CollectParseErrors = True
+                iP.Constraints = GeoPointConstraints.UniqueID
+                'TC.CollectParseErrors = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
                 'Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
                 'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
-                'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
-                'TC.Load(Me.FilePath1)
-                'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
-                'pts("7946800").ID = "1234"
-                'pts("7946811").ID = "946811"
+                'TC.Load()
+                'Dim pts As New GeoPointOpenList(iP.PointStream)
                 
-                'Dim OldPoint As IGeoPoint = pts(0)
-                'Dim NewPoint As Object = Activator.CreateInstance(OldPoint.GetType(), OldPoint)
-                'Dim NewPoint As IGeoPoint = DirectCast(Activator.CreateInstance(OldPoint.GetType(), OldPoint), IGeoPoint)
-                'NewPoint.ID = "777777777777"
-                
-                'KV.Store(TC.AllPoints, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                KV.Store(iP.PointStream, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
                 'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 

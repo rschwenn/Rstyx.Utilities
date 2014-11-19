@@ -180,7 +180,7 @@ Namespace IO
                         _TotalLinesCount += 1
                         DataLine = New DataTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
                         DataLine.SourceLineNo = _TotalLinesCount
-                        DataLine.SourceFileIndex = FileIndex
+                        'DataLine.SourceFileIndex = FileIndex
                         
                         ' Process header.
                         If (CheckHeaderLine) Then

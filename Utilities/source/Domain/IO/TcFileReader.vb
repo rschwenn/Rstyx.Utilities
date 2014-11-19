@@ -77,12 +77,20 @@ Namespace Domain.IO
                 setRecordDefinitionsIGeo()
             End Sub
             
+            ''' <summary> Creates a new instance of TCFileReader with a given file path. </summary>
+             ''' <param name="FilePath"> The file path of the TC file to be read. May be <see langword="null"/>. </param>
+            Public Sub New(FilePath As String)
+                Me.New()
+                Me.FilePath = FilePath
+            End Sub
+            
             ''' <summary> Creates a new instance of TCFileReader with specified settings. </summary>
+             ''' <param name="FilePath">           The file path of the TC file to be read. May be <see langword="null"/>. </param>
              ''' <param name="CantBase">           The base length for cant. Must be greater than zero. </param>
              ''' <param name="StationAsKilometer"> If <see langword="true"/> the station value may be used also as kilometer. </param>
              ''' <exception cref="System.ArgumentException"> <paramref name="CantBase"/> isn't > 0. </exception>
-            Public Sub New(CantBase As Double, StationAsKilometer As Boolean)
-                Me.New()
+            Public Sub New(FilePath As String, CantBase As Double, StationAsKilometer As Boolean)
+                Me.New(FilePath)
                 If (Not (CantBase > 0)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.Global_ValueNotGreaterThanZero, "CantBase")
                 
                 Me.CantBase = CantBase
@@ -106,13 +114,13 @@ Namespace Domain.IO
             #Region "Results"
                 
                 ''' <summary> Returns the list of found TC blocks with points. </summary>
-                 ''' <remarks> The file will be read if it hasn't been yet. </remarks>
+                 ''' <remarks>
+                 ''' This property never returns <see langword="null"/>.
+                 ''' This collection is empty until <see cref="TcFileReader.Load"/> has been invoked successfully
+                 ''' and it will be cleared by <see cref="TcFileReader.Reset"/>.
+                 ''' </remarks>
                 Public ReadOnly Property Blocks() As Collection(Of TcBlock)
                     Get
-                        If (IsFilePathChanged) Then
-                            Me.Load()
-                            IsFilePathChanged = False
-                        End If
                         Return _Blocks
                     End Get
                 End Property
@@ -138,14 +146,14 @@ Namespace Domain.IO
         
         #Region "Public Members"
             
-            ''' <summary> Loads the file. </summary>
+            ''' <summary> Loads the whole file into <see cref="TcFileReader.Blocks"/>. </summary>
              ''' <remarks>
              ''' The loaded data will be provided structured by the <see cref="TcFileReader.Blocks"/> and <see cref="TcFileReader.Header"/>
              ''' properties, which are cleared before. Same for <see cref="TcFileReader.ParseErrors"/>.
              ''' </remarks>
              ''' <exception cref="ParseException"> At least one error occurred while parsing, hence <see cref="TcFileReader.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Sub Load()
+            Public Overrides Sub Load()
                 Try
                     Logger.logDebug(sprintf("Load TC file '%s'", Me.FilePath))
                     
@@ -154,6 +162,8 @@ Namespace Domain.IO
                     Dim SourceBlock     As TcSourceBlockInfo
                     Dim TcBlock         As TcBlock
                     Dim BlockCount      As Integer = 0
+                    
+                    MyBase.Load()
                     
                     Logger.logDebug(" Looking for block beginnings...")
                     ' Read file. Find and store source block beginnings (still without EndIndex, Version and Format).
@@ -237,6 +247,8 @@ Namespace Domain.IO
                     Logger.logDebug(Me.ToReport(OnlySummary:=False))
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadSuccess, Me.TotalPointCount, Me.FilePath))
                     
+                    Me.DataLineBuffer.Clear()
+                    
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
@@ -272,6 +284,46 @@ Namespace Domain.IO
                 
                 Return List.ToString()
             End Function
+            
+        #End Region
+        
+        #Region "GeoPointFile Overrides Stub"
+            
+            ''' <summary> Reads the point file and provides the points as (not lazy established) enumerable. </summary>
+             ''' <returns> All read points of all <see cref="TcFileReader.Blocks"/> as flat list. See <b>remarks</b> for details. </returns>
+             ''' <remarks>
+             ''' The file will be read if it hasn't been yet
+             ''' <para>
+             ''' This method is for convenience only - see <see cref="TcFileReader.Load"/>.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
+            Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
+                Get
+                    For Each Block As TcBlock In Me.Blocks
+                        For Each p As GeoTcPoint In Block.Points
+                            Yield p
+                        Next
+                    Next
+                End Get
+            End Property
+            
+            ''' <summary> Writes the points collection to the point file. </summary>
+             ''' <param name="PointList"> The points to store. </param>
+             ''' <param name="FilePath">  File to store the points into. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="PointList"/> is a <see cref="GeoPointList"/> then
+             ''' it's ensured that the point ID's written to the file are unique.
+             ''' Otherwise point ID's may be not unique.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="RemarkException"> Wraps any exception. </exception>
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
+                Throw New NotImplementedException()
+            End Sub
             
         #End Region
         
@@ -878,13 +930,6 @@ Namespace Domain.IO
                 MyBase.Reset(Path)
                 SourceBlocks.Clear()
                 Me.Blocks.Clear()
-                Me.IDCheckList.Clear()
-                
-                ' Set file path.
-                Me.FilePath = Path
-                
-                ' Clear statistics.
-                
             End Sub
             
             ''' <summary> Finds the start line of a given block. </summary>
@@ -997,42 +1042,42 @@ Namespace Domain.IO
                             ' A0: PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
                             
                             Select Case FieldName
-                                Case "PktNr"     : RecordDef.ID       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Y"         : RecordDef.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "X"         : RecordDef.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Z"         : RecordDef.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "St"        : RecordDef.St       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Km"        : RecordDef.Km       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Q"         : RecordDef.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "H"         : RecordDef.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "HSOK"      : RecordDef.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "QG"        : RecordDef.QG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "HG"        : RecordDef.HG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "UebLi"     : RecordDef.UebL     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "UebRe"     : RecordDef.UebR     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Ueb"       : RecordDef.Ueb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Heb"       : RecordDef.Heb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "G"         : RecordDef.G        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Ri"        : RecordDef.Ri       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Ra"        : RecordDef.Ra       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "V"         : RecordDef.V        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "R"         : RecordDef.R        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "L"         : RecordDef.L        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "HDGM"      : RecordDef.HDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "ZDGM"      : RecordDef.ZDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Tm"        : RecordDef.Tm       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "QT"        : RecordDef.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "ZSOK"      : RecordDef.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "ZLGS"      : RecordDef.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "RG"        : RecordDef.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "LG"        : RecordDef.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "QGT"       : RecordDef.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "HGT"       : RecordDef.HGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "QGS"       : RecordDef.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "HGS"       : RecordDef.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "KmStatus"  : RecordDef.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Text"      : RecordDef.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
-                                Case "Kommentar" : RecordDef.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.Trim)
+                                Case "PktNr"     : RecordDef.ID       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.WordNumber, i, 0)
+                                Case "Y"         : RecordDef.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "X"         : RecordDef.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "Z"         : RecordDef.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "St"        : RecordDef.St       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "Km"        : RecordDef.Km       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "Q"         : RecordDef.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "H"         : RecordDef.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "HSOK"      : RecordDef.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "QG"        : RecordDef.QG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "HG"        : RecordDef.HG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "UebLi"     : RecordDef.UebL     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "UebRe"     : RecordDef.UebR     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "Ueb"       : RecordDef.Ueb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "Heb"       : RecordDef.Heb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "G"         : RecordDef.G        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "Ri"        : RecordDef.Ri       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "Ra"        : RecordDef.Ra       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "V"         : RecordDef.V        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "R"         : RecordDef.R        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "L"         : RecordDef.L        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "HDGM"      : RecordDef.HDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "ZDGM"      : RecordDef.ZDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "Tm"        : RecordDef.Tm       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "QT"        : RecordDef.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "ZSOK"      : RecordDef.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "ZLGS"      : RecordDef.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "RG"        : RecordDef.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "LG"        : RecordDef.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "QGT"       : RecordDef.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "HGT"       : RecordDef.HGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "QGS"       : RecordDef.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "HGS"       : RecordDef.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "KmStatus"  : RecordDef.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.WordNumber, i, 0)
+                                Case "Text"      : RecordDef.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                                Case "Kommentar" : RecordDef.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                             End Select
                         Next
                         
@@ -1584,9 +1629,9 @@ Namespace Domain.IO
             End Sub
             
             ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A0, A1, A5), especially block type and geometry reference info and first data line. </summary>
-             ''' <param name="DataLines">     [In]  The data cache holding the block of interest. </param>
-             ''' <param name="SourceBlock">    [In/Out] Info about block source in <paramref name="DataLines"/>. </param>
-             ''' <param name="Block">          [Out] The TcBlock to fill with info. </param>
+             ''' <param name="DataLines">   [In]  The data cache holding the block of interest. </param>
+             ''' <param name="SourceBlock"> [In/Out] Info about block source in <paramref name="DataLines"/>. </param>
+             ''' <param name="Block">       [Out] The TcBlock to fill with info. </param>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
@@ -1969,7 +2014,7 @@ Namespace Domain.IO
                                                                DataFieldOptions.ZeroAsNaN),
                     _
                     .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                                  DataFieldPositionType.WordNumber, 5, 0),
+                                                               DataFieldPositionType.WordNumber, 5, 0),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.WordNumber, 6, 0),
@@ -2006,10 +2051,10 @@ Namespace Domain.IO
                                                                DataFieldOptions.ZeroAsNaN),
                     _
                     .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                                  DataFieldPositionType.WordNumber, 5, 0),
+                                                               DataFieldPositionType.WordNumber, 5, 0),
                     _
                     .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                                  DataFieldPositionType.WordNumber, 6, 0),
+                                                               DataFieldPositionType.WordNumber, 6, 0),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.WordNumber, 7, 0),
@@ -2097,7 +2142,7 @@ Namespace Domain.IO
                                                                DataFieldOptions.ZeroAsNaN),
                     _
                     .KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus,
-                                                                   DataFieldPositionType.WordNumber, 34, 0),
+                                                               DataFieldPositionType.WordNumber, 34, 0),
                     _
                     .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
                                                                DataFieldPositionType.WordNumber, 35, 0,
@@ -2126,10 +2171,10 @@ Namespace Domain.IO
                                                                DataFieldPositionType.WordNumber, 4, 0),
                     _
                     .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                                  DataFieldPositionType.WordNumber, 5, 0),
+                                                               DataFieldPositionType.WordNumber, 5, 0),
                     _
                     .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                                  DataFieldPositionType.WordNumber, 6, 0),
+                                                               DataFieldPositionType.WordNumber, 6, 0),
                     _
                     .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
                                                                DataFieldPositionType.WordNumber, 7, 0),
@@ -2186,46 +2231,6 @@ Namespace Domain.IO
                                                                DataFieldPositionType.WordNumber, 24, 0,
                                                                DataFieldOptions.NotRequired)
                     })
-            End Sub
-            
-        #End Region
-        
-        #Region "GeoPointFile Overrides Stub"
-            
-            ''' <summary> Reads the point file and provides the points as (not lazy established) enumerable. </summary>
-             ''' <returns> All read points of all <see cref="TcFileReader.Blocks"/> as flat list. See <b>remarks</b> for details. </returns>
-             ''' <remarks>
-             ''' The file will be read if it hasn't been yet
-             ''' <para>
-             ''' This method is for convenience only - see <see cref="TcFileReader.Load"/>.
-             ''' </para>
-             ''' </remarks>
-             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
-             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
-                Get
-                    For Each Block As TcBlock In Me.Blocks
-                        For Each p As GeoTcPoint In Block.Points
-                            Yield p
-                        Next
-                    Next
-                End Get
-            End Property
-            
-            ''' <summary> Writes the points collection to the point file. </summary>
-             ''' <param name="PointList"> The points to store. </param>
-             ''' <param name="FilePath">  File to store the points into. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' If <paramref name="PointList"/> is a <see cref="GeoPointList"/> then
-             ''' it's ensured that the point ID's written to the file are unique.
-             ''' Otherwise point ID's may be not unique.
-             ''' </para>
-             ''' </remarks>
-             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
-             ''' <exception cref="RemarkException"> Wraps any exception. </exception>
-            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
-                Throw New NotImplementedException()
             End Sub
             
         #End Region

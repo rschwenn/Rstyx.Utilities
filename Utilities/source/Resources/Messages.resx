@@ -992,6 +992,6 @@
     <value>Keine Zeichenkodierung für Dateiperation angegeben.</value>
   </data>
   <data name="DataFile_MissingFilePath" xml:space="preserve">
-    <value>Keinen Dateipfad für Dateiperation angegeben.</value>
+    <value>Keinen Dateipfad für Dateioperation angegeben.</value>
   </data>
 </root>

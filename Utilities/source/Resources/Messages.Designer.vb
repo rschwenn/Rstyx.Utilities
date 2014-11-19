@@ -209,7 +209,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Keinen Dateipfad für Dateiperation angegeben. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Keinen Dateipfad für Dateioperation angegeben. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DataFile_MissingFilePath() As String
             Get
