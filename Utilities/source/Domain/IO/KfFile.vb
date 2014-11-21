@@ -68,12 +68,14 @@ Namespace Domain.IO
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </para>
              ''' </remarks>
+             ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
                     Try 
                         Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, FilePath))
+                        If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                         
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
  		                Dim PointCount  As Integer = 0
@@ -171,7 +173,6 @@ Namespace Domain.IO
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
-             ''' <param name="FilePath">  File to store the points into. </param>
              ''' <remarks>
              ''' <para>
              ''' It's ensured that the point ID's written to the file are unique.
@@ -184,18 +185,20 @@ Namespace Domain.IO
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </para>
              ''' </remarks>
+             ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint))
                 Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, Me.FilePath))
+                    If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Me.Reset(Nothing)
                     
                     Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = True  ' General Constraint for KF: Ensure unique ID.
                     
-                    Using oBW As New BinaryWriter(File.Open(FilePath, FileMode.Create, FileAccess.Write), FileEncoding)
+                    Using oBW As New BinaryWriter(File.Open(Me.FilePath, FileMode.Create, FileAccess.Write), FileEncoding)
                         
                         oBW.BaseStream.Seek(0, SeekOrigin.Begin)
                         
@@ -218,7 +221,7 @@ Namespace Domain.IO
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                                 End If
                             End Try
                         Next
@@ -226,15 +229,15 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, Me.FilePath))
                     
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreFailed, FilePath), ex)
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreFailed, Me.FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()

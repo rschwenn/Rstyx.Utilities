@@ -147,7 +147,6 @@ Namespace Domain.IO
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
-             ''' <param name="FilePath">  File to store the points into. </param>
              ''' <remarks>
              ''' <para>
              ''' If <paramref name="PointList"/> is a <see cref="GeoPointList"/> then
@@ -155,11 +154,13 @@ Namespace Domain.IO
              ''' Otherwise point ID's may be not unique.
              ''' </para>
              ''' </remarks>
+             ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), FilePath As String)
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint))
                 Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreStart, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreStart, Me.FilePath))
+                    If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Me.Reset(Nothing)
                     
@@ -167,7 +168,7 @@ Namespace Domain.IO
                     Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = (TypeOf PointList Is GeoPointList)
                     
-                    Using oSW As New StreamWriter(FilePath, append:=False, encoding:=Me.FileEncoding)
+                    Using oSW As New StreamWriter(Me.FilePath, append:=False, encoding:=Me.FileEncoding)
                         
                         ' Header.
                         If (TypeOf PointList Is IHeader) Then
@@ -211,7 +212,7 @@ Namespace Domain.IO
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                                 End If
                                 
                             'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
@@ -225,15 +226,15 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreSuccess, PointCount, FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreSuccess, PointCount, Me.FilePath))
                     
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreFailed, FilePath), ex)
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreFailed, Me.FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
