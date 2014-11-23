@@ -257,13 +257,25 @@ Namespace IO
             End Function
             
             ''' <summary> Creates the header for the file to write. </summary>
-             ''' <param name="MetaData"> The object to get individual header lines from. </param>
-            Protected Overridable Function CreateFileHeader(MetaData As IHeader) As StringBuilder
+            Protected Overridable Function CreateFileHeader() As StringBuilder
+                Return CreateFileHeader(Nothing)
+            End Function
+            
+            ''' <summary> Creates the header for the file to write. </summary>
+             ''' <param name="MetaData"> The object to get individual header lines from if it implements <see cref="Rstyx.Utilities.IO.IHeader"/>. May be <see langword="null"/>. </param>
+             ''' <remarks> If <paramref name="MetaData"/> doesn't provide a header, then <see cref="DataFile.Header"/> will be used. </remarks>
+            Protected Overridable Function CreateFileHeader(MetaData As Object) As StringBuilder
                 
-                Dim HeaderLines As New StringBuilder()
+                Dim HeaderLines      As New StringBuilder()
+                Dim IndividualHeader As IHeader = Nothing
                 
                 ' Individual Header.
-                For Each HeaderLine As String In MetaData.Header
+                If ((MetaData IsNot Nothing) AndAlso (TypeOf MetaData Is IHeader)) Then
+                    IndividualHeader = DirectCast(MetaData, IHeader)
+                Else
+                    IndividualHeader = Me
+                End If
+                For Each HeaderLine As String In IndividualHeader.Header
                     HeaderLines.Append(LineStartCommentToken)
                     HeaderLines.AppendLine(HeaderLine)
                 Next

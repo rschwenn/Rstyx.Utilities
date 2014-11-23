@@ -311,6 +311,7 @@ Namespace Domain.IO
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
+             ''' <param name="MetaData">  An object providing the header for <paramref name="PointList"/>. May be <see langword="null"/>. </param>
              ''' <remarks>
              ''' <para>
              ''' If <paramref name="PointList"/> is a <see cref="GeoPointList"/> then
@@ -320,7 +321,7 @@ Namespace Domain.IO
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any exception. </exception>
-            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint))
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Throw New NotImplementedException()
             End Sub
             

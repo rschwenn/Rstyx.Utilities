@@ -165,10 +165,11 @@ Namespace Domain.IO
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
+             ''' <param name="MetaData">  An object providing the header for <paramref name="PointList"/>. May be <see langword="null"/>. </param>
              ''' <exception cref="System.InvalidOperationException">     <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint))
+            Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, Me.FilePath))
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
@@ -181,15 +182,16 @@ Namespace Domain.IO
                     
                     Using oSW As New StreamWriter(Me.FilePath, append:=False, encoding:=Me.FileEncoding)
                         
-                        ' Header.
-                        If (TypeOf PointList Is IHeader) Then
-                            Dim HeaderLines As String = Me.CreateFileHeader(PointList).ToString()
-                            If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
-                        End If
-                        
                         ' Points.
                         For Each SourcePoint As IGeoPoint In PointList
                             Try
+                                ' Header.
+                                If (PointCount = 0) Then
+                                    ' At this point, the header of a GeoPointFile has been read and coud be written.
+                                    Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
+                                    If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
+                                End If
+                                
                                 ' Convert point: This verifies the ID and provides all fields for writing.
                                 Dim p As GeoIPoint = SourcePoint.AsGeoIPoint()
                                 

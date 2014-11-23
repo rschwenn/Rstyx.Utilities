@@ -58,15 +58,15 @@ Namespace Domain
             
             ''' <summary> Creates a new GeoPointOpenList and inititializes it's items from any given <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
              ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
-             ''' <param name="Header">          An object providing the header for this list. May be <see langword="null"/>. </param>
-            Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint), Header As IHeader)
+             ''' <param name="MetaData">        An object providing the header for this list. May be <see langword="null"/>. </param>
+            Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Me.New()
                 If (SourcePointList IsNot Nothing) Then
                     For Each SourcePoint As IGeoPoint In SourcePointList
                         Me.Add(SourcePoint)
                     Next
-                    If (Header IsNot Nothing) Then
-                        Me.Header = Header.Header
+                    If (MetaData IsNot Nothing) Then
+                        Me.Header = MetaData.Header
                     End If
                 End If
             End Sub

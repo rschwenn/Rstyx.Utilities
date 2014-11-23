@@ -128,7 +128,22 @@ Namespace Domain.IO
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any exception. </exception>
-            Public MustOverride Sub Store(PointList As IEnumerable(Of IGeoPoint))
+            Public Sub Store(PointList As IEnumerable(Of IGeoPoint))
+                Me.Store(PointList, Nothing)
+            End Sub
+            
+            ''' <summary> Writes the points collection to the point file. </summary>
+             ''' <param name="PointList"> The points to store. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="PointList"/> is a <see cref="GeoPointList"/> then
+             ''' it's ensured that the point ID's written to the file are unique.
+             ''' Otherwise point ID's may be not unique.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="RemarkException"> Wraps any exception. </exception>
+            Public MustOverride Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
             
         #End Region
         
@@ -144,6 +159,24 @@ Namespace Domain.IO
                     IDCheckList.Add(ID, String.Empty)
                 End If
             End Sub
+            
+            ''' <summary> Creates the header for the file to write. </summary>
+             ''' <param name="PointList"> The point list object, that may implement <see cref="Rstyx.Utilities.IO.IHeader"/>. </param>
+             ''' <param name="MetaData">  Priority over <paramref name="PointList"/>. The object to get individual header lines from if it implements <see cref="Rstyx.Utilities.IO.IHeader"/>. May be <see langword="null"/> </param>
+             ''' <remarks> If <paramref name="MetaData"/> and <paramref name="PointList"/> don't provide a header, then <see cref="DataFile.Header"/> will be used. </remarks>
+            Protected Overloads Function CreateFileHeader(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader) As StringBuilder
+                
+                Dim HeaderLines      As New StringBuilder()
+                Dim IndividualHeader As IHeader = Nothing
+                
+                If (MetaData IsNot Nothing) Then
+                    IndividualHeader = MetaData
+                ElseIf (TypeOf PointList Is IHeader)
+                    IndividualHeader = PointList
+                End If
+                
+                Return Me.CreateFileHeader(IndividualHeader)
+            End Function
             
         #End Region
         

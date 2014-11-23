@@ -139,9 +139,12 @@ Public Class MainViewModel
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'TC.Load()
-                'Dim pts As New GeoPointOpenList(iP.PointStream)
+                'Dim pts As New GeoPointOpenList(KV.PointStream, KV)
                 
-                KV.Store(iP.PointStream, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.kv")
+                Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
+                'KV2.Store(pts)
+                'KV2.Header = KV.Header
+                KV2.Store(KV.PointStream, KV)
                 'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 
