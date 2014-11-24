@@ -5,6 +5,7 @@ Imports System.Collections.ObjectModel
 Imports System.IO
 
 Imports Rstyx.Utilities.IO
+Imports Rstyx.Utilities.GeoMath
 Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain.IO
@@ -119,7 +120,7 @@ Namespace Domain.IO
                                 p.sh                 = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))
                                 
                                 Dim TrackNo As String = Trim(FileEncoding.GetString(oBR.ReadBytes(4)))
-                                Integer.TryParse(TrackNo, p.TrackPos.TrackNo)
+                                TryParseNullableInteger(TrackNo, p.TrackPos.TrackNo)
                                 
                                 p.TrackPos.RailsCode = FileEncoding.GetString(oBR.ReadBytes(1))
                                 

@@ -34,7 +34,7 @@ Namespace IO
         ''' <summary> Determines that a missing value will be treated as <c>Zero</c>. This flag implies the meaning of <see cref="DataFieldOptions.NotRequired"/>. </summary>
         MissingAsZero = 4
         
-        ''' <summary> Determines that, for a numeric target type, a non-numeric value will be treated as "unknown", hence <c>Double.NaN</c> resp. default value (Zero). </summary>
+        ''' <summary> Determines that, for a numeric target type, a non-numeric value will be treated as "unknown", hence <c>Double.NaN</c> or <see langword="null"/> or default value (Zero). </summary>
         NonNumericAsNaN = 8
         
         ''' <summary> Determines that the field or it's value isn't required to be found in the source string. This way a missing field value won't lead parsing to fail. </summary>
@@ -46,7 +46,7 @@ Namespace IO
         ''' <summary> Determines that a string field will be trimmed at it's end only. </summary>
         TrimEnd = 64
         
-        ''' <summary> Determines that, for a target type of <c>Double</c> or <c>Kilometer</c>, a value of zero will be treated as <c>Double.NaN</c>. </summary>
+        ''' <summary> Determines that, for a target type of <c>Double</c> or <c>Kilometer</c> or <c>Nullable(Of )</c>, a value of zero will be treated as <c>Double.NaN</c> resp. <see langword="null"/>. </summary>
         ZeroAsNaN = 128
         
     End Enum

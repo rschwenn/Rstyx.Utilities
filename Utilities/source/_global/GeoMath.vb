@@ -153,6 +153,44 @@ Imports PGK.Extensions
                 Return success
             End Function
             
+            ''' <summary> Tries to convert a string into a <c>Nullable(Of Integer)</c>. </summary>
+             ''' <param name="Value">  String to parse. </param>
+             ''' <param name="Result"> The parsing result. It's <see langword="null"/> if parsing fails. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks></remarks>
+            Public Shared Function TryParseNullableInteger(Value As String, <out> ByRef Result As Nullable(Of Integer)) As Boolean
+                Dim success As Boolean = False
+                Dim TestInt As Integer = 0
+                
+                If (Integer.TryParse(Value, TestInt)) Then
+                    Result  = TestInt
+                    success = True
+                Else
+                    Result = Nothing
+                End If
+                
+                Return success
+            End Function
+            
+            ''' <summary> Tries to convert a string into a <c>Nullable(Of Long)</c>. </summary>
+             ''' <param name="Value">  String to parse. </param>
+             ''' <param name="Result"> The parsing result. It's <see langword="null"/> if parsing fails. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks></remarks>
+            Public Shared Function TryParseNullableLong(Value As String, <out> ByRef Result As Nullable(Of Long)) As Boolean
+                Dim success As Boolean = False
+                Dim TestInt As Long = 0
+                
+                If (Long.TryParse(Value, TestInt)) Then
+                    Result  = TestInt
+                    success = True
+                Else
+                    Result = Nothing
+                End If
+                
+                Return success
+            End Function
+            
         #End Region
         
     End Class

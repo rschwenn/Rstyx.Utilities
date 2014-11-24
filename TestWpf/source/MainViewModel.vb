@@ -16,6 +16,7 @@ Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.Domain.IO
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.UI.ViewModel
+Imports Rstyx.Utilities.StringUtils
 
 Public Class MainViewModel
     Inherits Rstyx.Utilities.UI.ViewModel.ViewModelBase
@@ -116,12 +117,21 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                'Dim TestFile As New DataFile(Me.FilePath1)
-                'TestFile.Load()
-                'TestFile.Load()
-                'For Each DataLine As DataTextLine In TestFile.DataLineBuffer
-                '    Logger.logInfo(DataLine.Data)
-                'Next
+                Dim int1 As Integer = 1
+                Dim int2 As Nullable(Of Integer) = 2
+                Dim int3 As Nullable(Of Integer) = Nothing
+                Dim TestType1  As Type = int1.GetType()
+                Dim TestType2  As Type = GetType(Nullable(Of Integer))
+                Dim TestType3  As Type = GetType(Nullable(Of))
+                Dim TestType4  As Type = TestType2.GetGenericTypeDefinition()
+                Dim test  As Boolean = (TestType2.IsGenericType AndAlso (TestType4 Is TestType3))
+                Dim test2 As Boolean = (TestType2.IsGenericType AndAlso (TestType2.GetGenericTypeDefinition() Is GetType(Nullable(Of))))
+                Dim test3 As Boolean = (TestType2.Name = "Nullable`1")
+                Dim test4 As Boolean = (TestType2 Is GetType(Nullable(Of Integer)))
+                
+                Dim text As String = sprintf("%5.3f%5.3f", "1", int3)
+                'Dim text As String = CStr(Nothing)
+                'int2 = int3 '.GetValueOrDefault()
                 
                 Dim KV As New KvFile(Me.FilePath1)
                 Dim KF As New KfFile(Me.FilePath1)

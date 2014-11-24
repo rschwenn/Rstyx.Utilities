@@ -24,7 +24,7 @@ Namespace Domain
         #Region "Public Fields"
             
             ''' <summary> Rail track number </summary>
-            Public Number            As Integer = 0
+            Public Number            As Nullable(Of Integer) = Nothing
             
             ''' <summary> <see langword="true"/>, if the track info is determined successfully. </summary>
             Public IsValid           As Boolean = false

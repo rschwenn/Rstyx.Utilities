@@ -1,4 +1,5 @@
 ﻿
+Imports System
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
@@ -262,7 +263,7 @@ Namespace Domain.IO
                     Me.PositionInfo = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Info      , DataFieldPositionType.ColumnAndLength,  63, 13, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                     Me.HeightInfo   = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_HeightInfo, DataFieldPositionType.ColumnAndLength,  77, 13, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                     Me.PointKind    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_PointKind , DataFieldPositionType.ColumnAndLength,  91,  4, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.TrackNo      = New DataFieldDefinition(Of Integer)  (Rstyx.Utilities.Resources.Messages.Domain_Label_TrackNo   , DataFieldPositionType.ColumnAndLength,  96,  4, DataFieldOptions.NotRequired)
+                    Me.TrackNo      = New DataFieldDefinition(Of Nullable(Of Integer))(Rstyx.Utilities.Resources.Messages.Domain_Label_TrackNo, DataFieldPositionType.ColumnAndLength,  96,  4, DataFieldOptions.NotRequired)
                     Me.RailsCode    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_RailsCode , DataFieldPositionType.ColumnAndLength, 101,  1, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.HeightSys    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_HeightSys , DataFieldPositionType.ColumnAndLength, 104,  3, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.mp           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_mp        , DataFieldPositionType.ColumnAndLength, 108,  5, DataFieldOptions.NotRequired)
@@ -285,7 +286,7 @@ Namespace Domain.IO
                     Public PositionInfo As DataFieldDefinition(Of String)
                     Public HeightInfo   As DataFieldDefinition(Of String)
                     Public PointKind    As DataFieldDefinition(Of String)
-                    Public TrackNo      As DataFieldDefinition(Of Integer)
+                    Public TrackNo      As DataFieldDefinition(Of Nullable(Of Integer))
                     Public RailsCode    As DataFieldDefinition(Of String)
                     Public HeightSys    As DataFieldDefinition(Of String)
                     Public mp           As DataFieldDefinition(Of Double)
