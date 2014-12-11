@@ -268,12 +268,29 @@ Namespace Domain
              ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> or <paramref name="Km2"/> is <see langword="null"/>. </exception>
-            Public Shared Operator +(ByVal Km1 As Kilometer, ByVal Km2 As Kilometer) As Kilometer
+            Public Shared Overloads Operator +(ByVal Km1 As Kilometer, ByVal Km2 As Kilometer) As Kilometer
                 
                 If (Km1 Is Nothing) Then Throw New System.ArgumentNullException("Km1")
                 If (Km2 Is Nothing) Then Throw New System.ArgumentNullException("Km2")
                 
                 Return New Kilometer(Km1.Value + Km2.Value)
+            End Operator
+            
+            ''' <summary> Calculates the sum of a <see cref="Kilometer"/> and a <c>Double</c>. </summary>
+             ''' <param name="Km1"> The first operand. </param>
+             ''' <param name="Km2"> The second operand. </param>
+             ''' <returns> A <see cref="Kilometer"/> which represents the sum of the operands. </returns>
+             ''' <remarks>
+             ''' CAUTION: 
+             ''' The <see cref="Kilometer.Status"/> property of the operands will be ignored for this operation.
+             ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> is <see langword="null"/>. </exception>
+            Public Shared Overloads Operator +(ByVal Km1 As Kilometer, ByVal Km2 As Double) As Kilometer
+                
+                If (Km1 Is Nothing) Then Throw New System.ArgumentNullException("Km1")
+                
+                Return New Kilometer(Km1.Value + Km2)
             End Operator
             
             ''' <summary> Calculates the difference of two <see cref="Kilometer"/>'s. </summary>
@@ -286,12 +303,29 @@ Namespace Domain
              ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> or <paramref name="Km2"/> is <see langword="null"/>. </exception>
-            Public Shared Operator -(ByVal Km1 As Kilometer, ByVal Km2 As Kilometer) As Kilometer
+            Public Shared Overloads Operator -(ByVal Km1 As Kilometer, ByVal Km2 As Kilometer) As Kilometer
                 
                 If (Km1 Is Nothing) Then Throw New System.ArgumentNullException("Km1")
                 If (Km2 Is Nothing) Then Throw New System.ArgumentNullException("Km2")
                 
                 Return New Kilometer(Km1.Value - Km2.Value)
+            End Operator
+            
+            ''' <summary> Calculates the difference of a <see cref="Kilometer"/> and a <c>Double</c>. </summary>
+             ''' <param name="Km1"> The first operand. </param>
+             ''' <param name="Km2"> The second operand. </param>
+             ''' <returns> A <see cref="Kilometer"/> which represents the difference of the operands. </returns>
+             ''' <remarks>
+             ''' CAUTION: 
+             ''' The <see cref="Kilometer.Status"/> property of the operands will be ignored for this operation.
+             ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> or <paramref name="Km2"/> is <see langword="null"/>. </exception>
+            Public Shared Overloads Operator -(ByVal Km1 As Kilometer, ByVal Km2 As Double) As Kilometer
+                
+                If (Km1 Is Nothing) Then Throw New System.ArgumentNullException("Km1")
+                
+                Return New Kilometer(Km1.Value - Km2)
             End Operator
             
         #End Region
