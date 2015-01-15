@@ -51,6 +51,13 @@ Imports System.Collections.Generic
             Return RetDict
         End Function
         
+        ''' <summary> Converts this Boolean value to a string localized by resources. </summary>
+         ''' <param name="Value"> The boolean value to convert. </param>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function ToDisplayString(Value As Boolean) As String
+            Return If(Value, Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue, Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse)
+        End Function
+        
     End Module
     
 'End Namespace

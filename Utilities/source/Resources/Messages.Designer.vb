@@ -1316,6 +1316,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Nein ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_Label_BooleanFalse() As String
+            Get
+                Return ResourceManager.GetString("Global_Label_BooleanFalse", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ja ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Global_Label_BooleanTrue() As String
+            Get
+                Return ResourceManager.GetString("Global_Label_BooleanTrue", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die &apos;%s()&apos; wurde noch nicht implementiert! ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_NotImplemented() As String

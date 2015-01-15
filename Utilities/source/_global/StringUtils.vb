@@ -2,8 +2,6 @@
 Imports System.Collections.Generic
 Imports System.Text
 
-Imports PGK.Extensions
-
 'Namespace Strings
     
     ''' <summary> Static utility methods for dealing with strings. </summary>
@@ -573,19 +571,6 @@ Imports PGK.Extensions
             Dim Pad  As String = If(Padding, vbNewLine, "")
             Dim Line As String = LineChar.ToString().Repeat(Value.Length + 2)
             Return Pad & Line & vbNewLine & " " & Value & vbNewLine & Line & Pad
-        End Function
-        
-        ''' <summary> Converts this Boolean value to "Ja" / "Nein" instead of "True" / "False". </summary>
-         ''' <param name="Value"> The boolean value to convert. </param>
-         ''' <param name="dummy"> This parameter only exists to resolve the overloads to this method. </param>
-         ''' <returns> "Ja" / "Nein" </returns>
-        <System.Runtime.CompilerServices.Extension()> 
-        Public Function ToString(Value As Boolean, dummy As Integer) As String
-            If (Value) Then
-                Return "Ja"
-            Else
-                Return "Nein"
-            End If
         End Function
         
         ''' <summary> Splits the string into lines. Delimiters are <c>vbCrLf</c>, <c>vbLf</c> and <c>vbCr</c> - in this order. </summary>

@@ -994,4 +994,10 @@
   <data name="DataFile_MissingFilePath" xml:space="preserve">
     <value>Keinen Dateipfad für Dateioperation angegeben.</value>
   </data>
+  <data name="Global_Label_BooleanFalse" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="Global_Label_BooleanTrue" xml:space="preserve">
+    <value>Ja</value>
+  </data>
 </root>
