@@ -117,6 +117,10 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
+                Dim d1 As Double = Double.NaN
+                Dim d2 As Double = Double.NaN
+                Logger.logInfo((d1 = d2))
+                
                 Dim int1 As Integer = 1
                 Dim int2 As Nullable(Of Integer) = 2
                 Dim int3 As Nullable(Of Integer) = Nothing
@@ -154,7 +158,7 @@ Public Class MainViewModel
                 Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
                 'KV2.Store(pts)
                 'KV2.Header = KV.Header
-                KV2.Store(KV.PointStream, KV)
+               ' KV2.Store(KV.PointStream, KV)
                 'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 

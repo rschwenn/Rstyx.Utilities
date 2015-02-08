@@ -27,6 +27,7 @@ Imports System.Data.Common
 Imports Debug = System.Diagnostics.Debug
 Imports System.Globalization
 Imports System.IO
+Imports System.Math
 
 Namespace IO.CSV
     ''' <summary>
@@ -332,7 +333,7 @@ Namespace IO.CSV
                     If stream.CanSeek Then
                         ' Handle bad implementations returning 0 or less
                         If stream.Length > 0 Then
-                            _bufferSize = CInt(Math.Min(bufferSize, stream.Length))
+                            _bufferSize = CInt(Min(bufferSize, stream.Length))
                         End If
                     End If
                 End If
@@ -1157,7 +1158,7 @@ Namespace IO.CSV
                                     _nextFieldStart = 0
                                     
                                     If (Not ReadBuffer()) Then
-                                        HandleParseError(New MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), _nextFieldStart)
+                                        HandleParseError(New MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Max(0, _currentRecordIndex), index), _nextFieldStart)
                                         Return Nothing
                                     End If
                                 End If
@@ -1203,7 +1204,7 @@ Namespace IO.CSV
                                 
                                 ' If no delimiter is present after the quoted field and it is not the last field, then it is a parsing error
                                 If ((Not delimiterSkipped) AndAlso (Not _eof) AndAlso (Not (_eol OrElse IsNewLine(_nextFieldStart)))) Then
-                                    HandleParseError(New MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), _nextFieldStart)
+                                    HandleParseError(New MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Max(0, _currentRecordIndex), index), _nextFieldStart)
                                 End If
                             End If
                             
@@ -1217,7 +1218,7 @@ Namespace IO.CSV
                         End If
                     End If
                     
-                    _nextFieldIndex = Math.Max(index + 1, _nextFieldIndex)
+                    _nextFieldIndex = Max(index + 1, _nextFieldIndex)
                     
                     If (index = field) Then
                         ' If initializing, return null to signify the last field has been reached
@@ -1237,7 +1238,7 @@ Namespace IO.CSV
                 End While
                 
                 ' Getting here is bad ...
-                HandleParseError(New MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), _nextFieldStart)
+                HandleParseError(New MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Max(0, _currentRecordIndex), index), _nextFieldStart)
                 Return Nothing
             End Function
             
@@ -1582,7 +1583,7 @@ Namespace IO.CSV
                 Else
                     Select Case _missingFieldAction
                         Case MissingFieldAction.ParseError
-                            HandleParseError(New MissingFieldCsvException(GetCurrentRawData(), currentPosition, Math.Max(0, _currentRecordIndex), fieldIndex), currentPosition)
+                            HandleParseError(New MissingFieldCsvException(GetCurrentRawData(), currentPosition, Max(0, _currentRecordIndex), fieldIndex), currentPosition)
                             Return value
                             
                         Case MissingFieldAction.ReplaceByEmpty

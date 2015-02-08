@@ -2,6 +2,8 @@
 Imports System.Collections.Generic
 Imports System.Text
 
+Imports Rstyx.Utilities.Math.MathUtils
+
 'Namespace Strings
     
     ''' <summary> Static utility methods for dealing with strings. </summary>
@@ -175,13 +177,13 @@ Imports System.Text
                                 While ((InStr("01234567", FormatString.Left(1)) > 0) And (FormatString.Length > 0))
                                     NumberBuffer = NumberBuffer & NextChar(FormatString)
                                 End While
-                                Ret = Ret & CStr(GeoMath.Oct2Dec(NumberBuffer))
+                                Ret = Ret & CStr(Oct2Dec(NumberBuffer))
                             Case "x"c 'hexadecimal character
                                 NumberBuffer = ""
                                 While ((InStr("0123456789ABCDEFabcdef", FormatString.Left(1)) > 0) And (FormatString.Length > 0))
                                     NumberBuffer = NumberBuffer & NextChar(FormatString)
                                 End While
-                                Ret = Ret & CStr(GeoMath.Hex2Dec(NumberBuffer))
+                                Ret = Ret & CStr(Hex2Dec(NumberBuffer))
                             Case "\"c 'backslash
                                 Ret = Ret & "\"
                             Case "%"c 'percent

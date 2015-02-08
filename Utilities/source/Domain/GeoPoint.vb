@@ -1,6 +1,7 @@
 ﻿
 Imports System
 Imports Rstyx.Utilities.IO
+Imports Rstyx.Utilities.Math.MathExtensions
 Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
@@ -355,7 +356,7 @@ Namespace Domain
                                 Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb)
                             ElseIf (Double.IsNaN(tp.Ra)) Then
                                 Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ra)
-                            ElseIf (tp.Ra.EqualsAlmost(0, 0.001)) Then
+                            ElseIf (tp.Ra.EqualsTolerance(0, 0.001)) Then
                                 Hints = Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingCantSign
                             End If
                         End If

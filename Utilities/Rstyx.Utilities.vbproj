@@ -155,6 +155,8 @@
     <Compile Include="source\IO\ParseException.vb" />
     <Compile Include="source\IO\DataTextLine.vb" />
     <Compile Include="source\Domain\IO\TcFileReader.vb" />
+    <Compile Include="source\Math\Point.vb" />
+    <Compile Include="source\Math\Polygon.vb" />
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -190,7 +192,7 @@
     <Compile Include="source\IO\FileInfoCollection.vb" />
     <Compile Include="source\IO\FileUtils.vb" />
     <Compile Include="source\_global\Extensions.vb" />
-    <Compile Include="source\_global\GeoMath.vb" />
+    <Compile Include="source\Math\MathUtils.vb" />
     <Compile Include="source\_global\Interfaces.vb" />
     <Compile Include="source\_global\InvalidIDException.vb" />
     <Compile Include="source\_global\RegUtils.vb" />

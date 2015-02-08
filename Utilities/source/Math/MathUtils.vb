@@ -4,9 +4,7 @@ Imports System.Math
 Imports System.IO
 Imports System.Runtime.InteropServices
 
-Imports PGK.Extensions
-
-'Namespace GeoMath
+Namespace Math
     
     ''' <summary> Extension methods for numeric types. </summary>
     Public Module MathExtensions
@@ -17,7 +15,7 @@ Imports PGK.Extensions
          ''' <param name="Tolerance">    Difference between values to tolerate. (<c>Double.NaN</c> is treated as 0.0) </param>
          ''' <returns> <see langword="true"/> if difference between <paramref name="Value"/> and <paramref name="CompareValue"/> is less than or equal <paramref name="Tolerance"/>. </returns>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function EqualsAlmost(Value As Double, CompareValue As Double, ByVal Tolerance As Double) As Boolean
+        Public Function EqualsTolerance(Value As Double, CompareValue As Double, ByVal Tolerance As Double) As Boolean
             Dim IsEqual As Boolean = False
             
             If (Double.IsNaN(Tolerance)) Then
@@ -32,11 +30,71 @@ Imports PGK.Extensions
             
             Return IsEqual
         End Function
+            
+        #Region "Parsing"
+            
+            ''' <summary> Replacement for <c>Double.TryParse</c>. Returns <c>Double.NaN</c> if parsing fails. </summary>
+             ''' <param name="Result"> The parsing result. <c>Double.NaN</c> if parsing fails. </param>
+             ''' <param name="Value">  String to parse. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks></remarks>
+            <System.Runtime.CompilerServices.Extension()> 
+            Public Function TryParse(<out> ByRef Result As Double, Value As String) As Boolean
+                Dim success As Boolean = False
+                
+                If (Value.IsNotEmptyOrWhiteSpace()) Then success = Double.TryParse(Value, Result)
+                
+                If (Not success) Then Result = Double.NaN
+                
+                Return success
+            End Function
+            
+            ''' <summary> Tries to convert a string into a <c>Nullable(Of Integer)</c>. </summary>
+             ''' <param name="Result"> The parsing result. It's <see langword="null"/> if parsing fails. </param>
+             ''' <param name="Value">  String to parse. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks></remarks>
+            <System.Runtime.CompilerServices.Extension()> 
+            Public Function TryParse(<out> ByRef Result As Nullable(Of Integer), Value As String) As Boolean
+                Dim success As Boolean = False
+                Dim TestInt As Integer = 0
+                
+                If (Integer.TryParse(Value, TestInt)) Then
+                    Result  = TestInt
+                    success = True
+                Else
+                    Result = Nothing
+                End If
+                
+                Return success
+            End Function
+            
+            ''' <summary> Tries to convert a string into a <c>Nullable(Of Long)</c>. </summary>
+             ''' <param name="Result"> The parsing result. It's <see langword="null"/> if parsing fails. </param>
+             ''' <param name="Value">  String to parse. </param>
+             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks></remarks>
+            <System.Runtime.CompilerServices.Extension()> 
+            Public Function TryParse(<out> ByRef Result As Nullable(Of Long), Value As String) As Boolean
+                Dim success As Boolean = False
+                Dim TestInt As Long = 0
+                
+                If (Long.TryParse(Value, TestInt)) Then
+                    Result  = TestInt
+                    success = True
+                Else
+                    Result = Nothing
+                End If
+                
+                Return success
+            End Function
+            
+        #End Region
         
     End Module
     
     ''' <summary> Static utility methods for (geodetic) mathematic needs. </summary>
-    Public NotInheritable Class GeoMath
+    Public NotInheritable Class MathUtils
         
         #Region "Private Fields"
             
@@ -138,63 +196,10 @@ Imports PGK.Extensions
                 Return Dec
             End Function
             
-            ''' <summary> Replacement for <c>Double.TryParse</c>. Returns <c>Double.NaN</c> if parsing fails. </summary>
-             ''' <param name="Value">  String to parse. </param>
-             ''' <param name="Result"> The parsing result. <c>Double.NaN</c> if parsing fails. </param>
-             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
-             ''' <remarks></remarks>
-            Public Shared Function TryParseDouble(Value As String, <out> ByRef Result As Double) As Boolean
-                Dim success As Boolean = False
-                
-                If (Value.IsNotEmptyOrWhiteSpace()) Then success = Double.TryParse(Value, Result)
-                
-                If (Not success) Then Result = Double.NaN
-                
-                Return success
-            End Function
-            
-            ''' <summary> Tries to convert a string into a <c>Nullable(Of Integer)</c>. </summary>
-             ''' <param name="Value">  String to parse. </param>
-             ''' <param name="Result"> The parsing result. It's <see langword="null"/> if parsing fails. </param>
-             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
-             ''' <remarks></remarks>
-            Public Shared Function TryParseNullableInteger(Value As String, <out> ByRef Result As Nullable(Of Integer)) As Boolean
-                Dim success As Boolean = False
-                Dim TestInt As Integer = 0
-                
-                If (Integer.TryParse(Value, TestInt)) Then
-                    Result  = TestInt
-                    success = True
-                Else
-                    Result = Nothing
-                End If
-                
-                Return success
-            End Function
-            
-            ''' <summary> Tries to convert a string into a <c>Nullable(Of Long)</c>. </summary>
-             ''' <param name="Value">  String to parse. </param>
-             ''' <param name="Result"> The parsing result. It's <see langword="null"/> if parsing fails. </param>
-             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
-             ''' <remarks></remarks>
-            Public Shared Function TryParseNullableLong(Value As String, <out> ByRef Result As Nullable(Of Long)) As Boolean
-                Dim success As Boolean = False
-                Dim TestInt As Long = 0
-                
-                If (Long.TryParse(Value, TestInt)) Then
-                    Result  = TestInt
-                    success = True
-                Else
-                    Result = Nothing
-                End If
-                
-                Return success
-            End Function
-            
         #End Region
         
     End Class
     
-'End Namespace
+End Namespace
 
 ' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

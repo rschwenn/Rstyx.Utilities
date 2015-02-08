@@ -4,6 +4,7 @@ Imports System.Runtime.InteropServices
 Imports System.Text.RegularExpressions
 
 Imports Rstyx.Utilities.IO
+Imports Rstyx.Utilities.Math.MathExtensions
 
 Namespace Domain
     
@@ -205,12 +206,12 @@ Namespace Domain
              ''' </para>
             Public Sub transformHorizontalToCanted()
                 
-                If (Me.Ueb.EqualsAlmost(0, 0.0005)) Then
+                If (Me.Ueb.EqualsTolerance(0, 0.0005)) Then
                     
                     Me.QG = Me.Q
                     Me.HG = Me.HSOK
                     
-                ElseIf (Not (Double.IsNaN(Me.Ueb) OrElse Double.IsNaN(Me.CantBase) OrElse Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsAlmost(0, 0.001))) Then
+                ElseIf (Not (Double.IsNaN(Me.Ueb) OrElse Double.IsNaN(Me.CantBase) OrElse Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsTolerance(0, 0.001))) Then
                     
                     Dim sf  As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
                     Dim cbh As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
@@ -237,12 +238,12 @@ Namespace Domain
              ''' </remarks>
             Public Sub transformCantedToHorizontal()
                 
-                If (Me.Ueb.EqualsAlmost(0, 0.0005)) Then
+                If (Me.Ueb.EqualsTolerance(0, 0.0005)) Then
                     
                     Me.Q    = Me.QG
                     Me.HSOK = Me.HG
                     
-                ElseIf (Not (Double.IsNaN(Me.Ueb) OrElse Double.IsNaN(Me.CantBase) OrElse Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsAlmost(0, 0.001))) Then
+                ElseIf (Not (Double.IsNaN(Me.Ueb) OrElse Double.IsNaN(Me.CantBase) OrElse Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsTolerance(0, 0.001))) Then
                     
                     Dim sf      As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
                     Dim cbh     As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))

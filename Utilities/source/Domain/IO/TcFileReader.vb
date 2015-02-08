@@ -12,6 +12,7 @@ Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.IO
+Imports Rstyx.Utilities.Math.MathExtensions
 Imports Rstyx.Utilities.StringUtils
 Imports Rstyx.Utilities.Validation
 
@@ -58,7 +59,7 @@ Namespace Domain.IO
             
             Private _Blocks                     As New Collection(Of TcBlock)
             
-            Private Const RHO                   As Double = 200 / Math.PI
+            Private Const RHO                   As Double = 200 / System.Math.PI
             Private Const DoublePipeMask        As String = "D1o2u3b4l5e6P7i8p9e0"
             
             Private _TotalLinesCount            As Long
@@ -1388,12 +1389,12 @@ Namespace Domain.IO
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Resolve Ambiguities.
-                                    Dim NoRadius As Boolean = (Double.IsNaN(p.Ra) OrElse p.Ra.EqualsAlmost(0, 0.001))
-                                    If (p.Ueb.EqualsAlmost(0, 0.001) AndAlso NoRadius) Then
+                                    Dim NoRadius As Boolean = (Double.IsNaN(p.Ra) OrElse p.Ra.EqualsTolerance(0, 0.001))
+                                    If (p.Ueb.EqualsTolerance(0, 0.001) AndAlso NoRadius) Then
                                         ' Ignore minimal cant if radius is unknown or zero.
                                         p.Ueb = 0.0
                                     End If
-                                    If ( (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsAlmost(0, 0.001))) AndAlso NoRadius) Then
+                                    If ( (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, 0.001))) AndAlso NoRadius) Then
                                         ' Ensure that sign of cant is determinable by setting a special radius.
                                         Dim CantSign As Double = UebL - UebR
                                         If (Not Double.IsNaN(CantSign)) Then
