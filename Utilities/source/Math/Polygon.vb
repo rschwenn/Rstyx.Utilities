@@ -3,6 +3,8 @@ Imports System
 Imports System.Collections.ObjectModel
 Imports System.Math
 
+Imports Rstyx.Utilities
+
 Namespace Math
     
     ''' <summary> A mathematical polygon. </summary>
@@ -46,11 +48,40 @@ Namespace Math
         
         #Region "Methods"
             
-            ''' <summary> Calculates the minimum distance to a point in XY plane. </summary>
-             ''' <param name="Pt"> The target point. </param>
-             ''' <returns> Minimum (perpendicular) distance to <paramref name="Pt"/> in XY plane, or <c>Double.NaN</c> if there's no perpendicular to <paramref name="Pt"/>. </returns>
+            ''' <summary> Checks if <paramref name="TestPoint"/> is located inside a polygon in XY plane. </summary>
+             ''' <param name="Pt">        The point of interest. </param>
+             ''' <returns> <see langword="true"/> if the point is considered to be inside the polygon. </returns>
+             ''' <remarks>
+             ''' <see cref=" Point.Resolution"/> is considered as tolerance for treating the point to be on the polygon.
+             ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function GetMinimumDistanceToPoint(Pt As Point) As Double
+            Public Function GetMinimumDistanceToPointXY(Pt As Point) As Boolean
+                Return GetMinimumDistanceToPointXY(Pt, Point.Resolution)
+            End Function
+            
+            ''' <summary> Calculates the minimum distance to a point in XY plane. The sign determines the point's position. </summary>
+             ''' <param name="Pt">        The target point. </param>
+             ''' <param name="Tolerance"> Tolerance for treating the point to be on the polygon. </param>
+             ''' <returns> Minimum distance to <paramref name="Pt"/> in XY plane. See Remarks! </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' The return value's sign determines the position of <paramref name="Pt"/> relative to the (closed) polygon:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Sign</b> </term>  <description> Position </description></listheader>
+             ''' <item> <term> + </term>  <description> Outside polygon </description></item>
+             ''' <item> <term> 0 </term>  <description> On the polygon ** </description></item>
+             ''' <item> <term> - </term>  <description> Inside  polygon </description></item>
+             ''' </list>
+             ''' </para>
+             ''' ** The point is considered to be on the polygon, if the calculated distance is not greater than <paramref name="Tolerance"/>.
+             ''' In this case the return value will be set to <c>Zero</c>.
+             ''' <para>
+             ''' The distance is calculated perpendicular to the polygon. If this wasn't possible (i.e. near vertex), 
+             ''' the distance to the nearest polygon vertex will be returned.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
+            Public Function GetMinimumDistanceToPointXY(Pt As Point, Tolerance As Double) As Double
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
@@ -58,8 +89,8 @@ Namespace Math
                 Dim Distance    As Double  = Double.NaN
                 Dim j           As Integer = Me.Vertices.Count - 1
                 
-                For i As Integer = 0 To j - 1
-                    
+                ' Perpendicular distance to polygon edge.
+                For i As Integer = 0 To Me.Vertices.Count - 1
                     Distance = Pt.GetDistanceToLineXY(_Vertices(j), _Vertices(i))
                     If ((Not Double.IsNaN(Distance)) AndAlso (Distance < MinDistance)) Then
                         MinDistance = Distance
@@ -67,62 +98,30 @@ Namespace Math
                     j = i
                 Next
                 
+                ' Direct distance to polygon vertex.
                 If (Double.IsPositiveInfinity(MinDistance)) Then
-                    MinDistance = Double.NaN
-                End If
-                
-                Return MinDistance
-            End Function
-            
-            ''' <summary> Checks if <paramref name="TestPoint"/> is located inside a polygon in XY plane. </summary>
-             ''' <param name="Pt">        The point of interest. </param>
-             ''' <returns> <see langword="true"/> if the point is considered to be inside the polygon. </returns>
-             ''' <remarks>
-             ''' <see cref=" Point.Resolution"/> is considered as tolerance for each point's coordinate.
-             ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function ContainsPointXY(Pt As Point) As Boolean
-                Return ContainsPointXY(Pt, Point.Resolution)
-            End Function
-            
-            ''' <summary> Checks if <paramref name="TestPoint"/> is located inside a polygon in XY plane. </summary>
-             ''' <param name="Pt">        The point of interest. </param>
-             ''' <param name="Tolerance"> Tolerance in [m] for recognizing the point to be on the shape's outline - and that's why NOT inside. </param>
-             ''' <returns> <see langword="true"/> if the point is considered to be inside the polygon. </returns>
-             ''' <remarks>
-             ''' <para>
-             ''' see http://www.codeproject.com/Tips/84226/Is-a-Point-inside-a-Polygon
-             ''' </para>
-             ''' <para>
-             ''' see http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-             ''' </para>
-             ''' <para>
-             ''' see http://codekicker.de/fragen/polygon-Liegt-Punkt-Polygon-C%23-punkt
-             ''' </para>
-             ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function ContainsPointXY(Pt As Point, Tolerance As Double) As Boolean
-                
-                If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
-                
-                Dim IsInside As Boolean = False
-                
-                'If (MayContainPointXY(Pt)) Then
-                    
-                    Dim j As Integer = Me.Vertices.Count - 1
-                    
-                    For i As Integer = 0 To j - 1
-                        
-                        If ((Not ((_Vertices(i).Y > Pt.Y) = (_Vertices(j).Y > Pt.Y))) AndAlso
-                            (Pt.X < (_Vertices(j).X - _Vertices(i).X) * (Pt.Y - _Vertices(i).Y) / (_Vertices(j).Y - _Vertices(i).Y) + _Vertices(i).X)
-                            ) Then
-                            IsInside = (Not IsInside)
+                    For i As Integer = 0 To Me.Vertices.Count - 1
+                        Distance = Pt.GetDistanceToPointXY(_Vertices(i))
+                        If (Distance < MinDistance) Then
+                            MinDistance = Distance
                         End If
                         j = i
                     Next
-                'End If
+                End If
                 
-                Return IsInside
+                ' Check success.
+                If (Double.IsPositiveInfinity(MinDistance)) Then
+                    Throw New RemarkException("Polygon.GetMinimumDistanceToPointXY() failed to calculate a distance!")
+                End If
+
+                ' Tune return value.
+                If (Not (MinDistance > Abs(Tolerance))) Then
+                    MinDistance = 0.0000
+                ElseIf (IsPointInsideXY(Pt)) Then
+                    MinDistance = - MinDistance
+                End If
+                
+                Return MinDistance
             End Function
             
             ''' <summary> Checks this Polygon for equality of vertices against a given Polygon considering a given tolerance for each point's coordinate. </summary>
@@ -235,6 +234,51 @@ Namespace Math
                 Return IsEqual
             End Function
             
+            ''' <summary> Checks if <paramref name="TestPoint"/> is located inside a polygon in XY plane. </summary>
+             ''' <param name="Pt">        The point of interest. </param>
+             ''' <returns> <see langword="true"/> if the point is considered to be inside the polygon. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' It doesn't matter whether vertices are defined clockwise or anticlockwise.
+             ''' </para>
+             ''' <para>
+             ''' This method doesn't consider any tolerance, but there may be roundoff errors.
+             ''' </para>
+             ''' <para>
+             ''' see http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+             ''' </para>
+             ''' <para>
+             ''' see http://www.codeproject.com/Tips/84226/Is-a-Point-inside-a-Polygon
+             ''' </para>
+             ''' <para>
+             ''' see http://codekicker.de/fragen/polygon-Liegt-Punkt-Polygon-C%23-punkt
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
+            Private Function IsPointInsideXY(Pt As Point) As Boolean
+                
+                If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
+                
+                Dim IsInside As Boolean = False
+                
+                'If (MayContainPointXY(Pt)) Then
+                    
+                    Dim j As Integer = Me.Vertices.Count - 1
+                    
+                    For i As Integer = 0 To Me.Vertices.Count - 1
+                        
+                        If ((Not ((_Vertices(i).Y > Pt.Y) = (_Vertices(j).Y > Pt.Y))) AndAlso
+                            (Pt.X < (_Vertices(j).X - _Vertices(i).X) * (Pt.Y - _Vertices(i).Y) / (_Vertices(j).Y - _Vertices(i).Y) + _Vertices(i).X)
+                            ) Then
+                            IsInside = (Not IsInside)
+                        End If
+                        j = i
+                    Next
+                'End If
+                
+                Return IsInside
+            End Function
+            
             ''' <summary> Checks if <paramref name="TestPoint"/> may be located inside this polygon in XY plane at all. </summary>
              ''' <param name="Pt"> The point of interest. </param>
              ''' <returns> <see langword="false"/> if the point can't be inside the polygon. </returns>
@@ -269,6 +313,7 @@ Namespace Math
                 
                 Return MayInside
             End Function
+
         #End Region
         
     End Class
