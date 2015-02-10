@@ -6,7 +6,7 @@ Namespace Math
     
     ''' <summary> One single mathematical point. </summary>
      ''' <remarks>  </remarks>
-    Public Class Point
+    Public Class MathPoint
         
         #Region "Constuctor"
             
@@ -18,9 +18,12 @@ Namespace Math
         
         #Region "Shared Properties"
             
-            ''' <summary> The Resolution of <see cref="Point"/>'s. Defaults to <c>Double.NaN</c>. </summary>
+            ''' <summary> The Resolution of <see cref="MathPoint"/>'s. Defaults to <c>Double.NaN</c>. </summary>
              ''' <remarks> This value is considered by comparation operators. </remarks>
             Public Shared Resolution As Double = 0.0005
+            
+            ''' <summary> Returns a <see cref="MathPoint"/> with each coordinate set to <c>Zero</c>. </summary>
+            Public Shared ReadOnly ZeroPoint As New MathPoint() With {.X = 0.0, .Y = 0.0, .Z = 0.0}
             
         #End Region
         
@@ -45,7 +48,7 @@ Namespace Math
              ''' <returns> The distance to the line, if the foot point is between <paramref name="LineStart"/> and <paramref name="LineEnd"/>, otherwise <c>Double.NaN</c>. </returns>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function GetDistanceToLineXY(LineStart As Point, LineEnd As Point) As Double
+            Public Function GetDistanceToLineXY(LineStart As MathPoint, LineEnd As MathPoint) As Double
                 Dim Distance As Double = Double.NaN
                 
                 ' see http://paulbourke.net/geometry/pointlineplane/
@@ -72,7 +75,7 @@ Namespace Math
              ''' <param name="Pt"> The target point. </param>
              ''' <returns> Spatial distance to <paramref name="Pt"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function GetDistanceToPoint(Pt As Point) As Double
+            Public Function GetDistanceToPoint(Pt As MathPoint) As Double
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
@@ -83,7 +86,7 @@ Namespace Math
              ''' <param name="Pt"> The target point. </param>
              ''' <returns> Distance to <paramref name="Pt"/> in XY plane. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function GetDistanceToPointXY(Pt As Point) As Double
+            Public Function GetDistanceToPointXY(Pt As MathPoint) As Double
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
@@ -94,27 +97,27 @@ Namespace Math
              ''' <param name="Pt">        Point to compare with. </param>
              ''' <param name="Tolerance"> Tolerance in [m] for each coordinate. </param>
              ''' <remarks>
-             ''' The "=" and "&lt;&gt;" operators consider the static <see cref="Point.Resolution"/> value as tolerance.
+             ''' The "=" and "&lt;&gt;" operators consider the static <see cref="MathPoint.Resolution"/> value as tolerance.
              ''' This method is intended to use another tolerance.
              ''' </remarks>
              ''' <returns> <see langword="true"/> if this Point equals <paramref name="ComparePoint"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function EqualsTolerance(Pt As Point, Tolerance As Double) As Boolean
+            Public Function EqualsTolerance(Pt As MathPoint, Tolerance As Double) As Boolean
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
                 Return (Me.X.EqualsTolerance(Pt.X, Tolerance) AndAlso Me.Y.EqualsTolerance(Pt.Y, Tolerance) AndAlso Me.Z.EqualsTolerance(Pt.Z, Tolerance))
             End Function
             
-            ''' <summary> Checks two points for equality in XY plane. <see cref=" Point.Resolution"/> is considered as tolerance for each coordinate. </summary>
+            ''' <summary> Checks two points for equality in XY plane. <see cref="MathPoint.Resolution"/> is considered as tolerance for each coordinate. </summary>
              ''' <param name="Pt"> Point to compare with. </param>
              ''' <returns> <see langword="true"/> if this Point equals <paramref name="ComparePoint"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function EqualsXY(Pt As Point) As Boolean
+            Public Function EqualsXY(Pt As MathPoint) As Boolean
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
-                Return (Me.X.EqualsTolerance(Pt.X, Point.Resolution) AndAlso Me.Y.EqualsTolerance(Pt.Y, Point.Resolution))
+                Return (Me.X.EqualsTolerance(Pt.X, MathPoint.Resolution) AndAlso Me.Y.EqualsTolerance(Pt.Y, MathPoint.Resolution))
             End Function
             
             ''' <summary> Checks two points for equality in XY plane. <paramref name="Tolerance"/> is considered as tolerance for each coordinate. </summary>
@@ -122,7 +125,7 @@ Namespace Math
              ''' <param name="Tolerance"> Tolerance in [m] for each coordinate. </param>
              ''' <returns> <see langword="true"/> if this Point equals <paramref name="ComparePoint"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function EqualsXY(Pt As Point, Tolerance As Double) As Boolean
+            Public Function EqualsXY(Pt As MathPoint, Tolerance As Double) As Boolean
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
@@ -130,54 +133,54 @@ Namespace Math
             End Function
             
         #End Region
-
+        
         #Region "Operators"
             
-            ''' <summary> Calculates the sum of two <see cref="Point"/>'as vectors. </summary>
+            ''' <summary> Calculates the sum of two <see cref="MathPoint"/>'as vectors. </summary>
              ''' <param name="P1"> The first operand. </param>
              ''' <param name="P2"> The second operand. </param>
-             ''' <returns> A new <see cref="Point"/> which represents the sum of the operands treated as vectors. </returns>
+             ''' <returns> A new <see cref="MathPoint"/> which represents the sum of the operands treated as vectors. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="P1"/> or <paramref name="P2"/> is <see langword="null"/>. </exception>
-            Public Shared Overloads Operator + (ByVal P1 As Point, ByVal P2 As Point) As Point
+            Public Shared Overloads Operator + (ByVal P1 As MathPoint, ByVal P2 As MathPoint) As MathPoint
                 
                 If (P1 Is Nothing) Then Throw New System.ArgumentNullException("P1")
                 If (P2 Is Nothing) Then Throw New System.ArgumentNullException("P2")
                 
-                Return New Point() With {.X = P1.X + P2.X, .Y = P1.Y + P2.Y, .Z = P1.Z + P2.Z}
+                Return New MathPoint() With {.X = P1.X + P2.X, .Y = P1.Y + P2.Y, .Z = P1.Z + P2.Z}
             End Operator
             
-            ''' <summary> Calculates the difference of two <see cref="Point"/>'as vectors. </summary>
+            ''' <summary> Calculates the difference of two <see cref="MathPoint"/>'as vectors. </summary>
              ''' <param name="P1"> The first operand. </param>
              ''' <param name="P2"> The second operand. </param>
-             ''' <returns> A new <see cref="Point"/> which represents the difference of the operands treated as vectors. </returns>
+             ''' <returns> A new <see cref="MathPoint"/> which represents the difference of the operands treated as vectors. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="P1"/> or <paramref name="P2"/> is <see langword="null"/>. </exception>
-            Public Shared Overloads Operator - (ByVal P1 As Point, ByVal P2 As Point) As Point
+            Public Shared Overloads Operator - (ByVal P1 As MathPoint, ByVal P2 As MathPoint) As MathPoint
                 
                 If (P1 Is Nothing) Then Throw New System.ArgumentNullException("P1")
                 If (P2 Is Nothing) Then Throw New System.ArgumentNullException("P2")
                 
-                Return New Point() With {.X = P1.X - P2.X, .Y = P1.Y - P2.Y, .Z = P1.Z - P2.Z}
+                Return New MathPoint() With {.X = P1.X - P2.X, .Y = P1.Y - P2.Y, .Z = P1.Z - P2.Z}
             End Operator
             
-            ''' <summary> Checks two points for equality. <see cref=" Point.Resolution"/> is considered as tolerance for each coordinate. </summary>
+            ''' <summary> Checks two points for equality. <see cref="MathPoint.Resolution"/> is considered as tolerance for each coordinate. </summary>
              ''' <param name="P1"> The first operand. </param>
              ''' <param name="P2"> The second operand. </param>
              ''' <returns> <see langword="true"/> if <paramref name="P1"/> equals <paramref name="P2"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="P1"/> or <paramref name="P2"/> is <see langword="null"/>. </exception>
-            Public Shared Overloads Operator = (ByVal P1 As Point, ByVal P2 As Point) As Boolean
+            Public Shared Overloads Operator = (ByVal P1 As MathPoint, ByVal P2 As MathPoint) As Boolean
                 
                 If (P1 Is Nothing) Then Throw New System.ArgumentNullException("P1")
                 If (P2 Is Nothing) Then Throw New System.ArgumentNullException("P2")
                 
-                Return ( P1.X.EqualsTolerance(P2.X, Point.Resolution) AndAlso P1.Y.EqualsTolerance(P2.Y, Point.Resolution) AndAlso P1.Z.EqualsTolerance(P2.Z, Point.Resolution) )
+                Return ( P1.X.EqualsTolerance(P2.X, MathPoint.Resolution) AndAlso P1.Y.EqualsTolerance(P2.Y, MathPoint.Resolution) AndAlso P1.Z.EqualsTolerance(P2.Z, MathPoint.Resolution) )
             End Operator
             
-            ''' <summary> Checks two points for unequality. <see cref=" Point.Resolution"/> is considered as tolerance for each coordinate. </summary>
+            ''' <summary> Checks two points for unequality. <see cref="MathPoint.Resolution"/> is considered as tolerance for each coordinate. </summary>
              ''' <param name="P1"> The first operand. </param>
              ''' <param name="P2"> The second operand. </param>
              ''' <returns> <see langword="true"/> if <paramref name="P1"/> doesn't equal <paramref name="P2"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="P1"/> or <paramref name="P2"/> is <see langword="null"/>. </exception>
-            Public Shared Overloads Operator <> (ByVal P1 As Point, ByVal P2 As Point) As Boolean
+            Public Shared Overloads Operator <> (ByVal P1 As MathPoint, ByVal P2 As MathPoint) As Boolean
                 
                 If (P1 Is Nothing) Then Throw New System.ArgumentNullException("P1")
                 If (P2 Is Nothing) Then Throw New System.ArgumentNullException("P2")
@@ -186,7 +189,7 @@ Namespace Math
             End Operator
             
         #End Region
-
+        
         #Region "Private Methods"
             
             Private Shared Function Interpol(ValueA As Double, ValueB As Double, Ratio As Double) As Double
@@ -194,9 +197,9 @@ Namespace Math
             End Function
 
         #End Region
-
+        
     End Class
-
+    
 End Namespace
 
 ' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

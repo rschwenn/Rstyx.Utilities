@@ -21,7 +21,7 @@ Namespace Math
         
         #Region "Properties"
             
-            Dim _Vertices As Collection(Of Point)
+            Dim _Vertices As Collection(Of MathPoint)
             
             ''' <summary> The vertices of the polygon. </summary>
              ''' <remarks>
@@ -29,14 +29,14 @@ Namespace Math
              ''' the <see cref="Polygon.IsClosed"/> property has to be set to <see langword="true"/>.
              ''' </remarks>
              ''' <returns> The verttices of this polygon. Will never be <see langword="null"/>. </returns>
-            Public Property Vertices() As Collection(Of Point)
+            Public Property Vertices() As Collection(Of MathPoint)
                 Get
                     If (_Vertices Is Nothing) Then
-                        _Vertices = New Collection(Of Point)
+                        _Vertices = New Collection(Of MathPoint)
                     End If
                     Return _Vertices
                 End Get
-                Set(value As Collection(Of Point))
+                Set(value As Collection(Of MathPoint))
                     _Vertices = value
                 End Set
             End Property
@@ -52,11 +52,11 @@ Namespace Math
              ''' <param name="Pt">        The point of interest. </param>
              ''' <returns> <see langword="true"/> if the point is considered to be inside the polygon. </returns>
              ''' <remarks>
-             ''' <see cref=" Point.Resolution"/> is considered as tolerance for treating the point to be on the polygon.
+             ''' <see cref="MathPoint.Resolution"/> is considered as tolerance for treating the point to be on the polygon.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function GetMinimumDistanceToPointXY(Pt As Point) As Boolean
-                Return GetMinimumDistanceToPointXY(Pt, Point.Resolution)
+            Public Function GetMinimumDistanceToPointXY(Pt As MathPoint) As Boolean
+                Return GetMinimumDistanceToPointXY(Pt, MathPoint.Resolution)
             End Function
             
             ''' <summary> Calculates the minimum distance to a point in XY plane. The sign determines the point's position. </summary>
@@ -81,7 +81,7 @@ Namespace Math
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function GetMinimumDistanceToPointXY(Pt As Point, Tolerance As Double) As Double
+            Public Function GetMinimumDistanceToPointXY(Pt As MathPoint, Tolerance As Double) As Double
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
@@ -124,11 +124,36 @@ Namespace Math
                 Return MinDistance
             End Function
             
+            ''' <summary> Checks if a line segment (given by two points) do intersect with this polygon in XY plane. </summary>
+             ''' <param name="StartPoint"> Start point of line. </param>
+             ''' <param name="EndPoint">   End   point of line. </param>
+             ''' <returns> <see langword="true"/> if there is an intersection which isn't outside of the segment. </returns>
+             ''' <exception cref="System.ArgumentNullException"> One of the points is <see langword="null"/>. </exception>
+            Public Function IntersectsWithLineXY(StartPoint As MathPoint, EndPoint As MathPoint) As Boolean
+                
+                If (StartPoint Is Nothing) Then Throw New System.ArgumentNullException("StartPoint")
+                If (EndPoint Is Nothing)   Then Throw New System.ArgumentNullException("EndPoint")
+                
+                Dim IsIntersection As Boolean = False
+                Dim j              As Integer = Me.Vertices.Count - 1
+                
+                ' Check each polygon edge.
+                For i As Integer = 0 To Me.Vertices.Count - 1
+                    IsIntersection = IsLineIntersectionXY(_Vertices(j), _Vertices(i), StartPoint, EndPoint)
+                    If (IsIntersection) Then
+                        Exit For
+                    End If
+                    j = i
+                Next
+                
+                Return IsIntersection
+            End Function
+            
             ''' <summary> Checks this Polygon for equality of vertices against a given Polygon considering a given tolerance for each point's coordinate. </summary>
              ''' <param name="ComparePolygon"> Polygon to compare with. </param>
              ''' <param name="Tolerance">      Tolerance in [m] for each point's coordinate. </param>
              ''' <remarks>
-             ''' The "=" and "&lt;&gt;" operators consider the static <see cref="Point.Resolution"/> value as tolerance.
+             ''' The "=" and "&lt;&gt;" operators consider the static <see cref="MathPoint.Resolution"/> value as tolerance.
              ''' This method is intended to use another tolerance.
              ''' </remarks>
              ''' <returns> <see langword="true"/> if this Polygon equals <paramref name="ComparePolygon"/>, otherwise <see langword="false"/>. </returns>
@@ -140,7 +165,7 @@ Namespace Math
                 Return Me.Equals(ComparePolygon, Tolerance, XYonly:=False)
             End Function
             
-            ''' <summary> Checks two Polygons for equality of vertices in XY plane. <see cref=" Point.Resolution"/> is considered as tolerance for each coordinate. </summary>
+            ''' <summary> Checks two Polygons for equality of vertices in XY plane. <see cref="MathPoint.Resolution"/> is considered as tolerance for each coordinate. </summary>
              ''' <param name="ComparePolygon"> Polygon to compare with. </param>
              ''' <returns> <see langword="true"/> if this Polygon equals <paramref name="ComparePolygon"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="ComparePolygon"/> is <see langword="null"/>. </exception>
@@ -148,7 +173,7 @@ Namespace Math
                 
                 If (ComparePolygon Is Nothing) Then Throw New System.ArgumentNullException("ComparePolygon")
                 
-                Return Me.Equals(ComparePolygon, Point.Resolution, XYonly:=True)
+                Return Me.Equals(ComparePolygon, MathPoint.Resolution, XYonly:=True)
             End Function
             
             ''' <summary> Checks two Polygons for equality of vertices in XY plane. <paramref name="Tolerance"/> is considered as tolerance for each coordinate. </summary>
@@ -177,7 +202,7 @@ Namespace Math
         
         #Region "Operators"
             
-            ''' <summary> Checks two poygons for equality of vertices. <see cref=" Point.Resolution"/> is considered as tolerance for each point's coordinate. </summary>
+            ''' <summary> Checks two poygons for equality of vertices. <see cref="MathPoint.Resolution"/> is considered as tolerance for each point's coordinate. </summary>
              ''' <param name="P1"> The first operand. </param>
              ''' <param name="P2"> The second operand. </param>
              ''' <returns> <see langword="true"/> if <paramref name="P1"/> equals <paramref name="P2"/>, otherwise <see langword="false"/>. </returns>
@@ -187,10 +212,10 @@ Namespace Math
                 If (P1 Is Nothing) Then Throw New System.ArgumentNullException("P1")
                 If (P2 Is Nothing) Then Throw New System.ArgumentNullException("P2")
                 
-                Return ( P1.Equals(P2, Point.Resolution, XYonly:=False) )
+                Return ( P1.Equals(P2, MathPoint.Resolution, XYonly:=False) )
             End Operator
             
-            ''' <summary> Checks two poygons for unequality of vertices. <see cref=" Point.Resolution"/> is considered as tolerance for each point's coordinate. </summary>
+            ''' <summary> Checks two poygons for unequality of vertices. <see cref="MathPoint.Resolution"/> is considered as tolerance for each point's coordinate. </summary>
              ''' <param name="P1"> The first operand. </param>
              ''' <param name="P2"> The second operand. </param>
              ''' <returns> <see langword="true"/> if <paramref name="P1"/> doesn't equal <paramref name="P2"/>, otherwise <see langword="false"/>. </returns>
@@ -255,7 +280,7 @@ Namespace Math
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Private Function IsPointInsideXY(Pt As Point) As Boolean
+            Private Function IsPointInsideXY(Pt As MathPoint) As Boolean
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
@@ -279,12 +304,55 @@ Namespace Math
                 Return IsInside
             End Function
             
+            ''' <summary> Checks if two line segments (given by two points each) do intersect in XY plane. </summary>
+             ''' <param name="Line1PA"> Start point of line 1. </param>
+             ''' <param name="Line1PE"> End   point of line 1. </param>
+             ''' <param name="Line2PA"> Start point of line 2. </param>
+             ''' <param name="Line2PE"> End   point of line 2. </param>
+             ''' <returns> <see langword="true"/> if there is an intersection which isn't outside of each of the segments. </returns>
+             ''' <remarks> See http://stackoverflow.com/questions/385305/efficient-maths-algorithm-to-calculate-intersections. </remarks>
+             ''' <exception cref="System.ArgumentNullException"> One of the points is <see langword="null"/>. </exception>
+            Private Function IsLineIntersectionXY(Line1PA As MathPoint, Line1PE As MathPoint, Line2PA As MathPoint, Line2PE As MathPoint) As Boolean
+                
+                If (Line1PA Is Nothing) Then Throw New System.ArgumentNullException("Line1PA")
+                If (Line1PE Is Nothing) Then Throw New System.ArgumentNullException("Line1PE")
+                If (Line2PA Is Nothing) Then Throw New System.ArgumentNullException("Line2PA")
+                If (Line2PE Is Nothing) Then Throw New System.ArgumentNullException("Line2PE")
+                
+                Dim IsIntersection As Boolean = False
+                
+                Dim dX1  As Double  = Line1PE.X - Line1PA.X
+                Dim dY1  As Double  = Line1PE.Y - Line1PA.Y
+                Dim dX2  As Double  = Line2PE.X - Line2PA.X
+                Dim dY2  As Double  = Line2PE.Y - Line2PA.Y
+                
+                Dim c    As Double  = (dX1 * dY2) - (dY1 * dX2)
+                
+                If (Abs(c) > 0.01) Then
+                    ' Intersection of rays
+                    Dim a   As Double  = (Line1PA.X * Line1PE.Y) - (Line1PA.Y * Line1PE.X)
+                    Dim b   As Double  = (Line2PA.X * Line2PE.Y) - (Line2PA.Y * Line2PE.X)
+                    
+                    Dim Xi  As Double  = ( (a * dX2) - (b * dX1) ) / c
+                    Dim Yi  As Double  = ( (a * dY2) - (b * dY1) ) / c
+                    
+                    ' Check if intersection isn't outside segments.
+                    IsIntersection = ( Xi.IsBetween(Min(Line1PA.X, Line1PE.X), Max(Line1PA.X, Line1PE.X)) AndAlso
+                                       Yi.IsBetween(Min(Line1PA.Y, Line1PE.Y), Max(Line1PA.Y, Line1PE.Y)) AndAlso
+                                       Xi.IsBetween(Min(Line2PA.X, Line2PE.X), Max(Line2PA.X, Line2PE.X)) AndAlso
+                                       Yi.IsBetween(Min(Line2PA.Y, Line2PE.Y), Max(Line2PA.Y, Line2PE.Y))
+                                     )
+                End If
+                
+                Return IsIntersection
+            End Function
+            
             ''' <summary> Checks if <paramref name="TestPoint"/> may be located inside this polygon in XY plane at all. </summary>
              ''' <param name="Pt"> The point of interest. </param>
              ''' <returns> <see langword="false"/> if the point can't be inside the polygon. </returns>
              ''' <remarks> This method compares minimum and maximum coordinates of point and polygon only as a quick test. </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Private Function MayContainPointXY(Pt As Point) As Boolean
+            Private Function MayContainPointXY(Pt As MathPoint) As Boolean
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("TestPoint")
                 
@@ -295,7 +363,7 @@ Namespace Math
                 Dim PolyMaxY  As Double  = Double.MinValue
                 
                 ' Polygon range.
-                For Each Vertex As Point In Me.Vertices
+                For Each Vertex As MathPoint In Me.Vertices
                     PolyMinX = Min(Vertex.X, PolyMinX)
                     PolyMinY = Min(Vertex.Y, PolyMinY)
                     PolyMaxX = Max(Vertex.X, PolyMaxX)
