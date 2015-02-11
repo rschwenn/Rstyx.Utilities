@@ -55,7 +55,7 @@ Namespace Math
              ''' <see cref="MathPoint.Resolution"/> is considered as tolerance for treating the point to be on the polygon.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
-            Public Function GetMinimumDistanceToPointXY(Pt As MathPoint) As Boolean
+            Public Function GetMinimumDistanceToPointXY(Pt As MathPoint) As Double
                 Return GetMinimumDistanceToPointXY(Pt, MathPoint.Resolution)
             End Function
             
@@ -99,7 +99,7 @@ Namespace Math
                 Next
                 
                 ' Direct distance to polygon vertex.
-                If (Double.IsPositiveInfinity(MinDistance)) Then
+                'If (Double.IsPositiveInfinity(MinDistance)) Then
                     For i As Integer = 0 To Me.Vertices.Count - 1
                         Distance = Pt.GetDistanceToPointXY(_Vertices(i))
                         If (Distance < MinDistance) Then
@@ -107,7 +107,7 @@ Namespace Math
                         End If
                         j = i
                     Next
-                End If
+                'End If
                 
                 ' Check success.
                 If (Double.IsPositiveInfinity(MinDistance)) Then

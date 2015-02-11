@@ -2,6 +2,8 @@
 Imports System
 Imports System.Math
 
+Imports Rstyx.Utilities.StringUtils
+
 Namespace Math
     
     ''' <summary> One single mathematical point. </summary>
@@ -130,6 +132,15 @@ Namespace Math
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
                 Return (Me.X.EqualsTolerance(Pt.X, Tolerance) AndAlso Me.Y.EqualsTolerance(Pt.Y, Tolerance))
+            End Function
+            
+        #End Region
+    
+        #Region "Overrides"
+            
+            ''' <inheritdoc/>
+            Public Overrides Function ToString() As String
+                Return sprintf("%13.4f, %13.4f, %13.4f", Me.X, Me.Y, Me.Z)
             End Function
             
         #End Region
