@@ -22,9 +22,10 @@ Namespace Math
                 Tolerance = 0.0
             End If
             
-            If (Double.IsNaN(Value) And Double.IsNaN(CompareValue)) Then
-                IsEqual = True
-            ElseIf (Not (Double.IsNaN(Value) OrElse Double.IsNaN(CompareValue))) Then
+            If (Double.IsNaN(Value)) Then
+                If (Double.IsNaN(CompareValue)) Then IsEqual = True
+
+            ElseIf (Not Double.IsNaN(CompareValue)) Then
                 IsEqual = (Not (Abs(Value - CompareValue) > Abs(Tolerance)))
             End If
             

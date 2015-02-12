@@ -321,10 +321,10 @@ Namespace Math
                 
                 Dim IsIntersection As Boolean = False
                 
-                Dim dX1  As Double  = Line1PE.X - Line1PA.X
-                Dim dY1  As Double  = Line1PE.Y - Line1PA.Y
-                Dim dX2  As Double  = Line2PE.X - Line2PA.X
-                Dim dY2  As Double  = Line2PE.Y - Line2PA.Y
+                Dim dX1  As Double  = Line1PA.X - Line1PE.X
+                Dim dY1  As Double  = Line1PA.Y - Line1PE.Y
+                Dim dX2  As Double  = Line2PA.X - Line2PE.X
+                Dim dY2  As Double  = Line2PA.Y - Line2PE.Y
                 
                 Dim c    As Double  = (dX1 * dY2) - (dY1 * dX2)
                 
@@ -337,10 +337,11 @@ Namespace Math
                     Dim Yi  As Double  = ( (a * dY2) - (b * dY1) ) / c
                     
                     ' Check if intersection isn't outside segments.
-                    IsIntersection = ( Xi.IsBetween(Min(Line1PA.X, Line1PE.X), Max(Line1PA.X, Line1PE.X)) AndAlso
-                                       Yi.IsBetween(Min(Line1PA.Y, Line1PE.Y), Max(Line1PA.Y, Line1PE.Y)) AndAlso
-                                       Xi.IsBetween(Min(Line2PA.X, Line2PE.X), Max(Line2PA.X, Line2PE.X)) AndAlso
-                                       Yi.IsBetween(Min(Line2PA.Y, Line2PE.Y), Max(Line2PA.Y, Line2PE.Y))
+                    Dim eps As Double = MathPoint.Resolution
+                    IsIntersection = ( Xi.IsBetween(Min(Line1PA.X, Line1PE.X) - eps, Max(Line1PA.X, Line1PE.X) + eps) AndAlso
+                                       Yi.IsBetween(Min(Line1PA.Y, Line1PE.Y) - eps, Max(Line1PA.Y, Line1PE.Y) + eps) AndAlso
+                                       Xi.IsBetween(Min(Line2PA.X, Line2PE.X) - eps, Max(Line2PA.X, Line2PE.X) + eps) AndAlso
+                                       Yi.IsBetween(Min(Line2PA.Y, Line2PE.Y) - eps, Max(Line2PA.Y, Line2PE.Y) + eps)
                                      )
                 End If
                 
