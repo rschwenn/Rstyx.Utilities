@@ -2286,5 +2286,14 @@ Namespace Resources
                 Return ResourceManager.GetString("UIResources_ErrorCreatingIconRectangle", resourceCulture)
             End Get
         End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler in Eingabefeldern (siehe ToolTip) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property ViewModelBase_Status_UIValidationErrorsPresent() As String
+            Get
+                Return ResourceManager.GetString("ViewModelBase_Status_UIValidationErrorsPresent", resourceCulture)
+            End Get
+        End Property
     End Class
 End Namespace

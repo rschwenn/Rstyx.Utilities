@@ -1000,4 +1000,8 @@
   <data name="Global_Label_BooleanTrue" xml:space="preserve">
     <value>Ja</value>
   </data>
+  <data name="ViewModelBase_Status_UIValidationErrorsPresent" xml:space="preserve">
+    <value>Fehler in Eingabefeldern (siehe ToolTip)</value>
+    <comment>Status bar text, when there are UI validation errors</comment>
+  </data>
 </root>

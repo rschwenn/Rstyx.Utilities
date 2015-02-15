@@ -1,11 +1,14 @@
 ﻿
 Imports System
+Imports System.Collections.Generic
+Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.Linq
 Imports System.Diagnostics
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Data
+Imports System.Windows.Media
 
 Imports Rstyx.Utilities.Validation
 
@@ -252,53 +255,101 @@ Namespace UI.Controls
             
             Private ErrorEventRoutedEventHandler As RoutedEventHandler
             
+            ' Maintains ViewModel UIValidationError*** poperties.
             Private Sub ExceptionValidationErrorHandler(ByVal sender As Object, ByVal e As RoutedEventArgs)
                 
                 Dim args As System.Windows.Controls.ValidationErrorEventArgs = DirectCast(e, System.Windows.Controls.ValidationErrorEventArgs)
                 
-                If (TypeOf args.Error.RuleInError Is System.Windows.Controls.ExceptionValidationRule) Then
+                ' Record binding vallidation errors for both a) Exceptions and b) business rule violations using IDataErrorInfo.
+                ' For fine grained control use binding properties: ValidatesOnExceptions, ValidatesOnDataErrors
+                
+                'If (TypeOf args.Error.RuleInError Is System.Windows.Controls.ExceptionValidationRule OrElse
+                '    TypeOf args.Error.RuleInError Is System.Windows.Controls.DataErrorValidationRule
+                '    ) Then
                     
                     Dim oViewModelBase As Rstyx.Utilities.UI.ViewModel.ViewModelBase = TryCast(Me.DataContext, Rstyx.Utilities.UI.ViewModel.ViewModelBase)
                     
                     If (oViewModelBase IsNot Nothing) Then
                         
-                        ' We only want to work with validation errors that are Exceptions because the business object has already recorded the business rule violations using IDataErrorInfo.
                         Dim oBindingExpression As BindingExpression = DirectCast(args.Error.BindingInError, System.Windows.Data.BindingExpression)
                         Dim strDataItemName As String = oBindingExpression.DataItem.ToString()
                         Dim strPropertyName As String = oBindingExpression.ParentBinding.Path.Path
                         
                         Dim sb As New System.Text.StringBuilder(1024)
                         
-                        For Each oValidationError As ValidationError In System.Windows.Controls.Validation.GetErrors(DirectCast(args.OriginalSource, DependencyObject))
+                        ' Collect Error messages of all errors of this control.
+                        Dim ValidationErrors As ReadOnlyObservableCollection(Of ValidationError) = System.Windows.Controls.Validation.GetErrors(DirectCast(args.OriginalSource, DependencyObject))
+                        For Each oValidationError As ValidationError In ValidationErrors
                             
-                            If (TypeOf oValidationError.RuleInError Is System.Windows.Controls.ExceptionValidationRule) Then
-                                'sb.AppendFormat("{0} has error: ", strPropertyName)
-                            
-                                If (oValidationError.Exception Is Nothing OrElse oValidationError.Exception.InnerException Is Nothing) Then
-                                    sb.AppendLine(oValidationError.ErrorContent.ToString())
-                                Else
-                                    sb.AppendLine(oValidationError.Exception.InnerException.Message)
-                                End If
+                            If (oValidationError.Exception Is Nothing OrElse oValidationError.Exception.InnerException Is Nothing) Then
+                                sb.AppendLine(oValidationError.ErrorContent.ToString())
+                            Else
+                                sb.AppendLine(oValidationError.Exception.InnerException.Message)
                             End If
                         Next
                         
-                        If (args.Action = ValidationErrorEventAction.Added) Then
-                            oViewModelBase.AddUIValidationError(New UIValidationError(strDataItemName, strPropertyName, sb.ToString() ))
-                        
-                        ElseIf args.Action = ValidationErrorEventAction.Removed Then
-                            oViewModelBase.RemoveUIValidationError(New UIValidationError(strDataItemName, strPropertyName, sb.ToString() ))
+                        If (ValidationErrors.Count > 0) Then
+                            ' Add or replace error for this property.
+                            oViewModelBase.AddUIValidationError(New UIValidationError(strDataItemName, strPropertyName, GetLabel(args.OriginalSource), sb.ToString() ))
                         Else
-                            ' This can only happen if the .NET Framework changes.  Better to put a sanity check in now that have a very hard to find bug later.
-                            Throw New ArgumentOutOfRangeException("Action", args.Action, "Action value was not programmed.")
+                            oViewModelBase.RemoveUIValidationError(New UIValidationError(strDataItemName, strPropertyName, GetLabel(args.OriginalSource), sb.ToString() ))
                         End If
                     End If
-                End If
+                'End If
             End Sub
+            
+            ''' <summary> Finds children in the visual tree of <paramref name="Parent"/> filtered by a given type. </summary>
+             ''' <typeparam name="TargetType"> The type for the children to find. </typeparam>
+             ''' <param name="Parent">         The root to start the search. </param>
+             ''' <returns> A lazy created enumeration of found children. </returns>
+            Public Shared Iterator Function FindVisualChildren(Of TargetType As DependencyObject)(Parent As DependencyObject) As IEnumerable(Of TargetType)
+            
+                If (Parent IsNot Nothing) Then
+
+                    For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(Parent) - 1
+
+                        Dim Child As DependencyObject = VisualTreeHelper.GetChild(Parent, i)
+                        
+                        If ((Child IsNot Nothing) AndAlso (TypeOf Child Is TargetType)) Then
+                            Yield  DirectCast(Child, TargetType)
+                        End If
+            
+                        For Each ChildOfChild As TargetType in FindVisualChildren(Of TargetType)(Child)
+                            Yield ChildOfChild
+                        Next
+                    Next
+                End If
+            End Function
+            
+            Private Function GetLabel(Control As Object) As String
+                Dim RetLabel As String = Nothing
+                    
+                If ((Control IsNot Nothing) AndAlso (TypeOf Control Is FrameworkElement)) Then
+                    Dim ControlName  As String = DirectCast(Control, FrameworkElement).Name
+                    
+                    For Each oLabel As Label in FindVisualChildren(Of Label)(Me)
+                        Dim Target As UIElement = oLabel.Target
+                        
+                        If ((Target IsNot Nothing) AndAlso (TypeOf Target Is FrameworkElement)) Then
+                            Dim TargetName  As String = DirectCast(Target, FrameworkElement).Name
+                            
+                            If (TargetName = ControlName) Then
+                                Dim TargetLabel As String = oLabel.Content.ToString().Replace("_", String.Empty)
+                                If (TargetLabel.IsNotEmptyOrWhiteSpace()) Then
+                                    RetLabel = TargetLabel
+                                End If
+                            End If
+                        End If
+                    Next
+                End If
+                
+                Return RetLabel
+            End Function
             
         #End Region
         
     End Class
-
+    
 End Namespace
 
 ' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

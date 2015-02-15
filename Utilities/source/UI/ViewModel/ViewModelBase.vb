@@ -662,10 +662,23 @@ Namespace UI.ViewModel
             ''' <summary> Gets the count of current UI validation errors. </summary>
              ''' <returns> Count of current UI validation errors. </returns>
              ''' <remarks>
+             ''' <para>
+             ''' <b>UI validation errors can be raised by:</b>
+             ''' <list type="bullet">
+             ''' <item><description> ExceptionValidationRule - Exception before source update (convert failed) - controlled by <c>ValidatesOnExceptions</c>. </description></item>
+             ''' <item><description> DataErrorValidationRule - Source's IDataErrorInfo(bound property's name) isn't empty after source update - controlled by <c>ValidatesOnDataErrors</c>. </description></item>
+             ''' <item><description> Any <c>ValidationRule</c> of <c>Binding.ValidationRules</c> . </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' Only one single error per property is maintained.
+             ''' </para>
+             ''' <para>
              ''' In order to work automatically, 
              ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
-             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
+             ''' and the binding to have it's following properties set to <see langword="true"/>:
+             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c> and/or <c>ValidatesOnExceptions</c>.
+             ''' </para>
              ''' </remarks>
             Public ReadOnly Property UIValidationErrorCount() As Integer
                 Get
@@ -676,32 +689,43 @@ Namespace UI.ViewModel
             ''' <summary> Gets the messages of all current UI validation errors (one line per error). </summary>
              ''' <returns> Messages of all current UI validation errors. </returns>
              ''' <remarks>
+             ''' <para>
+             ''' <b>UI validation errors can be raised by:</b>
+             ''' <list type="bullet">
+             ''' <item><description> ExceptionValidationRule - Exception before source update (convert failed) - controlled by <c>ValidatesOnExceptions</c>. </description></item>
+             ''' <item><description> DataErrorValidationRule - Source's IDataErrorInfo(bound property's name) isn't empty after source update - controlled by <c>ValidatesOnDataErrors</c>. </description></item>
+             ''' <item><description> Any <c>ValidationRule</c> of <c>Binding.ValidationRules</c> . </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' Only one single error per property is maintained.
+             ''' </para>
+             ''' <para>
              ''' In order to work automatically, 
              ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
-             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
+             ''' and the binding to have it's following properties set to <see langword="true"/>:
+             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c> and/or <c>ValidatesOnExceptions</c>.
+             ''' </para>
              ''' </remarks>
             Public ReadOnly Property UIValidationErrorUserMessages() As String
                 Get
                     Dim sb As New System.Text.StringBuilder(1024)
                     
                     For Each kvp As KeyValuePair(Of String, UIValidationError) In UIValidationErrors
-                        sb.AppendLine(String.Format("{0}: {1}", kvp.Value.PropertyName, kvp.Value.ErrorMessage))
+                        sb.AppendLine(String.Format("{0}: {1}", If(kvp.Value.Label.IsNotEmptyOrWhiteSpace(), kvp.Value.Label, kvp.Value.PropertyName), kvp.Value.ErrorMessage))
                     Next
                     
                     Return sb.ToString()
                 End Get
             End Property
             
-            ''' <summary> Adds an UI validation error to this ViewModel. </summary>
+            ''' <summary> Adds or replaces an UI validation error for a certain property of this ViewModel. </summary>
              ''' <param name="e"> The UI error. </param>
-             ''' <remarks>
-             ''' In order to be called automatically by the view, 
-             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
-             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
-             ''' </remarks>
+             ''' <remarks> See <see cref="ViewModelBase.UIValidationErrorCount"/>. </remarks>
             Public Sub AddUIValidationError(ByVal e As UIValidationError)
+                If (UIValidationErrors.ContainsKey(e.Key)) Then
+                    UIValidationErrors.Remove(e.Key)
+                End If
                 UIValidationErrors.Add(e.Key, e)
                 NotifyPropertyChanged("UIValidationErrorUserMessages")
                 NotifyPropertyChanged("UIValidationErrorCount")
@@ -709,12 +733,7 @@ Namespace UI.ViewModel
             End Sub
             
             ''' <summary> Clears the internal UI validation error dictionary of this ViewModel. </summary>
-             ''' <remarks>
-             ''' In order to be called automatically by the view, 
-             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
-             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
-             ''' </remarks>
+             ''' <remarks> See <see cref="ViewModelBase.UIValidationErrorCount"/>. </remarks>
             Protected Sub ClearUIValidationErrors()
                 UIValidationErrors.Clear()
                 NotifyPropertyChanged("UIValidationErrorUserMessages")
@@ -724,22 +743,31 @@ Namespace UI.ViewModel
             
             ''' <summary> Removes an UI validation error from this ViewModel. </summary>
              ''' <param name="e"> The UI error. </param>
-             ''' <remarks>
-             ''' In order to be called automatically by the view, 
-             ''' this requires the view to inherit from <see cref="Rstyx.Utilities.UI.Controls.UserControlBase"/>
-             ''' and the binding to have it's following properties to be set to <see langword="true"/>:
-             ''' <c>NotifyOnValidationError</c>, <c>ValidatesOnDataErrors</c>, <c>ValidatesOnExceptions</c>.
-             ''' </remarks>
+             ''' <remarks> See <see cref="ViewModelBase.UIValidationErrorCount"/>. </remarks>
             Public Sub RemoveUIValidationError(ByVal e As UIValidationError)
-                UIValidationErrors.Remove(e.Key)
-                NotifyPropertyChanged("UIValidationErrorUserMessages")
-                NotifyPropertyChanged("UIValidationErrorCount")
-                OnUIValidationErrorsChanged()
+                If (UIValidationErrors.ContainsKey(e.Key)) Then
+                    UIValidationErrors.Remove(e.Key)
+                    NotifyPropertyChanged("UIValidationErrorUserMessages")
+                    NotifyPropertyChanged("UIValidationErrorCount")
+                    OnUIValidationErrorsChanged()
+                End If
             End Sub
             
             
-            ''' <summary> Response to changed UIValidationErrors (The default implementation is empty). </summary>
+            ''' <summary> Response to changed UIValidationErrors. </summary>
+             ''' <remarks>
+             ''' The default implementation is to set status text and tooltip to reflect status of UI validation errors.
+             ''' Also, <c>Me.RaiseCanExecuteChangedForAll()</c> is called.
+             ''' </remarks>
             Protected Overridable Sub OnUIValidationErrorsChanged()
+                If (Me.UIValidationErrorCount > 0) Then
+                    Me.StatusText = Rstyx.Utilities.Resources.Messages.ViewModelBase_Status_UIValidationErrorsPresent
+                    Me.StatusTextToolTip = Me.UIValidationErrorUserMessages
+                Else
+                    Me.StatusText = Nothing
+                    Me.StatusTextToolTip = Nothing
+                End If
+                Me.RaiseCanExecuteChangedForAll()
             End Sub
             
         #End Region
