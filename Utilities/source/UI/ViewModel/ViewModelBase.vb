@@ -29,7 +29,7 @@ Namespace UI.ViewModel
      ''' </list>
      ''' </remarks>
     Public MustInherit Class ViewModelBase
-        Inherits   Cinch.ViewModelBase
+        Inherits   Cinch.ValidatingViewModelBase
         Implements IStatusIndicator
         Implements Cinch.IViewStatusAwareInjectionAware
         
