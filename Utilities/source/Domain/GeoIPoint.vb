@@ -28,6 +28,8 @@ Namespace Domain
             Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
                 
+                 Me.CoordType = "YXZ"
+                
                 ' iPkt specials.
                 If (TypeOf SourcePoint Is GeoIPoint) Then
                     
@@ -43,6 +45,32 @@ Namespace Domain
                     Me.GraficsCode = SourceIPoint.GraficsCode
                     Me.GraficsDim  = SourceIPoint.GraficsDim
                     Me.GraficsEcc  = SourceIPoint.GraficsEcc
+                    
+                ElseIf (TypeOf SourcePoint Is GeoVEPoint) Then
+                        
+                    Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
+                        
+                    'If (Me.ObjectKey.IsEmptyOrWhiteSpace() OrElse (Me.ObjectKey = "0")) Then
+                    '    Me.ObjectKey = SourceIPoint.Kind
+                    'End If
+                    
+                    ' Take VE specials as comment.
+                    Me.Comment = sprintf(" %12.4f  %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s  # %-s",
+                                         SourceVEPoint.TrackPos.Kilometer.Value,
+                                         SourceVEPoint.HeightInfo.TrimToMaxLength(13),
+                                         SourceVEPoint.Kind.TrimToMaxLength(4),
+                                         SourceVEPoint.TrackPos.TrackNo,
+                                         SourceVEPoint.TrackPos.RailsCode.TrimToMaxLength(1),
+                                         SourceVEPoint.HeightSys.TrimToMaxLength(3),
+                                         SourceVEPoint.mp,
+                                         SourceVEPoint.mh, 
+                                         SourceVEPoint.MarkHints.TrimToMaxLength(1),
+                                         SourceVEPoint.MarkType.TrimToMaxLength(3),
+                                         SourceVEPoint.sp.TrimToMaxLength(1),
+                                         SourceVEPoint.sh.TrimToMaxLength(1),
+                                         SourceVEPoint.Job.TrimToMaxLength(8),
+                                         SourceVEPoint.Comment
+                                        )
                 End If
             End Sub
             
