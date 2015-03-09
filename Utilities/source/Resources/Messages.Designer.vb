@@ -1811,6 +1811,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Geschwindigkeit ist 0.0 oder negativ ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_InvalidConfiguration_NonPositiveSpeed() As String
+            Get
+                Return ResourceManager.GetString("RailPair_InvalidConfiguration_NonPositiveSpeed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Gleis: Überhöhung = %.2f mm, Basis für Überhöhung = %.3f m ähnelt.
         '''</summary>
         Public Shared ReadOnly Property RailPair_ToString() As String

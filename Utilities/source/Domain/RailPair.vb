@@ -15,6 +15,7 @@ Namespace Domain
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Microstation.Addin.Lichtraum.RailPair")
             
             Private Shared UnknownConfigurationRule As Cinch.SimpleRule
+            Private Shared NonPositiveSpeed         As Cinch.SimpleRule
             
         #End Region
         
@@ -25,12 +26,21 @@ Namespace Domain
                 UnknownConfigurationRule = New Cinch.SimpleRule("IsConfigured",
                                                                 Rstyx.Utilities.Resources.Messages.RailPair_UnknownConfiguration,
                                                                 Function (oValidatingObject As Object) (Not DirectCast(oValidatingObject, RailPair).IsConfigured))
+                
+                NonPositiveSpeed         = New Cinch.SimpleRule("Speed",
+                                                                Rstyx.Utilities.Resources.Messages.RailPair_InvalidConfiguration_NonPositiveSpeed,
+                                                                Function (oValidatingObject As Object) 
+                                                                    Dim Speed As Double = DirectCast(oValidatingObject, RailPair).Speed
+                                                                    Return ((Not Double.IsNaN(Speed)) AndAlso (Speed <= 0.0))     
+                                                                End Function
+                                                               )
             End Sub
             
             ''' <summary> Creates a new RailPair with unknown configuration. </summary>
             Public Sub New()
                 Me.reset()
                 Me.AddRule(UnknownConfigurationRule)
+                Me.AddRule(NonPositiveSpeed)
             End Sub
             
         #End Region
@@ -43,8 +53,11 @@ Namespace Domain
             Private _RSRight        As Point
             Private _IsConfigured   As Boolean
             
+            ''' <summary> Gets or sets the speed. </summary>
+            Public Property Speed()  As Double
+            
             ''' <summary> Gets or sets the radius. </summary>
-            Public Property Radius() As Double = Double.NaN
+            Public Property Radius() As Double
             
             ''' <summary> Gets the Cant (negative, if right running surface is higher). </summary>
             Public ReadOnly Property Cant() As Double
@@ -173,11 +186,13 @@ Namespace Domain
             
             ''' <summary> Resets the configuration of this RailPair to "unknown". </summary>
             Public Sub reset()
-                _Cant       = Double.NaN
-                _CantBase   = Double.NaN
-                _RSLeft     = New Point(Double.NaN, Double.NaN)
-                _RSRight    = New Point(Double.NaN, Double.NaN)
-                _IsConfigured    = False
+                Speed         = Double.NaN
+                Radius        = Double.NaN
+                _Cant         = Double.NaN
+                _CantBase     = Double.NaN
+                _RSLeft       = New Point(Double.NaN, Double.NaN)
+                _RSRight      = New Point(Double.NaN, Double.NaN)
+                _IsConfigured = False
             End Sub
             
         #End Region

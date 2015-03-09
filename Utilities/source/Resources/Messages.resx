@@ -1004,4 +1004,7 @@
     <value>Fehler in Eingabefeldern (siehe ToolTip)</value>
     <comment>Status bar text, when there are UI validation errors</comment>
   </data>
+  <data name="RailPair_InvalidConfiguration_NonPositiveSpeed" xml:space="preserve">
+    <value>Geschwindigkeit ist 0.0 oder negativ</value>
+  </data>
 </root>

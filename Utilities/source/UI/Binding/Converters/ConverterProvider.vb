@@ -66,6 +66,15 @@ Namespace UI.Binding.Converters
                 End Get
             End Property
             
+            ''' <summary> Returns an instance of NanToNullConverter. </summary>
+             ''' <returns> NanToNullConverter (WPF Binding IValueConverter). </returns>
+             ''' <remarks> The returned Converter converts between NaN and Null string - and vice versa. </remarks>
+            Public Shared ReadOnly Property NanToNullConverter() As IValueConverter
+                Get
+                    Return New NanToNullConverter()
+                End Get
+            End Property
+            
             ''' <summary> Returns an instance of ScaleConverter. </summary>
              ''' <returns> ScaleConverter (WPF Binding IValueConverter). </returns>
              ''' <remarks> The returned Converter scales the input value applying the converter parameter as scale factor. </remarks>
