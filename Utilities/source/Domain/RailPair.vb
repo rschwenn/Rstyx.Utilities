@@ -119,7 +119,7 @@ Namespace Domain
              ''' <param name="RunningSurface2"> Coordinates of the other RunningSurface in track system. </param>
              ''' <exception cref="System.ArgumentException"> At least one coordinate of the points is <c>Dougble.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> RunningSurface1 and RunningSurface2 are equal. </exception>
-             ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1. </remarks>
+             ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
             Public Sub reconfigure(RunningSurface1 As Point, RunningSurface2 As Point)
                 
                 If (Double.IsNaN(RunningSurface1.X) OrElse Double.IsNaN(RunningSurface1.Y)) Then Throw New System.ArgumentException("RunningSurface1: at least one coordinate is NaN")
@@ -137,7 +137,7 @@ Namespace Domain
                 Dim V As Vector = _RSLeft - _RSRight
                 _Cant     = V.Y
                 _CantBase = V.Length
-                Me.Radius = 1 * Sign(_Cant)
+                If (Double.IsNaN(Me.Radius)) Then Me.Radius = 1 * Sign(_Cant)
                 
                 _IsConfigured  = True
             End Sub
@@ -145,9 +145,9 @@ Namespace Domain
             ''' <summary> Re-configures this RailPair based on cant and cantbase. </summary>
              ''' <param name="Cant"> Cant in [m]. </param>
              ''' <param name="CantBase"> CantBase in [m]. </param>
-             ''' <exception cref="System.ArgumentException"> Cant is <c>Dougble.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> CantBase is <c>Dougble.NaN</c> or less than 0.001. </exception>
-             ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1. </remarks>
+             ''' <exception cref="System.ArgumentException"> Cant is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> CantBase is <c>Double.NaN</c> or less than 0.001. </exception>
+             ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
             Public Sub reconfigure(Cant As Double, CantBase As Double)
                 
                 If (Double.IsNaN(Cant))     Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant, "Cant")
@@ -179,7 +179,7 @@ Namespace Domain
                 _RSRight  = New Point(xr, yr)
                 '_RSLeft   = New Point(-hd2, yl)
                 '_RSRight  = New Point(hd2, yr)
-                Me.Radius = 1 * Sign(_Cant)
+                If (Double.IsNaN(Me.Radius)) Then Me.Radius = 1 * Sign(_Cant)
                 
                 _IsConfigured  = True
             End Sub
