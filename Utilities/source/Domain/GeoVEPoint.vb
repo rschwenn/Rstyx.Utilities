@@ -17,19 +17,19 @@ Namespace Domain
         
         #Region "ID Definition Fields"
             
-            ''' <summary> Gets the default maximum length of <see cref="GeoPoint.ID"/>. </summary>
+            ''' <summary> Gets the default maximum length of <see cref="GeoVEPoint.ID"/>. </summary>
             Public Shared ReadOnly DefaultMaxIDLength As Integer = 7
             
-            ''' <summary> Gets the maximum length of <see cref="GeoPoint.ID"/> as determined at instantiation. </summary>
+            ''' <summary> Gets the maximum length of <see cref="GeoVEPoint.ID"/> as determined at instantiation. </summary>
             Public ReadOnly MaxIDLength   As Integer
             
-            ''' <summary> Gets the factor that converts a double <see cref="GeoPoint.ID"/> into an integer one (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
+            ''' <summary> Gets the factor that converts a double <see cref="GeoVEPoint.ID"/> into an integer one (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
             Public ReadOnly PointNoFactor As Integer
             
-            ''' <summary> Gets the minimal integer <see cref="GeoPoint.ID"/> (always <b>1</b>). </summary>
+            ''' <summary> Gets the minimal integer <see cref="GeoVEPoint.ID"/> (always <b>1</b>). </summary>
             Public ReadOnly MinIntegerID  As Integer
             
-            ''' <summary> Gets the maximum integer <see cref="GeoPoint.ID"/> (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
+            ''' <summary> Gets the maximum integer <see cref="GeoVEPoint.ID"/> (derived from <see cref="GeoVEPoint.MaxIDLength"/>). </summary>
             Public ReadOnly MaxIntegerID  As Integer
             
         #End Region
@@ -129,6 +129,33 @@ Namespace Domain
                 Return If(Me.ID.IsEmptyOrWhiteSpace(), 0, CInt(Me.ID))
             End Function
             
+            ''' <summary> Validates a given integer ID. </summary>
+             ''' <param name="IntegerID"> The ID to validate </param>
+             ''' <returns> <see langword="true"/>, if <paramref name="IntegerID"/> could be applied as <see cref="GeoVEPoint.ID"/>. </returns>
+            Public Function IsValidID(IntegerID As Integer) As Boolean
+                Return ((Me.MinIntegerID <= IntegerID) AndAlso (IntegerID <= Me.MaxIntegerID))
+            End Function
+            
+            ''' <summary> Validates a given double ID. </summary>
+             ''' <param name="DoubleID"> The ID to validate </param>
+             ''' <returns> <see langword="true"/>, if <paramref name="DoubleID"/> could be applied as <see cref="GeoVEPoint.ID"/>. </returns>
+            Public Function IsValidID(DoubleID As Double) As Boolean
+                
+                Dim MinDoubleID As Double = Me.MinIntegerID / Me.PointNoFactor
+                Dim MaxDoubleID As Double = Me.MaxIntegerID / Me.PointNoFactor
+                Dim ModDoubleID As Double = Round(DoubleID, Me.MaxIDLength)
+                
+                Return ((MinDoubleID <= ModDoubleID) AndAlso (ModDoubleID <= MaxDoubleID))
+            End Function
+            
+            ''' <summary> Validates a given single ID. </summary>
+             ''' <param name="SingleID"> The ID to validate </param>
+             ''' <returns> <see langword="true"/>, if <paramref name="SingleID"/> could be applied as <see cref="GeoVEPoint.ID"/>. </returns>
+            Public Function IsValidID(SingleID As Single) As Boolean
+                Return IsValidID(CDbl(SingleID))
+            End Function
+            
+            
             ''' <summary> Gets a decimal string representation from this point's ID. </summary>
              ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is still <see langword="null"/>. </returns>
             Public Function FormatID() As String
@@ -206,7 +233,7 @@ Namespace Domain
                 Else
                     Dim MinDoubleID As Double  = MinIntegerID
                     Dim MaxDoubleID As Double  = MaxIntegerID
-                    If (RetValue.Contains(".")) Then DoubleID = DoubleID * PointNoFactor
+                    If (RetValue.Contains(".") OrElse ((DoubleID > 0.0) AndAlso (DoubleID < 1.0))) Then DoubleID = DoubleID * PointNoFactor
                     DoubleID = Round(DoubleID, 0)
                     
                     If ((DoubleID < MinDoubleID) OrElse (DoubleID > MaxDoubleID)) Then
