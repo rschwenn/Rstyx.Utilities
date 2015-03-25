@@ -1,5 +1,6 @@
 ﻿
 Imports System.Collections.Generic
+'Imports System.Collections.ObjectModel
 Imports System.Text
 
 Imports Rstyx.Utilities.Math.MathUtils
@@ -577,11 +578,35 @@ Imports Rstyx.Utilities.Math.MathUtils
         
         ''' <summary> Splits the string into lines. Delimiters are <c>vbCrLf</c>, <c>vbLf</c> and <c>vbCr</c> - in this order. </summary>
          ''' <param name="Value"> The string to split. </param>
-         ''' <returns>            A String array containing all lines. </returns>
+         ''' <returns>            A String array containing all lines of <paramref name="Value"/>. </returns>
          ''' <remarks>            If the trimmed input string is empty, the returned array will contain one empty line. </remarks>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function splitLines(Value As String) As String()
             Return Value.Split({vbCrLf, vbLf, vbCr}, System.StringSplitOptions.None)
+        End Function
+        
+        ''' <summary> Splits the string into lines. Delimiters are <c>vbCrLf</c>, <c>vbLf</c> and <c>vbCr</c> - in this order. </summary>
+         ''' <param name="Value">            The string to split. </param>
+         ''' <param name="IgnoreEmptyLines"> If <see langword="true"/>, lines that are empty or white space only won't be returned. </param>
+         ''' <returns> A String array containing all lines of <paramref name="Value"/>. </returns>
+         ''' <remarks>
+         ''' If the trimmed input string is empty, the returned array will contain one empty line.
+         ''' BUT: If <paramref name="IgnoreEmptyLines"/> is <see langword="true"/> the returned array may be of length zero!
+         ''' </remarks>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function splitLines(Value As String, IgnoreEmptyLines As Boolean) As String()
+            If (Not IgnoreEmptyLines) Then
+                Return Value.splitLines()
+            Else
+                Dim Array1() As String = Value.Split({vbCrLf, vbLf, vbCr}, System.StringSplitOptions.None)
+                Dim NonEmptyLines As List(Of String) = New List(Of String)
+                For i As Integer = 0 To Array1.Length - 1
+                    If (Array1(i).IsNotEmptyOrWhiteSpace()) Then
+                        NonEmptyLines.Add(Array1(i))
+                    End If
+                Next
+                Return NonEmptyLines.ToArray()
+            End If
         End Function
         
         ''' <summary> Awk like splitting: Delimiter is whole whitespace. A word cannot contain white space. Words are trimmed. </summary>
