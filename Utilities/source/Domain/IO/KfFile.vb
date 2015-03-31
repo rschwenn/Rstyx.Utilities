@@ -290,11 +290,13 @@ Namespace Domain.IO
                 Dim mp          As Int16 = 0
                 Dim mh          As Int16 = 0
                 Dim ObjectKey   As Int32 = 0
+                Dim TrackNo     As String = Nothing
                 
                 Byte.TryParse(p.MarkType, MarkType)
                 If (Not Double.IsNaN(p.mp)) Then mp = CInt(p.mp)
                 If (Not Double.IsNaN(p.mh)) Then mh = CInt(p.mh)
                 Int32.TryParse(p.ObjectKey, ObjectKey)
+                If (p.TrackPos.TrackNo IsNot Nothing) Then TrackNo = CStr(p.TrackPos.TrackNo)
                 
                 oBW.Write(p.IDToVEDouble())
                 oBW.Write(getVEDoubleFromDouble(p.Y))
@@ -320,7 +322,7 @@ Namespace Domain.IO
                 oBW.Write(GetByteArray(FileEncoding, p.Job, 8, " "c))
                 oBW.Write(If(p.sp.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.sp))))
                 oBW.Write(If(p.sh.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.sh))))
-                oBW.Write(GetByteArray(FileEncoding, CStr(p.TrackPos.TrackNo), 4, " "c, AdjustAtRight:=True))
+                oBW.Write(GetByteArray(FileEncoding, TrackNo, 4, " "c, AdjustAtRight:=True))
                 oBW.Write(If(p.TrackPos.RailsCode.IsEmptyOrWhiteSpace(), " "c, CByte(Asc(p.TrackPos.RailsCode))))
             End Sub
             

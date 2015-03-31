@@ -203,7 +203,7 @@ Namespace IO
                         ElseIf (Not isValidFilePath(FolderName)) Then
                             Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFolderName, FolderName))
                         Else
-                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchFolderNotFound, FolderName, Directory.GetCurrentDirectory()))
+                            Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchFolderNotFound, FolderName, Directory.GetCurrentDirectory()))
                         End If 
                     ElseIf (ConsolidatedFolders.Contains(FolderName)) Then
                         Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFolderName, FolderName))

@@ -236,21 +236,26 @@ Namespace IO
             
             ''' <summary> Creates a byte array from a string. </summary>
              ''' <param name="TheEncoding">   The encoding to use. </param>
-             ''' <param name="text">          Input string </param>
+             ''' <param name="text">          Input string. May be <see langword="null"/>. </param>
              ''' <param name="Length">        Given length of the byte array to return. </param>
              ''' <param name="FillChar">      If <paramref name="text"/> is shorter than <paramref name="Length"/>, it will be filled with this character. </param>
              ''' <param name="AdjustAtRight"> If <see langword="true"/> the <paramref name="FillChar"/>'s will be inserted left, otherwise right. </param>
              ''' <returns> A byte array with given <paramref name="Length"/>. </returns>
              ''' <remarks> The input string will be trimmed to <paramref name="Length"/>. </remarks>
             Protected Function GetByteArray(TheEncoding As Encoding, text As String, Length As Integer, FillChar As Char, Optional AdjustAtRight As Boolean = False) As Byte()
-                Dim TrimmedInput As String = text
+                
+                Dim OriginalInput As String = text
+                If (OriginalInput Is Nothing) Then OriginalInput = String.Empty
+                
+                Dim TrimmedInput As String = OriginalInput
+                
                 If (TrimmedInput.Length > Length) Then
-                    TrimmedInput = text.Left(Length)
+                    TrimmedInput = OriginalInput.Left(Length)
                 ElseIf (TrimmedInput.Length < Length) Then
                     If (AdjustAtRight) Then
-                        TrimmedInput = text.PadLeft(Length, FillChar)
+                        TrimmedInput = OriginalInput.PadLeft(Length, FillChar)
                     Else
-                        TrimmedInput = text.PadRight(Length, FillChar)
+                        TrimmedInput = OriginalInput.PadRight(Length, FillChar)
                     End If
                 End If
                 Return TheEncoding.GetBytes(TrimmedInput)
