@@ -36,6 +36,15 @@
         End Class
     End Namespace
     
+    Namespace Domain.ClearanceGauge
+        ''' <summary>
+        ''' Clearance Gauge related stuff.
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
     Namespace Domain.IO
         ''' <summary>
         ''' I/O for Business objects etc (domain layer).

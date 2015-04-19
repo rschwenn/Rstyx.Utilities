@@ -621,4 +621,43 @@
   <data name="Rstyx_Utilities_IO_DataFieldPositionType_Ignore" xml:space="preserve">
     <value>Feld wird ignoriert</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_CAD" xml:space="preserve">
+    <value>aus Grafik</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_G2" xml:space="preserve">
+    <value>berechnet mit Bezugslinie G2</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_None" xml:space="preserve">
+    <value>Nicht definiert</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinition_MinimumClearance" xml:space="preserve">
+    <value>Grenzlinie</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinition_None" xml:space="preserve">
+    <value>keine</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_Custom" xml:space="preserve">
+    <value>benutzerdefiniert</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_None" xml:space="preserve">
+    <value>ohne</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_15kV" xml:space="preserve">
+    <value>OLA 15 kV</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_1kV" xml:space="preserve">
+    <value>OLA 1 kV</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_25kV" xml:space="preserve">
+    <value>OLA 25 kV</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_3kV" xml:space="preserve">
+    <value>OLA 3 kV</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceRulesScope_DBAG" xml:space="preserve">
+    <value>Deutsche Bahn</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceRulesScope_None" xml:space="preserve">
+    <value>keiner</value>
+  </data>
 </root>

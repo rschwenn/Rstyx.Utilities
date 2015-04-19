@@ -116,6 +116,8 @@
     <Compile Include="My Project\Settings.vb" />
     <Compile Include="source\Apps\AppInfo.vb" />
     <Compile Include="source\Apps\AppUtils.vb" />
+    <Compile Include="source\Domain\ClearanceGauge\Enums.vb" />
+    <Compile Include="source\Domain\ClearanceGauge\MinimumClearanceDBAG.vb" />
     <Compile Include="source\Domain\GeoIPoint.vb" />
     <Compile Include="source\Domain\GeoPoint.vb" />
     <Compile Include="source\Domain\GeoPointExtensions.vb" />

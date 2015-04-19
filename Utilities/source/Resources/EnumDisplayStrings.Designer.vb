@@ -1069,6 +1069,123 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grenzlinie ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinition_MinimumClearance() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinition_MinimumClearance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinition_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinition_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die aus Grafik ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_CAD() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_CAD", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die berechnet mit Bezugslinie G2 ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_G2() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_G2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Nicht definiert ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceDefinitionBase_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die benutzerdefiniert ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_Custom() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_Custom", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die ohne ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die OLA 15 kV ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_15kV() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_15kV", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die OLA 1 kV ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_1kV() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_1kV", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die OLA 25 kV ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_25kV() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_25kV", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die OLA 3 kV ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_3kV() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceOptionalPart_OHL_3kV", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Deutsche Bahn ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceRulesScope_DBAG() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceRulesScope_DBAG", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die keiner ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_ClearanceGauge_ClearanceRulesScope_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_ClearanceGauge_ClearanceRulesScope_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Werte im gedrehten Gleissystem erforderlich ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointConstraints_KnownCantedRailsSystem() As String
