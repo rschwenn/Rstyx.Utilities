@@ -158,6 +158,7 @@
     <Compile Include="source\IO\ParseException.vb" />
     <Compile Include="source\IO\DataTextLine.vb" />
     <Compile Include="source\Domain\IO\TcFileReader.vb" />
+    <Compile Include="source\Math\LinearTabFunction.vb" />
     <Compile Include="source\Math\Point.vb" />
     <Compile Include="source\Math\Polygon.vb" />
     <Compile Include="source\Resources\EnumDisplayStrings.Designer.vb">

@@ -1730,6 +1730,78 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grenzlinie kann nicht berechnet werden: Die Überhöhungsbasis ist kleiner als 0.01 m. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_InvalidCantBase() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_InvalidCantBase", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es wurde versucht, eine ungültige Geometrie zu setzen: Die Überhöhung ist unbekannt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_SetGeometry_UnknownCant() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_SetGeometry_UnknownCant", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es wurde versucht, eine ungültige Geometrie zu setzen: Die Überhöhungsbasis ist unbekannt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_SetGeometry_UnknownCantBase() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_SetGeometry_UnknownCantBase", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es wurde versucht, eine ungültige Geometrie zu setzen: Der Radius ist unbekannt oder 0.0, die relative Überhöhung aber ungleich 0.0. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_SetGeometry_UnknownRadius() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_SetGeometry_UnknownRadius", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grenzlinie kann nicht berechnet werden: Die Überhöhung ist unbekannt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_UnknownCant() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_UnknownCant", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grenzlinie kann nicht berechnet werden: Die Überhöhungsbasis ist unbekannt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_UnknownCantBase() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_UnknownCantBase", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grenzlinie kann nicht berechnet werden: Der Radius ist unbekannt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_UnknownRadius() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_UnknownRadius", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grenzlinie kann nicht berechnet werden: Die Geschwindigkeit ist unbekannt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property MinimumClearanceDBAG_UnknownSpeed() As String
+            Get
+                Return ResourceManager.GetString("MinimumClearanceDBAG_UnknownSpeed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die %s in Zeile %d: %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property ParseError_ErrorLevelInLineNo() As String
