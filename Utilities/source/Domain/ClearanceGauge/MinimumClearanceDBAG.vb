@@ -69,7 +69,7 @@ Namespace Domain.ClearanceGauge
             
             ''' <summary> Gets the static definition of G2. </summary>
              ''' <remarks> The lower part is for all rails that may contain changes in vertical curve. </remarks>
-            Shared ReadOnly Property ReferenceLineG2()  As Polygon
+            Shared ReadOnly Property ReferenceLineG2() As Polygon
                 Get
                     Return _ReferenceLineG2
                 End Get
@@ -77,7 +77,7 @@ Namespace Domain.ClearanceGauge
             
             ''' <summary> Returns the main outline of minimum clearance. </summary>
              ''' <remarks>  </remarks>
-            Public ReadOnly Property MainOutline()  As Polygon
+            Public ReadOnly Property MainOutline() As Polygon
                 Get
                     If (Not IsMainOutlineValid) Then
                         _MainOutline = CalculateMainOutline()
@@ -89,7 +89,7 @@ Namespace Domain.ClearanceGauge
             
             ''' <summary> Returns the outline for overhead line area of minimum clearance. </summary>
              ''' <remarks>  </remarks>
-            Public ReadOnly Property OHLOutline()   As Polygon
+            Public ReadOnly Property OHLOutline() As Polygon
                 Get
                     If (Not IsOHLOutlineValid) Then
                         _OHLOutline = CalculateOHLOutline()
@@ -200,7 +200,7 @@ Namespace Domain.ClearanceGauge
                 Me.Radius   = GeometryConditions.Ra
                 Me.CantBase = GeometryConditions.CantBase
                 
-                If (GeometryConditions.Ueb < CantZeroTol) Then
+                If (Abs(GeometryConditions.Ueb) < CantZeroTol) Then
                     Me.Cant = 0.0
                 Else
                     If (Double.IsNaN(GeometryConditions.Ra) OrElse GeometryConditions.Ra.EqualsTolerance(0.0, RadiusInfinityTol)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownRadius)

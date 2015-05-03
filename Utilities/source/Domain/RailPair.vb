@@ -3,6 +3,8 @@ Imports System
 Imports System.Math
 Imports System.Windows
 
+Imports Rstyx.Utilities.Math
+
 Namespace Domain
     
     ''' <summary> A pair of rails at a discrete spot (cross section). </summary>
@@ -16,6 +18,13 @@ Namespace Domain
             
             Private Shared UnknownConfigurationRule As Cinch.SimpleRule
             Private Shared NonPositiveSpeed         As Cinch.SimpleRule
+            
+            Const MinCantBase               As Double  = 0.01
+            Const CantZeroTol               As Double  = 0.001
+            Const RadiusInfinityTol         As Double  = 0.001
+            
+            Private IsCantDeficiencyValid   As Boolean = False
+            Private AbsRadius               As Double = Double.NaN
             
         #End Region
         
@@ -47,19 +56,62 @@ Namespace Domain
         
         #Region "Properties"
             
-            Private _Cant           As Double
-            Private _CantBase       As Double
+            Private _Speed          As Double = Double.NaN
+            Private _Radius         As Double = Double.NaN
+            Private _CantDeficiency As Double = Double.NaN
+            Private _Cant           As Double = Double.NaN
+            Private _CantBase       As Double = Double.NaN
             Private _RSLeft         As Point
             Private _RSRight        As Point
             Private _IsConfigured   As Boolean
             
             ''' <summary> Gets or sets the speed. </summary>
             Public Property Speed()  As Double
+                Get
+                    Return _Speed
+                End Get
+                Set(value As Double)
+                    _Speed = value
+                    IsCantDeficiencyValid = False
+                End Set
+            End Property
             
             ''' <summary> Gets or sets the radius. </summary>
-            Public Property Radius() As Double
+            Public Property Radius()  As Double
+                Get
+                    Return _Radius
+                End Get
+                Set(value As Double)
+                    If (Double.IsNaN(value)) Then
+                        _Radius   = Double.NaN
+                        AbsRadius = Double.NaN
+                        
+                    ElseIf (value.EqualsTolerance(0.0, RadiusInfinityTol)) Then
+                        _Radius   = Double.PositiveInfinity
+                        AbsRadius = Double.PositiveInfinity
+                    Else
+                        _Radius   = value
+                        AbsRadius = Abs(value)
+                    End If
+                    
+                    IsCantDeficiencyValid = False
+                End Set
+            End Property
+            
+            ''' <summary> Returns the main outline of minimum clearance. </summary>
+             ''' <remarks>  </remarks>
+            Public ReadOnly Property CantDeficiency() As Double
+                Get
+                    If (Not IsCantDeficiencyValid) Then
+                        _CantDeficiency = CalculateCantDeficiency()
+                        IsCantDeficiencyValid = True
+                    End If
+                    Return _CantDeficiency
+                End Get
+            End Property
             
             ''' <summary> Gets the Cant (negative, if right running surface is higher). </summary>
+             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property Cant() As Double
                 Get
                     Return _Cant
@@ -67,6 +119,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets the CantBase. </summary>
+             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property CantBase() As Double
                 Get
                     Return _CantBase
@@ -74,6 +127,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Left Running Surface in track system. </summary>
+             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSLeft() As Point
                 Get
                     Return _RSLeft
@@ -81,6 +135,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Higher Running Surface in track system. </summary>
+             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSHigher() As Point
                 Get
                     Dim RetRS As Point = If((_Cant < 0), RSRight, RSLeft)
@@ -89,6 +144,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Lower Running Surface in track system. </summary>
+             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSLower() As Point
                 Get
                     Dim RetRS As Point = If((_Cant < 0), RSLeft, RSRight)
@@ -97,6 +153,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Right Running Surface in track system. </summary>
+             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSRight() As Point
                 Get
                     Return _RSRight
@@ -137,8 +194,13 @@ Namespace Domain
                 Dim V As Vector = _RSLeft - _RSRight
                 _Cant     = V.Y
                 _CantBase = V.Length
-                If (Double.IsNaN(Me.Radius)) Then Me.Radius = 1 * Sign(_Cant)
                 
+                ' Check close to zero.
+                If (Abs(_Cant) < CantZeroTol) Then _Cant = 0.0
+                
+                If (Double.IsNaN(_Radius)) Then Me.Radius = 1 * Sign(_Cant)
+                
+                IsCantDeficiencyValid = False
                 _IsConfigured  = True
             End Sub
             
@@ -152,47 +214,56 @@ Namespace Domain
                 
                 If (Double.IsNaN(Cant))     Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant, "Cant")
                 If (Double.IsNaN(CantBase)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase, "CantBase")
-                If (CantBase < 0.001)       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_InvalidCantBaseNegative, "CantBase")
+                If (CantBase < MinCantBase) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_InvalidCantBaseNegative, "CantBase")
+                
+                ' Check close to zero.
+                If (Abs(Cant) < CantZeroTol) Then
+                    _Cant = 0.0
+                Else
+                    _Cant = Cant
+                End If
                 
                 Dim yl  As Double
                 Dim yr  As Double
                 Dim xl  As Double
                 Dim xr  As Double
                 'Dim hd2 As Double = Sqrt(Pow(CantBase, 2) - Pow(Cant, 2)) / 2
-                Dim cbh As Double = Sqrt(Pow(CantBase, 2) - Pow(Cant, 2))
+                Dim cbh As Double = Sqrt(Pow(CantBase, 2) - Pow(_Cant, 2))
                 
-                If (Cant < 0) Then
+                If (_Cant < 0) Then
                     Yl = 0.0
-                    yr = Abs(Cant)
+                    yr = Abs(_Cant)
                     xl = -CantBase / 2
                     xr = cbh + xl
                 Else
-                    Yl = Cant
+                    Yl = _Cant
                     yr = 0.0
                     xr = CantBase / 2
                     xl = -cbh + xr
                 End If
                 
-                _Cant     = Cant
                 _CantBase = CantBase
                 _RSLeft   = New Point(xl, yl)
                 _RSRight  = New Point(xr, yr)
                 '_RSLeft   = New Point(-hd2, yl)
                 '_RSRight  = New Point(hd2, yr)
-                If (Double.IsNaN(Me.Radius)) Then Me.Radius = 1 * Sign(_Cant)
+                If (Double.IsNaN(_Radius)) Then Me.Radius = 1 * Sign(_Cant)
                 
+                IsCantDeficiencyValid = False
                 _IsConfigured  = True
             End Sub
             
             ''' <summary> Resets the configuration of this RailPair to "unknown". </summary>
             Public Sub reset()
-                Speed         = Double.NaN
-                Radius        = Double.NaN
-                _Cant         = Double.NaN
-                _CantBase     = Double.NaN
-                _RSLeft       = New Point(Double.NaN, Double.NaN)
-                _RSRight      = New Point(Double.NaN, Double.NaN)
-                _IsConfigured = False
+                Me.Speed        = Double.NaN
+                Me.Radius       = Double.NaN
+                _CantDeficiency = Double.NaN
+                _Cant           = Double.NaN
+                _CantBase       = Double.NaN
+                _RSLeft         = New Point(Double.NaN, Double.NaN)
+                _RSRight        = New Point(Double.NaN, Double.NaN)
+                _IsConfigured   = False
+                IsCantDeficiencyValid = False
             End Sub
             
         #End Region
@@ -208,6 +279,24 @@ Namespace Domain
                     RetValue = Rstyx.Utilities.StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.RailPair_ToString, Me.Cant * 1000, Me.CantBase)
                 End If
                 Return RetValue
+            End Function
+            
+        #End Region
+        
+        #Region "Private Methods"
+            
+            ''' <summary> Calculates cant Deficiency in [m]. Maybe <c>Double.NaN</c>. </summary>
+             ''' <returns> Cant Deficiency in [m]. </returns>
+            Private Function CalculateCantDeficiency() As Double
+            
+                Dim uf  As Double = Double.NaN
+                
+                If (Not (Double.IsNaN(_Cant) OrElse Double.IsNaN(_Radius) OrElse Double.IsNaN(_Speed) )) Then
+                    
+                    uf = (11.8 * _Speed * _Speed / AbsRadius / 1000) - (Sign(_Radius) * _Cant)   ' In [m].
+                End If
+                
+                Return uf
             End Function
             
         #End Region
