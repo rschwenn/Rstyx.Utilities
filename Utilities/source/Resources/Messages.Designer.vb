@@ -1901,7 +1901,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Überhöhung ist unbekannt (NaN) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Überhöhung ist unbekannt (NaN). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property RailPair_UnknownCant() As String
             Get
@@ -1910,7 +1910,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Basis für Überhöhung ist unbekannt (NaN) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Basis für Überhöhung ist unbekannt (NaN). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property RailPair_UnknownCantBase() As String
             Get
@@ -1924,6 +1924,24 @@ Namespace Resources
         Public Shared ReadOnly Property RailPair_UnknownConfiguration() As String
             Get
                 Return ResourceManager.GetString("RailPair_UnknownConfiguration", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Abstand des Punktes von der Lichtraumachse ist unbekannt (NaN). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_UnknownPointDistance() As String
+            Get
+                Return ResourceManager.GetString("RailPair_UnknownPointDistance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Radius ist unbekannt (NaN). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_UnknownRadius() As String
+            Get
+                Return ResourceManager.GetString("RailPair_UnknownRadius", resourceCulture)
             End Get
         End Property
         

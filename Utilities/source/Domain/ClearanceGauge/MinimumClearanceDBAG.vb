@@ -18,10 +18,6 @@ Namespace Domain.ClearanceGauge
             Const S0                    As Double  = 0.005   ' Influence of track gauge widening / deviation. Corresponds to EBO appendix 2 table 2.1.1 (gauge = 1.445).
             Const hc                    As Double  = 0.500   ' Wankpolhöhe.
             
-            Const MinCantBase           As Double  = 0.01
-            Const CantZeroTol           As Double  = 0.001
-            Const RadiusInfinityTol     As Double  = 0.001
-            
             Private Shared Table212i    As LinearTabFunction
             Private Shared Table212a    As LinearTabFunction
             Private Shared MinBaseLine  As Polygon
@@ -36,13 +32,11 @@ Namespace Domain.ClearanceGauge
             Private IsOHLOutlineValid   As Boolean = False
             Private IsSmallRadius250    As Boolean = False
             
-            Private NormalizedCant      As Double = Double.NaN
+            'Private NormalizedCant      As Double = Double.NaN
             Private RelativeCant        As Double = Double.NaN
-            Private UnsignedCant        As Double = Double.NaN
             Private AbsRadius           As Double = Double.NaN
-            Private u0                  As Double = Double.NaN
-            Private uf                  As Double = Double.NaN
-            Private Q0                  As Double = Double.NaN
+            Private Qi0                 As Double = Double.NaN
+            Private Qa0                 As Double = Double.NaN
             
         #End Region
         
@@ -103,66 +97,27 @@ Namespace Domain.ClearanceGauge
         
         #Region "Input Properties"
             
-            Dim _Speed          As Double  = Double.NaN
-            Dim _Radius         As Double  = Double.NaN
-            Dim _Cant           As Double  = Double.NaN
-            Dim _CantBase       As Double  = Double.NaN
-            Dim _OverHeadLine   As ClearanceOptionalPart = ClearanceOptionalPart.None
-            
-            ''' <summary> Gets or sets the Speed in [km/h]. </summary>
-            Public Property Speed As Double
-                Get 
-                    Return _Speed
-                End Get
-                Set(value As Double)
-                    _Speed = value
-                    SetAuxValues()
-                End Set
-            End Property
-            
-            ''' <summary> Gets or sets the Radius in [m]. </summary>
-             ''' <remarks> Trying to set a value close to <c>Zero</c> (0.0+-0.001) results in a value of <c>Double.PositiveInfinity</c> </remarks>
-            Public Property Radius As Double
-                Get 
-                    Return _Radius
-                End Get
-                Set(value As Double)
-                    If (Double.IsNaN(value)) Then
-                        _Radius   = Double.NaN
-                        AbsRadius = Double.NaN
-                        
-                    ElseIf (value.EqualsTolerance(0.0, RadiusInfinityTol)) Then
-                        _Radius   = Double.PositiveInfinity
-                        AbsRadius = Double.PositiveInfinity
-                        IsSmallRadius250 = False
-                    Else
-                        _Radius   = value
-                        AbsRadius = Abs(value)
-                        IsSmallRadius250 = (Round(AbsRadius, 3) < 250.0)
+            Private _RailsConfig    As RailPair
+            Private _OverHeadLine   As ClearanceOptionalPart = ClearanceOptionalPart.None
+        
+            ''' <summary> Gets or sets the rails configuration (geometry and speed). </summary>
+             ''' <remarks> The getter never returns <see langword="null"/>. </remarks>
+            Public Property RailsConfig() As RailPair
+                Get
+                    If (_RailsConfig Is Nothing) Then
+                        _RailsConfig = New RailPair()
+                        AddHandler _RailsConfig.RailsConfigChanged, AddressOf RailsConfigChanged
                     End If
-                    
-                    SetAuxValues()
-                End Set
-            End Property
-            
-            ''' <summary> Gets or sets the Absolute Cant in [m] (negative, if right running surface is higher). </summary>
-            Public Property Cant As Double
-                Get 
-                    Return _Cant
+                    Return _RailsConfig
                 End Get
-                Set(value As Double)
-                    _Cant = value
-                    SetAuxValues()
-                End Set
-            End Property
-            
-            ''' <summary> Gets or sets the CantBase in [m]. </summary>
-            Public Property CantBase As Double
-                Get 
-                    Return _CantBase
-                End Get
-                Set(value As Double)
-                    _CantBase = value
+                Set(value As RailPair)
+                    If (_RailsConfig IsNot Nothing) Then
+                        RemoveHandler _RailsConfig.RailsConfigChanged, AddressOf RailsConfigChanged
+                    End If
+                    _RailsConfig = value
+                    If (_RailsConfig IsNot Nothing) Then
+                        AddHandler _RailsConfig.RailsConfigChanged, AddressOf RailsConfigChanged
+                    End If
                     SetAuxValues()
                 End Set
             End Property
@@ -197,15 +152,20 @@ Namespace Domain.ClearanceGauge
                 If (Double.IsNaN(GeometryConditions.Ueb))       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownCant)
                 If (Double.IsNaN(GeometryConditions.CantBase))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownCantBase)
                 
-                Me.Radius   = GeometryConditions.Ra
-                Me.CantBase = GeometryConditions.CantBase
+                Me.RailsConfig.Radius = GeometryConditions.Ra
                 
-                If (Abs(GeometryConditions.Ueb) < CantZeroTol) Then
-                    Me.Cant = 0.0
-                Else
-                    If (Double.IsNaN(GeometryConditions.Ra) OrElse GeometryConditions.Ra.EqualsTolerance(0.0, RadiusInfinityTol)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownRadius)
-                    Me.Cant = GeometryConditions.Ueb * Sign(GeometryConditions.Ra)
+                If (Not GeometryConditions.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
+                    If (Double.IsNaN(Me.RailsConfig.Radius) OrElse Double.IsInfinity(Me.RailsConfig.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownRadius)
                 End If
+                
+                Me.RailsConfig.reconfigure(GeometryConditions.Ueb * Sign(Me.RailsConfig.Radius), GeometryConditions.CantBase)
+            End Sub
+            
+            ''' <summary> Sets geometry input values by referencing an existing <see cref="RailPair"/>. </summary>
+             ''' <param name="RailsConfig"> The <see cref="RailPair"/> which provides cant, cant base, radius and speed. </param>
+             ''' <remarks> If <paramref name="GeometryConditions"/> is <see langword="null"/>, a default  <see cref="RailPair"/> will be used. </remarks>
+            Public Sub SetGeometry(RailsConfig As RailPair)
+                Me.RailsConfig = RailsConfig
             End Sub
             
         #End Region
@@ -350,14 +310,14 @@ Namespace Domain.ClearanceGauge
              ''' <remarks></remarks>
              ''' <exception cref="System.InvalidOperationException"> Cant     is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.InvalidOperationException"> CantBase is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.InvalidOperationException"> Radius   is <c>Double.NaN</c> or Zero, but Cant isn't zero. </exception>
+             ''' <exception cref="System.InvalidOperationException"> Radius   is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> Speed    is <c>Double.NaN</c>. </exception>
             Private Function CalculateMainOutline() As Polygon
                 
-                If (Double.IsNaN(_Cant))     Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
-                If (Double.IsNaN(_CantBase)) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
-                If (Double.IsNaN(_Radius))   Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
-                If (Double.IsNaN(_Speed))    Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
-                If (_CantBase < MinCantBase) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_InvalidCantBase)
+                If (Double.IsNaN(Me.RailsConfig.Cant))     Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
+                If (Double.IsNaN(Me.RailsConfig.CantBase)) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
+                If (Double.IsNaN(Me.RailsConfig.Radius))   Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
+                If (Double.IsNaN(Me.RailsConfig.Speed))    Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
                 
                 Dim MinimumOutline As Polygon = New Polygon()
                 MinimumOutline.IsClosed = True
@@ -405,9 +365,7 @@ Namespace Domain.ClearanceGauge
                     RetValue = (3.750 / AbsRadius) + S0
                 Else
                     ' Radius < 250 m.
-                    Dim IsPointInsideCurve  As Boolean = (Sign(Point.X) = Sign(_Radius))
-                    
-                    If (IsPointInsideCurve) Then
+                    If (Me.RailsConfig.IsPointInsideCurve(Point)) Then
                         ' Inside of curve.
                         RetValue = Table212i.EvaluateFx(AbsRadius)
                     Else
@@ -431,7 +389,7 @@ Namespace Domain.ClearanceGauge
              ''' <remarks></remarks>
             Private Function Calc_Q(Point As MathPoint, IsPointAboveHc As Boolean, PointHeightAboveHc As Double) As Double
                 
-                Return If(IsPointAboveHc, Q0 * PointHeightAboveHc, 0.0)
+                Return If(IsPointAboveHc, If(Me.RailsConfig.IsPointInsideCant(Point), Qi0, Qa0) * PointHeightAboveHc, 0.0)
             End Function
             
             ''' <summary> Calculates the delta according to EBO, appendix2, Pt. 1.4, named "T" (Zufallsbedingte Verschiebung). </summary>
@@ -442,20 +400,16 @@ Namespace Domain.ClearanceGauge
              ''' <remarks></remarks>
             Private Function Calc_T(Point As MathPoint, IsPointAboveHc As Boolean, PointHeightAboveHc As Double) As Double
                 
-                Dim RetValue As Double
-                Dim T2g      As Double = Point.Y / 100
+                Dim RetValue As Double = 0.006
                 
                 If (IsPointAboveHc) Then
-                    Dim IsPointInsideCant As Boolean = (Sign(Point.X) = Sign(_Cant))
-                    
+                    Dim T2g As Double = Point.Y / 100
                     Dim T2d As Double = PointHeightAboveHc * 0.004
-                    Dim T3  As Double = PointHeightAboveHc * If(IsPointInsideCant, T3i0, T3a0)
+                    Dim T3  As Double = PointHeightAboveHc * If(Me.RailsConfig.IsPointInsideCant(Point), T3i0, T3a0)
                     Dim T4  As Double = PointHeightAboveHc * T40
                     Dim T5  As Double = PointHeightAboveHc * T50
                     
                     RetValue = 1.2 * Sqrt( Pow(T2g + T2d, 2) + (T3 * T3) + (T4 * T4) + (T5 * T5) )
-                Else
-                    RetValue = 1.2 * T2g
                 End If
                 
                 Return RetValue
@@ -463,14 +417,24 @@ Namespace Domain.ClearanceGauge
             
         #End Region
         
+        #Region "Event Handlers"
+            
+            Private Sub RailsConfigChanged(sender As Object, e As EventArgs)
+                If ((_RailsConfig IsNot Nothing) AndAlso sender.Equals(_RailsConfig)) Then
+                    SetAuxValues()
+                End If
+            End Sub 
+            
+        #End Region
+        
         #Region "Private Helper Methods"
             
-            ''' <summary> Calculates a normalized cant which match a cant base of 1.500 m. </summary>
-             ''' <remarks> This is for supporting other cant bases than 1.500 m. </remarks>
+            ''' <summary> Calculates a normalized cant which matches a cant base of 1.500 m. </summary>
+             ''' <remarks> This is for trying to basically support other cant bases than 1.500 m. </remarks>
             Private Function NormalizeCant() As Double
                 Dim RetValue As Double = Double.NaN
-                If ( (Not Double.IsNaN(_Cant)) AndAlso (Not Double.IsNaN(_CantBase)) AndAlso (Not (_CantBase < MinCantBase)) ) Then
-                    RetValue = _Cant * 1.5 / _CantBase
+                If (Me.RailsConfig.IsConfigured) Then
+                    RetValue = Me.RailsConfig.Cant * 1.5 / Me.RailsConfig.CantBase
                 End If
                 Return RetValue
             End Function
@@ -481,31 +445,31 @@ Namespace Domain.ClearanceGauge
                 IsMainOutlineValid = False
                 IsOHLOutlineValid  = False
                 
-                ' Default values.
-                NormalizedCant = Double.NaN
-                UnsignedCant   = Double.NaN
-                RelativeCant   = Double.NaN
+                ' Radius.
+                If (Double.IsNaN(Me.RailsConfig.Radius)) Then
+                    AbsRadius = Double.NaN
+                ElseIf (Double.IsInfinity(Me.RailsConfig.Radius)) Then
+                    AbsRadius = Double.PositiveInfinity
+                    IsSmallRadius250 = False
+                Else
+                    AbsRadius = Abs(Me.RailsConfig.Radius)
+                    IsSmallRadius250 = (Round(AbsRadius, 3) < 250.0)
+                End If
                 
                 ' Consider cant base.
-                NormalizedCant = NormalizeCant()
+                'NormalizedCant = NormalizeCant()
                 
                 ' Cant: Unsigned + relative.
-                If (Not Double.IsNaN(NormalizedCant)) Then
-
-                    UnsignedCant = Abs(NormalizedCant)
-                    
-                    If (Not Double.IsNaN(_Radius)) Then
-                        RelativeCant = Sign(_Radius) * _Cant
+                RelativeCant = Double.NaN
+                If (Not Double.IsNaN(Me.RailsConfig.Cant)) Then
+                    If (Not Double.IsNaN(Me.RailsConfig.Radius)) Then
+                        RelativeCant = Sign(Me.RailsConfig.Radius) * Me.RailsConfig.Cant
                     End If
                 End If
                 
-                ' Cant deficiency.
-                u0 = 11.8 * _Speed * _Speed / AbsRadius / 1000  ' Always positive (relative cant) in [m].
-                uf = u0 - RelativeCant                          ' In [m].
-                
-                ' Point independent part of Q.
-                Dim ufu50 As Double = Max(uf, UnsignedCant) - 0.050
-                Q0 = If(ufu50 > 0.0, 0.267 * ufu50, 0)
+                ' Point independent part of Qi and Qa.
+                Qi0 = 0.267 * Max(RelativeCant - 0.050, 0.0)
+                Qa0 = 0.267 * Max(Me.RailsConfig.CantDeficiency - 0.050, 0.0)
                 
             End Sub
             

@@ -636,10 +636,10 @@
     <value>Basis für Überhöhung ist ungültig (negativ)</value>
   </data>
   <data name="RailPair_UnknownCant" xml:space="preserve">
-    <value>Überhöhung ist unbekannt (NaN)</value>
+    <value>Überhöhung ist unbekannt (NaN).</value>
   </data>
   <data name="RailPair_UnknownCantBase" xml:space="preserve">
-    <value>Basis für Überhöhung ist unbekannt (NaN)</value>
+    <value>Basis für Überhöhung ist unbekannt (NaN).</value>
   </data>
   <data name="DataTextLine_InvalidFieldNotInteger" xml:space="preserve">
     <value>Das Feld '%s' stellt keine ganze Zahl zwischen %d und %d dar (%s).</value>
@@ -1030,5 +1030,11 @@
   </data>
   <data name="MinimumClearanceDBAG_UnknownSpeed" xml:space="preserve">
     <value>Grenzlinie kann nicht berechnet werden: Die Geschwindigkeit ist unbekannt.</value>
+  </data>
+  <data name="RailPair_UnknownPointDistance" xml:space="preserve">
+    <value>Abstand des Punktes von der Lichtraumachse ist unbekannt (NaN).</value>
+  </data>
+  <data name="RailPair_UnknownRadius" xml:space="preserve">
+    <value>Radius ist unbekannt (NaN).</value>
   </data>
 </root>

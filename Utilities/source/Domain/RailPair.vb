@@ -8,20 +8,19 @@ Imports Rstyx.Utilities.Math
 Namespace Domain
     
     ''' <summary> A pair of rails at a discrete spot (cross section). </summary>
-     ''' <remarks> To be valid, the <see cref="RailPair.reconfigure"/> method has to be applied successfuly. </remarks>
+     ''' <remarks>
+     ''' Any Change to this RailPair is signaled by firing the <see cref="RailPair.RailsConfigChanged"/> event.
+     ''' To be valid, the <see cref="RailPair.reconfigure"/> method has to be applied successfuly.
+     ''' </remarks>
     Public Class RailPair
         Inherits Cinch.ValidatingObject
         
         #Region "Private Fields"
             
-            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Microstation.Addin.Lichtraum.RailPair")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.RailPair")
             
             Private Shared UnknownConfigurationRule As Cinch.SimpleRule
             Private Shared NonPositiveSpeed         As Cinch.SimpleRule
-            
-            Const MinCantBase               As Double  = 0.01
-            Const CantZeroTol               As Double  = 0.001
-            Const RadiusInfinityTol         As Double  = 0.001
             
             Private IsCantDeficiencyValid   As Boolean = False
             Private AbsRadius               As Double = Double.NaN
@@ -54,6 +53,19 @@ Namespace Domain
             
         #End Region
         
+        #Region "Public Shared Fields"
+            
+            ''' <summary> Determines the minimum value that will be accepted for cant base. </summary>
+            Public Shared MinimumCantBase       As Double  = 0.1
+            
+            ''' <summary> A given cant lower than this value, will be snapped to Zero cant. </summary>
+            Public Shared CantZeroSnap          As Double  = 0.001
+            
+            ''' <summary> A given radius lower than this value, will be snapped to infinity radius resp. tangent. </summary>
+            Public Shared RadiusInfinitySnap    As Double  = 0.001
+            
+        #End Region
+        
         #Region "Properties"
             
             Private _Speed          As Double = Double.NaN
@@ -73,6 +85,7 @@ Namespace Domain
                 Set(value As Double)
                     _Speed = value
                     IsCantDeficiencyValid = False
+                    RaiseRailsConfigChanged()
                 End Set
             End Property
             
@@ -86,19 +99,19 @@ Namespace Domain
                         _Radius   = Double.NaN
                         AbsRadius = Double.NaN
                         
-                    ElseIf (value.EqualsTolerance(0.0, RadiusInfinityTol)) Then
+                    ElseIf (value.EqualsTolerance(0.0, RadiusInfinitySnap)) Then
                         _Radius   = Double.PositiveInfinity
                         AbsRadius = Double.PositiveInfinity
                     Else
                         _Radius   = value
                         AbsRadius = Abs(value)
                     End If
-                    
                     IsCantDeficiencyValid = False
+                    RaiseRailsConfigChanged()
                 End Set
             End Property
             
-            ''' <summary> Returns the main outline of minimum clearance. </summary>
+            ''' <summary> Gets the cant deficiency for this rails pair in [m]. </summary>
              ''' <remarks>  </remarks>
             Public ReadOnly Property CantDeficiency() As Double
                 Get
@@ -169,14 +182,46 @@ Namespace Domain
             
         #End Region
         
+        #Region "Events"
+            
+            Private ReadOnly RailsConfigChangedWeakEvent As New Cinch.WeakEvent(Of EventHandler(Of EventArgs))
+            
+            ''' <summary> Raises when any aspect of this RailPair has changed. (Internaly managed in a weakly way). </summary>
+            Public Custom Event RailsConfigChanged As EventHandler(Of EventArgs)
+                
+                AddHandler(ByVal value As EventHandler(Of EventArgs))
+                    RailsConfigChangedWeakEvent.Add(value)
+                End AddHandler
+                
+                RemoveHandler(ByVal value As EventHandler(Of EventArgs))
+                    RailsConfigChangedWeakEvent.Remove(value)
+                End RemoveHandler
+                
+                RaiseEvent(ByVal sender As Object, ByVal e As EventArgs)
+                    Try
+                        RailsConfigChangedWeakEvent.Raise(sender, e)
+                    Catch ex As System.Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                    End Try
+                End RaiseEvent
+                
+            End Event
+            
+            ''' <summary> Raises the RailsConfigChanged event. </summary>
+            Private Sub RaiseRailsConfigChanged()
+                RaiseEvent RailsConfigChanged(Me, EventArgs.Empty)
+            End Sub
+            
+        #End Region
+        
         #Region "Methods"
             
             ''' <summary> Re-configures this RailPair based on running surfaces. </summary>
              ''' <param name="RunningSurface1"> Coordinates of one RunningSurface in track system. </param>
              ''' <param name="RunningSurface2"> Coordinates of the other RunningSurface in track system. </param>
-             ''' <exception cref="System.ArgumentException"> At least one coordinate of the points is <c>Dougble.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> RunningSurface1 and RunningSurface2 are equal. </exception>
              ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
+             ''' <exception cref="System.ArgumentException"> At least one coordinate of the points is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> RunningSurface1 and RunningSurface2 are equal. </exception>
             Public Sub reconfigure(RunningSurface1 As Point, RunningSurface2 As Point)
                 
                 If (Double.IsNaN(RunningSurface1.X) OrElse Double.IsNaN(RunningSurface1.Y)) Then Throw New System.ArgumentException("RunningSurface1: at least one coordinate is NaN")
@@ -196,28 +241,29 @@ Namespace Domain
                 _CantBase = V.Length
                 
                 ' Check close to zero.
-                If (Abs(_Cant) < CantZeroTol) Then _Cant = 0.0
+                If (Abs(_Cant) < CantZeroSnap) Then _Cant = 0.0
                 
                 If (Double.IsNaN(_Radius)) Then Me.Radius = 1 * Sign(_Cant)
                 
                 IsCantDeficiencyValid = False
                 _IsConfigured  = True
+                RaiseRailsConfigChanged()
             End Sub
             
             ''' <summary> Re-configures this RailPair based on cant and cantbase. </summary>
-             ''' <param name="Cant"> Cant in [m]. </param>
+             ''' <param name="Cant"> Cant in [m] (negative, if right running surface is higher). </param>
              ''' <param name="CantBase"> CantBase in [m]. </param>
              ''' <exception cref="System.ArgumentException"> Cant is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> CantBase is <c>Double.NaN</c> or less than 0.001. </exception>
              ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
             Public Sub reconfigure(Cant As Double, CantBase As Double)
                 
-                If (Double.IsNaN(Cant))     Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant, "Cant")
-                If (Double.IsNaN(CantBase)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase, "CantBase")
-                If (CantBase < MinCantBase) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_InvalidCantBaseNegative, "CantBase")
+                If (Double.IsNaN(Cant))         Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant, "Cant")
+                If (Double.IsNaN(CantBase))     Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase, "CantBase")
+                If (CantBase < MinimumCantBase) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_InvalidCantBaseNegative, "CantBase")
                 
                 ' Check close to zero.
-                If (Abs(Cant) < CantZeroTol) Then
+                If (Abs(Cant) < CantZeroSnap) Then
                     _Cant = 0.0
                 Else
                     _Cant = Cant
@@ -251,7 +297,47 @@ Namespace Domain
                 
                 IsCantDeficiencyValid = False
                 _IsConfigured  = True
+                RaiseRailsConfigChanged()
             End Sub
+            
+            ''' <summary> Tells if a given point is inside of canted train. </summary>
+             ''' <param name="Point"> The point, given in canted rails system. </param>
+             ''' <returns> <see langword="false"/> if <paramref name="Point"/> is outside cant or cant is Zero, otherwise <see langword="true"/>. </returns>
+             ''' <remarks> "Inside cant" means: sign of point's X equals sign of cant. </remarks>
+             ''' <exception cref="System.ArgumentException"> The X-coordinate of <paramref name="Point"/> is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> <c>Cant</c> is <c>Double.NaN</c>. </exception>
+            Public Function IsPointInsideCant(Point As MathPoint) As Boolean
+                
+                If (Double.IsNaN(Point.X))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownPointDistance, "Point.X")
+                If (Double.IsNaN(_Cant))    Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant)
+                
+                Dim RetValue As Boolean = False
+                
+                If (Not _Cant.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
+                    RetValue = (Sign(Point.X) = Sign(_Cant))
+                End If
+                
+                Return RetValue
+            End Function
+            
+            ''' <summary> Tells if a given point is inside the curve. </summary>
+             ''' <param name="Point"> The point, given in canted rails system. </param>
+             ''' <returns> <see langword="false"/> if <paramref name="Point"/> is outside curve or radius is infinite (tangent), otherwise <see langword="true"/>. </returns>
+             ''' <exception cref="System.ArgumentException"> The X-coordinate of <paramref name="Point"/> is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> <c>Radius</c> is <c>Double.NaN</c>. </exception>
+            Public Function IsPointInsideCurve(Point As MathPoint) As Boolean
+                
+                If (Double.IsNaN(Point.X))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownPointDistance, "Point.X")
+                If (Double.IsNaN(_Radius))  Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownRadius)
+                
+                Dim RetValue As Boolean = False
+                
+                If (Not Double.IsInfinity(_Radius)) Then
+                    RetValue = (Sign(Point.X) = Sign(_Radius))
+                End If
+                
+                Return RetValue
+            End Function
             
             ''' <summary> Resets the configuration of this RailPair to "unknown". </summary>
             Public Sub reset()
@@ -264,6 +350,7 @@ Namespace Domain
                 _RSRight        = New Point(Double.NaN, Double.NaN)
                 _IsConfigured   = False
                 IsCantDeficiencyValid = False
+                RaiseRailsConfigChanged()
             End Sub
             
         #End Region
@@ -293,7 +380,11 @@ Namespace Domain
                 
                 If (Not (Double.IsNaN(_Cant) OrElse Double.IsNaN(_Radius) OrElse Double.IsNaN(_Speed) )) Then
                     
-                    uf = (11.8 * _Speed * _Speed / AbsRadius / 1000) - (Sign(_Radius) * _Cant)   ' In [m].
+                    If (Double.IsInfinity(_Radius)) Then
+                        If (_Cant.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then uf = 0.0
+                    Else
+                        uf = (11.8 * _Speed * _Speed / AbsRadius / 1000)  -  (Sign(_Radius) * _Cant)   ' In [m].
+                    End If
                 End If
                 
                 Return uf
