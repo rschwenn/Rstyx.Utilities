@@ -56,13 +56,14 @@ Namespace Domain
         #Region "Public Shared Fields"
             
             ''' <summary> Determines the minimum value that will be accepted for cant base. </summary>
-            Public Shared MinimumCantBase       As Double  = 0.1
+            Public Shared MinimumCantBase       As Double = 0.1
             
             ''' <summary> A given cant lower than this value, will be snapped to Zero cant. </summary>
-            Public Shared CantZeroSnap          As Double  = 0.001
+            Public Shared CantZeroSnap          As Double = 0.001
             
-            ''' <summary> A given radius lower than this value, will be snapped to infinity radius resp. tangent. </summary>
-            Public Shared RadiusInfinitySnap    As Double  = 0.001
+            ''' <summary> A given radius lower than this value, will be snapped to infinity radius resp. tangent (with sign!). </summary>
+             ''' <remarks> Default is 100. This way an input radius lower than 100 will be rejected. </remarks>
+            Public Shared RadiusInfinitySnap    As Double = 100.0
             
         #End Region
         
@@ -99,8 +100,8 @@ Namespace Domain
                         _Radius   = Double.NaN
                         AbsRadius = Double.NaN
                         
-                    ElseIf (value.EqualsTolerance(0.0, RadiusInfinitySnap)) Then
-                        _Radius   = Double.PositiveInfinity
+                    ElseIf (Abs(value) < RadiusInfinitySnap) Then
+                        _Radius   = If(value < 0, Double.NegativeInfinity, Double.PositiveInfinity)
                         AbsRadius = Double.PositiveInfinity
                     Else
                         _Radius   = value
@@ -300,6 +301,28 @@ Namespace Domain
                 RaiseRailsConfigChanged()
             End Sub
             
+            ''' <summary> Re-configures this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
+             ''' <param name="PointGeometry"> The point which provides cant, cant base and radius. </param>
+             ''' <remarks></remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry.Ueb"/>) is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry.CantBase"/>) is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="PointGeometry.Ra"/>) is <c>Double.NaN</c>, but Cant isn't Zero. </exception>
+            Public Sub reconfigure(PointGeometry As GeoTcPoint)
+                
+                If (PointGeometry Is Nothing)              Then Throw New System.ArgumentNullException("PointGeometry")
+                If (Double.IsNaN(PointGeometry.Ueb))       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant)
+                If (Double.IsNaN(PointGeometry.CantBase))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase)
+                
+                Me.Radius = PointGeometry.Ra
+                
+                If (Not PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
+                    If (Double.IsNaN(Me.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
+                End If
+                
+                Me.reconfigure(PointGeometry.Ueb * Sign(Me.Radius), PointGeometry.CantBase)
+            End Sub
+            
             ''' <summary> Tells if a given point is inside of canted train. </summary>
              ''' <param name="Point"> The point, given in canted rails system. </param>
              ''' <returns> <see langword="false"/> if <paramref name="Point"/> is outside cant or cant is Zero, otherwise <see langword="true"/>. </returns>
@@ -352,6 +375,28 @@ Namespace Domain
                 IsCantDeficiencyValid = False
                 RaiseRailsConfigChanged()
             End Sub
+            
+            ''' <summary> Creates a <see cref="GeoTcPoint"/> whith cant, cant base and radius of this rail pair. </summary>
+             ''' <returns> The "GeometryPoint". </returns>
+             ''' <remarks></remarks>
+            Public Function ToGeometryPoint() As GeoTcPoint
+                
+                Dim GeometryPoint As New GeoTcPoint()
+                
+                ' Radius specials.
+                If ( (Not (Double.IsNaN(Me.Cant) OrElse Me.Cant.EqualsTolerance(0, RailPair.CantZeroSnap))) AndAlso Double.IsNaN(Me.Radius)) Then
+                    ' Ensure that sign of cant is determinable by setting a special radius.
+                    GeometryPoint.Ra = If(Me.Cant < 0, Double.NegativeInfinity, Double.PositiveInfinity)
+                Else
+                    GeometryPoint.Ra = Me.Radius
+                End If
+                
+                GeometryPoint.ID       = "GeometryPoint"
+                GeometryPoint.Ueb      = Me.Cant * Sign(Me.Radius)
+                GeometryPoint.CantBase = Me.CantBase
+                
+                Return GeometryPoint
+            End Function
             
         #End Region
         

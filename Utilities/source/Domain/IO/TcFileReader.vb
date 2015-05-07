@@ -1389,6 +1389,7 @@ Namespace Domain.IO
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Resolve Ambiguities.
+                                    ' TODO: Check tolerances and infinities.
                                     Dim NoRadius As Boolean = (Double.IsNaN(p.Ra) OrElse p.Ra.EqualsTolerance(0, 0.001))
                                     If (p.Ueb.EqualsTolerance(0, 0.001) AndAlso NoRadius) Then
                                         ' Ignore minimal cant if radius is unknown or zero.

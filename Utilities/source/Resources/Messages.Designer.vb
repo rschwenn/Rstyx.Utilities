@@ -1739,33 +1739,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Es wurde versucht, eine ungültige Geometrie zu setzen: Die Überhöhung ist unbekannt. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property MinimumClearanceDBAG_SetGeometry_UnknownCant() As String
-            Get
-                Return ResourceManager.GetString("MinimumClearanceDBAG_SetGeometry_UnknownCant", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Es wurde versucht, eine ungültige Geometrie zu setzen: Die Überhöhungsbasis ist unbekannt. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property MinimumClearanceDBAG_SetGeometry_UnknownCantBase() As String
-            Get
-                Return ResourceManager.GetString("MinimumClearanceDBAG_SetGeometry_UnknownCantBase", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Es wurde versucht, eine ungültige Geometrie zu setzen: Der Radius ist unbekannt oder 0.0, die relative Überhöhung aber ungleich 0.0. ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property MinimumClearanceDBAG_SetGeometry_UnknownRadius() As String
-            Get
-                Return ResourceManager.GetString("MinimumClearanceDBAG_SetGeometry_UnknownRadius", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Grenzlinie kann nicht berechnet werden: Die Überhöhung ist unbekannt. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property MinimumClearanceDBAG_UnknownCant() As String
@@ -1888,6 +1861,15 @@ Namespace Resources
         Public Shared ReadOnly Property RailPair_InvalidConfiguration_NonPositiveSpeed() As String
             Get
                 Return ResourceManager.GetString("RailPair_InvalidConfiguration_NonPositiveSpeed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es wurde versucht, eine ungültige Geometrie zu setzen: Der Radius ist unbekannt oder 0.0, die relative Überhöhung aber ungleich 0.0. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property RailPair_Reconfigure_UnknownRadius() As String
+            Get
+                Return ResourceManager.GetString("RailPair_Reconfigure_UnknownRadius", resourceCulture)
             End Get
         End Property
         

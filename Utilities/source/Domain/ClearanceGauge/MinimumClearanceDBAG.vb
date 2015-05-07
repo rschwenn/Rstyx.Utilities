@@ -53,6 +53,13 @@ Namespace Domain.ClearanceGauge
             Public Sub New()
             End Sub
             
+            ''' <summary> Creates a new MinimumClearanceDBAG and sets geometry by referencing an existing <see cref="RailPair"/>. </summary>
+             ''' <param name="RailsConfig"> The <see cref="RailPair"/> which provides cant, cant base, radius and speed. </param>
+             ''' <remarks> If <paramref name="RailsConfig"/> is <see langword="null"/>, a default <see cref="RailPair"/> will be used. </remarks>
+            Public Sub New(RailsConfig As RailPair)
+                Me.RailsConfig = RailsConfig
+            End Sub
+            
         #End Region
         
         #Region "Result Properties"
@@ -139,35 +146,6 @@ Namespace Domain.ClearanceGauge
         
         #Region "Public Methods"
             
-            ''' <summary> Sets geometry input values from a <see cref="GeoTcPoint"/>. </summary>
-             ''' <param name="GeometryConditions"> The point which provides cant, cant base and radius. </param>
-             ''' <remarks></remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="GeometryConditions"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="GeometryConditions.Ueb"/>) is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="GeometryConditions.CantBase"/>) is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="GeometryConditions.Ra"/>) is <c>Double.NaN</c> or Zero, but Cant isn't zero. </exception>
-            Public Sub SetGeometry(GeometryConditions As GeoTcPoint)
-                
-                If (GeometryConditions Is Nothing)              Then Throw New System.ArgumentNullException("GeometryConditions")
-                If (Double.IsNaN(GeometryConditions.Ueb))       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownCant)
-                If (Double.IsNaN(GeometryConditions.CantBase))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownCantBase)
-                
-                Me.RailsConfig.Radius = GeometryConditions.Ra
-                
-                If (Not GeometryConditions.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
-                    If (Double.IsNaN(Me.RailsConfig.Radius) OrElse Double.IsInfinity(Me.RailsConfig.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_SetGeometry_UnknownRadius)
-                End If
-                
-                Me.RailsConfig.reconfigure(GeometryConditions.Ueb * Sign(Me.RailsConfig.Radius), GeometryConditions.CantBase)
-            End Sub
-            
-            ''' <summary> Sets geometry input values by referencing an existing <see cref="RailPair"/>. </summary>
-             ''' <param name="RailsConfig"> The <see cref="RailPair"/> which provides cant, cant base, radius and speed. </param>
-             ''' <remarks> If <paramref name="GeometryConditions"/> is <see langword="null"/>, a default  <see cref="RailPair"/> will be used. </remarks>
-            Public Sub SetGeometry(RailsConfig As RailPair)
-                Me.RailsConfig = RailsConfig
-            End Sub
-            
         #End Region
         
         #Region "Definition of polygons"
@@ -233,14 +211,15 @@ Namespace Domain.ClearanceGauge
                 Dim BasePolygon As New Polygon()
                 BasePolygon.IsClosed = True
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.6475, .Y= 0.080})
+                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.6475, .Y= 0.055})
                 BasePolygon.Vertices.Add(New MathPoint With {.X=-0.6475, .Y=-0.038})
                 BasePolygon.Vertices.Add(New MathPoint With {.X=-0.7175, .Y=-0.038})
                 BasePolygon.Vertices.Add(New MathPoint With {.X=-0.7175, .Y= 0.000})
                 BasePolygon.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.000})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.080})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.2750, .Y= 0.080})
+                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.055})
+                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.1750, .Y= 0.055})
                 
+                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.250 , .Y= 0.110})
                 BasePolygon.Vertices.Add(New MathPoint With {.X=-1.520 , .Y= 0.380})
                 BasePolygon.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 0.380})
                 BasePolygon.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 1.150})
@@ -258,14 +237,15 @@ Namespace Domain.ClearanceGauge
                 BasePolygon.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 1.150})
                 BasePolygon.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 0.380})
                 BasePolygon.Vertices.Add(New MathPoint With {.X= 1.520 , .Y= 0.380})
+                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.250 , .Y= 0.110})
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.2750, .Y= 0.080})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.080})
+                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.1750, .Y= 0.055})
+                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.055})
                 BasePolygon.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.000})
                 BasePolygon.Vertices.Add(New MathPoint With {.X= 0.7175, .Y= 0.000})
                 BasePolygon.Vertices.Add(New MathPoint With {.X= 0.7175, .Y=-0.038})
                 BasePolygon.Vertices.Add(New MathPoint With {.X= 0.6475, .Y=-0.038})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.6475, .Y= 0.080})
+                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.6475, .Y= 0.055})
                 
                 Return BasePolygon
             End Function
@@ -324,7 +304,8 @@ Namespace Domain.ClearanceGauge
                 
                 For Each BasePoint As MathPoint In MinBaseLine.Vertices
                     
-                    If (BasePoint.Y < 0.125) Then
+                    If ((BasePoint.Y < 0.1) AndAlso (Abs(BasePoint.X) < 1.0)) Then
+                        ' Immutual lower part of minimum clearance.
                         MinimumOutline.Vertices.Add(BasePoint)
                     Else
                         Dim IsPointAboveHc      As Boolean = (BasePoint.Y > hc)

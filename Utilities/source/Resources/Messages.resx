@@ -1007,13 +1007,7 @@
   <data name="RailPair_InvalidConfiguration_NonPositiveSpeed" xml:space="preserve">
     <value>Geschwindigkeit ist 0.0 oder negativ</value>
   </data>
-  <data name="MinimumClearanceDBAG_SetGeometry_UnknownCant" xml:space="preserve">
-    <value>Es wurde versucht, eine ungültige Geometrie zu setzen: Die Überhöhung ist unbekannt.</value>
-  </data>
-  <data name="MinimumClearanceDBAG_SetGeometry_UnknownCantBase" xml:space="preserve">
-    <value>Es wurde versucht, eine ungültige Geometrie zu setzen: Die Überhöhungsbasis ist unbekannt.</value>
-  </data>
-  <data name="MinimumClearanceDBAG_SetGeometry_UnknownRadius" xml:space="preserve">
+  <data name="RailPair_Reconfigure_UnknownRadius" xml:space="preserve">
     <value>Es wurde versucht, eine ungültige Geometrie zu setzen: Der Radius ist unbekannt oder 0.0, die relative Überhöhung aber ungleich 0.0.</value>
   </data>
   <data name="MinimumClearanceDBAG_InvalidCantBase" xml:space="preserve">
