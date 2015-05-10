@@ -15,37 +15,45 @@ Namespace Domain.ClearanceGauge
             
             'Private Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.ClearanceGauge.MinimumClearanceDBAG")
             
-            Const S0                    As Double  = 0.005   ' Influence of track gauge widening / deviation. Corresponds to EBO appendix 2 table 2.1.1 (gauge = 1.445).
-            Const hc                    As Double  = 0.500   ' Wankpolhöhe.
+            Const S0    As Double  = 0.005   ' Influence of track gauge widening / deviation. Corresponds to EBO appendix 2 table 2.1.1 (gauge = 1.445).
+            Const hc    As Double  = 0.500   ' Wankpolhöhe.
+            Const bw2   As Double  = 0.975   ' Half width of pantograph.
             
-            Private Shared Table212i    As LinearTabFunction
-            Private Shared Table212a    As LinearTabFunction
-            Private Shared MinBaseLine  As Polygon
+            Private Shared Table212i            As LinearTabFunction
+            Private Shared Table212a            As LinearTabFunction
+            Private Shared OHLTable22           As LinearTabFunction
+            Private Shared MinBaseLine          As Polygon
+            Private Shared OHLCharacteristics   As Dictionary(Of ClearanceOptionalPart , OHLKeyData)
             
-            Private Shared RHO          As Double = 180 / PI
-            Private Shared T3i0         As Double = Tan(0.2 / RHO)
-            Private Shared T3a0         As Double = Tan(1.0 / RHO)
-            Private Shared T40          As Double = Tan(1.0 / RHO) * 50 / 65
-            Private Shared T50          As Double = Tan(1.0 / RHO) * 15 / 65
+            Private Shared RHO                  As Double = 180 / PI
+            Private Shared T3i0                 As Double = Tan(0.2 / RHO)
+            Private Shared T3a0                 As Double = Tan(1.0 / RHO)
+            Private Shared T40                  As Double = Tan(1.0 / RHO) * 50 / 65
+            Private Shared T50                  As Double = Tan(1.0 / RHO) * 15 / 65
             
-            Private IsMainOutlineValid  As Boolean = False
-            Private IsOHLOutlineValid   As Boolean = False
-            Private IsSmallRadius250    As Boolean = False
+            Private IsMainOutlineValid          As Boolean = False
+            Private IsOHLOutlineValid           As Boolean = False
+            Private IsSmallRadius250            As Boolean = False
             
-            'Private NormalizedCant      As Double = Double.NaN
-            Private RelativeCant        As Double = Double.NaN
-            Private AbsRadius           As Double = Double.NaN
-            Private Qi0                 As Double = Double.NaN
-            Private Qa0                 As Double = Double.NaN
+            'Private NormalizedCant              As Double = Double.NaN
+            Private RelativeCant                As Double = Double.NaN
+            Private AbsRadius                   As Double = Double.NaN
+            Private oQi0                        As Double = Double.NaN
+            Private oQa0                        As Double = Double.NaN
+            Private Qi0                         As Double = Double.NaN
+            Private Qa0                         As Double = Double.NaN
             
+            Private OHLKeys                     As OHLKeyData
         #End Region
         
         #Region "Constructors"
             
             ''' <summary> Shared initialization of MinimumClearanceDBAG. </summary>
             Shared Sub New()
-                _ReferenceLineG2 = CreateG2()
-                MinBaseLine      = CreateMinBaseLine()
+                _ReferenceLineG2    = CreateG2()
+                MinBaseLine         = CreateMinBaseLine()
+                OHLCharacteristics  = CreateOHLCharacteristics()
+
                 CreateTables()
             End Sub
             
@@ -77,7 +85,7 @@ Namespace Domain.ClearanceGauge
             End Property
             
             ''' <summary> Returns the main outline of minimum clearance. </summary>
-             ''' <remarks>  </remarks>
+             ''' <remarks> The outline will be calculated if it isn't yet. </remarks>
             Public ReadOnly Property MainOutline() As Polygon
                 Get
                     If (Not IsMainOutlineValid) Then
@@ -89,7 +97,7 @@ Namespace Domain.ClearanceGauge
             End Property
             
             ''' <summary> Returns the outline for overhead line area of minimum clearance. </summary>
-             ''' <remarks>  </remarks>
+             ''' <remarks> The outline will be calculated if it isn't yet. It may be an empty polygon. </remarks>
             Public ReadOnly Property OHLOutline() As Polygon
                 Get
                     If (Not IsOHLOutlineValid) Then
@@ -105,7 +113,7 @@ Namespace Domain.ClearanceGauge
         #Region "Input Properties"
             
             Private _RailsConfig    As RailPair
-            Private _OverHeadLine   As ClearanceOptionalPart = ClearanceOptionalPart.None
+            Private _OHLType   As ClearanceOptionalPart = ClearanceOptionalPart.None
         
             ''' <summary> Gets or sets the rails configuration (geometry and speed). </summary>
              ''' <remarks> The getter never returns <see langword="null"/>. </remarks>
@@ -130,21 +138,52 @@ Namespace Domain.ClearanceGauge
             End Property
             
             ''' <summary> Gets or sets the type of OverHeadLine. </summary>
-            Public Property OverHeadLine() As ClearanceOptionalPart
+             ''' <remarks> Setting this to an unsupported value will result in setting it to <see cref="ClearanceOptionalPart.None"/> </remarks>
+            Public Property OHLType() As ClearanceOptionalPart
                 Get 
-                    Return _OverHeadLine
+                    Return _OHLType
                 End Get
                 Set(value As ClearanceOptionalPart)
-                    If (Not (value = _OverHeadLine)) Then
-                        _OverHeadLine = value
-                        IsOHLOutlineValid  = False
+                    If (Not (value = _OHLType)) Then
+                        _OHLType = value
+                        
+                        ' Validate for supported values.
+                        If (OHLCharacteristics.ContainsKey(_OHLType)) Then
+                            
+                            OHLKeys = OHLCharacteristics(_OHLType)
+                        Else
+                            OHLKeys = Nothing 
+                            
+                            If (Not (value = ClearanceOptionalPart.None)) Then
+                                _OHLType = ClearanceOptionalPart.None
+                            End If
+                        End If
                     End If
+                    SetAuxValues()
                 End Set
             End Property
             
         #End Region
         
-        #Region "Public Methods"
+        #Region "Nested Types"
+            
+            ''' <summary> Internal used data record for configuring OHL minimum clearance. </summary>
+             ''' <remarks> See http://www.gesetze-im-internet.de/ebo/anlage_1.html </remarks>
+            Private Structure OHLKeyData
+                
+                ''' <summary> Minimal distance to over head line. </summary>
+                Public MinimumDistance  As Double
+                
+                ''' <summary> Minimal height of OHL minimum clearance. </summary>
+                Public MinimumHeight    As Double
+                
+                ''' <summary> Horizontal bevel. </summary>
+                Public HorizontalBevel  As Double
+                
+                ''' <summary> Vertical bevel. </summary>
+                Public VerticalBevel    As Double
+                
+            End Structure
             
         #End Region
         
@@ -201,8 +240,8 @@ Namespace Domain.ClearanceGauge
             ''' <summary> Creates the definition of the base polygon for calculation of minimum clearance. </summary>
              ''' <remarks> 
              ''' This polygon is based on G2, but:
-             ''' - Heights are changed corresponding to EBO appendix 2 Pt3 - so they match EBO appendix 1 Illustration 1.
-             ''' - Corresponding to EBO appendix 2 Pt4 the lower part is replaced to match EBO appendix 1 Illustration 2.
+             ''' - Heights are changed corresponding to EBO appendix 2 Pt 3 - so they match EBO appendix 1 Illustration 1.
+             ''' - Corresponding to EBO appendix 2 Pt 4 the lower part is replaced to match EBO appendix 1 Illustration 2.
              ''' See EBO, appendix 1 (http://www.gesetze-im-internet.de/ebo/anlage_1.html).
              ''' See EBO, appendix 2 (http://www.gesetze-im-internet.de/ebo/anlage_2.html).
              ''' </remarks>
@@ -250,14 +289,32 @@ Namespace Domain.ClearanceGauge
                 Return BasePolygon
             End Function
             
+            ''' <summary> Creates characteristics table of OHL minimum clearance. </summary>
+             ''' <remarks> 
+             ''' See EBO, appendix 1, table 1 (http://www.gesetze-im-internet.de/ebo/anlage_1.html).
+             ''' See EBO, appendix 3, Pt 1.7  (http://www.gesetze-im-internet.de/ebo/anlage_3.html).
+             ''' </remarks>
+            Private Shared Function CreateOHLCharacteristics()
+                
+                Dim OHLKeyDataDict As Dictionary(Of ClearanceOptionalPart , OHLKeyData) = New Dictionary(Of ClearanceOptionalPart , OHLKeyData)
+                
+                OHLKeyDataDict.Add(ClearanceOptionalPart.OHL_1kV , New OHLKeyData With {.MinimumDistance = 0.035, .MinimumHeight = 5.00, .VerticalBevel = 0.250, .HorizontalBevel = 0.350})
+                OHLKeyDataDict.Add(ClearanceOptionalPart.OHL_3kV , New OHLKeyData With {.MinimumDistance = 0.050, .MinimumHeight = 5.03, .VerticalBevel = 0.250, .HorizontalBevel = 0.350})
+                OHLKeyDataDict.Add(ClearanceOptionalPart.OHL_15kV, New OHLKeyData With {.MinimumDistance = 0.150, .MinimumHeight = 5.20, .VerticalBevel = 0.300, .HorizontalBevel = 0.400})
+                OHLKeyDataDict.Add(ClearanceOptionalPart.OHL_25kV, New OHLKeyData With {.MinimumDistance = 0.220, .MinimumHeight = 5.34, .VerticalBevel = 0.335, .HorizontalBevel = 0.447})
+                
+                Return OHLKeyDataDict
+            End Function
+
         #End Region
         
-        #Region "Definition of Tables"
+        #Region "Definition of interpolation Tables"
             
             Private Shared Sub CreateTables()
                 
-                Table212i = New LinearTabFunction()
-                Table212a = New LinearTabFunction()
+                Table212i  = New LinearTabFunction()
+                Table212a  = New LinearTabFunction()
+                OHLTable22 = New LinearTabFunction()
                 
                 ' Inside of curve.
                 Table212i.AddBasePoint(100.0, 0.560)
@@ -280,6 +337,13 @@ Namespace Domain.ClearanceGauge
                 Table212a.AddBasePoint(200.0, 0.095)
                 Table212a.AddBasePoint(225.0, 0.060)
                 Table212a.AddBasePoint(250.0, 0.020)
+                
+                ' OHL.
+                OHLTable22.AddBasePoint(100.0, 0.043)
+                OHLTable22.AddBasePoint(120.0, 0.039)
+                OHLTable22.AddBasePoint(150.0, 0.034)
+                OHLTable22.AddBasePoint(200.0, 0.030)
+                OHLTable22.AddBasePoint(250.0, 0.015)
             End Sub
             
         #End Region
@@ -288,16 +352,16 @@ Namespace Domain.ClearanceGauge
             
             ''' <summary> Calculates the minimum clearance main outline. </summary>
              ''' <remarks></remarks>
-             ''' <exception cref="System.InvalidOperationException"> Cant     is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.InvalidOperationException"> CantBase is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.InvalidOperationException"> Radius   is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.InvalidOperationException"> Speed    is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> Cant     is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> CantBase is <c>Double.NaN</c>. </exception>
             Private Function CalculateMainOutline() As Polygon
                 
-                If (Double.IsNaN(Me.RailsConfig.Cant))     Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
-                If (Double.IsNaN(Me.RailsConfig.CantBase)) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
-                If (Double.IsNaN(Me.RailsConfig.Radius))   Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
-                If (Double.IsNaN(Me.RailsConfig.Speed))    Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
+                If (Double.IsNaN(Me.RailsConfig.Radius))         Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
+                If (Double.IsNaN(Me.RailsConfig.Speed))          Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
+                If (Double.IsNaN(Me.RailsConfig.Cant))           Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
+                If (Double.IsNaN(Me.RailsConfig.CantBase))       Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
                 
                 Dim MinimumOutline As Polygon = New Polygon()
                 MinimumOutline.IsClosed = True
@@ -325,14 +389,69 @@ Namespace Domain.ClearanceGauge
             
             ''' <summary> Calculates the minimum clearance outline for overhead line. </summary>
              ''' <remarks></remarks>
+             ''' <exception cref="System.InvalidOperationException"> Radius   is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> Speed    is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> Cant     is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.InvalidOperationException"> CantBase is <c>Double.NaN</c>. </exception>
             Private Function CalculateOHLOutline() As Polygon
                 
+                If (Double.IsNaN(Me.RailsConfig.Radius))         Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
+                If (Double.IsNaN(Me.RailsConfig.Speed))          Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
+                If (Double.IsNaN(Me.RailsConfig.Cant))           Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
+                If (Double.IsNaN(Me.RailsConfig.CantBase))       Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
+                
                 Dim OHLOutline As Polygon = New Polygon()
+                OHLOutline.IsClosed = True
+                
+                If (OHLCharacteristics.ContainsKey(Me.OHLType)) Then
+                    
+                    Dim OHLBaseLine As Polygon = New Polygon()
+                    OHLBaseLine.Vertices.Add(New MathPoint With {.X = -bw2                          , .Y = 4.00})
+                    OHLBaseLine.Vertices.Add(New MathPoint With {.X = -bw2                          , .Y = OHLKeys.MinimumHeight - OHLKeys.VerticalBevel})
+                    OHLBaseLine.Vertices.Add(New MathPoint With {.X = -bw2 + OHLKeys.HorizontalBevel, .Y = OHLKeys.MinimumHeight})
+                    OHLBaseLine.Vertices.Add(New MathPoint With {.X =  bw2 - OHLKeys.HorizontalBevel, .Y = OHLKeys.MinimumHeight})
+                    OHLBaseLine.Vertices.Add(New MathPoint With {.X =  bw2                          , .Y = OHLKeys.MinimumHeight - OHLKeys.VerticalBevel})
+                    OHLBaseLine.Vertices.Add(New MathPoint With {.X =  bw2                          , .Y = 4.00})
+                    
+                    For Each BasePoint As MathPoint In OHLBaseLine.Vertices
+                        
+                        Dim PointHeightAboveHc As Double = BasePoint.Y - hc
+                        Dim PointHeightAbove5m As Double = If(BasePoint.Y > 5.0, BasePoint.Y - 5.0, 0.0)
+                            
+                        Dim e  As Double = 0.11 + (0.04 * PointHeightAbove5m)
+                        Dim S  As Double = If(Not IsSmallRadius250, (2.5 / AbsRadius) + S0, OHLTable22.EvaluateFx(AbsRadius) )
+                        Dim Q  As Double = CalcOHL_Q(BasePoint, PointHeightAboveHc)
+                        Dim T  As Double = 0.073 + (0.0144 * PointHeightAbove5m)   ' EBO, appendix 3, Pt. 1.6 / 2.4, named "T" (Zufallsbedingte Verschiebung)
+                        Dim dX As Double = Sign(BasePoint.X) * (e + S + Q + T + OHLKeys.MinimumDistance)
+                        
+                        OHLOutline.Vertices.Add(New MathPoint With {.X=BasePoint.X + dX, .Y=BasePoint.Y})
+                    Next
+                End If
                 
                 Return OHLOutline
             End Function
             
-            ''' <summary> Calculates the delta according to EBO, appendix2, Pt. 1.2, named "S" (Ausladung). </summary>
+            ''' <summary> Calculates the delta according to EBO, appendix 3, Pt. 2.3, named "Q" (Quasistatische Seitenneigung). </summary>
+             ''' <param name="Point">              A point in canted rails system. </param>
+             ''' <param name="PointHeightAboveHc"> The height of the point above hc (negative means under hc) (for performance). </param>
+             ''' <returns> The horizontal delta for <paramref name="Point"/><c>.X</c> </returns>
+             ''' <remarks></remarks>
+            Private Function CalcOHL_Q(Point As MathPoint, PointHeightAboveHc As Double) As Double
+                
+                Dim RetValue As Double = 0.0
+                
+                Dim oQ0 As Double = 0.0
+                If (Double.IsInfinity(Me.RailsConfig.Radius)) Then
+                    oQ0 = If(Me.RailsConfig.IsPointInsideCant(Point), oQi0, oQa0)
+                Else
+                    oQ0 = If(Me.RailsConfig.IsPointInsideCurve(Point), oQi0, oQa0)
+                End If
+                RetValue = oQ0 * PointHeightAboveHc
+                
+                Return RetValue
+            End Function
+            
+            ''' <summary> Calculates the delta according to EBO, appendix 2, Pt. 1.2, named "S" (Ausladung). </summary>
              ''' <param name="Point"> A point in canted rails system. </param>
              ''' <returns> The horizontal delta for <paramref name="Point"/><c>.X</c> </returns>
              ''' <remarks></remarks>
@@ -362,7 +481,7 @@ Namespace Domain.ClearanceGauge
                 Return RetValue
             End Function
             
-            ''' <summary> Calculates the delta according to EBO, appendix2, Pt. 1.3, named "Q" (Quasistatische Seitenneigung). </summary>
+            ''' <summary> Calculates the delta according to EBO, appendix 2, Pt. 1.3, named "Q" (Quasistatische Seitenneigung). </summary>
              ''' <param name="Point">              A point in canted rails system. </param>
              ''' <param name="IsPointAboveHc">     Determines whether or not the point is above hc (for performance). </param>
              ''' <param name="PointHeightAboveHc"> The height of the point above hc (negative means under hc) (for performance). </param>
@@ -385,7 +504,7 @@ Namespace Domain.ClearanceGauge
                 Return RetValue
             End Function
             
-            ''' <summary> Calculates the delta according to EBO, appendix2, Pt. 1.4, named "T" (Zufallsbedingte Verschiebung). </summary>
+            ''' <summary> Calculates the delta according to EBO, appendix 2, Pt. 1.4, named "T" (Zufallsbedingte Verschiebung). </summary>
              ''' <param name="Point">              A point in canted rails system. </param>
              ''' <param name="IsPointAboveHc">     Determines whether or not the point is above hc (for performance). </param>
              ''' <param name="PointHeightAboveHc"> The height of the point above hc (negative means under hc) (for performance). </param>
@@ -464,11 +583,11 @@ Namespace Domain.ClearanceGauge
                     End If
                 End If
                 
-                ' Point independent part of Qi and Qa.
+                ' Main: Point independent part of Qi and Qa.
                 Qi0 = 0.0
                 Qa0 = 0.0
                 
-                ' Impact of standing train.
+                ' Main: Impact of standing train.
                 Dim Qu0  As Double = 0.267 * Max(Abs(Me.RailsConfig.Cant) - 0.050, 0.0)
                 If (Qu0 <> 0.0) Then
                     If (RelativeCant > 0) Then
@@ -478,7 +597,7 @@ Namespace Domain.ClearanceGauge
                     End If
                 End If
                 
-                ' Impact of moving train.
+                ' Main: Impact of moving train.
                 If (Not Double.IsNaN(Me.RailsConfig.CantDeficiency)) Then
                     Dim Quf0 As Double = 0.267 * Max(Abs(Me.RailsConfig.CantDeficiency) - 0.050, 0.0)
                     If (Quf0 <> 0.0) Then
@@ -486,6 +605,32 @@ Namespace Domain.ClearanceGauge
                             Qa0 = Max(Quf0, Qa0)
                         Else
                             Qi0 = Max(Quf0, Qi0)
+                        End If
+                    End If
+                End If
+                
+                ' OHL: Point independent part of Qi and Qa.
+                oQi0 = 0.0
+                oQa0 = 0.0
+                
+                ' OHL: Impact of standing train.
+                Dim oQu0  As Double = 0.15 * Max(Abs(Me.RailsConfig.Cant) - 0.066, 0.0)
+                If (oQu0 <> 0.0) Then
+                    If (RelativeCant > 0) Then
+                        oQi0 = oQu0
+                    Else
+                        oQa0 = oQu0
+                    End If
+                End If
+                
+                ' OHL: Impact of moving train.
+                If (Not Double.IsNaN(Me.RailsConfig.CantDeficiency)) Then
+                    Dim oQuf0 As Double = 0.15 * Max(Abs(Me.RailsConfig.CantDeficiency) - 0.066, 0.0)
+                    If (oQuf0 <> 0.0) Then
+                        If (Me.RailsConfig.CantDeficiency > 0) Then
+                            oQa0 = Max(oQuf0, oQa0)
+                        Else
+                            oQi0 = Max(oQuf0, oQi0)
                         End If
                     End If
                 End If
