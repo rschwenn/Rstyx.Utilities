@@ -338,6 +338,8 @@ Namespace Domain
                 
                 If (Not _Cant.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
                     RetValue = (Sign(Point.X) = Sign(_Cant))
+                Else
+                    RetValue = IsPointInsideCurve(Point)
                 End If
                 
                 Return RetValue

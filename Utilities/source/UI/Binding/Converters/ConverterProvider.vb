@@ -66,6 +66,15 @@ Namespace UI.Binding.Converters
                 End Get
             End Property
             
+            ''' <summary> Returns an instance of InfinityToZeroConverter. </summary>
+             ''' <returns> InfinityToZeroConverter (WPF Binding IValueConverter). </returns>
+             ''' <remarks> The returned Converter converts between Infinity and Zero - and vice versa. </remarks>
+            Public Shared ReadOnly Property InfinityToZeroConverter() As IValueConverter
+                Get
+                    Return New InfinityToZeroConverter()
+                End Get
+            End Property
+            
             ''' <summary> Returns an instance of NanToNullConverter. </summary>
              ''' <returns> NanToNullConverter (WPF Binding IValueConverter). </returns>
              ''' <remarks> The returned Converter converts between NaN and Null string - and vice versa. </remarks>

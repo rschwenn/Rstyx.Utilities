@@ -176,8 +176,10 @@
     <Compile Include="source\UI\Binding\Converters\DebugConverter.vb" />
     <Compile Include="source\UI\Binding\Converters\EnumDisplayConverter.vb" />
     <Compile Include="source\UI\Binding\Converters\EnumIntConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\InfinityToZeroConverter.vb" />
     <Compile Include="source\UI\Binding\Converters\NanToNullConverter.vb" />
     <Compile Include="source\UI\Binding\Converters\ScaleConverter.vb" />
+    <Compile Include="source\UI\Binding\Converters\ValueConverterGroup.vb" />
     <Compile Include="source\UI\Binding\Converters\VisibilityToBooleanConverter.vb" />
     <Compile Include="source\UI\ClassEvents.vb" />
     <Compile Include="source\UI\Controls\LooseExpanderToggle.xaml.vb">

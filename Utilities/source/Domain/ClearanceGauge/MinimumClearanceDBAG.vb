@@ -370,7 +370,19 @@ Namespace Domain.ClearanceGauge
              ''' <remarks></remarks>
             Private Function Calc_Q(Point As MathPoint, IsPointAboveHc As Boolean, PointHeightAboveHc As Double) As Double
                 
-                Return If(IsPointAboveHc, If(Me.RailsConfig.IsPointInsideCant(Point), Qi0, Qa0) * PointHeightAboveHc, 0.0)
+                Dim RetValue As Double = 0.0
+                
+                If (IsPointAboveHc) Then
+                    Dim Q0 As Double = 0.0
+                    If (Double.IsInfinity(Me.RailsConfig.Radius)) Then
+                        Q0 = If(Me.RailsConfig.IsPointInsideCant(Point), Qi0, Qa0)
+                    Else
+                        Q0 = If(Me.RailsConfig.IsPointInsideCurve(Point), Qi0, Qa0)
+                    End If
+                    RetValue = Q0 * PointHeightAboveHc
+                End If
+                
+                Return RetValue
             End Function
             
             ''' <summary> Calculates the delta according to EBO, appendix2, Pt. 1.4, named "T" (Zufallsbedingte Verschiebung). </summary>
@@ -386,7 +398,7 @@ Namespace Domain.ClearanceGauge
                 If (IsPointAboveHc) Then
                     Dim T2g As Double = Point.Y / 100
                     Dim T2d As Double = PointHeightAboveHc * 0.004
-                    Dim T3  As Double = PointHeightAboveHc * If(Me.RailsConfig.IsPointInsideCant(Point), T3i0, T3a0)
+                    Dim T3  As Double = PointHeightAboveHc * If(Me.RailsConfig.IsPointInsideCurve(Point), T3i0, T3a0)
                     Dim T4  As Double = PointHeightAboveHc * T40
                     Dim T5  As Double = PointHeightAboveHc * T50
                     
@@ -444,13 +456,39 @@ Namespace Domain.ClearanceGauge
                 RelativeCant = Double.NaN
                 If (Not Double.IsNaN(Me.RailsConfig.Cant)) Then
                     If (Not Double.IsNaN(Me.RailsConfig.Radius)) Then
-                        RelativeCant = Sign(Me.RailsConfig.Radius) * Me.RailsConfig.Cant
+                        If (Double.IsInfinity(Me.RailsConfig.Radius)) Then
+                            RelativeCant = Abs(Me.RailsConfig.Cant)
+                        Else
+                            RelativeCant = Sign(Me.RailsConfig.Radius) * Me.RailsConfig.Cant
+                        End If
                     End If
                 End If
                 
                 ' Point independent part of Qi and Qa.
-                Qi0 = 0.267 * Max(RelativeCant - 0.050, 0.0)
-                Qa0 = 0.267 * Max(Me.RailsConfig.CantDeficiency - 0.050, 0.0)
+                Qi0 = 0.0
+                Qa0 = 0.0
+                
+                ' Impact of standing train.
+                Dim Qu0  As Double = 0.267 * Max(Abs(Me.RailsConfig.Cant) - 0.050, 0.0)
+                If (Qu0 <> 0.0) Then
+                    If (RelativeCant > 0) Then
+                        Qi0 = Qu0
+                    Else
+                        Qa0 = Qu0
+                    End If
+                End If
+                
+                ' Impact of moving train.
+                If (Not Double.IsNaN(Me.RailsConfig.CantDeficiency)) Then
+                    Dim Quf0 As Double = 0.267 * Max(Abs(Me.RailsConfig.CantDeficiency) - 0.050, 0.0)
+                    If (Quf0 <> 0.0) Then
+                        If (Me.RailsConfig.CantDeficiency > 0) Then
+                            Qa0 = Max(Quf0, Qa0)
+                        Else
+                            Qi0 = Max(Quf0, Qi0)
+                        End If
+                    End If
+                End If
                 
             End Sub
             

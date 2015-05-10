@@ -31,6 +31,14 @@ Namespace Math
             
             Return IsEqual
         End Function
+        
+        ''' <summary> A filter which converts an infinite value to Zero. </summary>
+         ''' <param name="Value"> The Value </param>
+         ''' <returns> <c>Zero</c> if <paramref name="Value"/> is Infinity, otherwise <paramref name="Value"/>. </returns>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function InfinityAsZero(Value As Double) As Double
+            Return If(Double.IsInfinity(Value), 0.0, Value)
+        End Function
             
         #Region "Parsing"
             
