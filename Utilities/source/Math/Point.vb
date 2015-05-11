@@ -153,7 +153,7 @@ Namespace Math
             End Function
             
         #End Region
-    
+        
         #Region "Overrides"
             
             ''' <inheritdoc/>
@@ -224,7 +224,7 @@ Namespace Math
             Private Shared Function Interpol(ValueA As Double, ValueB As Double, Ratio As Double) As Double
                 Return ValueA + (ValueB - ValueA) * Ratio
             End Function
-
+            
         #End Region
         
     End Class

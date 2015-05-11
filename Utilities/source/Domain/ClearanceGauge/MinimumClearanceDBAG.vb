@@ -53,7 +53,7 @@ Namespace Domain.ClearanceGauge
                 _ReferenceLineG2    = CreateG2()
                 MinBaseLine         = CreateMinBaseLine()
                 OHLCharacteristics  = CreateOHLCharacteristics()
-
+                
                 CreateTables()
             End Sub
             
@@ -395,40 +395,73 @@ Namespace Domain.ClearanceGauge
              ''' <exception cref="System.InvalidOperationException"> CantBase is <c>Double.NaN</c>. </exception>
             Private Function CalculateOHLOutline() As Polygon
                 
-                If (Double.IsNaN(Me.RailsConfig.Radius))         Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
-                If (Double.IsNaN(Me.RailsConfig.Speed))          Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
-                If (Double.IsNaN(Me.RailsConfig.Cant))           Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
-                If (Double.IsNaN(Me.RailsConfig.CantBase))       Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
+                If (Double.IsNaN(Me.RailsConfig.Radius))    Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
+                If (Double.IsNaN(Me.RailsConfig.Speed))     Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
+                If (Double.IsNaN(Me.RailsConfig.Cant))      Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
+                If (Double.IsNaN(Me.RailsConfig.CantBase))  Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
                 
                 Dim OHLOutline As Polygon = New Polygon()
                 OHLOutline.IsClosed = True
                 
                 If (OHLCharacteristics.ContainsKey(Me.OHLType)) Then
                     
+                    ' Intersection of side parts with main outline.
+                    Dim LeftX  As Double = CalcOHL_dX(New MathPoint With {.X = -bw2, .Y = 4.50}) - bw2
+                    Dim RightX As Double = CalcOHL_dX(New MathPoint With {.X = +bw2, .Y = 4.50}) + bw2
+                    
+                    Dim LeftIntersect  As MathPoint = InterpolPoint(Me.MainOutline.Vertices(13), Me.MainOutline.Vertices(14), LeftX)
+                    Dim RightIntersect As MathPoint = InterpolPoint(Me.MainOutline.Vertices(15), Me.MainOutline.Vertices(16), RightX)
+                    
+                    ' Upper part.
                     Dim OHLBaseLine As Polygon = New Polygon()
-                    OHLBaseLine.Vertices.Add(New MathPoint With {.X = -bw2                          , .Y = 4.00})
                     OHLBaseLine.Vertices.Add(New MathPoint With {.X = -bw2                          , .Y = OHLKeys.MinimumHeight - OHLKeys.VerticalBevel})
                     OHLBaseLine.Vertices.Add(New MathPoint With {.X = -bw2 + OHLKeys.HorizontalBevel, .Y = OHLKeys.MinimumHeight})
                     OHLBaseLine.Vertices.Add(New MathPoint With {.X =  bw2 - OHLKeys.HorizontalBevel, .Y = OHLKeys.MinimumHeight})
                     OHLBaseLine.Vertices.Add(New MathPoint With {.X =  bw2                          , .Y = OHLKeys.MinimumHeight - OHLKeys.VerticalBevel})
-                    OHLBaseLine.Vertices.Add(New MathPoint With {.X =  bw2                          , .Y = 4.00})
                     
                     For Each BasePoint As MathPoint In OHLBaseLine.Vertices
-                        
-                        Dim PointHeightAboveHc As Double = BasePoint.Y - hc
-                        Dim PointHeightAbove5m As Double = If(BasePoint.Y > 5.0, BasePoint.Y - 5.0, 0.0)
-                            
-                        Dim e  As Double = 0.11 + (0.04 * PointHeightAbove5m)
-                        Dim S  As Double = If(Not IsSmallRadius250, (2.5 / AbsRadius) + S0, OHLTable22.EvaluateFx(AbsRadius) )
-                        Dim Q  As Double = CalcOHL_Q(BasePoint, PointHeightAboveHc)
-                        Dim T  As Double = 0.073 + (0.0144 * PointHeightAbove5m)   ' EBO, appendix 3, Pt. 1.6 / 2.4, named "T" (Zufallsbedingte Verschiebung)
-                        Dim dX As Double = Sign(BasePoint.X) * (e + S + Q + T + OHLKeys.MinimumDistance)
-                        
-                        OHLOutline.Vertices.Add(New MathPoint With {.X=BasePoint.X + dX, .Y=BasePoint.Y})
+                        OHLOutline.Vertices.Add(New MathPoint With {.X = BasePoint.X + CalcOHL_dX(BasePoint), .Y = BasePoint.Y})
                     Next
+                    
+                    ' Bottom part (along main outline).
+                    OHLOutline.Vertices.Add(RightIntersect)
+                    OHLOutline.Vertices.Add(Me.MainOutline.Vertices(15))
+                    OHLOutline.Vertices.Add(Me.MainOutline.Vertices(14))
+                    OHLOutline.Vertices.Add(LeftIntersect)
                 End If
                 
                 Return OHLOutline
+            End Function
+            
+            ''' <summary> Interpolates a point between two points, at a given X coordinate. </summary>
+             ''' <param name="P1"> Point 1. </param>
+             ''' <param name="P2"> Point 2. </param>
+             ''' <param name="X">  X coordinate for Point to interpolate. </param>
+             ''' <returns> The interpolated point. </returns>
+            Private Function InterpolPoint(P1 As MathPoint, P2 As MathPoint, X As Double) As MathPoint
+                
+                Dim Ratio As Double = (X - P1.X) / (P2.X - P1.X)
+                Dim Y     As Double = P1.Y + (Ratio * (P2.Y - P1.Y)) - MathPoint.Resolution / 10
+                
+                Return New MathPoint With {.X = X, .Y = Y}
+            End Function
+            
+            ''' <summary> Calculates the accumulated delta according to EBO, appendix 3. </summary>
+             ''' <param name="Point"> A point in canted rails system. </param>
+             ''' <returns> The complete horizontal delta for <paramref name="Point"/><c>.X</c> </returns>
+             ''' <remarks></remarks>
+            Private Function CalcOHL_dX(Point As MathPoint) As Double
+                
+                Dim PointHeightAboveHc As Double = Point.Y - hc
+                Dim PointHeightAbove5m As Double = If(Point.Y > 5.0, Point.Y - 5.0, 0.0)
+                    
+                Dim e  As Double = 0.11 + (0.04 * PointHeightAbove5m)
+                Dim S  As Double = If(Not IsSmallRadius250, (2.5 / AbsRadius) + S0, OHLTable22.EvaluateFx(AbsRadius) )
+                Dim Q  As Double = CalcOHL_Q(Point, PointHeightAboveHc)
+                Dim T  As Double = 0.073 + (0.0144 * PointHeightAbove5m)   ' EBO, appendix 3, Pt. 1.6 / 2.4, named "T" (Zufallsbedingte Verschiebung)
+                Dim dX As Double = Sign(Point.X) * (e + S + Q + T + OHLKeys.MinimumDistance)
+                
+                Return dX
             End Function
             
             ''' <summary> Calculates the delta according to EBO, appendix 3, Pt. 2.3, named "Q" (Quasistatische Seitenneigung). </summary>
