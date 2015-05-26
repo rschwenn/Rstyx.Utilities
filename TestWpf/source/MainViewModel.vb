@@ -118,8 +118,12 @@ Public Class MainViewModel
                 Logger.logInfo("")
                 
                 Dim d1 As Double = Double.NaN
-                Dim d2 As Double = Double.NaN
-                Logger.logInfo((d1 = d2))
+                Dim d2 As Double = Double.NegativeInfinity
+                Dim d3 As Double = Double.PositiveInfinity
+                Logger.logInfo(d2.ToString())
+                Logger.logInfo(d3.ToString())
+                Logger.logInfo(sprintf("%+5.3f", d2))
+                'Logger.logInfo(sprintf("%+5.3f", d3))
                 
                 Dim int1 As Integer = 1
                 Dim int2 As Nullable(Of Integer) = 2

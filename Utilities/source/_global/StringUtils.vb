@@ -221,9 +221,9 @@ Imports Rstyx.Utilities.Math.MathUtils
                             End If
                             
                             ParmX = FlatParms(CInt(ParamUpTo))
-                            if ((ParmX Is Nothing) OrElse ParmX.ToString().IsEmpty()) then
+                            If ((ParmX Is Nothing) OrElse ParmX.ToString().IsEmpty()) Then
                               AddStr = ""
-                            else
+                            Else
                                 Select Case OneChar
                                   
                                   Case "d"c, "i"c 'signed decimal
@@ -280,6 +280,10 @@ Imports Rstyx.Utilities.Math.MathUtils
                                     If (Double.IsNaN(Value)) Then
                                         'AddStr = "NaN"
                                         AddStr = ""
+                                        
+                                    ElseIf (Double.IsInfinity(Value)) Then
+                                        'AddStr = "oo"
+                                        AddStr = Value.ToString()
                                     Else
                                         If (Precision = "") Then Precision = "6"
                                         'AddStr = Format(Abs(Value), "0." & String(Precision, "0"))
@@ -289,13 +293,13 @@ Imports Rstyx.Utilities.Math.MathUtils
                                                 '-1 = true
                                                 ' 0 = false
                                                 '-2 = Ländereinstellungen des Computers verwenden
-                                    End If
-                                    If (Value < 0) Then
-                                      AddStr = "-" & AddStr
-                                    ElseIf (InStr(Flags, "+") > 0) Then
-                                      AddStr = "+" & AddStr
-                                    ElseIf (InStr(Flags, " ") > 0) Then
-                                      AddStr = " " & AddStr
+                                        If (Value < 0) Then
+                                            AddStr = "-" & AddStr
+                                        ElseIf (InStr(Flags, "+") > 0) Then
+                                            AddStr = "+" & AddStr
+                                        ElseIf (InStr(Flags, " ") > 0) Then
+                                            AddStr = " " & AddStr
+                                        End If
                                     End If
                                   
                                   'Case "e", "E" 'float w/ exponent
@@ -337,7 +341,7 @@ Imports Rstyx.Utilities.Math.MathUtils
                                     'ElseIf InStr(Flags, "-") = 0 Then
                                     '  AddStrPercentF = " " & AddStrPercentF
                                     'End If
-                                    ''then calculate with
+                                    ''Then calculate with
                                     'Value = CDbl(ParmX)
                                     'Mantissa = Abs(Value)
                                     'Exponent = 0
@@ -373,12 +377,11 @@ Imports Rstyx.Utilities.Math.MathUtils
                                     AddStr = CStr(ParmX)
                                   
                                   Case Else
-                                    If (Precision <> "") then prec = "." & Precision else prec = ""
+                                    If (Precision <> "") Then prec = "." & Precision else prec = ""
                                     Throw New System.FormatException(String.Format(Rstyx.Utilities.Resources.Messages.Sprintf_InvalidParameterSequence, Flags, Width, prec, OneChar))
                                     AddStr = "%" & Flags & Width & prec & OneChar
                                 End Select
-                              
-                            end if
+                            End If
                             
                             If (Width <> "") Then
                               If cint(Width) > AddStr.Length Then
@@ -622,7 +625,7 @@ Imports Rstyx.Utilities.Math.MathUtils
          ''' <param name="Value">                     The string to indent. </param>
          ''' <param name="Width">                     The width or count of spaces to prepend every line with. </param>
          ''' <param name="IncludeFirstline">          If <see langword="true"/>, the first line will be indented too. </param>
-         ''' <param name="PrependNewlineIfMultiline"> If <see langword="true"/> and <paramref name="Value"/> is multi-line, then <paramref name="Value"/> will be prepended by a new line. </param>
+         ''' <param name="PrependNewlineIfMultiline"> If <see langword="true"/> and <paramref name="Value"/> is multi-line, Then <paramref name="Value"/> will be prepended by a new line. </param>
          ''' <returns>                                A String with indented lines. </returns>
          ''' <remarks> </remarks>
         <System.Runtime.CompilerServices.Extension()> 
