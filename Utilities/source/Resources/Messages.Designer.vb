@@ -1550,6 +1550,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die KF-Datei enthält noch %d bereits gelöschte Punkte. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_GhostPoints() As String
+            Get
+                Return ResourceManager.GetString("KfFile_GhostPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Lesen der Verm.esn-Punktdatei (KF) &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KfFile_LoadFailed() As String

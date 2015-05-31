@@ -63,6 +63,15 @@
         End Class
     End Namespace
     
+    Namespace Math
+        ''' <summary>
+        ''' Mathematical stuff.
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
     Namespace IO.CSV
         ''' <summary>
         ''' Handling of CSV files. (CSV Reader: see http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader)

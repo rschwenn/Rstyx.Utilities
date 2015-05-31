@@ -1031,4 +1031,8 @@
   <data name="RailPair_UnknownRadius" xml:space="preserve">
     <value>Radius ist unbekannt (NaN).</value>
   </data>
+  <data name="KfFile_GhostPoints" xml:space="preserve">
+    <value>Die KF-Datei enthält noch %d bereits gelöschte Punkte.</value>
+    <comment>Ghost Point Count: Integer</comment>
+  </data>
 </root>

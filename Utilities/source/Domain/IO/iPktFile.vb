@@ -84,8 +84,14 @@ Namespace Domain.IO
                                     p.X = FieldX.Value
                                     p.Z = FieldZ.Value
                                     
+                                    ' Object key: Remove leading zero's if integer.
+                                    Dim KeyText    As String = DataLine.ParseField(RecDef.ObjectKey).Value
+                                    Dim KeyInt     As Integer
+                                    If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = KeyInt.ToString()
+                                    
+                                    p.ObjectKey    = KeyText
+                                    
                                     p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
-                                    p.ObjectKey    = DataLine.ParseField(RecDef.ObjectKey  ).Value
                                     p.GraficsCode  = DataLine.ParseField(RecDef.GraficsCode).Value
                                     p.GraficsDim   = DataLine.ParseField(RecDef.GraficsDim ).Value
                                     p.GraficsEcc   = DataLine.ParseField(RecDef.GraficsEcc ).Value
@@ -200,11 +206,16 @@ Namespace Domain.IO
                                 
                                 PointCount += 1
                                 Dim TimeStamp As String = If(p.TimeStamp.HasValue, p.TimeStamp.Value.ToString("s"), Nothing)
+                                    
+                                ' Object key: Add leading zero's if integer.
+                                Dim KeyText As String = p.ObjectKey
+                                Dim KeyInt  As Integer
+                                If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = sprintf("%6.6d", KeyInt)
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt, PointCount,
                                                       p.CalcCode.TrimToMaxLength(2),
-                                                      p.ObjectKey.TrimToMaxLength(6),
+                                                      KeyText.TrimToMaxLength(6),
                                                       p.GraficsCode.TrimToMaxLength(2),
                                                       p.GraficsDim,
                                                       p.GraficsEcc,
