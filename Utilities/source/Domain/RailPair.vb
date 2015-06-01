@@ -112,7 +112,7 @@ Namespace Domain
                 End Set
             End Property
             
-            ''' <summary> Gets the cant deficiency for this rails pair in [m]. </summary>
+            ''' <summary> Gets the cant deficiency for this rails pair in [m]. Maybe <c>Double.NaN</c> </summary>
              ''' <remarks>  </remarks>
             Public ReadOnly Property CantDeficiency() As Double
                 Get
@@ -364,6 +364,32 @@ Namespace Domain
                 Return RetValue
             End Function
             
+            ''' <summary> Ensures that cant deficiency doesn't exceeds <paramref name="MaxCantDeficiency"/> by reducing speed of this rail pair. </summary>
+             ''' <param name="MaxCantDeficiency"> Maximum allowed cant deficiency in [m]. </param>
+             ''' <remarks>
+             ''' The speed of this railpair will be reduced in steps of 5 km/h until cant deficiency doesn't exceeds <paramref name="MaxCantDeficiency"/>.
+             ''' This method has no effect if cant deficiency can't be calculated.
+             ''' </remarks>
+            Public Sub LimitCantDeficiency(MaxCantDeficiency As Double)
+                
+                Dim uf As Double = Me.CantDeficiency
+                
+                If (Not Double.IsNaN(uf)) Then
+                    
+                    Dim oldSpeed As Double = Me.Speed
+                    
+                    Do While  (uf > MaxCantDeficiency)
+                        _Speed -= 5
+                        uf = CalculateCantDeficiency()
+                    Loop
+                    
+                    ' Propagate new speed.
+                    If (_Speed < oldSpeed) Then
+                        Me.Speed = _Speed
+                    End If
+                End If
+            End Sub
+            
             ''' <summary> Resets the configuration of this RailPair to "unknown". </summary>
             Public Sub reset()
                 Me.Speed        = Double.NaN
@@ -420,7 +446,7 @@ Namespace Domain
         #Region "Private Methods"
             
             ''' <summary> Calculates cant Deficiency in [m]. Maybe <c>Double.NaN</c>. </summary>
-             ''' <returns> Cant Deficiency in [m]. </returns>
+             ''' <returns> Cant Deficiency in [m]. Maybe <c>Double.NaN</c> </returns>
             Private Function CalculateCantDeficiency() As Double
             
                 Dim uf  As Double = Double.NaN
