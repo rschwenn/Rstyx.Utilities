@@ -165,9 +165,23 @@ Namespace Domain
                         For Each SourcePoint In Me
                             
                             Dim NewPoint As IGeoPoint = DirectCast(Activator.CreateInstance(SourcePoint.GetType(), SourcePoint), IGeoPoint)
+                            Dim NewID    As String    = Nothing
                             
                             If (IDChangeTab.ContainsKey(SourcePoint.ID)) Then
-                                NewPoint.ID = IDChangeTab(SourcePoint.ID)
+                                
+                                NewID = IDChangeTab(SourcePoint.ID)
+                                
+                                ' Repeated ID: More precise hint (if possible) than the default exception of IDCollection.
+                                If (NewList.Contains(NewID)) Then
+                                    Dim Message     As String    = sprintf(Rstyx.Utilities.Resources.Messages.IDCollection_RepeatedID, NewID)
+                                    Dim OriginPoint As IGeoPoint = NewList.Item(NewID)
+                                    If ((OriginPoint.SourcePath IsNot Nothing) AndAlso (OriginPoint.SourceLineNo > 0)) Then
+                                        Message &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDRepeatedIDSource, OriginPoint.SourceLineNo, OriginPoint.SourcePath)
+                                    End If
+                                    Throw New InvalidIDException(Message)
+                                End If
+                                
+                                NewPoint.ID = NewID
                                 ChangeCount += 1
                             End If
                             

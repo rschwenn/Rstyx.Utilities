@@ -1226,6 +1226,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die \n  =&gt; Erstes Auftreten in Zeile %d der Datei: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointList_ChangeIDRepeatedIDSource() As String
+            Get
+                Return ResourceManager.GetString("GeoPointList_ChangeIDRepeatedIDSource", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die =&gt; %d Punkt-ID&apos;s geändert. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointList_ChangeIDSuccess() As String

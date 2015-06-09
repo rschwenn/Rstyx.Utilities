@@ -1035,4 +1035,8 @@
     <value>Die KF-Datei enthält noch %d bereits gelöschte Punkte.</value>
     <comment>Ghost Point Count: Integer</comment>
   </data>
+  <data name="GeoPointList_ChangeIDRepeatedIDSource" xml:space="preserve">
+    <value>\n  =&gt; Erstes Auftreten in Zeile %d der Datei: %s</value>
+    <comment>Source Line No.: Integer; Source Path: String</comment>
+  </data>
 </root>
