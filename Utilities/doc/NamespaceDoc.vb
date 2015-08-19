@@ -11,7 +11,7 @@
     
     Namespace Apps
         ''' <summary>
-        ''' General-purpose development utilities for dealing with applications
+        ''' General-purpose development utilities for dealing with (external) applications.
         ''' </summary>
         <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
         Class NamespaceDoc
@@ -66,6 +66,15 @@
     Namespace Math
         ''' <summary>
         ''' Mathematical stuff.
+        ''' </summary>
+        <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
+        Class NamespaceDoc
+        End Class
+    End Namespace
+    
+    Namespace PDF
+        ''' <summary>
+        ''' PDF related utilities.
         ''' </summary>
         <System.Runtime.CompilerServices.CompilerGeneratedAttribute()> _
         Class NamespaceDoc

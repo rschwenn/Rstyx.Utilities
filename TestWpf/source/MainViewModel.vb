@@ -10,11 +10,15 @@ Imports System.Math
 Imports System.IO
 Imports System.Threading.Tasks
 
+'Imports PdfSharp.Pdf
+'Imports PdfSharp.Pdf.IO
+
 Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.Domain.IO
 Imports Rstyx.Utilities.IO
+Imports Rstyx.Utilities.PDF.PdfUtils
 Imports Rstyx.Utilities.UI.ViewModel
 Imports Rstyx.Utilities.StringUtils
 
@@ -110,6 +114,25 @@ Public Class MainViewModel
             
         End Sub
         
+        
+        Public Sub TestPDF()
+            
+            Dim Files As New Collection(Of String)
+            Files.Add("T:\Hotel Drei Kronen - Karte 1.pdf")
+            Files.Add("T:\TestOutput_y.pdf")
+            Files.Add("T:\Hotel Drei Kronen - Karte 2.pdf")
+            'Files.Add("T:\debug.log")
+            
+            Const Filename As String = "T:\TestOutput.pdf"
+            
+            Call JoinPdfFiles(Files, Filename, True)
+            'Call Rstyx.Utilities.Pdfy.PDFUtils.JoinPdfFiles(Files, Filename, True)
+            
+            ' ...and start a viewer.
+            System.Diagnostics.Process.Start(Filename)
+            
+        End Sub
+        
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             
             'Dim TcReader As TcFileReader
@@ -117,29 +140,31 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Dim d1 As Double = Double.NaN
-                Dim d2 As Double = Double.NegativeInfinity
-                Dim d3 As Double = Double.PositiveInfinity
-                Logger.logInfo(d2.ToString())
-                Logger.logInfo(d3.ToString())
-                Logger.logInfo(sprintf("%+5.3f", d2))
-                'Logger.logInfo(sprintf("%+5.3f", d3))
+                Call TestPDF()
                 
-                Dim int1 As Integer = 1
-                Dim int2 As Nullable(Of Integer) = 2
-                Dim int3 As Nullable(Of Integer) = Nothing
-                Dim TestType1  As Type = int1.GetType()
-                Dim TestType2  As Type = GetType(Nullable(Of Integer))
-                Dim TestType3  As Type = GetType(Nullable(Of))
-                Dim TestType4  As Type = TestType2.GetGenericTypeDefinition()
-                Dim test  As Boolean = (TestType2.IsGenericType AndAlso (TestType4 Is TestType3))
-                Dim test2 As Boolean = (TestType2.IsGenericType AndAlso (TestType2.GetGenericTypeDefinition() Is GetType(Nullable(Of))))
-                Dim test3 As Boolean = (TestType2.Name = "Nullable`1")
-                Dim test4 As Boolean = (TestType2 Is GetType(Nullable(Of Integer)))
-                
-                Dim text As String = sprintf("%5.3f%5.3f", "1", int3)
-                'Dim text As String = CStr(Nothing)
-                'int2 = int3 '.GetValueOrDefault()
+                'Dim d1 As Double = Double.NaN
+                'Dim d2 As Double = Double.NegativeInfinity
+                'Dim d3 As Double = Double.PositiveInfinity
+                'Logger.logInfo(d2.ToString())
+                'Logger.logInfo(d3.ToString())
+                'Logger.logInfo(sprintf("%+5.3f", d2))
+                ''Logger.logInfo(sprintf("%+5.3f", d3))
+                '
+                'Dim int1 As Integer = 1
+                'Dim int2 As Nullable(Of Integer) = 2
+                'Dim int3 As Nullable(Of Integer) = Nothing
+                'Dim TestType1  As Type = int1.GetType()
+                'Dim TestType2  As Type = GetType(Nullable(Of Integer))
+                'Dim TestType3  As Type = GetType(Nullable(Of))
+                'Dim TestType4  As Type = TestType2.GetGenericTypeDefinition()
+                'Dim test  As Boolean = (TestType2.IsGenericType AndAlso (TestType4 Is TestType3))
+                'Dim test2 As Boolean = (TestType2.IsGenericType AndAlso (TestType2.GetGenericTypeDefinition() Is GetType(Nullable(Of))))
+                'Dim test3 As Boolean = (TestType2.Name = "Nullable`1")
+                'Dim test4 As Boolean = (TestType2 Is GetType(Nullable(Of Integer)))
+                '
+                'Dim text As String = sprintf("%5.3f%5.3f", "1", int3)
+                ''Dim text As String = CStr(Nothing)
+                ''int2 = int3 '.GetValueOrDefault()
                 
                 Dim KV As New KvFile(Me.FilePath1)
                 Dim KF As New KfFile(Me.FilePath1)

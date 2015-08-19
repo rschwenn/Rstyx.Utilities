@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TestWpf", "TestWpf\TestWpf.vbproj", "{648DE3EA-EEF2-41FC-9BBC-7BF0FE4F205D}"
 EndProject
@@ -33,6 +33,7 @@ Global
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Debug|x86.Build.0 = Debug|Any CPU
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
