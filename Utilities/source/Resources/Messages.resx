@@ -1039,4 +1039,16 @@
     <value>\n  =&gt; Erstes Auftreten in Zeile %d der Datei: %s</value>
     <comment>Source Line No.: Integer; Source Path: String</comment>
   </data>
+  <data name="PdfUtils_FailedDeletePDF" xml:space="preserve">
+    <value>Datei konnte nicht gelöscht werden: %s</value>
+    <comment>Input PDF File Name: String</comment>
+  </data>
+  <data name="PdfUtils_InvalidPdfDocument" xml:space="preserve">
+    <value>Datei ist kein gültiges PDF-Dokument: %s</value>
+    <comment>Input PDF File Name: String</comment>
+  </data>
+  <data name="PdfUtils_JoinFailedNoFiles" xml:space="preserve">
+    <value>Datei %s kann nicht erzeugt werden, da die Liste der zusammenzufügenden PDF-Dateien leer ist.</value>
+    <comment>Output PDF File Name: String</comment>
+  </data>
 </root>

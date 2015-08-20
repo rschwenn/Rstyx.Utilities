@@ -118,15 +118,14 @@ Public Class MainViewModel
         Public Sub TestPDF()
             
             Dim Files As New Collection(Of String)
-            Files.Add("T:\Hotel Drei Kronen - Karte 1.pdf")
-            Files.Add("T:\TestOutput_y.pdf")
-            Files.Add("T:\Hotel Drei Kronen - Karte 2.pdf")
+            Files.Add("T:\6340_004_01.pdf")
+            Files.Add("T:\6340_003_01.pdf")
+            Files.Add("T:\6340_002_01.pdf")
             'Files.Add("T:\debug.log")
             
             Const Filename As String = "T:\TestOutput.pdf"
             
-            Call JoinPdfFiles(Files, Filename, True)
-            'Call Rstyx.Utilities.Pdfy.PDFUtils.JoinPdfFiles(Files, Filename, True)
+            Call JoinPdfFiles(InputPaths:=Files, OutputPath:=Filename, Order:=True, DeleteInput:=False)
             
             ' ...and start a viewer.
             System.Diagnostics.Process.Start(Filename)

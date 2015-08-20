@@ -1811,6 +1811,33 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Datei konnte nicht gelöscht werden: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PdfUtils_FailedDeletePDF() As String
+            Get
+                Return ResourceManager.GetString("PdfUtils_FailedDeletePDF", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Datei ist kein gültiges PDF-Dokument: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PdfUtils_InvalidPdfDocument() As String
+            Get
+                Return ResourceManager.GetString("PdfUtils_InvalidPdfDocument", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Datei %s kann nicht erzeugt werden, da die Liste der zusammenzufügenden PDF-Dateien leer ist. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property PdfUtils_JoinFailedNoFiles() As String
+            Get
+                Return ResourceManager.GetString("PdfUtils_JoinFailedNoFiles", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Km ähnelt.
         '''</summary>
         Public Shared ReadOnly Property PositionAtTrack_Label_Kilometer() As String

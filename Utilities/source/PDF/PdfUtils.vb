@@ -31,9 +31,10 @@ Namespace PDF
         #Region "Static Methods"
             
             ''' <summary> Joins some given PDF files into one single PDF file. </summary>
-             ''' <param name="InputPaths"> List of PDF file paths to join. </param>
-             ''' <param name="OutputPath"> The path for the resulting PDF file. </param>
-             ''' <param name="Order">      If <see langword="true"/>, the input files will be joined ordered by file name. </param>
+             ''' <param name="InputPaths">  List of PDF file paths to join. </param>
+             ''' <param name="OutputPath">  The path for the resulting PDF file. </param>
+             ''' <param name="Order">       If <see langword="true"/>, the input files will be joined ordered by file name. </param>
+             ''' <param name="DeleteInput"> If <see langword="true"/>, the input files will be deleted after joining. </param>
              ''' <returns> The newly created <see cref="PdfDocument"/>. </returns>
              ''' <remarks>
              ''' Every page of created PDF file gets a related bookmark, which is the input file name.
@@ -43,7 +44,7 @@ Namespace PDF
              ''' <exception cref="System.ArgumentNullException"> <paramref name="OutputPath"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException">     <paramref name="InputPaths"/> is empty. </exception>
              ''' <exception cref="System.InvalidOperationException"> One of the input PDF files is not a valid PDF document. </exception>
-            Public Shared Function JoinPdfFiles(InputPaths As IEnumerable(Of String), OutputPath As String, Order As Boolean) As PdfDocument
+            Public Shared Function JoinPdfFiles(InputPaths As IEnumerable(Of String), OutputPath As String, Order As Boolean, DeleteInput As Boolean) As PdfDocument
                     
                 If (InputPaths Is Nothing) Then Throw New System.ArgumentNullException("InputPaths")
                 If (OutputPath Is Nothing) Then Throw New System.ArgumentNullException("OutputPath")
@@ -64,16 +65,28 @@ Namespace PDF
                             Dim BookMarkName As String      = If(InputPDF.PageCount = 1, FileName, FileName & " (" & CStr(idx + 1) & ")")
                             Dim Outline      As PdfOutline  = OutputPDF.Outlines.Add(BookMarkName, Page)
                         Next
+                        InputPDF.Close()
+                        
                     Catch ex As InvalidOperationException When ex.Message.Contains("not a valid PDF")
-                        Throw New InvalidOperationException(sprintf("Datei ist kein gültiges PDF-Dokument: %s", FilePath))
+                        Throw New InvalidOperationException(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_InvalidPdfDocument, FilePath))
                     End Try
                 Next
                 
-                Dim fmt As String = "Datei %s kann nicht erzeugt werden, da die Liste der zusammenzufügenden PDF-Dateien leer ist."
-                If (OutputPDF.PageCount < 1) Then Throw New ArgumentException(sprintf(fmt, OutputPath))
+                If (OutputPDF.PageCount < 1) Then Throw New ArgumentException(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_JoinFailedNoFiles, OutputPath))
                 
                 ' Save joined PDF as file.
                  OutputPDF.Save(OutputPath)
+                
+                ' Optionally delete input files (if joining has been successful).
+                If (DeleteInput) Then
+                    For Each FilePath As String In InputPaths
+                        Try
+                            System.IO.File.Delete(FilePath)
+                        Catch ex As Exception
+                            Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_FailedDeletePDF, FilePath))
+                        End Try
+                    Next
+                End If
                 
                 Return OutputPDF
             End Function
