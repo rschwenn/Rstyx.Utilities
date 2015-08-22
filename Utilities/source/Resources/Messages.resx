@@ -819,7 +819,7 @@
     <comment>Default Header Line #3 for KV file</comment>
   </data>
   <data name="IDCollection_RepeatedID" xml:space="preserve">
-    <value>ID (%s) trit wiederholt auf.</value>
+    <value>ID (%s) tritt wiederholt auf.</value>
     <comment>Collection Element ID: String</comment>
   </data>
   <data name="GeoPointConstraints_MissingHeight" xml:space="preserve">
@@ -1032,7 +1032,7 @@
     <value>Radius ist unbekannt (NaN).</value>
   </data>
   <data name="KfFile_GhostPoints" xml:space="preserve">
-    <value>Die KF-Datei enthält noch %d bereits gelöschte Punkte.</value>
+    <value>Die KF-Datei enthält %d bereits gelöschte Punkte.</value>
     <comment>Ghost Point Count: Integer</comment>
   </data>
   <data name="GeoPointList_ChangeIDRepeatedIDSource" xml:space="preserve">
@@ -1050,5 +1050,9 @@
   <data name="PdfUtils_JoinFailedNoFiles" xml:space="preserve">
     <value>Datei %s kann nicht erzeugt werden, da die Liste der zusammenzufügenden PDF-Dateien leer ist.</value>
     <comment>Output PDF File Name: String</comment>
+  </data>
+  <data name="KfFile_InvalidPointIDs" xml:space="preserve">
+    <value>Die KF-Datei enthält %d Punkte mit ungültiger Punktnummer.</value>
+    <comment>Invalid PointID Count: Integer</comment>
   </data>
 </root>

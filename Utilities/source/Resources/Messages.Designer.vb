@@ -1433,7 +1433,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die ID (%s) trit wiederholt auf. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die ID (%s) tritt wiederholt auf. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property IDCollection_RepeatedID() As String
             Get
@@ -1559,11 +1559,20 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Die KF-Datei enthält noch %d bereits gelöschte Punkte. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die KF-Datei enthält %d bereits gelöschte Punkte. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KfFile_GhostPoints() As String
             Get
                 Return ResourceManager.GetString("KfFile_GhostPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die KF-Datei enthält %d Punkte mit ungültiger Punktnummer. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_InvalidPointIDs() As String
+            Get
+                Return ResourceManager.GetString("KfFile_InvalidPointIDs", resourceCulture)
             End Get
         End Property
         

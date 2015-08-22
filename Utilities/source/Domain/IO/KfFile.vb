@@ -18,8 +18,8 @@ Namespace Domain.IO
             
             Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KfFile")
             
-            Private RecordLength    As Integer = 102
-            Private GhostPointID    As Double  = 1E+40
+            Private Const RecordLength  As Integer = 102
+            Private Const GhostPointID  As Double  = 1E+40
             
         #End Region
         
@@ -79,9 +79,10 @@ Namespace Domain.IO
                         Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, FilePath))
                         If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                         
-                        Dim UniqueID        As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
- 		                Dim PointCount      As Integer = 0
- 		                Dim GhostPointCount As Integer = 0
+                        Dim UniqueID            As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+ 		                Dim PointCount          As Integer = 0
+ 		                Dim GhostPointIDCount   As Integer = 0
+ 		                Dim InvalidPointIDCount As Integer = 0
                         
                         Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
     		                
@@ -94,9 +95,10 @@ Namespace Domain.IO
     		                For i As Integer = 0 To KfPointCount
     		                	
     		                    Dim p As New GeoVEPoint()
-                                Dim PointID As String
-    		                    
-                                PointID              = oBR.ReadDouble().ToString()
+                                
+                                Dim PointNo As Double = oBR.ReadDouble()
+                                Dim PointID As String = sprintf("%.6f", PointNo)
+                                
                                 p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
                                 p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
                                 p.Z                  = getDoubleFromVEDouble(oBR.ReadDouble())
@@ -128,8 +130,10 @@ Namespace Domain.IO
                                 
                                 If (i = 0) Then
                                     Me.HeaderKF = p
-                                ElseIf (PointID = GhostPointID) Then
-                                    GhostPointCount +=1
+                                ElseIf (PointNo = GhostPointID) Then
+                                    GhostPointIDCount +=1
+                                ElseIf (Not p.IsValidID(PointNo)) Then
+                                    InvalidPointIDCount +=1
                                 Else
                                     Try
                                         p.ID = PointID
@@ -159,8 +163,9 @@ Namespace Domain.IO
                         If (Me.ParseErrors.HasErrors) Then
                             Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                         Else
-                            If (GhostPointCount > 0) Then Logger.logInfo(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_GhostPoints, GhostPointCount))
-                            If (PointCount = 0)      Then Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
+                            If (GhostPointIDCount > 0)   Then Logger.logInfo(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_GhostPoints, GhostPointIDCount))
+                            If (InvalidPointIDCount > 0) Then Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_InvalidPointIDs, InvalidPointIDCount))
+                            If (PointCount = 0)          Then Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                         End If
                         
                         
