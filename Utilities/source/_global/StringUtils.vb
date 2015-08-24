@@ -435,7 +435,7 @@ Imports Rstyx.Utilities.Math.MathUtils
          ''' <param name="SourceStrings"> The source Strings. </param>
          ''' <param name="JoinString">    The join string. </param>
          ''' <returns> The joined string. May be empty (but not <see langword="null"/>). </returns>
-         ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceStrings"/> or <paramref name="TestStrings"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceStrings"/> or <paramref name="JoinString"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function JoinIgnoreEmpty(SourceStrings As IEnumerable(Of String), JoinString As String) As String
             
@@ -645,7 +645,7 @@ Imports Rstyx.Utilities.Math.MathUtils
             Return RetValue
         End Function
         
-        ''' <summary> Surrounds the string with <paramref name="SurroundChar"/>. </summary>
+        ''' <summary> Surrounds the string with <paramref name="SurroundString"/>. </summary>
          ''' <param name="Value">          The source string. </param>
          ''' <param name="SurroundString"> The string to surround <paramref name="Value"/> with. </param>
          ''' <returns> The sourrounded string, or <see langword="null"/> if <paramref name="Value"/> was <see langword="null"/>. </returns>

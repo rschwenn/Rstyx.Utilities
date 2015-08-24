@@ -64,7 +64,7 @@ Namespace IO
              ''' <param name="Length"> The length of this data field. </param>
              ''' <param name="Value">  The string representing the field's value. </param>
              ''' <remarks></remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceValue"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="Column"/> is less than Zero. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than 1. </exception>
             Public Sub New(Column As Integer,
@@ -177,7 +177,6 @@ Namespace IO
      ''' <typeparam name="TFieldValue"> The target type of the field value. </typeparam>
      ''' <remarks>
      ''' This definition is intended to be a parsing instruction on how to pick a piece of data out of a string.
-     ''' The argument <paramref name="TFieldValue"/> comes to play only to determine the type of a <see cref="DataField"/>
      ''' when this will be created.
      ''' </remarks>
     Public Class DataFieldDefinition(Of TFieldValue)

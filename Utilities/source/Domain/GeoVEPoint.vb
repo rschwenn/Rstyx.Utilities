@@ -47,7 +47,7 @@ Namespace Domain
             ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a given Value for <see cref="GeoVEPoint.MaxIDLength"/>. </summary>
              ''' <param name="MaxIDLength"> The maximum supported length resp. digits for the point ID. </param>
              ''' <remarks>  </remarks>
-             ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> doesn't equals 6 or 7. </exception>
+             ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="MaxIDLength"/> doesn't equals 6 or 7. </exception>
             Public Sub New(MaxIDLength As Integer)
                 
                 If ((MaxIDLength < 6) OrElse (MaxIDLength > 7)) Then Throw New ArgumentOutOfRangeException("MaxIDLength")
@@ -184,7 +184,7 @@ Namespace Domain
              ''' <param name="ID"> The point ID to format. May be <see langword="null"/>. </param>
              ''' <param name="MaxIDLength"> The maximum supported length resp. digits for the point ID. </param>
              ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is <see langword="null"/>. </returns>
-             ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> doesn't equals 6 or 7. </exception>
+             ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="MaxIDLength"/> doesn't equals 6 or 7. </exception>
              ''' <exception cref="InvalidIDException"> <paramref name="ID"/> isn't a valid ID for this point. </exception>
             Public Shared Function FormatID(ID As String, MaxIDLength As Integer) As String
                 Dim RetID As String = ID

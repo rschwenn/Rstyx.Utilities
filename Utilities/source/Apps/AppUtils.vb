@@ -370,7 +370,7 @@ Namespace Apps
             ''' <summary> Activates Excel and invokes the CSV import of GeoTools VBA Add-In. </summary>
              ''' <param name="FilePath"> The csv file to import in Excel. </param>
              ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="FilePath"/> hasn't been found. </exception>
-             ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="XlmVbsFile"/> hasn't been found after extracting from resources. </exception>
+             ''' <exception cref="System.IO.FileNotFoundException"> xlm.vbs hasn't been found after extracting from resources. </exception>
              ''' <exception cref="Rstyx.Utilities.RemarkException"> Wraps any exception occurred while invoking the system command with a clear message. </exception>
              ''' <remarks>
              ''' <para>

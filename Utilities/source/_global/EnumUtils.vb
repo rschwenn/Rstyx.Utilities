@@ -162,7 +162,7 @@ Imports Rstyx.Utilities.StringUtils
          ''' <typeparam name="TEnum">         The Enum type wrapped by the <c>Nullable</c>. </typeparam>
          ''' <param name="NullableStructure"> The <c>Nullable(Of Enum)</c> value to display. </param>
          ''' <returns>                        If <c>T</c> is an <c>Enum</c> then the localized string available in resources, otherwise <c>T.ToString()</c>. </returns>
-         ''' <exception cref="System.ArgumentException"> <paramref name="TEnum"/> is not an Enum type. </exception>
+         ''' <exception cref="System.ArgumentException"> Type parameter is not an Enum type. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function ToDisplayString(Of TEnum As Structure)(NullableStructure As Nullable(Of TEnum)) As String
             
@@ -201,7 +201,7 @@ Imports Rstyx.Utilities.StringUtils
             End If
             Dim RetValue  As Boolean = False
             Try
-                Dim EnumValue As TEnum
+                Dim EnumValue As TEnum = Nothing
                 
                 For Each i As Integer In System.Enum.GetValues(GetType(TEnum))
                     

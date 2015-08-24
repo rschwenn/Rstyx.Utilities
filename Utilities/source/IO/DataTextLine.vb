@@ -185,7 +185,7 @@ Namespace IO
              ''' <item> <term> Kilometer            </term>  <description> New, empty <see cref="Kilometer"/> instance </description></item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Integer</c> or <c>Long</c> or <c>Nullable(Of Integer)</c> or <c>Nullable(Of Long)</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
+             ''' <exception cref="System.ArgumentException"> Type parameter <c>TValue</c> is not <c>String</c> or <c>Integer</c> or <c>Long</c> or <c>Nullable(Of Integer)</c> or <c>Nullable(Of Long)</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> The data field couldn't be parsed successfully. </exception>
@@ -252,7 +252,7 @@ Namespace IO
              ''' <item> <term> Kilometer            </term>  <description> New, empty <see cref="Kilometer"/> instance </description></item>
              ''' </list>
              ''' </remarks>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TValue"/> is not <c>String</c> or <c>Integer</c> or <c>Long</c> or <c>Nullable(Of Integer)</c> or <c>Nullable(Of Long)</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
+             ''' <exception cref="System.ArgumentException"> Type parameter <c>TValue</c> is not <c>String</c> or <c>Integer</c> or <c>Long</c> or <c>Nullable(Of Integer)</c> or <c>Nullable(Of Long)</c> or <c>Double</c> or <c>Enum</c> or <see cref="Kilometer"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldDef"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.InvalidOperationException"> This DataTextLine doesn't contain data (<see cref="DataTextLine.HasData"/> is <see langword="false"/>). </exception>
             Public Function TryParseField(Of TFieldValue)(FieldDef As DataFieldDefinition(Of TFieldValue),

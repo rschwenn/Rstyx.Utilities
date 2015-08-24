@@ -305,9 +305,9 @@ Namespace Domain
              ''' <param name="PointGeometry"> The point which provides cant, cant base and radius. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry.Ueb"/>) is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry.CantBase"/>) is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="PointGeometry.Ra"/>) is <c>Double.NaN</c>, but Cant isn't Zero. </exception>
+             ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry"/><c>.Ueb</c>) is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry"/><c>.CantBase</c>) is <c>Double.NaN</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="PointGeometry"/><c>.Ra</c>) is <c>Double.NaN</c>, but Cant isn't Zero. </exception>
             Public Sub reconfigure(PointGeometry As GeoTcPoint)
                 
                 If (PointGeometry Is Nothing)              Then Throw New System.ArgumentNullException("PointGeometry")

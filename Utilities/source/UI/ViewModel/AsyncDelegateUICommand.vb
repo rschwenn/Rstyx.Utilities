@@ -67,7 +67,7 @@ Namespace UI.ViewModel
             ''' <summary> Creates a new command that runs in current thread and supports cancellation. </summary>
              ''' <param name="TargetCommandInfo"> The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo)
                 Me.New(TargetCommandInfo, Nothing, True, False)
             End Sub
@@ -76,7 +76,7 @@ Namespace UI.ViewModel
              ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
              ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, SupportsCancellation As Boolean)
                 Me.New(TargetCommandInfo, Nothing, SupportsCancellation, False)
             End Sub
@@ -86,7 +86,7 @@ Namespace UI.ViewModel
              ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. </param>
              ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean)
                 Me.New(TargetCommandInfo, CancelCallback, SupportsCancellation, False)
             End Sub
@@ -97,7 +97,7 @@ Namespace UI.ViewModel
              ''' <param name="SupportsCancellation"> Should be <c>False</c>, when the target action doesn't worry about cancellation requests. </param>
              ''' <param name="runAsync">             If <c>True</c>, the command will be executed in a separate thread, otherwise not. </param>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo.ExecuteAction"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
              ''' <remarks> If <paramref name="SupportsCancellation"/> is <see langword="True"/>, the cancellation command won't be available. </remarks>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean, runAsync As Boolean)
                 

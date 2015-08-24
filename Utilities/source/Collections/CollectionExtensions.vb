@@ -28,7 +28,7 @@ Namespace Collections
          ''' <typeparam name="TValue"> Type of values. </typeparam>
          ''' <param name="dictionary"> The dictionary. </param>
          ''' <param name="Value">      The value to search for. </param>
-         ''' <returns>                 The key of the found value, or default value of <typeparam name="TKey"/>. </returns>
+         ''' <returns>                 The key of the found value, or default value of type parameter <c>TKey</c>. </returns>
          ''' <remarks>                 For value types of TKey, the result is ambigious if the default value of TKey is returned (May be a real occurence or not)! </remarks>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="dictionary"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
@@ -55,7 +55,7 @@ Namespace Collections
          ''' <param name="FoundItem">    [Out] Will contain the found Item, otherwise it isn't changed. </param>
          ''' <returns>                   <see langword="true"/>, if the Item has been found, otherwise <see langword="false"/>. </returns>
          ''' <remarks>                   For value types the result is ambigious if the default value is returned (May be a real occurence or not)! </remarks>
-         ''' <exception cref="System.ArgumentNullException"> <paramref name="dictionary"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="collection"/> is <see langword="null"/>. </exception>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="ItemToString"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function findItemByString(Of TItem)(ByVal collection As ICollection(Of TItem), ItemToString As String, ByRef FoundItem As TItem) As Boolean
@@ -68,7 +68,7 @@ Namespace Collections
          ''' <typeparam name="TItem">    Type of Items. </typeparam>
          ''' <param name="collection">   The collection. </param>
          ''' <param name="ItemToString"> The string representation to search for. </param>
-         ''' <returns>                   The found Item, or default value of <typeparam name="TItem"/>. </returns>
+         ''' <returns>                   The found Item, or default value of type parameter <c>TKey</c>. </returns>
          ''' <remarks>                   For value types the result is ambigious if the default value is returned (May be a real occurence or not)! </remarks>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="collection"/> is <see langword="null"/>. </exception>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="ItemToString"/> is <see langword="null"/>. </exception>

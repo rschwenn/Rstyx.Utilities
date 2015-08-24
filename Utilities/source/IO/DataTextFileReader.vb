@@ -132,11 +132,10 @@ Namespace IO
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentException">             <paramref name="Path"/> is empty. </exception>
-             ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> or <paramref name="Encoding"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="System.ArgumentNullException">         <paramref name="Path"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.IO.FileNotFoundException">      The file cannot be found. </exception>
              ''' <exception cref="System.IO.DirectoryNotFoundException"> The specified path is invalid, such as being on an unmapped drive. </exception>
              ''' <exception cref="System.NotSupportedException">         <paramref name="Path"/> includes an incorrect or invalid syntax for file name, directory name, or volume label. </exception>
-             ''' <exception cref="System.ArgumentOutOfRangeException">   <paramref name="BufferSize"/> is less than or equal to zero </exception>
              ''' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
              ''' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
             Public Sub Load(Path As String)

@@ -727,7 +727,7 @@ Namespace IO.CSV
             ''' </summary>
             ''' <param name="array"> The one-dimensional <see cref="T:Array"/> that is the destination of the fields of the current record.</param>
             ''' <exception cref="T:ArgumentNullException"> <paramref name="array"/> is <see langword="null"/>. </exception>
-            ''' <exception cref="ArgumentException"> The number of fields in the record is greater than the available space from <paramref name="index"/> to the end of <paramref name="array"/>. </exception>
+            ''' <exception cref="ArgumentException"> The number of fields in the record is greater than the available space from zero to the end of <paramref name="array"/>. </exception>
             Public Sub CopyCurrentRecordTo(array As String())
                 CopyCurrentRecordTo(array, 0)
             End Sub

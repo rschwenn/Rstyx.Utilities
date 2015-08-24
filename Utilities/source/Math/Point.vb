@@ -120,7 +120,7 @@ Namespace Math
              ''' The "=" and "&lt;&gt;" operators consider the static <see cref="MathPoint.Resolution"/> value as tolerance.
              ''' This method is intended to use another tolerance.
              ''' </remarks>
-             ''' <returns> <see langword="true"/> if this Point equals <paramref name="ComparePoint"/>, otherwise <see langword="false"/>. </returns>
+             ''' <returns> <see langword="true"/> if this Point equals <paramref name="Pt"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
             Public Function EqualsTolerance(Pt As MathPoint, Tolerance As Double) As Boolean
                 
@@ -131,7 +131,7 @@ Namespace Math
             
             ''' <summary> Checks two points for equality in XY plane. <see cref="MathPoint.Resolution"/> is considered as tolerance for each coordinate. </summary>
              ''' <param name="Pt"> Point to compare with. </param>
-             ''' <returns> <see langword="true"/> if this Point equals <paramref name="ComparePoint"/>, otherwise <see langword="false"/>. </returns>
+             ''' <returns> <see langword="true"/> if this Point equals <paramref name="Pt"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
             Public Function EqualsXY(Pt As MathPoint) As Boolean
                 
@@ -143,7 +143,7 @@ Namespace Math
             ''' <summary> Checks two points for equality in XY plane. <paramref name="Tolerance"/> is considered as tolerance for each coordinate. </summary>
              ''' <param name="Pt">        Point to compare with. </param>
              ''' <param name="Tolerance"> Tolerance in [m] for each coordinate. </param>
-             ''' <returns> <see langword="true"/> if this Point equals <paramref name="ComparePoint"/>, otherwise <see langword="false"/>. </returns>
+             ''' <returns> <see langword="true"/> if this Point equals <paramref name="Pt"/>, otherwise <see langword="false"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Pt"/> is <see langword="null"/>. </exception>
             Public Function EqualsXY(Pt As MathPoint, Tolerance As Double) As Boolean
                 

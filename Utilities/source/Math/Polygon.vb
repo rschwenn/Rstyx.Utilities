@@ -48,7 +48,7 @@ Namespace Math
         
         #Region "Methods"
             
-            ''' <summary> Checks if <paramref name="TestPoint"/> is located inside a polygon in XY plane. </summary>
+            ''' <summary> Checks if <paramref name="Pt"/> is located inside a polygon in XY plane. </summary>
              ''' <param name="Pt">        The point of interest. </param>
              ''' <returns> <see langword="true"/> if the point is considered to be inside the polygon. </returns>
              ''' <remarks>
@@ -188,7 +188,7 @@ Namespace Math
                 Return Me.Equals(ComparePolygon, Tolerance, XYonly:=True)
             End Function
             
-            ''' <summary> If start and end point of <paramref name="Polygon.Vertices"/> are the same point, the end point will be removed. </summary>
+            ''' <summary> If start and end point of <see cref="Polygon.Vertices"/> are the same point, the end point will be removed. </summary>
             Public Sub Trim()
                 Dim VCount As Integer = Me.Vertices.Count
                 If (VCount > 1) Then
@@ -259,7 +259,7 @@ Namespace Math
                 Return IsEqual
             End Function
             
-            ''' <summary> Checks if <paramref name="TestPoint"/> is located inside a polygon in XY plane. </summary>
+            ''' <summary> Checks if <paramref name="Pt"/> is located inside a polygon in XY plane. </summary>
              ''' <param name="Pt">        The point of interest. </param>
              ''' <returns> <see langword="true"/> if the point is considered to be inside the polygon. </returns>
              ''' <remarks>
@@ -348,7 +348,7 @@ Namespace Math
                 Return IsIntersection
             End Function
             
-            ''' <summary> Checks if <paramref name="TestPoint"/> may be located inside this polygon in XY plane at all. </summary>
+            ''' <summary> Checks if <paramref name="Pt"/> may be located inside this polygon in XY plane at all. </summary>
              ''' <param name="Pt"> The point of interest. </param>
              ''' <returns> <see langword="false"/> if the point can't be inside the polygon. </returns>
              ''' <remarks> This method compares minimum and maximum coordinates of point and polygon only as a quick test. </remarks>

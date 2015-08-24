@@ -67,13 +67,16 @@ Namespace Collections
          ''' <remarks>            If the key of the item already exists, nothing is done. Otherwise the Item is added at the position determined by the KeyComparer property. </remarks>
          ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> is less than 0, or greater than <see cref="SortedKeyedCollectionBase(Of TKey, TItem).Count"/>. </exception>
         Protected Overrides Sub InsertItem(Index As Integer, Item As TItem)
+
             Dim insertIndex As Integer = Index
-            If (Not ((Item IsNot Nothing) AndAlso MyClass.Contains(GetKeyForItem(Item)))) Then
-                Dim retrievedItem As TItem
+            Dim ItemKey     As TKey    = GetKeyForItem(Item)
+            
+            If (Not ((Item IsNot Nothing) AndAlso MyClass.Contains(ItemKey))) Then
+                Dim TargetItem As TItem
                 
-                For i As Integer = 0 To (Count - 1 )
-                    retrievedItem = Me(i)
-                    If (Me.KeyComparer.Compare(GetKeyForItem(Item), GetKeyForItem(retrievedItem)) < 0) Then
+                For i As Integer = 0 To (Me.Count - 1 )
+                    TargetItem = Me(i)
+                    If (Me.KeyComparer.Compare(ItemKey, GetKeyForItem(TargetItem)) < 0) Then
                         insertIndex = i
                         Exit For
                     End If

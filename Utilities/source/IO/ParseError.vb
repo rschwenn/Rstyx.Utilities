@@ -187,8 +187,6 @@ Namespace IO
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is not greater than <paramref name="StartColumn"/>. </exception>
             Public Shared Function Create(Of TSourceField)(Level       As ParseErrorLevel,
                                                            LineNo      As Long,
                                                            SourceField As DataField(Of TSourceField),

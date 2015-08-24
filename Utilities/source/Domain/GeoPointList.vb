@@ -36,7 +36,7 @@ Namespace Domain
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
-                ' Init a new SortedKeyedCollection: 1. ignoring case when checking for key equality, 2. sorting keys alphanumeric.
+                ' Inits a new SortedKeyedCollection: 1. ignoring case when checking for key equality, 2. sorting keys alphanumeric.
                 'MyBase.New(System.StringComparer.InvariantCultureIgnoreCase)
                 MyBase.KeyComparer = New Rstyx.Utilities.Collections.AlphanumericComparer(IgnoreCase:=True)
                 Logger.logDebug("New(): GeoPointList instantiated")
@@ -48,7 +48,7 @@ Namespace Domain
              ''' If <paramref name="SourcePointList"/> is of type <see cref="IHeader"/>
              ''' the <see cref="GeoPointList.Header"/> will be set, too.
              ''' </remarks>
-             ''' <exception cref="InvalidIDException"> There are at least two <paramref name="SourcePoint"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
+             ''' <exception cref="InvalidIDException"> There are at least two points in <paramref name="SourcePointList"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
             Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint))
                 Me.New()
                 If (SourcePointList IsNot Nothing) Then
@@ -64,7 +64,7 @@ Namespace Domain
             ''' <summary> Creates a new GeoPointList and inititializes it's items from any given <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
              ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
              ''' <param name="MetaData">        An object providing the header for this list. May be <see langword="null"/>. </param>
-             ''' <exception cref="InvalidIDException"> There are at least two <paramref name="SourcePoint"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
+             ''' <exception cref="InvalidIDException"> There are at least two points in <paramref name="SourcePointList"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
             Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Me.New()
                 If (SourcePointList IsNot Nothing) Then
