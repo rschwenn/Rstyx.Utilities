@@ -1055,4 +1055,8 @@
     <value>Die KF-Datei enthält %d Punkte mit ungültiger Punktnummer.</value>
     <comment>Invalid PointID Count: Integer</comment>
   </data>
+  <data name="GeoPointList_Status_Constructing" xml:space="preserve">
+    <value>%d. Punkt  (ID = %s)</value>
+    <comment>Point Count: Integer; Point ID: String</comment>
+  </data>
 </root>

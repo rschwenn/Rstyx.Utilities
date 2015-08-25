@@ -2,6 +2,7 @@
 Imports System
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
+Imports System.Threading
 
 Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.IO
@@ -42,37 +43,71 @@ Namespace Domain
                 Logger.logDebug("New(): GeoPointList instantiated")
             End Sub
             
-            ''' <summary> Creates a new GeoPointList and inititializes it's items from any given <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
+            ''' <summary> Creates a new GeoPointList and inititializes it's items from a <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
              ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
              ''' <remarks>
              ''' If <paramref name="SourcePointList"/> is of type <see cref="IHeader"/>
-             ''' the <see cref="GeoPointList.Header"/> will be set, too.
+             ''' the <see cref="GeoPointList.Header"/> will be setfrom <paramref name="SourcePointList"/><c>.Header</c>.
              ''' </remarks>
              ''' <exception cref="InvalidIDException"> There are at least two points in <paramref name="SourcePointList"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
             Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint))
-                Me.New()
-                If (SourcePointList IsNot Nothing) Then
-                    For Each SourcePoint As IGeoPoint In SourcePointList
-                        Me.Add(SourcePoint)
-                    Next
-                    If (TypeOf SourcePointList Is IHeader) Then
-                        Me.Header = DirectCast(SourcePointList, IHeader).Header
-                    End If
-                End If
+                Me.New(SourcePointList:=SourcePointList, MetaData:=Nothing)
             End Sub
             
-            ''' <summary> Creates a new GeoPointList and inititializes it's items from any given <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
+            ''' <summary> Creates a new GeoPointList, inititializes it's items from a <see cref="IEnumerable(Of IGeoPoint)"/> and takes a given header. </summary>
              ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
              ''' <param name="MetaData">        An object providing the header for this list. May be <see langword="null"/>. </param>
+             ''' <remarks>
+             ''' If <paramref name="MetaData"/> is <see langword="null"/> and <paramref name="SourcePointList"/> is of type <see cref="IHeader"/>
+             ''' the <see cref="GeoPointList.Header"/> will be set from <paramref name="SourcePointList"/><c>.Header</c>.
+             ''' </remarks>
              ''' <exception cref="InvalidIDException"> There are at least two points in <paramref name="SourcePointList"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
             Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
+                Me.New(SourcePointList:=SourcePointList, MetaData:=MetaData, CancelToken:=Nothing, StatusIndicator:=Nothing)
+            End Sub
+            
+            ''' <summary> Creates a new GeoPointList, inititializes it's items from a <see cref="IEnumerable(Of IGeoPoint)"/> and takes a given header. </summary>
+             ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
+             ''' <param name="MetaData">        An object providing the header for this list. May be <see langword="null"/>. </param>
+             ''' <param name="CancelToken">     A CancellationToken that can signal a cancel request (may be CancellationToken.None). </param>
+             ''' <remarks>
+             ''' If <paramref name="MetaData"/> is <see langword="null"/> and <paramref name="SourcePointList"/> is of type <see cref="IHeader"/>
+             ''' the <see cref="GeoPointList.Header"/> will be set from <paramref name="SourcePointList"/><c>.Header</c>.
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> There are at least two points in <paramref name="SourcePointList"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
+             ''' <exception cref="System.OperationCanceledException"> This method has been cancelled. </exception>
+            Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint), MetaData As IHeader, CancelToken As CancellationToken)
+                Me.New(SourcePointList:=SourcePointList, MetaData:=MetaData, CancelToken:=CancelToken, StatusIndicator:=Nothing)
+            End Sub
+            
+            ''' <summary> Creates a new GeoPointList, inititializes it's items from a <see cref="IEnumerable(Of IGeoPoint)"/> and takes a given header. </summary>
+             ''' <param name="SourcePointList"> The source point list to get initial points from. May be <see langword="null"/>. </param>
+             ''' <param name="MetaData">        An object providing the header for this list. May be <see langword="null"/>. </param>
+             ''' <param name="CancelToken">     A CancellationToken that can signal a cancel request (may be CancellationToken.None). </param>
+             ''' <param name="StatusIndicator"> The object that will get status reporting (i.g. the view model). May be <see langword="null"/> </param>
+             ''' <remarks>
+             ''' If <paramref name="MetaData"/> is <see langword="null"/> and <paramref name="SourcePointList"/> is of type <see cref="IHeader"/>
+             ''' the <see cref="GeoPointList.Header"/> will be set from <paramref name="SourcePointList"/><c>.Header</c>.
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> There are at least two points in <paramref name="SourcePointList"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
+             ''' <exception cref="System.OperationCanceledException"> This method has been cancelled. </exception>
+            Public Sub New(SourcePointList As IEnumerable(Of IGeoPoint), MetaData As IHeader, CancelToken As CancellationToken, StatusIndicator As IStatusIndicator)
                 Me.New()
                 If (SourcePointList IsNot Nothing) Then
+                    
+                    Dim IsStatusReporting = (StatusIndicator IsNot Nothing)
+                    
                     For Each SourcePoint As IGeoPoint In SourcePointList
+                        CancelToken.ThrowIfCancellationRequested()
                         Me.Add(SourcePoint)
+                        If (IsStatusReporting) Then
+                            StatusIndicator.StatusText = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_Status_Constructing, Me.Count, SourcePoint.ID)
+                        End If
                     Next
                     If (MetaData IsNot Nothing) Then
                         Me.Header = MetaData.Header
+                    ElseIf (TypeOf SourcePointList Is IHeader) Then
+                        Me.Header = DirectCast(SourcePointList, IHeader).Header
                     End If
                 End If
             End Sub

@@ -123,6 +123,10 @@ Public Class MainViewModel
             Files.Add("T:\6340_002_01.pdf")
             'Files.Add("T:\debug.log")
             
+            #If DEBUG Then
+                System.Diagnostics.Debug.Print("AsyncDelegateUICommand \ Execute: Current thread ID = " & System.Windows.Threading.Dispatcher.CurrentDispatcher.Thread.ManagedThreadId.ToString())
+            #End If
+            
             Const Filename As String = "T:\TestOutput.pdf"
             
             Call JoinPdfFiles(InputPaths:=Files, OutputPath:=Filename, Order:=True, DeleteInput:=False)
