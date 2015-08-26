@@ -249,14 +249,15 @@ Namespace UI.ViewModel
         
         #Region "IStatusIndicator Members"
             
-            Private _Progress                   As Double = 0
-            Private _StatusText                 As String = String.Empty
-            Private _StatusTextDefault          As String = String.Empty
-            Private _StatusTextToolTip          As String = Nothing
-            Private _StatusTextToolTipDefault   As String = Nothing
+            Private _Progress                   As Double  = 0
+            Private _IsInProgress               As Boolean = False
+            Private _StatusText                 As String  = String.Empty
+            Private _StatusTextDefault          As String  = String.Empty
+            Private _StatusTextToolTip          As String  = Nothing
+            Private _StatusTextToolTipDefault   As String  = Nothing
             
-            Private VisibleProgressStepCount    As Double = 90
-            Private NextProgressThreshold       As Double = 0
+            Private VisibleProgressStepCount    As Double  = 90
+            Private NextProgressThreshold       As Double  = 0
             
             Private DeferredSetProgressAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf setProgressTo100, System.Windows.Threading.Dispatcher.CurrentDispatcher)
             Private ReadOnly SetProgressDelay   As System.TimeSpan = System.TimeSpan.FromMilliseconds(300)
@@ -268,6 +269,21 @@ Namespace UI.ViewModel
                 NextProgressThreshold = 0
                 MyBase.NotifyPropertyChanged("Progress")
             End Sub
+            
+            ''' <summary> <see langword="true"/> signals "work in progress" or "busy". </summary>
+             ''' <remarks> This is intended to use when a discrete progress value is unknown. </remarks>
+            Public Property IsInProgress() As Boolean Implements IStatusIndicator.IsInProgress
+                Get 
+                    Return _IsInProgress
+                End Get
+                Set(value As Boolean)
+                    If (Value Xor _IsInProgress) Then
+                        _IsInProgress = Value
+                        MyBase.NotifyPropertyChanged("IsInProgress")
+                        Cinch.ApplicationHelper.DoEvents()
+                    End If
+                End Set
+            End Property
             
             ''' <summary> The progress in percent. </summary>
              ''' <remarks>
@@ -289,7 +305,9 @@ Namespace UI.ViewModel
                     If (Not (value = _Progress)) Then
                         
                         ' Set value.
-                        If (value < 100) Then
+                        If (value < 0) Then
+                            _Progress = 0.0
+                        ElseIf (value < 100) Then
                             _Progress = value
                         Else
                             _Progress = 99.8
@@ -376,18 +394,20 @@ Namespace UI.ViewModel
                 End Set
             End Property
             
-            ''' <summary> Sets <see cref="StatusText"/> to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (immediately). </summary>
+            ''' <summary> Sets status text to <see cref="StatusTextDefault"/>, <see cref="Progress"/> to zero and <see cref="IsInProgress"/> to <see langword="false"/> (immediately). </summary>
              ''' <remarks> If there's already a delayed reset pending, it's aborted. </remarks>
             Public Sub resetStateIndication() Implements IStatusIndicator.resetStateIndication
                 DeferredResetStateAction.Abort()
                 Me.StatusTextToolTip = Nothing
                 Me.StatusText = Me.StatusTextDefault
                 Me.Progress = 0
+                Me.IsInProgress = False
             End Sub
             
-            ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay). </summary>
+            ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay), but immediately <see cref="IsInProgress"/> to <see langword="false"/>. </summary>
              ''' <param name="Delay"> Delay for reset (in Milliseconds). </param>
             Public Sub resetStateIndication(Delay As Double) Implements IStatusIndicator.resetStateIndication
+                Me.IsInProgress = False
                 DeferredResetStateAction.Defer(Delay)
             End Sub
             

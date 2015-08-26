@@ -395,7 +395,7 @@
                     </RstyxControls:LooseExpanderToggle>
                     </StackPanel>-->
                     
-                    <ToolBar Height="37" Name="ToolBar1" Width="164" Visibility="Hidden" >
+                    <ToolBar Height="37" Name="ToolBar1" Width="164" Visibility="Visible" >
                         <Button Content="Button" Width="50"/>
                         <ToggleButton Content="TB"/>
                     </ToolBar>
@@ -444,6 +444,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </ItemsPanelTemplate>
@@ -452,15 +453,26 @@
                 <TextBlock Text="{Binding Path=StatusText, Mode=OneWay}" />
             </StatusBarItem>
             
-            <!-- Progress Bar -->
+            <!-- Circular Progress Bar -->
             <StatusBarItem Grid.Column="1"
+                Padding="3,0,3,3"
+                >
+                <Viewbox Width="18" Height="18"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
+                    <Cinch:CircularProgressBar />
+                </Viewbox>
+            </StatusBarItem>
+            
+            <!-- Progress Bar -->
+            <StatusBarItem Grid.Column="2"
                 Padding="3,0,3,3"
                 >
                 <ProgressBar Value="30" Width="130" Height="18"/>
                 <!--<ViewBox><ProgressBar Value="30" Width="130" /></ViewBox>-->
             </StatusBarItem>
             
-            <StatusBarItem Grid.Column="2">
+            <StatusBarItem Grid.Column="3">
                 <TextBlock>Set</TextBlock>
             </StatusBarItem>
         </StatusBar>

@@ -96,6 +96,7 @@ Namespace Domain
                 If (SourcePointList IsNot Nothing) Then
                     
                     Dim IsStatusReporting = (StatusIndicator IsNot Nothing)
+                    If (IsStatusReporting) Then StatusIndicator.IsInProgress = True
                     
                     For Each SourcePoint As IGeoPoint In SourcePointList
                         CancelToken.ThrowIfCancellationRequested()
@@ -104,11 +105,14 @@ Namespace Domain
                             StatusIndicator.StatusText = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_Status_Constructing, Me.Count, SourcePoint.ID)
                         End If
                     Next
+                    
                     If (MetaData IsNot Nothing) Then
                         Me.Header = MetaData.Header
                     ElseIf (TypeOf SourcePointList Is IHeader) Then
                         Me.Header = DirectCast(SourcePointList, IHeader).Header
                     End If
+                    
+                    If (IsStatusReporting) Then StatusIndicator.IsInProgress = False
                 End If
             End Sub
             
