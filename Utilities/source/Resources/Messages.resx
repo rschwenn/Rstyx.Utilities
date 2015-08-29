@@ -1063,4 +1063,8 @@
     <value>Ändern der Punkt-ID's:  %d geändert</value>
     <comment>Changed ID Count: Integer</comment>
   </data>
+  <data name="KfFile_InvalidFile" xml:space="preserve">
+    <value>Die Datei ist keine gültige Verm.esn-Punktdatei (ungültige Dateigröße): %s</value>
+    <comment>File Name: String</comment>
+  </data>
 </root>

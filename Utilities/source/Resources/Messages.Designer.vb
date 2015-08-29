@@ -1586,6 +1586,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die Datei ist keine gültige Verm.esn-Punktdatei (ungültige Dateigröße): %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KfFile_InvalidFile() As String
+            Get
+                Return ResourceManager.GetString("KfFile_InvalidFile", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Die KF-Datei enthält %d Punkte mit ungültiger Punktnummer. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KfFile_InvalidPointIDs() As String

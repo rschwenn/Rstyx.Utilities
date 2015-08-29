@@ -85,11 +85,16 @@ Namespace Domain.IO
  		                Dim InvalidPointIDCount As Integer = 0
                         
                         Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
-    		                
+                            
                             oBR.BaseStream.Seek(0, SeekOrigin.Begin)
                             
     		                ' Points count.
     		                Dim KfPointCount As Integer = CInt(oBR.BaseStream.Length / RecordLength) - 1
+    		                
+                            ' Check plausibility of file size.
+                            If (Not ( ((oBR.BaseStream.Length Mod 102) = 0) AndAlso (((KfPointCount + 1) * 102) = oBR.BaseStream.Length) )) Then
+                                Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_InvalidFile, Me.FilePath))
+                            End If
                             
     		                ' Read header and points.
     		                For i As Integer = 0 To KfPointCount
