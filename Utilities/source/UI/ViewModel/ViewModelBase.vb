@@ -5,6 +5,8 @@ Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.Diagnostics
 Imports System.Linq
+Imports System.Threading
+Imports System.Windows.Threading
 
 Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Collections
@@ -37,6 +39,9 @@ Namespace UI.ViewModel
             
             Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.ViewModelBase")
             
+            ''' <summary> Returns the ID of the tread which has created this view model (and should be the WPF UI thread). </summary>
+            Protected ReadOnly WpfUiThreadID As Integer
+            
         #End Region
         
         #Region "Initializing and Finalizing"
@@ -45,6 +50,8 @@ Namespace UI.ViewModel
                 MyBase.New()
                 
                 MyBase.DisplayName = "** DisplayName not set **"
+                
+                WpfUiThreadID = Dispatcher.CurrentDispatcher.Thread.ManagedThreadId
                 
                 'Subscribe for notifications of user settings changes.
                 Dim WeakPropertyChangedListener As Cinch.WeakEventProxy(Of PropertyChangedEventArgs) = New Cinch.WeakEventProxy(Of PropertyChangedEventArgs)(AddressOf OnUserSettingsChanged)
@@ -91,6 +98,28 @@ Namespace UI.ViewModel
                     End if
                 End Set
             End Property
+            
+        #End Region
+        
+        #Region "DoEvents"
+            
+            ''' <summary>
+            ''' Forces the WPF message pump to process all enqueued messages that are <c>DispatcherPriority.Background</c> or above
+            ''' if the calling thread is the WPF UI thread (the thread created this view model).
+            ''' </summary>
+            Protected Sub DoEventsIfWpfUiThread()
+                        
+                Dim CurrentDispatcher As Dispatcher = Dispatcher.FromThread(Thread.CurrentThread)
+                
+                ' If current thread hasn't a dispatcher it isn't WPF UI thread, because it always has a dispatcher, hasn't it?
+                If (CurrentDispatcher IsNot Nothing) Then
+                    Dim CurrentThreadID As Integer = CurrentDispatcher.Thread.ManagedThreadId
+                    
+                    If (CurrentThreadID = WpfUiThreadID) Then
+                        Cinch.ApplicationHelper.DoEvents()
+                    End If
+                End If
+            End Sub
             
         #End Region
         
@@ -280,10 +309,11 @@ Namespace UI.ViewModel
                     If (Value Xor _IsInProgress) Then
                         _IsInProgress = Value
                         MyBase.NotifyPropertyChanged("IsInProgress")
-                        Cinch.ApplicationHelper.DoEvents()
+                        DoEventsIfWpfUiThread()
                     End If
                 End Set
             End Property
+            
             
             ''' <summary> The progress in percent. </summary>
              ''' <remarks>
@@ -318,12 +348,24 @@ Namespace UI.ViewModel
                         ' Notify about change: only at discrete values.
                         If (_Progress >= NextProgressThreshold) Then
                             MyBase.NotifyPropertyChanged("Progress")
-                            Cinch.ApplicationHelper.DoEvents()
+                            DoEventsIfWpfUiThread()
                             NextProgressThreshold += 100 / VisibleProgressStepCount
                         End if
                     End if
                 End Set
             End Property
+            
+            ''' <summary> The progress range in percent which is currently used for <see cref="ProgressTick"/>. Defaults to 100. </summary>
+            Public Property ProgressTickRange() As Double Implements IStatusIndicator.ProgressTickRange
+            
+            ''' <summary> The count of ticks matching <see cref="ProgressTickRange"/>. Defaults to 100. </summary>
+            Public Property ProgressTickRangeCount() As Double Implements IStatusIndicator.ProgressTickRangeCount
+            
+            ''' <summary> Increases <see cref="Progress"/> by <see cref="ProgressTickRange"/> divided by <see cref="ProgressTickRangeCount"/>. </summary>
+            Public Sub ProgressTick() Implements IStatusIndicator.ProgressTick
+                Me.Progress += Me.ProgressTickRange / Me.ProgressTickRangeCount
+            End Sub
+            
             
             ''' <summary> A status text (i.e for displaying in status bar). </summary>
              ''' <remarks> In order to reflect value change on UI, <c>Cinch.ApplicationHelper.DoEvents()</c> is called. </remarks>
@@ -337,7 +379,7 @@ Namespace UI.ViewModel
                         _StatusTextToolTip = Nothing
                         MyBase.NotifyPropertyChanged("StatusText")
                         MyBase.NotifyPropertyChanged("StatusTextToolTip")
-                        Cinch.ApplicationHelper.DoEvents()
+                        DoEventsIfWpfUiThread()
                     End if
                 End Set
             End Property
@@ -374,7 +416,7 @@ Namespace UI.ViewModel
                     If (Not (value = _StatusTextToolTip)) Then
                         _StatusTextToolTip = value
                         MyBase.NotifyPropertyChanged("StatusTextToolTip")
-                        Cinch.ApplicationHelper.DoEvents()
+                        DoEventsIfWpfUiThread()
                     End if
                 End Set
             End Property
@@ -401,6 +443,8 @@ Namespace UI.ViewModel
                 Me.StatusTextToolTip = Nothing
                 Me.StatusText = Me.StatusTextDefault
                 Me.Progress = 0
+                Me.ProgressTickRange = 100
+                Me.ProgressTickRangeCount = 100
                 Me.IsInProgress = False
             End Sub
             

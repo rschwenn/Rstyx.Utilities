@@ -33,6 +33,17 @@
         ''' <summary> The current progress in percent. </summary>
         Property Progress() As Double
         
+        
+        ''' <summary> The progress range in percent which is currently used for <see cref="ProgressTick"/>. Defaults to 100. </summary>
+        Property ProgressTickRange() As Double
+        
+        ''' <summary> The count of ticks matching <see cref="ProgressTickRange"/>. Defaults to 100. </summary>
+        Property ProgressTickRangeCount() As Double
+        
+        ''' <summary> Increases <see cref="Progress"/> by <see cref="ProgressTickRange"/> divided by <see cref="ProgressTickRangeCount"/>. </summary>
+        Sub ProgressTick()
+        
+        
         ''' <summary> Sets status text to <see cref="StatusTextDefault"/>, <see cref="Progress"/> to zero and <see cref="IsInProgress"/> to <see langword="false"/> (immediately). </summary>
         Sub resetStateIndication()
         

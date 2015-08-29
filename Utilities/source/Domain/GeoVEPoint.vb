@@ -58,7 +58,7 @@ Namespace Domain
                 Me.MaxIntegerID  = Pow(10, MaxIDLength) - 1
             End Sub
             
-            ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of
+            ''' <summary> Creates a new <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of
             ''' <see cref="GeoVEPoint.DefaultMaxIDLength"/> and inititializes it's properties from a given <see cref="IGeoPoint"/>.
             ''' </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>

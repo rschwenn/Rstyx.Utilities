@@ -189,6 +189,29 @@ Namespace Domain
              ''' <exception cref="System.ArgumentNullException"> <paramref name="IDChangeTab"/> is <see langword="null"/>. </exception>
              ''' <exception cref="InvalidIDException"> Attempt to assign an ID of invalid format or an ID which has been already assigned to another point. </exception>
             Public Function ChangeIDs(IDChangeTab As Dictionary(Of String, String)) As GeoPointList
+                Return ChangeIDs(IDChangeTab:=IDChangeTab, CancelToken:=Nothing, StatusIndicator:=Nothing)
+            End Function
+            
+            ''' <summary> Changes point ID's of this list according to a ID change table. </summary>
+             ''' <param name="IDChangeTab"> Table with Point ID pairs (source => target). </param>
+             ''' <param name="CancelToken">     A CancellationToken that can signal a cancel request (may be CancellationToken.None). </param>
+             ''' <returns> A new copy of this <see cref="GeoPointList"/> with changed point ID's. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="IDChangeTab"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="InvalidIDException"> Attempt to assign an ID of invalid format or an ID which has been already assigned to another point. </exception>
+             ''' <exception cref="System.OperationCanceledException"> This method has been cancelled. </exception>
+            Public Function ChangeIDs(IDChangeTab As Dictionary(Of String, String), CancelToken As CancellationToken) As GeoPointList
+                Return ChangeIDs(IDChangeTab:=IDChangeTab, CancelToken:=CancelToken, StatusIndicator:=Nothing)
+            End Function
+            
+            ''' <summary> Changes point ID's of this list according to a ID change table. </summary>
+             ''' <param name="IDChangeTab">     Table with Point ID pairs (source => target). </param>
+             ''' <param name="CancelToken">     A CancellationToken that can signal a cancel request (may be CancellationToken.None). </param>
+             ''' <param name="StatusIndicator"> The object that will get status reporting (i.g. the view model). May be <see langword="null"/>. </param>
+             ''' <returns> A new copy of this <see cref="GeoPointList"/> with changed point ID's. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="IDChangeTab"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="InvalidIDException"> Attempt to assign an ID of invalid format or an ID which has been already assigned to another point. </exception>
+             ''' <exception cref="System.OperationCanceledException"> This method has been cancelled. </exception>
+            Public Function ChangeIDs(IDChangeTab As Dictionary(Of String, String), CancelToken As CancellationToken, StatusIndicator As IStatusIndicator) As GeoPointList
                 
                 If (IDChangeTab Is Nothing) Then Throw New System.ArgumentNullException("PointChangeTab")
                 
@@ -198,17 +221,23 @@ Namespace Domain
                     Dim ChangeCount As Long = 0
                     NewList.Header = Me.Header
                     
+                    Dim IsStatusReporting = (StatusIndicator IsNot Nothing)
+                    If (IsStatusReporting) Then StatusIndicator.ProgressTickRangeCount = Me.Count
+                    
                     If (IDChangeTab.Count < 1) then
                         Logger.logWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyIDChangeTab)
+                        If (IsStatusReporting) Then StatusIndicator.ProgressTick()
                     Else
+                        
                         For Each SourcePoint In Me
                             
+                            CancelToken.ThrowIfCancellationRequested()
+                            
                             Dim NewPoint As IGeoPoint = DirectCast(Activator.CreateInstance(SourcePoint.GetType(), SourcePoint), IGeoPoint)
-                            Dim NewID    As String    = Nothing
                             
                             If (IDChangeTab.ContainsKey(SourcePoint.ID)) Then
                                 
-                                NewID = IDChangeTab(SourcePoint.ID)
+                                Dim NewID As String = IDChangeTab(SourcePoint.ID)
                                 
                                 ' Repeated ID: More precise hint (if possible) than the default exception of IDCollection.
                                 If (NewList.Contains(NewID)) Then
@@ -225,6 +254,11 @@ Namespace Domain
                             End If
                             
                             NewList.Add(NewPoint)
+                            
+                            If (IsStatusReporting) Then
+                                StatusIndicator.ProgressTick()
+                                StatusIndicator.StatusText = sprintf(Rstyx.Utilities.Resources.Messages.IDCollection_ChangeIDStatus, ChangeCount)
+                            End If
                         Next
                         Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDSuccess, ChangeCount))
                     End If

@@ -47,6 +47,9 @@ Namespace UI.ViewModel
             Private _IsBusy                         As Boolean = False
             Private _Decoration                     As UICommandDecoration = Nothing
             
+            ''' <summary> Returns the Dispatcher of the tread which has created this view model (and should be the WPF UI thread). </summary>
+            Protected ReadOnly WpfUiDispatcher      As Dispatcher
+            
         #End Region
         
         #Region "Public Fields"
@@ -103,6 +106,9 @@ Namespace UI.ViewModel
                 
                 If (TargetCommandInfo Is Nothing) Then Throw New ArgumentNullException("TargetCommandInfo")
                 If (TargetCommandInfo.ExecuteAction Is Nothing) Then Throw New ArgumentNullException("TargetCommandInfo.ExecuteAction")
+                
+                WpfUiDispatcher = Dispatcher.CurrentDispatcher
+                
                 Me.TargetCommandInfo = TargetCommandInfo
                 Me.CancelCallback = CancelCallback
                 
@@ -135,11 +141,18 @@ Namespace UI.ViewModel
                 End Get
             End Property
             
-            ''' <summary> Returns whether or not cancellation of the running target action is supported. </summary>
-            Public ReadOnly Property IsCancellationSupported() As Boolean
+            ''' <summary> Gets or sets whether or not cancellation of the running target action is supported. </summary>
+            Public Property IsCancellationSupported() As Boolean
                 Get
                     Return _IsCancellationSupported
                 End Get
+                Set(value As Boolean)
+                    If (value Xor _IsCancellationSupported) Then
+                        _IsCancellationSupported = value
+                        Me.OnPropertyChanged("IsCancellationSupported")
+                        If (Me.IsBusy) Then RaiseCanExecuteChanged()
+                    End If
+                End Set
             End Property
             
         #End Region
@@ -148,10 +161,13 @@ Namespace UI.ViewModel
             
             Private CanExecuteChangedEvents As New System.Collections.ObjectModel.Collection(Of EventHandler)
             
-            ''' <summary> Indicates when changes occur that affect whether or not the command could be executed. This isn't raised automatically. </summary>
+            ''' <summary> Indicates that changes occur which affect whether or not the command could be executed. This isn't raised automatically. </summary>
              ''' <remarks> 
              ''' <para> The class which holds this command has to call RaiseCanExecuteChanged() on this command when conditions has been changed. </para>
-             ''' <para> If the event listener is a dispatcher object then the event is raised on it's dispatcher, otherwise on the current thread's dispatcher. </para>
+             ''' <para>
+             ''' If the event listener is a dispatcher object then the event is raised on it's dispatcher, otherwise on the dispatcher
+             ''' that has created this command instance (which should be the dispatcher of WPF UI).
+             ''' </para>
              ''' </remarks>
             Public Custom Event CanExecuteChanged As EventHandler Implements ICommand.CanExecuteChanged
                 
@@ -170,10 +186,13 @@ Namespace UI.ViewModel
                                 
                                 ' Get the matching dispatcher.
                                 Dim Dispatcher As System.Windows.Threading.Dispatcher = Nothing
+                                
                                 If (TypeOf Handler.Target Is System.Windows.Threading.DispatcherObject) Then
                                     Dispatcher = CType(Handler.Target, System.Windows.Threading.DispatcherObject).Dispatcher
+                                    
                                 Else
-                                    Dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher
+                                    Dispatcher = WpfUiDispatcher
+                                    'Dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher
                                 End If
                                 
                                 ' Invoke the handler.
@@ -190,14 +209,17 @@ Namespace UI.ViewModel
             
             ''' <summary> Raises the CanExecuteChanged event. </summary>
             Public Sub RaiseCanExecuteChanged()
+                
                 RaiseEvent CanExecuteChanged(Me, System.EventArgs.Empty)
-                Try
-                    If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
-                Catch ex As System.Exception
-                    'Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
-                    Logger.logDebug(ex.ToString())
-                    Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
-                End Try
+                
+                If (Not Me.IsAsync) Then
+                    Try
+                        Cinch.ApplicationHelper.DoEvents()
+                    Catch ex As System.Exception
+                        Logger.logDebug(ex.ToString())
+                        Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                    End Try
+                End If
             End Sub
             
             ''' <summary> Determines if the currently active command (target or cancel) can execute by invoking the matching Predicate(Of Object). </summary>
@@ -257,12 +279,11 @@ Namespace UI.ViewModel
                                 Catch ex As System.ObjectDisposedException
                                     ' Task has been finished already (?)
                                     finishTask(CmdTask)
-                                End Try 
+                                End Try
                             Else
                                 ' Start ExecuteAction in current thread.
                                 ' Nevertheless pass the cancellation token in order to enable the action to get cancellation requests.
                                 RaiseCanExecuteChanged()
-                                'Cinch.ApplicationHelper.DoEvents()
                                 Try
                                     TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
                                 Catch ex As System.Exception
@@ -275,7 +296,6 @@ Namespace UI.ViewModel
                     End If
                     
                     RaiseCanExecuteChanged()
-                    'If (Not Me.IsAsync) Then Cinch.ApplicationHelper.DoEvents()
                     
                 Catch ex As System.Exception
                     Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))

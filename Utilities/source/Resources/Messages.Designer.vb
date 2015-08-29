@@ -1433,6 +1433,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ändern der Punkt-ID&apos;s:  %d geändert ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property IDCollection_ChangeIDStatus() As String
+            Get
+                Return ResourceManager.GetString("IDCollection_ChangeIDStatus", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die ID fehlt bzw. ist leer. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property IDCollection_MissingID() As String

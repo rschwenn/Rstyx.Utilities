@@ -1059,4 +1059,8 @@
     <value>%d. Punkt  (ID = %s)</value>
     <comment>Point Count: Integer; Point ID: String</comment>
   </data>
+  <data name="IDCollection_ChangeIDStatus" xml:space="preserve">
+    <value>Ändern der Punkt-ID's:  %d geändert</value>
+    <comment>Changed ID Count: Integer</comment>
+  </data>
 </root>
