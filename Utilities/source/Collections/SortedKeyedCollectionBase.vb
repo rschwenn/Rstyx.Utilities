@@ -62,25 +62,42 @@ Namespace Collections
         End Property
         
         ''' <summary> This is called by <see cref="System.Collections.ObjectModel.KeyedCollection(Of TKey, TItem)"/>.Add and changes it's default behavior. </summary>
-         ''' <param name="Index"> Collection index. </param>
+         ''' <param name="Index"> Collection index, will be ignored and automatically determined because of the nature of this collection. </param>
          ''' <param name="Item">  The item to add. </param>
-         ''' <remarks>            If the key of the item already exists, nothing is done. Otherwise the Item is added at the position determined by the KeyComparer property. </remarks>
+         ''' <remarks>            If the key of the item already exists or is <see langword="null"/>, nothing is done. Otherwise the Item is added at the position determined by the KeyComparer property. </remarks>
          ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="Index"/> is less than 0, or greater than <see cref="SortedKeyedCollectionBase(Of TKey, TItem).Count"/>. </exception>
         Protected Overrides Sub InsertItem(Index As Integer, Item As TItem)
-
-            Dim insertIndex As Integer = Index
-            Dim ItemKey     As TKey    = GetKeyForItem(Item)
             
-            If (Not ((Item IsNot Nothing) AndAlso MyClass.Contains(ItemKey))) Then
-                Dim TargetItem As TItem
+            Dim NewItemKey  As TKey = GetKeyForItem(Item)
+            
+            If (Not ((Item IsNot Nothing) AndAlso MyClass.Contains(NewItemKey))) Then
+
+                Dim insertIndex As Integer
                 
-                For i As Integer = 0 To (Me.Count - 1 )
-                    TargetItem = Me(i)
-                    If (Me.KeyComparer.Compare(ItemKey, GetKeyForItem(TargetItem)) < 0) Then
-                        insertIndex = i
-                        Exit For
-                    End If
-                Next
+                If (Me.Count = 0) Then
+                    insertIndex = 0
+                ElseIf (Me.KeyComparer.Compare(NewItemKey, GetKeyForItem(Me.Item(0))) < 0) Then
+                    insertIndex = 0
+                ElseIf (Me.KeyComparer.Compare(NewItemKey, GetKeyForItem(Me.Item(Me.Count - 1))) > 0) Then
+                    insertIndex = Me.Count
+                Else
+                    Dim PartitionMid   As Integer = 0
+                    Dim PartitionBegin As Integer = 0
+                    Dim PartitionEnd   As Integer = Me.Count - 1
+                    
+                    ' Kind of "binary search".
+                    Do While (PartitionBegin < (PartitionEnd - 1) )
+
+                        PartitionMid = Int( (PartitionBegin + PartitionEnd) / 2)
+
+                        If (Me.KeyComparer.Compare(NewItemKey, GetKeyForItem(Me.Item(PartitionMid))) < 0) Then
+                            PartitionEnd = PartitionMid
+                        Else
+                            PartitionBegin = PartitionMid
+                        End If
+                    Loop
+                    insertIndex = PartitionEnd
+                End If
                 
                 MyBase.InsertItem(insertIndex, Item)
             End If
