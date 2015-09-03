@@ -111,6 +111,17 @@ Namespace Domain
                 
         #Region "Instance Methods"
             
+            ''' <summary> Returns the KEY part of <see cref="ID"/>. </summary>
+             ''' <returns> The KEY part of <see cref="ID"/>. </returns>
+             ''' <remarks>
+             ''' The KEY part is the integer part of the double representation of ID.
+             ''' I.e: ID = "1234567"  => key = 12 (when <see cref="PointNoFactor"/> is 5).
+             ''' </remarks>
+            Public Function GetKeyOfID() As Byte
+                Return If(Me.ID.IsEmptyOrWhiteSpace(), 0, CByte(Int(CDbl(Me.ID) / PointNoFactor)))
+            End Function
+            
+            
             ''' <summary> Gets a Double for VE flavoured storage from this point's ID. </summary>
              ''' <returns> Me.ID / PointNoFactor or 1.0E+40 if ID is still <see langword="null"/>. </returns>
             Public Function IDToVEDouble() As Double
@@ -128,6 +139,7 @@ Namespace Domain
             Public Function IDToVEInt32() As Int32
                 Return If(Me.ID.IsEmptyOrWhiteSpace(), 0, CInt(Me.ID))
             End Function
+            
             
             ''' <summary> Validates a given integer ID. </summary>
              ''' <param name="IntegerID"> The ID to validate </param>
@@ -161,6 +173,44 @@ Namespace Domain
             Public Function FormatID() As String
                 Return If(Me.ID.IsEmptyOrWhiteSpace(), String.Empty, sprintf("%." & CStr(MaxIDLength - 2) & "f", CDbl(Me.ID) / PointNoFactor))
             End Function
+            
+            
+            ''' <summary> Parses the given Double as new <see cref="GeoVEPoint.ID"/> for this GeoVEPoint. </summary>
+             ''' <param name="TargetID"> The Integer which is intended to become the new point ID. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' Use this method if the ID to set isn't already a string but an integer.
+             ''' </para>
+             ''' <para>
+             ''' This method is a foolproof and more performat alternative to setting the ID property directly.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> <paramref name="TargetID"/> isn't a valid ID for this point - see above. </exception>
+            Public Overloads Sub ParseID(TargetID As Integer)
+                If (Not Me.IsValidID(TargetID)) Then
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDOutOfIntRange, TargetID.ToString(), MinIntegerID, MaxIntegerID))
+                End If
+                _ID = TargetID.ToString()
+            End Sub
+            
+            ''' <summary> Parses the given Double as new <see cref="GeoVEPoint.ID"/> for this GeoVEPoint. </summary>
+             ''' <param name="TargetID"> The Double which is intended to become the new point ID. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' Use this method if the ID to set isn't already a string but a Double,
+             ''' because there are traps otherwise.
+             ''' </para>
+             ''' <para>
+             ''' This method is a foolproof and more performat alternative to setting the ID property directly.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> <paramref name="TargetID"/> isn't a valid ID for this point - see above. </exception>
+            Public Overloads Sub ParseID(TargetID As Double)
+                If (Not Me.IsValidID(TargetID)) Then
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDOutOfIntRange, TargetID.ToString(), MinIntegerID, MaxIntegerID))
+                End If
+                _ID = sprintf("%.0f", TargetID * PointNoFactor)
+            End Sub
             
         #End Region
         

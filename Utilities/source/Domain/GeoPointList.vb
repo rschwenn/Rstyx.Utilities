@@ -228,7 +228,6 @@ Namespace Domain
                         Logger.logWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyIDChangeTab)
                         If (IsStatusReporting) Then StatusIndicator.ProgressTick()
                     Else
-                        
                         For Each SourcePoint In Me
                             
                             CancelToken.ThrowIfCancellationRequested()

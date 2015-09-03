@@ -140,7 +140,7 @@ Namespace Domain
         
         #Region "IIdentifiable Members"
             
-            Dim _ID As String = Nothing
+            Protected _ID As String = Nothing
             
             ''' <summary> The point ID (It will be verified while setting it). </summary>
              ''' <remarks> The setter fails if given ID isn't valid for this point type. </remarks>
