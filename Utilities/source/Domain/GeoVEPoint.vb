@@ -179,6 +179,9 @@ Namespace Domain
              ''' <param name="TargetID"> The Integer which is intended to become the new point ID. </param>
              ''' <remarks>
              ''' <para>
+             ''' Example: Input = 123456  => ID = "123456"
+             ''' </para>
+             ''' <para>
              ''' Use this method if the ID to set isn't already a string but an integer.
              ''' </para>
              ''' <para>
@@ -196,6 +199,9 @@ Namespace Domain
             ''' <summary> Parses the given Double as new <see cref="GeoVEPoint.ID"/> for this GeoVEPoint. </summary>
              ''' <param name="TargetID"> The Double which is intended to become the new point ID. </param>
              ''' <remarks>
+             ''' <para>
+             ''' Example: Input = 12.3456789  => ID = "1234568"
+             ''' </para>
              ''' <para>
              ''' Use this method if the ID to set isn't already a string but a Double,
              ''' because there are traps otherwise.

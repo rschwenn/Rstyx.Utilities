@@ -102,7 +102,7 @@ Namespace Domain.IO
     		                    Dim p As New GeoVEPoint()
                                 
                                 Dim PointNo As Double = oBR.ReadDouble()
-                                Dim PointID As String = sprintf("%.6f", PointNo)
+                                'Dim PointID As String = sprintf("%.6f", PointNo)
                                 
                                 p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
                                 p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
@@ -141,7 +141,8 @@ Namespace Domain.IO
                                     InvalidPointIDCount +=1
                                 Else
                                     Try
-                                        p.ID = PointID
+                                        'p.ID = PointID
+                                        p.ParseID(PointNo)
                                         If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                         p.VerifyConstraints(Me.Constraints)
                                         PointCount += 1
