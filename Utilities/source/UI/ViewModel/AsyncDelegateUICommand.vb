@@ -60,8 +60,11 @@ Namespace UI.ViewModel
             ''' <summary> Provides access to the cancel callback action. </summary>
             Public ReadOnly CancelCallback          As Action = Nothing
             
-            ''' <summary> If <c>True</c>, the command will be executed in a separate thread, otherwise not. </summary>
+            ''' <summary> If <see langword="true"/>, the command will be executed in a separate thread, otherwise not. </summary>
             Public ReadOnly IsAsync                 As Boolean = False
+            
+            ''' <summary> The <see cref="ApartmentState"/> for the separate thread. Only meaningfull if <see cref="IsAsync"/> is <see langword="true"/>. </summary>
+            Public ReadOnly ThreadAptState          As ApartmentState = ApartmentState.MTA
             
         #End Region
         
@@ -72,7 +75,7 @@ Namespace UI.ViewModel
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo)
-                Me.New(TargetCommandInfo, Nothing, True, False)
+                Me.New(TargetCommandInfo, Nothing, SupportsCancellation:=True, runAsync:=False)
             End Sub
             
             ''' <summary> Creates a new command that runs in current thread and may support cancellation. </summary>
@@ -81,7 +84,7 @@ Namespace UI.ViewModel
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, SupportsCancellation As Boolean)
-                Me.New(TargetCommandInfo, Nothing, SupportsCancellation, False)
+                Me.New(TargetCommandInfo, Nothing, SupportsCancellation, runAsync:=False)
             End Sub
             
             ''' <summary> Creates a new command that runs in current thread and may support cancellation and a cancelation callback. </summary>
@@ -91,18 +94,31 @@ Namespace UI.ViewModel
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean)
-                Me.New(TargetCommandInfo, CancelCallback, SupportsCancellation, False)
+                Me.New(TargetCommandInfo, CancelCallback, SupportsCancellation, runAsync:=False)
             End Sub
             
             ''' <summary> Creates a new asyncronous command that may run in a separate thread and may support cancellation and a cancelation callback. </summary>
              ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
              ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. May be <see langword="null"/> </param>
              ''' <param name="SupportsCancellation"> Should be <c>False</c>, when the target action doesn't worry about cancellation requests. </param>
-             ''' <param name="runAsync">             If <c>True</c>, the command will be executed in a separate thread, otherwise not. </param>
+             ''' <param name="runAsync">             If <see langword="true"/>, the command will be executed in a separate MTA thread, otherwise not. </param>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
              ''' <remarks> If <paramref name="SupportsCancellation"/> is <see langword="True"/>, the cancellation command won't be available. </remarks>
             Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean, runAsync As Boolean)
+                Me.New(TargetCommandInfo, CancelCallback, SupportsCancellation, runAsync:=runAsync, ThreadAptState:=ApartmentState.MTA)
+            End Sub
+            
+            ''' <summary> Creates a new asyncronous command that may run in a separate thread and may support cancellation and a cancelation callback. </summary>
+             ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
+             ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. May be <see langword="null"/> </param>
+             ''' <param name="SupportsCancellation"> Should be <c>False</c>, when the target action doesn't worry about cancellation requests. </param>
+             ''' <param name="runAsync">             If <see langword="true"/>, the command will be executed in a separate thread, otherwise not. </param>
+             ''' <param name="ThreadAptState">       Sets the <see cref="ApartmentState"/> for the new thread. Only meaningfull if <paramref name="runAsync"/> is <see langword="true"/>. </param>
+             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
+             ''' <remarks> If <paramref name="SupportsCancellation"/> is <see langword="True"/>, the cancellation command won't be available. </remarks>
+            Public Sub New(TargetCommandInfo As DelegateUICommandInfo, CancelCallback As Action, SupportsCancellation As Boolean, runAsync As Boolean, ThreadAptState As ApartmentState)
                 
                 If (TargetCommandInfo Is Nothing) Then Throw New ArgumentNullException("TargetCommandInfo")
                 If (TargetCommandInfo.ExecuteAction Is Nothing) Then Throw New ArgumentNullException("TargetCommandInfo.ExecuteAction")
@@ -113,6 +129,7 @@ Namespace UI.ViewModel
                 Me.CancelCallback = CancelCallback
                 
                 Me.IsAsync = runAsync
+                Me.ThreadAptState = ThreadAptState
                 _IsCancellationSupported = SupportsCancellation
                 
                 Me.Decoration = TargetCommandInfo.Decoration
@@ -266,11 +283,17 @@ Namespace UI.ViewModel
                             
                             If (Me.IsAsync) Then
                                 ' Create and start a new task.
-                                CmdTask = Task.Factory.StartNew(TargetCommandInfo.ExecuteAction, CmdTaskCancelToken, CmdTaskCancelToken)
+                                If (Me.ThreadAptState = ApartmentState.STA) Then
+                                    'Dim sta As StaTaskScheduler = New StaTaskScheduler(NumberOfThreads:=1)
+                                    'CmdTask = Task.Factory.StartNew(TargetCommandInfo.ExecuteAction, CmdTaskCancelToken, CmdTaskCancelToken, TaskCreationOptions.None, sta)
+                                    CmdTask = Task.Factory.StartNew(TargetCommandInfo.ExecuteAction, CmdTaskCancelToken, CmdTaskCancelToken, TaskCreationOptions.None, New StaTaskScheduler(NumberOfThreads:=1))
+                                Else
+                                    CmdTask = Task.Factory.StartNew(TargetCommandInfo.ExecuteAction, CmdTaskCancelToken, CmdTaskCancelToken)
+                                End If
                                 
                                 #If DEBUG Then
                                     If (System.Windows.Application.Current IsNot Nothing) Then Debug.Print("AsyncDelegateUICommand \ Execute: WPF UI thread ID  = " & System.Windows.Application.Current.Dispatcher.Thread.ManagedThreadId.ToString())
-                                    Debug.Print("AsyncDelegateUICommand \ Execute: Current thread ID = " & Dispatcher.CurrentDispatcher.Thread.ManagedThreadId.ToString())
+                                    Debug.Print("AsyncDelegateUICommand \ Execute: Current thread ID = " & Thread.CurrentThread.ManagedThreadId.ToString())
                                 #End If
                                 
                                 ' Register the task's continuation callback, which will be invoked in current thread (which shuld be the UI thread since this command is an UI command).

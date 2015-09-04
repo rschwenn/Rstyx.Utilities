@@ -108,16 +108,8 @@ Namespace UI.ViewModel
             ''' if the calling thread is the WPF UI thread (the thread created this view model).
             ''' </summary>
             Protected Sub DoEventsIfWpfUiThread()
-                        
-                Dim CurrentDispatcher As Dispatcher = Dispatcher.FromThread(Thread.CurrentThread)
-                
-                ' If current thread hasn't a dispatcher it isn't WPF UI thread, because it always has a dispatcher, hasn't it?
-                If (CurrentDispatcher IsNot Nothing) Then
-                    Dim CurrentThreadID As Integer = CurrentDispatcher.Thread.ManagedThreadId
-                    
-                    If (CurrentThreadID = WpfUiThreadID) Then
-                        Cinch.ApplicationHelper.DoEvents()
-                    End If
+                If (Thread.CurrentThread.ManagedThreadId = WpfUiThreadID) Then
+                    Cinch.ApplicationHelper.DoEvents()
                 End If
             End Sub
             

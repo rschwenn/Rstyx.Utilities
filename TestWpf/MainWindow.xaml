@@ -454,7 +454,7 @@
             </StatusBarItem>
             
             <!-- Circular Progress Bar -->
-            <StatusBarItem Grid.Column="1"
+            <!--<StatusBarItem Grid.Column="1"
                 Padding="3,0,3,3"
                 >
                 <Viewbox Width="18" Height="18"
@@ -462,7 +462,7 @@
                     VerticalAlignment="Center">
                     <Cinch:CircularProgressBar />
                 </Viewbox>
-            </StatusBarItem>
+            </StatusBarItem>-->
             
             <!-- Progress Bar -->
             <StatusBarItem Grid.Column="2"

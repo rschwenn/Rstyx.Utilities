@@ -87,9 +87,10 @@ Public Class MainViewModel
                         CmdInfo.Decoration          = Decoration
                         
                         _TestTaskAsyncCommand = New AsyncDelegateUICommand(CmdInfo, CancelCallback:=Nothing, SupportsCancellation:=False, runAsync:=True)
+                        '_TestTaskAsyncCommand = New AsyncDelegateUICommand(CmdInfo, CancelCallback:=Nothing, SupportsCancellation:=False, runAsync:=True, ThreadAptState:=Threading.ApartmentState.STA)
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.logError(ex, sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 
                 Return _TestTaskAsyncCommand
@@ -110,7 +111,7 @@ Public Class MainViewModel
             'Dim Task1 As Task = Task.Factory.StartNew(AddressOf test_1)
             
             Dim TestEnum2 As ArrayUtils.SortType = 2 'ArrayUtils.SortType.Numeric
-            Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
+            Logger.logInfo(sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
             
         End Sub
         
@@ -124,7 +125,8 @@ Public Class MainViewModel
             'Files.Add("T:\debug.log")
             
             #If DEBUG Then
-                System.Diagnostics.Debug.Print("AsyncDelegateUICommand \ Execute: Current thread ID = " & System.Windows.Threading.Dispatcher.CurrentDispatcher.Thread.ManagedThreadId.ToString())
+                Dim th As System.Threading.Thread = System.Threading.Thread.CurrentThread
+                System.Diagnostics.Debug.Print(sprintf("TestPDF: Current thread ID = %d,  ApartmentState = %s,  IsThreadPoolThread = %s,  IsBackground = %s", th.ManagedThreadId, th.GetApartmentState().ToString(), th.IsThreadPoolThread, th.IsBackground))
             #End If
             
             Const Filename As String = "T:\TestOutput.pdf"

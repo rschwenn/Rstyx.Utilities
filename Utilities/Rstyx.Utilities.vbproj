@@ -240,6 +240,7 @@
     <Compile Include="source\_global\InvalidIDException.vb" />
     <Compile Include="source\_global\RegUtils.vb" />
     <Compile Include="source\_global\RemarkException.vb" />
+    <Compile Include="source\_global\StaTaskScheduler.vb" />
     <Compile Include="source\_global\StringUtils.vb" />
     <Compile Include="source\_global\SysUtils.vb" />
     <Compile Include="source\UI\Binding\Converters\ConverterProvider.vb" />
