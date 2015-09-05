@@ -39,9 +39,6 @@ Namespace UI.ViewModel
             
             Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.ViewModelBase")
             
-            ''' <summary> Returns the ID of the tread which has created this view model (and should be the WPF UI thread). </summary>
-            Protected ReadOnly WpfUiThreadID As Integer
-            
         #End Region
         
         #Region "Initializing and Finalizing"
@@ -51,7 +48,8 @@ Namespace UI.ViewModel
                 
                 MyBase.DisplayName = "** DisplayName not set **"
                 
-                WpfUiThreadID = Dispatcher.CurrentDispatcher.Thread.ManagedThreadId
+                _WpfUiDispatcher = Dispatcher.CurrentDispatcher
+                WpfUiThreadID    = _WpfUiDispatcher.Thread.ManagedThreadId
                 
                 'Subscribe for notifications of user settings changes.
                 Dim WeakPropertyChangedListener As Cinch.WeakEventProxy(Of PropertyChangedEventArgs) = New Cinch.WeakEventProxy(Of PropertyChangedEventArgs)(AddressOf OnUserSettingsChanged)
@@ -101,13 +99,37 @@ Namespace UI.ViewModel
             
         #End Region
         
-        #Region "DoEvents"
+        #Region "WPF dispatcher related"
+            
+            ''' <summary> Provides quick access to the ID of the tread of <see cref="WpfUiDispatcher"/>. </summary>
+            Protected WpfUiThreadID     As Integer
+            
+            ''' <summary> Backend field of  of <see cref="WpfUiDispatcher"/>. </summary>
+            Protected _WpfUiDispatcher  As Dispatcher
+            
+            ''' <summary> Returns the dispatcher of WPF UI thread. </summary>
+             ''' <returns> The dispatcher of WPF UI thread. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' After construction of this view model the returned dispatcher is the one which has dispached
+             ''' the construction of this view model, which usually should be the dispatcher of WPF UI thread.
+             ''' </para>
+             ''' <para>
+             ''' Every call to <see cref="InitialiseViewAwareService"/> resets this property to the dispatcher
+             ''' of <see cref="ViewAwareStatusService"/><c>.View</c> to be really sure ;-)
+             ''' </para>
+             ''' </remarks>
+            Public ReadOnly Property WpfUiDispatcher() As Dispatcher
+                Get
+                    Return _WpfUiDispatcher
+                End Get
+            End Property
             
             ''' <summary>
             ''' Forces the WPF message pump to process all enqueued messages that are <c>DispatcherPriority.Background</c> or above
             ''' if the calling thread is the WPF UI thread (the thread created this view model).
             ''' </summary>
-            Protected Sub DoEventsIfWpfUiThread()
+            Public Sub DoEventsIfWpfUiThread()
                 If (Thread.CurrentThread.ManagedThreadId = WpfUiThreadID) Then
                     Cinch.ApplicationHelper.DoEvents()
                 End If
@@ -232,6 +254,13 @@ Namespace UI.ViewModel
                 Me.ViewAwareStatusService = viewAwareStatusService
                 
                 If (Me.ViewAwareStatusService IsNot Nothing) Then
+                    
+                    ' Store link to WPF UI dispatcher.
+                    If (Me.ViewAwareStatusService.ViewsDispatcher IsNot Nothing) Then
+                        _WpfUiDispatcher = Me.ViewAwareStatusService.ViewsDispatcher
+                        WpfUiThreadID    = _WpfUiDispatcher.Thread.ManagedThreadId
+                    End If
+                    
                     ' Subscribe to weak events.
                     AddHandler Me.ViewAwareStatusService.ViewLoaded,   AddressOf OnViewLoaded
                     AddHandler Me.ViewAwareStatusService.ViewUnloaded, AddressOf OnViewUnloaded

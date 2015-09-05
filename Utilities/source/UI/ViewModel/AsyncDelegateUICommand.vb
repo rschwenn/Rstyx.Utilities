@@ -89,7 +89,7 @@ Namespace UI.ViewModel
             
             ''' <summary> Creates a new command that runs in current thread and may support cancellation and a cancelation callback. </summary>
              ''' <param name="TargetCommandInfo">    The target <see cref="DelegateUICommandInfo" /> for the desired action. </param>
-             ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. </param>
+             ''' <param name="CancelCallback">       Action that is invoked after the target command has been cancelled. May be <see langword="null"/> </param>
              ''' <param name="SupportsCancellation"> Should be False, when the target action doesn't worry about cancellation requests. </param>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/> is <see langword="null"/>. </exception>
              ''' <exception cref="ArgumentNullException"> <paramref name="TargetCommandInfo"/><b>.ExecuteAction</b> is <see langword="null"/>. </exception>
