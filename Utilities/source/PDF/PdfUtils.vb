@@ -8,6 +8,8 @@ Imports PdfSharp.Pdf.IO
 
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
+Imports Rstyx.Utilities.Collections
+
 
 Namespace PDF
     
@@ -51,7 +53,7 @@ Namespace PDF
                 
                 Dim OutputPDF As PdfDocument = New PdfDocument()
                 
-                For Each FilePath As String In If(Order, InputPaths.OrderBy(Function(ByVal PathName) PathName), InputPaths)
+                For Each FilePath As String In If(Order, InputPaths.OrderBy(Function(ByVal PathName) PathName, New AlphanumericComparer(IgnoreCase:=True)), InputPaths)
                     
                     ' Open the document to import pages from it.
                     Try

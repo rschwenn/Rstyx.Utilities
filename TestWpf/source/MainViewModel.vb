@@ -119,10 +119,11 @@ Public Class MainViewModel
         Public Sub TestPDF()
             
             Dim Files As New Collection(Of String)
-            Files.Add("T:\6340_004_01.pdf")
-            Files.Add("T:\6340_003_01.pdf")
-            Files.Add("T:\6340_002_01.pdf")
-            'Files.Add("T:\debug.log")
+            Files.Add("T:\6340_1.pdf")
+            Files.Add("T:\6340_12.pdf")
+            Files.Add("T:\6340_2.pdf")
+            Files.Add("T:\Profil  km 255.2 + 9.90.pdf")
+            Files.Add("T:\Profil  km 255.2 + 76.38.pdf")
             
             #If DEBUG Then
                 Dim th As System.Threading.Thread = System.Threading.Thread.CurrentThread
