@@ -82,11 +82,13 @@ Namespace PDF
                 ' Optionally delete input files (if joining has been successful).
                 If (DeleteInput) Then
                     For Each FilePath As String In InputPaths
-                        Try
-                            System.IO.File.Delete(FilePath)
-                        Catch ex As Exception
-                            Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_FailedDeletePDF, FilePath))
-                        End Try
+                        If (Not (FilePath.ToLower() = OutputPath.ToLower())) Then
+                            Try
+                                System.IO.File.Delete(FilePath)
+                            Catch ex As Exception
+                                Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_FailedDeletePDF, FilePath))
+                            End Try
+                        End If
                     Next
                 End If
                 
