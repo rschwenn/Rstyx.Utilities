@@ -181,11 +181,11 @@ Namespace IO
                     FileFilter = FileFilter.Trim()
                     
                     If (FileFilter.IsEmptyOrWhiteSpace()) Then
-                        Logger.logWarning(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFileFilter)
+                        Logger.logDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFileFilter)
                     ElseIf (Not isValidFileNameFilter(FileFilter)) Then
                         Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFileFilter, FileFilter))
                     ElseIf (ConsolidatedFileFilters.Contains(FileFilter)) Then
-                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFileFilter, FileFilter))
+                        Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFileFilter, FileFilter))
                     Else
                         ConsolidatedFileFilters.Add(FileFilter)
                     End If
@@ -199,14 +199,14 @@ Namespace IO
                     
                     If (Not Directory.Exists(FolderName)) Then
                         If (FolderName.IsEmptyOrWhiteSpace()) Then
-                            Logger.logWarning(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFolderName)
+                            Logger.logDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFolderName)
                         ElseIf (Not isValidFilePath(FolderName)) Then
                             Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFolderName, FolderName))
                         Else
                             Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchFolderNotFound, FolderName, Directory.GetCurrentDirectory()))
                         End If 
                     ElseIf (ConsolidatedFolders.Contains(FolderName)) Then
-                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFolderName, FolderName))
+                        Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFolderName, FolderName))
                     Else
                         ConsolidatedFolders.Add(FolderName)
                     End If

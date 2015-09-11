@@ -146,7 +146,7 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Call TestPDF()
+                'Call TestPDF()
                 
                 'Dim d1 As Double = Double.NaN
                 'Dim d2 As Double = Double.NegativeInfinity
@@ -346,9 +346,9 @@ Public Class MainViewModel
                 
                 'Throw New InvalidDataException("+++++++++++++++++++++++++++")
                 
-                'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
-                'Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_50\macros\Aktive_Datei", Nothing, Nothing)
-                'Logger.logInfo(fi.FullName)
+                'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_51\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
+                Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", ";;G:\Tools\jEdit_51\macros\Aktive_Datei;G:\Tools\jEdit_51\macros\Aktive_Datei", ";", Nothing)
+                Logger.logInfo(fi.FullName)
                 
                 'Dim Field = "UserDomaiN"
                 'Dim TableName = "Standorte$y"
