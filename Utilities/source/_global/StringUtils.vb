@@ -621,7 +621,7 @@ Imports Rstyx.Utilities.Math.MathUtils
             Return Value.Trim().Split("\s+")
         End Function
         
-        ''' <summary> Indents the single lines of the string. </summary>
+        ''' <summary> Indents every single line of a string. </summary>
          ''' <param name="Value">                     The string to indent. </param>
          ''' <param name="Width">                     The width or count of spaces to prepend every line with. </param>
          ''' <param name="IncludeFirstline">          If <see langword="true"/>, the first line will be indented too. </param>
@@ -640,6 +640,24 @@ Imports Rstyx.Utilities.Math.MathUtils
                 If (PrependNewlineIfMultiline) Then
                     RetValue = vbNewLine & RetValue
                 End If
+            End If
+            
+            Return RetValue
+        End Function
+        
+        ''' <summary> Prepends a prefix to every single line of a string. </summary>
+         ''' <param name="Value">  The string to indent. </param>
+         ''' <param name="Prefix"> The String to prepend every line with. </param>
+         ''' <returns>             A String with prefixed lines. </returns>
+         ''' <remarks> </remarks>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function PrefixLines(Value As String, Prefix As String) As String
+            Dim RetValue As String = Value
+            
+            RetValue = Prefix & RetValue
+            
+            If (RetValue.Contains(vbNewLine)) Then
+                RetValue = RetValue.Replace(vbNewLine, vbNewLine & Prefix)
             End If
             
             Return RetValue
