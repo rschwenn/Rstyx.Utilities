@@ -5,9 +5,12 @@ Imports System.Collections.ObjectModel
 Imports System.Data
 Imports System.Data.OleDb
 Imports System.Data.DataTableExtensions
+Imports System.Drawing
+Imports System.Drawing.Imaging
 Imports System.Linq
 Imports System.Math
 Imports System.IO
+Imports System.Text
 Imports System.Threading.Tasks
 
 'Imports PdfSharp.Pdf
@@ -139,6 +142,90 @@ Public Class MainViewModel
             
         End Sub
         
+        Public Sub TestJPEG()
+            Dim SourceImage As Bitmap = New Bitmap("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Test.JPG")
+            
+            Const TargetWidth  As Integer = 512
+            Const TargetHeight As Integer = 768
+            
+            Dim IsRotated As Boolean = False
+            
+            ' EXIF: all properties.
+            'Dim ImageProperties() As PropertyItem = SourceImage.PropertyItems
+            
+            ' Orientation (see http://sylvana.net/jpegcrop/exif_orientation.html).
+            Dim PropIDs As Collection(Of Integer) = New Collection(Of Integer)(SourceImage.PropertyIdList)
+            Dim ExifOrientationID As Integer = &H0112  ' decimal: 37510
+            If (PropIDs.Contains(ExifOrientationID)) Then
+                Dim Orientation As Byte = SourceImage.GetPropertyItem(ExifOrientationID).Value(0)
+                
+                If (Orientation > 1) Then
+                    Dim ImageRotateFlipType As Dictionary(Of Byte, RotateFlipType) = New Dictionary(Of Byte, RotateFlipType)
+                    ImageRotateFlipType.Add(0, RotateFlipType.RotateNoneFlipNone)    ' Orientation unknown.
+                    ImageRotateFlipType.Add(1, RotateFlipType.RotateNoneFlipNone)    ' Orientation o.k.
+                    ImageRotateFlipType.Add(2, RotateFlipType.RotateNoneFlipX)
+                    ImageRotateFlipType.Add(3, RotateFlipType.Rotate180FlipNone)
+                    ImageRotateFlipType.Add(4, RotateFlipType.RotateNoneFlipY)
+                    ImageRotateFlipType.Add(5, RotateFlipType.Rotate90FlipX)
+                    ImageRotateFlipType.Add(6, RotateFlipType.Rotate90FlipNone)
+                    ImageRotateFlipType.Add(7, RotateFlipType.Rotate270FlipX)
+                    ImageRotateFlipType.Add(8, RotateFlipType.Rotate270FlipNone)
+                    
+                    SourceImage.RotateFlip(ImageRotateFlipType(Orientation))
+                    IsRotated = True
+                End If
+            End If
+            
+            ' Size.
+            Dim DoResize As Boolean = (Not ((TargetWidth = SourceImage.Width) AndAlso (TargetHeight = SourceImage.Height)) )
+            'If (DoResize OrElse IsRotated) Then
+                Dim TargetImage As New Bitmap(TargetWidth, TargetHeight)
+                Dim FlagColor   As Color = Color.FromArgb(255, 0, 0, 255)
+                
+                Using TargetGraphics As Graphics = Graphics.FromImage(TargetImage)
+                    TargetGraphics.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
+                    TargetGraphics.DrawImage(SourceImage, 0, 0, TargetImage.Width, TargetImage.Height)
+                    
+                    TargetGraphics.FillRectangle(Brushes.LightGray, New Rectangle(100, 700, TargetWidth - 200, 40))
+                    TargetGraphics.FillEllipse(Brushes.Blue,        New Rectangle(115, 715, 10, 10))  ' Flag
+                    TargetGraphics.FillEllipse(Brushes.Blue,        New Rectangle(TargetWidth - 125, 715, 10, 10))  ' Flag
+                    'TargetGraphics.FillRectangle(Brushes.Blue,      New Rectangle(114, 716, 8, 8))  ' Flag
+                    'TargetGraphics.FillRectangle(Brushes.Blue,      New Rectangle(TargetWidth - 122, 716, 8, 8))  ' Flag
+                    
+                    Dim DirText As String = "Bild in Richtung"
+                    'Dim DirText As String = "Bild in Richtung"
+                    Dim DirFont As Font   = New Font(FontFamily.GenericSansSerif, 11, FontStyle.Regular, GraphicsUnit.Point)
+                    Dim DirSize As SizeF  = TargetGraphics.MeasureString(DirText, DirFont)
+                    TargetGraphics.DrawString(DirText, DirFont, Brushes.Blue, TargetWidth / 2 - DirSize.Width / 2, 705)
+                End Using
+                
+                ' http://www.wisotop.de/farbabstand-farben-vergleichen.shtml
+                
+                Const X1 As Integer = 118
+                Const Y1 As Integer = 720
+                Dim PixelColor As Color = TargetImage.GetPixel(X1, Y1)
+                'Dim ColorDist  As Double = Sqrt( Pow(FlagColor.R - PixelColor.R, 2) + Pow(FlagColor.G - PixelColor.G, 2) + Pow(FlagColor.B - PixelColor.B, 2) )
+                'Dim ColorDist  As Double = Sqrt( ((FlagColor.R - PixelColor.R) * (FlagColor.R - PixelColor.R)) +
+                '                                 ((FlagColor.G - PixelColor.G) * (FlagColor.G - PixelColor.G)) +
+                '                                 ((FlagColor.B - PixelColor.B) * (FlagColor.B - PixelColor.B))
+                '                               )
+                Dim dR As Double = CInt(FlagColor.R) - CInt(PixelColor.R)
+                Dim dG As Double = CInt(FlagColor.G) - CInt(PixelColor.G)
+                Dim dB As Double = CInt(FlagColor.B) - CInt(PixelColor.B)
+                Dim ColorDist  As Double = Sqrt( (dR * dR) + (dG * dG) + (dG * dG) )
+                
+                
+                Dim IsFlag As Boolean = (Abs(ColorDist) < 20)
+                TargetImage.MakeTransparent()
+                TargetImage.SetPixel(X1, Y1, FlagColor)
+                
+                TargetImage.Save("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Test_Ziel.JPG", ImageFormat.Jpeg)
+            'End If
+            
+            
+            Dim dummy As String = "d"
+        End Sub
+        
         Public Sub test_1(CancelToken As System.Threading.CancellationToken)
             
             'Dim TcReader As TcFileReader
@@ -147,6 +234,7 @@ Public Class MainViewModel
                 Logger.logInfo("")
                 
                 'Call TestPDF()
+                Call TestJPEG()
                 
                 'Dim d1 As Double = Double.NaN
                 'Dim d2 As Double = Double.NegativeInfinity
