@@ -2450,7 +2450,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Anwendungsweite Ressorcen konnten nicht bereitgestellt werden (%s). ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Anwendungsweite Ressourcen konnten nicht bereitgestellt werden: %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property UIResources_ErrorLoadingAppresources() As String
             Get

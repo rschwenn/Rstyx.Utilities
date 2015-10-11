@@ -110,6 +110,7 @@ Namespace UI.Resources
              ''' This should always work, even if WPF is hosted in a none WPF application.
              ''' </remarks>
             Public Shared Sub EnsureDefaultApplicationResources()
+                Dim CurrentUri As String = "???"
                 Try
                     ' Ensure Application object exists (in case WPF is hosted in none WPF app).
                     If (Application.Current Is Nothing) Then
@@ -119,12 +120,23 @@ Namespace UI.Resources
                     
                     ' Load and merge desired application resources.
                     If (Not AppResourcesLoaded) Then
-                        Dim u As Uri = New Uri(My.Settings.UIResources_DefaultAppResourcesUri, UriKind.Relative)
+                        CurrentUri = My.Settings.UIResources_ThemePatchGeneralUri
+                        Dim u As Uri = New Uri(CurrentUri, UriKind.Relative)
                         Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
+                        
+                        ' For OS greater than Windows 7:
+                        Dim OsVersion As Double
+                        Double.TryParse(Environment.OSVersion.Version.Major & "." & Environment.OSVersion.Version.Minor, OsVersion)
+                        If (OsVersion > 6.1) Then
+                            CurrentUri = My.Settings.UIResources_ThemePatchWin8Uri
+                            u  = New Uri(CurrentUri, UriKind.Relative)
+                            Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
+                        End If
+                        
                         AppResourcesLoaded = True
                     End If
                 Catch ex As Exception
-                    Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorLoadingAppresources, My.Settings.UIResources_DefaultAppResourcesUri))
+                    Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorLoadingAppresources, ex.Message))
                     Logger.logDebug(ex.StackTrace)
                 End Try
             End Sub

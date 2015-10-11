@@ -113,10 +113,19 @@ Namespace My
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("/Rstyx.Utilities;component/source/UI/Resources/GlobalStyles_1.xaml")>  _
-        Public ReadOnly Property UIResources_DefaultAppResourcesUri() As String
+         Global.System.Configuration.DefaultSettingValueAttribute("/Rstyx.Utilities;component/source/UI/Resources/ThemePatchGeneral.xaml")>  _
+        Public ReadOnly Property UIResources_ThemePatchGeneralUri() As String
             Get
-                Return CType(Me("UIResources_DefaultAppResourcesUri"),String)
+                Return CType(Me("UIResources_ThemePatchGeneralUri"),String)
+            End Get
+        End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("/Rstyx.Utilities;component/source/UI/Resources/ThemePatchWin8.xaml")>  _
+        Public ReadOnly Property UIResources_ThemePatchWin8Uri() As String
+            Get
+                Return CType(Me("UIResources_ThemePatchWin8Uri"),String)
             End Get
         End Property
     End Class

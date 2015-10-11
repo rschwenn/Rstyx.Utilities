@@ -1068,7 +1068,7 @@
     <comment>File Name: String</comment>
   </data>
   <data name="UIResources_ErrorLoadingAppresources" xml:space="preserve">
-    <value>Anwendungsweite Ressorcen konnten nicht bereitgestellt werden (%s).</value>
-    <comment>Resource URI</comment>
+    <value>Anwendungsweite Ressourcen konnten nicht bereitgestellt werden: %s</value>
+    <comment>Exception Message: String</comment>
   </data>
 </root>

@@ -1,5 +1,5 @@
 <!-- 
-Global changes of some controls.
+Patches global theme in general.
 -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

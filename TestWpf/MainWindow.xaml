@@ -253,9 +253,9 @@
                 </Setter>
             </Style>
             
-            <!--<Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}" >
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-            </Style>-->
+            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}" >
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+            </Style>
             
         </ResourceDictionary>
     </Window.Resources>

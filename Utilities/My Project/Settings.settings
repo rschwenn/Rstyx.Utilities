@@ -20,8 +20,11 @@
     <Setting Name="UIResources_IconResourcesUri" Type="System.String" Scope="Application">
       <Value Profile="(Default)">/Rstyx.Utilities;component/source/UI/Resources/IconResources.xaml</Value>
     </Setting>
-    <Setting Name="UIResources_DefaultAppResourcesUri" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">/Rstyx.Utilities;component/source/UI/Resources/GlobalStyles_1.xaml</Value>
+    <Setting Name="UIResources_ThemePatchGeneralUri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">/Rstyx.Utilities;component/source/UI/Resources/ThemePatchGeneral.xaml</Value>
+    </Setting>
+    <Setting Name="UIResources_ThemePatchWin8Uri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">/Rstyx.Utilities;component/source/UI/Resources/ThemePatchWin8.xaml</Value>
     </Setting>
   </Settings>
 </SettingsFile>
