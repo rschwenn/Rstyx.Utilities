@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- :mode=xml::noTabs=true::noWordSep=\::tabSize=2::folding=indent::collapseFolds=2: -->
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -24,6 +24,7 @@
     <IncrementalBuild>true</IncrementalBuild>
     <DocumentationFile>TestWpf.xml</DocumentationFile>
     <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -35,6 +36,7 @@
     <Optimize>true</Optimize>
     <DocumentationFile>TestWpf.xml</DocumentationFile>
     <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -50,6 +52,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cinch.WPF">
@@ -83,7 +89,6 @@
       <HintPath>..\packages\PDFsharp-wpf.1.50.3638-beta\lib\net30\PdfSharp-wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PresentationFramework.Luna" />
     <Reference Include="Rstyx.LoggingConsole">
       <HintPath>..\..\Rstyx.LoggingConsole\LoggingConsole\bin\Rstyx.LoggingConsole.dll</HintPath>
     </Reference>

@@ -4,6 +4,8 @@ Imports System.Windows
 Imports System.Collections
 Imports System.Collections.Generic
 
+Imports Rstyx.Utilities.StringUtils
+
 Namespace UI.Resources
     
     ''' <summary> Static properties that provide UI resources (ResourceDictionaries). </summary>
@@ -17,6 +19,8 @@ Namespace UI.Resources
             
             Private Shared _Icons                   As ResourceDictionary = Nothing
             Private Shared _IconRectangles          As Dictionary(Of String, System.Windows.Shapes.Rectangle) = Nothing
+            
+            Private Shared AppResourcesLoaded       As Boolean = False
             
             Private Const IconBrushSuffix           As String = "_IconBrush"
             
@@ -40,12 +44,11 @@ Namespace UI.Resources
                         If (_Icons Is Nothing) Then
                             Try
                                 Logger.logDebug("Icons [Get]: Read IconResources.xaml.")
-                                Dim u As Uri = new Uri(My.Settings.UIResources_IconResourcesUri, UriKind.Relative)
-                                Dim tmp As Object  = Application.LoadComponent(u)
-                                _Icons = CType(tmp, ResourceDictionary)
+                                Dim u As Uri = New Uri(My.Settings.UIResources_IconResourcesUri, UriKind.Relative)
+                                _Icons = CType(Application.LoadComponent(u), ResourceDictionary)
                                 Logger.logDebug("Icons [Get]: Icon resources initialized.")
                             Catch ex As Exception 
-                                Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ResourceNotFound, My.Settings.UIResources_IconResourcesUri))
+                                Logger.logError(sprintf(Rstyx.Utilities.Resources.Messages.Global_ResourceNotFound, My.Settings.UIResources_IconResourcesUri))
                             End Try 
                         End If
                         Return _Icons
@@ -72,7 +75,7 @@ Namespace UI.Resources
                                     End If
                                 Next
                             Catch ex As Exception 
-                                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                                Logger.logError(ex, sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                             End Try 
                         End If
                         Return _IconRectangles
@@ -100,7 +103,35 @@ Namespace UI.Resources
             
         #End Region
         
-        #Region "Private Members"
+        #Region "Public Methods"
+            
+            ''' <summary> Ensures that some default application resources has been loaded and merged into <c>Application.Current.Resources.MergedDictionaries</c>. </summary>
+             ''' <remarks>
+             ''' This should always work, even if WPF is hosted in a none WPF application.
+             ''' </remarks>
+            Public Shared Sub EnsureDefaultApplicationResources()
+                Try
+                    ' Ensure Application object exists (in case WPF is hosted in none WPF app).
+                    If (Application.Current Is Nothing) Then
+                        Dim tmp As Application = New Application()
+                        Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown
+                    End If
+                    
+                    ' Load and merge desired application resources.
+                    If (Not AppResourcesLoaded) Then
+                        Dim u As Uri = New Uri(My.Settings.UIResources_DefaultAppResourcesUri, UriKind.Relative)
+                        Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
+                        AppResourcesLoaded = True
+                    End If
+                Catch ex As Exception
+                    Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorLoadingAppresources, My.Settings.UIResources_DefaultAppResourcesUri))
+                    Logger.logDebug(ex.StackTrace)
+                End Try
+            End Sub
+            
+        #End Region
+        
+        #Region "Private Methods"
             
             ''' <summary> Creates a rectangle filled with an icon of the given resource name from <see cref="Icons"/>. </summary>
              ''' <param name="ResourceName"> Resource name of the DrawingBrush resource in <see cref="Icons"/> (The "_IconBrush" suffix can be omitted). </param>
@@ -112,7 +143,7 @@ Namespace UI.Resources
                         If (Not ResourceName.EndsWith(IconBrushSuffix)) Then ResourceName &= IconBrushSuffix
                         
                         If (Not Icons.Contains(ResourceName)) Then
-                            'Logger.logError(StringUtils.sprintf("getIconRectangle: Das Icon '%s' existiert nicht.", ResourceName))
+                            'Logger.logError(sprintf("getIconRectangle: Das Icon '%s' existiert nicht.", ResourceName))
                         Else
                             If (Icons(ResourceName).GetType().FullName = "System.Windows.Media.DrawingBrush") Then
                                 RetBrush = CType(Icons(ResourceName), System.Windows.Media.DrawingBrush)
@@ -120,7 +151,7 @@ Namespace UI.Resources
                             End If
                         End If
                     Catch ex As Exception 
-                        Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconDrawingBrush, ResourceName))
+                        Logger.logError(sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconDrawingBrush, ResourceName))
                     End Try 
                     Return RetBrush
                 End SyncLock
@@ -136,7 +167,7 @@ Namespace UI.Resources
                         If (Not ResourceName.EndsWith(IconBrushSuffix)) Then ResourceName &= IconBrushSuffix
                         
                         If (Not Icons.Contains(ResourceName)) Then
-                            'Logger.logError(StringUtils.sprintf("getIconRectangle: Das Icon '%s' existiert nicht.", ResourceName))
+                            'Logger.logError(sprintf("getIconRectangle: Das Icon '%s' existiert nicht.", ResourceName))
                         Else
                             If (Icons(ResourceName).GetType().FullName = "System.Windows.Media.DrawingBrush") Then
                                 RetRectangle = New System.Windows.Shapes.Rectangle()
@@ -145,7 +176,7 @@ Namespace UI.Resources
                             End If
                         End If
                     Catch ex As Exception 
-                        Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconRectangle, ResourceName))
+                        Logger.logError(sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorCreatingIconRectangle, ResourceName))
                     End Try 
                     Return RetRectangle
                 End SyncLock

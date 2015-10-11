@@ -20,5 +20,8 @@
     <Setting Name="UIResources_IconResourcesUri" Type="System.String" Scope="Application">
       <Value Profile="(Default)">/Rstyx.Utilities;component/source/UI/Resources/IconResources.xaml</Value>
     </Setting>
+    <Setting Name="UIResources_DefaultAppResourcesUri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">/Rstyx.Utilities;component/source/UI/Resources/GlobalStyles_1.xaml</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

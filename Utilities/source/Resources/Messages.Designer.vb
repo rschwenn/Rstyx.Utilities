@@ -2450,6 +2450,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Anwendungsweite Ressorcen konnten nicht bereitgestellt werden (%s). ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property UIResources_ErrorLoadingAppresources() As String
+            Get
+                Return ResourceManager.GetString("UIResources_ErrorLoadingAppresources", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Fehler in Eingabefeldern (siehe ToolTip) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property ViewModelBase_Status_UIValidationErrorsPresent() As String

@@ -6,7 +6,11 @@
     >
     
     <Application.Resources>
-        
+        <!--<ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/GlobalStyles_1.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>-->
         <!-- This Style will be inherited by a Style with:  TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}" -->
         <!--<Style TargetType="ComboBox">
             <Setter Property="Background" Value="Blue" />

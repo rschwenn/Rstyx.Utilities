@@ -331,6 +331,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Resource Include="source\UI\Resources\GlobalStyles_1.xaml">
+      <SubType>Designer</SubType>
+    </Resource>
     <Resource Include="source\UI\Resources\IconResources.xaml">
       <SubType>Designer</SubType>
     </Resource>

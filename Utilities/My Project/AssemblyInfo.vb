@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Reflection
 Imports System.Runtime.InteropServices
+Imports System.Windows.Markup
 
 ' Allgemeine Informationen über eine Assembly werden über die folgenden 
 ' Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
@@ -14,6 +15,17 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyProduct("Rstyx.Utilities")> 
 <Assembly: AssemblyCopyright("Copyright © Robert Schwenn 2012-2015")> 
 <Assembly: AssemblyTrademark("")> 
+
+' XAML namespace mappings.
+<assembly: XmlnsPrefix("http://schemas.rstyx.de/wpf/Utils", "RstyxUtils")>
+<assembly: XmlnsDefinition("http://schemas.rstyx.de/wpf/Utils", "Rstyx.LoggingConsole")>
+<assembly: XmlnsDefinition("http://schemas.rstyx.de/wpf/Utils", "Rstyx.Utilities")>
+<assembly: XmlnsDefinition("http://schemas.rstyx.de/wpf/Utils", "Rstyx.Utilities.Apps")>
+<assembly: XmlnsDefinition("http://schemas.rstyx.de/wpf/Utils", "Rstyx.Utilities.UI.Binding.Converters")>
+<assembly: XmlnsDefinition("http://schemas.rstyx.de/wpf/Utils", "Rstyx.Utilities.UI.Binding.PushBinding")>
+<assembly: XmlnsDefinition("http://schemas.rstyx.de/wpf/Utils", "Rstyx.Utilities.UI.Controls")>
+<assembly: XmlnsDefinition("http://schemas.rstyx.de/wpf/Utils", "Rstyx.Utilities.UI.Resources")>
+
 
 <Assembly: ComVisible(False)>
 

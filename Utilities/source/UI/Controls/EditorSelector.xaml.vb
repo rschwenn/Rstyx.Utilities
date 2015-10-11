@@ -1,4 +1,6 @@
-﻿
+﻿Imports Rstyx.Utilities
+Imports Rstyx.Utilities.Apps
+
 Namespace UI.Controls
     
     Public Class EditorSelector

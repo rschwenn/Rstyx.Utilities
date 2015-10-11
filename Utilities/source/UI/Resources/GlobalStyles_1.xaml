@@ -1,0 +1,15 @@
+<!-- 
+Global changes of some controls.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    >
+    
+    <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}" >
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    
+</ResourceDictionary>
+
+<!-- for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:-->

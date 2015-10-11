@@ -9,12 +9,7 @@
     
     xmlns:Cinch="clr-namespace:Cinch;assembly=Cinch.WPF"
     xmlns:Logging="clr-namespace:Rstyx.LoggingConsole;assembly=Rstyx.LoggingConsole"
-    xmlns:RstyxPush="clr-namespace:Rstyx.Utilities.UI.Binding.PushBinding;assembly=Rstyx.Utilities"
-    xmlns:RstyxUtils="clr-namespace:Rstyx.Utilities;assembly=Rstyx.Utilities"
-    xmlns:RstyxUtilsApps="clr-namespace:Rstyx.Utilities.Apps;assembly=Rstyx.Utilities"
-    xmlns:RstyxControls="clr-namespace:Rstyx.Utilities.UI.Controls;assembly=Rstyx.Utilities"
-    xmlns:RstyxConverters="clr-namespace:Rstyx.Utilities.UI.Binding.Converters;assembly=Rstyx.Utilities"
-    xmlns:RstyxResources="clr-namespace:Rstyx.Utilities.UI.Resources;assembly=Rstyx.Utilities"
+    xmlns:RstyxUtils="http://schemas.rstyx.de/wpf/Utils"
     xmlns:global="clr-namespace:Rstyx.Utilities.TestWpf;assembly="
     
     mc:Ignorable="d"
@@ -32,7 +27,13 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/IconResources.xaml" />
+                <!--<ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/GlobalStyles_1.xaml" />-->
+                <!--<ResourceDictionary Source="/PresentationFramework.Aero, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Aero.NormalColor.xaml" />-->
+                <!--<ResourceDictionary Source="/PresentationFramework.Classic, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Classic.xaml" />-->
+                <!--<ResourceDictionary Source="/PresentationFramework.Luna, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Luna.Homestead.xaml" />-->
                 <!--<ResourceDictionary Source="/PresentationFramework.Luna, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Luna.Metallic.xaml" />-->
+                <!--<ResourceDictionary Source="/PresentationFramework.Luna, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Luna.NormalColor.xaml" />-->
+                <!--<ResourceDictionary Source="/PresentationFramework.Royale, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Royale.NormalColor.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
             
             <DrawingBrush x:Key="EllipsenBrush" >
@@ -252,6 +253,10 @@
                 </Setter>
             </Style>
             
+            <!--<Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}" >
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>-->
+            
         </ResourceDictionary>
     </Window.Resources>
     
@@ -293,13 +298,13 @@
             <ContentControl Content="{StaticResource Power2_IconRectangle}" Margin="10" Height="35" Width="35" />-->
             
             <!--<HeaderedContentControl Content="{StaticResource Power2_IconRectangle}" Margin="10" Width="35" Header="Key" HeaderTemplate="{StaticResource IconHeaderTemplate}" />-->
-            <!--<HeaderedContentControl  Content="{Binding Source={x:Static RstyxResources:UIResources.IconRectangles}, Path=Item[Power2_IconRectangle]}" Margin="10" Width="35" Header="Key" HeaderTemplate="{StaticResource IconHeaderTemplate}" />-->
-            <!--<HeaderedContentControl  Content="{Binding Source={x:Static RstyxResources:UIResources.IconRectangles}, Path=[Power2_IconRectangle]}" Margin="10" Width="35" Header="Key" HeaderTemplate="{StaticResource IconHeaderTemplate}" />-->
+            <!--<HeaderedContentControl  Content="{Binding Source={x:Static RstyxUtils:UIResources.IconRectangles}, Path=Item[Power2_IconRectangle]}" Margin="10" Width="35" Header="Key" HeaderTemplate="{StaticResource IconHeaderTemplate}" />-->
+            <!--<HeaderedContentControl  Content="{Binding Source={x:Static RstyxUtils:UIResources.IconRectangles}, Path=[Power2_IconRectangle]}" Margin="10" Width="35" Header="Key" HeaderTemplate="{StaticResource IconHeaderTemplate}" />-->
             
-            <!--<HeaderedContentControl  Content="{Binding Source={x:Static RstyxResources:UIResources}, Path=IconRectangles[Power2_IconRectangle]}" Margin="10" Width="35" Header="Key" HeaderTemplate="{StaticResource IconHeaderTemplate}" />-->
+            <!--<HeaderedContentControl  Content="{Binding Source={x:Static RstyxUtils:UIResources}, Path=IconRectangles[Power2_IconRectangle]}" Margin="10" Width="35" Header="Key" HeaderTemplate="{StaticResource IconHeaderTemplate}" />-->
             
             <StackPanel>
-                <RstyxControls:FileChooser 
+                <RstyxUtils:FileChooser 
                     Name="FileChoser1" 
                     FontSize="15" 
                     DockPanel.Dock="Bottom" 
@@ -309,15 +314,15 @@
                     ChangesWorkingDir="true"
                     Watermark="Wasserzeichen"
                     >
-                    <RstyxPush:PushBindingManager.PushBindings>
-                        <RstyxPush:PushBinding TargetProperty="FilePath" Path="FilePath1" />
-                    </RstyxPush:PushBindingManager.PushBindings>
-                </RstyxControls:FileChooser>
+                    <RstyxUtils:PushBindingManager.PushBindings>
+                        <RstyxUtils:PushBinding TargetProperty="FilePath" Path="FilePath1" />
+                    </RstyxUtils:PushBindingManager.PushBindings>
+                </RstyxUtils:FileChooser>
                 
                 <!-- FileChooser 2 -->
                 <DockPanel>
                     <Label Target="{Binding ElementName=FileChoser2}" Content="_FileChooser"/>
-                    <RstyxControls:FileChooser 
+                    <RstyxUtils:FileChooser 
                         Name="FileChoser2"
                         FileMode="OpenOrCreate" 
                         DockPanel.Dock="Bottom" 
@@ -336,7 +341,7 @@
                         Name="tbTest"
                         Text="{Binding Path=Textbox, Mode=TwoWay}"
                         />
-                        <!--Text="{Binding Path=Textbox, Mode=TwoWay, Converter={x:Static RstyxConverters:ConverterProvider.DebugConverter}}"-->
+                        <!--Text="{Binding Path=Textbox, Mode=TwoWay, Converter={x:Static RstyxUtils:ConverterProvider.DebugConverter}}"-->
                 </DockPanel>
                 
             </StackPanel>
@@ -351,17 +356,17 @@
                 <Cinch:CircularProgressBar />
             </Viewbox>-->
             
-            <RstyxControls:EditorSelector Name="EditorCombo2" />
+            <RstyxUtils:EditorSelector Name="EditorCombo2" />
             
-            <RstyxControls:RadioButtonList
-                Name="TestRadioButtonList" ItemsSource="{Binding Source={x:Static RstyxUtilsApps:AppUtils.AvailableEditors}, Mode=OneWay}"
+            <RstyxUtils:RadioButtonList
+                Name="TestRadioButtonList" ItemsSource="{Binding Source={x:Static RstyxUtils:AppUtils.AvailableEditors}, Mode=OneWay}"
                 DisplayMemberPath="Value.DisplayName"
                 SelectedValuePath="Key" 
                 DockPanel.Dock="Left" Margin="5" >
                 <!--SelectedValue="{Binding Path=MetaData.SiteDataPool.ActiveSiteID, Mode=TwoWay}"
                 SelectedValuePath="[Key]"
                 IsSynchronizedWithCurrentItem="true"-->
-            </RstyxControls:RadioButtonList>
+            </RstyxUtils:RadioButtonList>
             
             <DockPanel DockPanel.Dock="Right">
                     <!--<TextBlock
@@ -387,18 +392,23 @@
                     </ToggleButton>
                     
                     <!--<StackPanel>
-                    <RstyxControls:LooseExpanderToggle
+                    <RstyxUtils:LooseExpanderToggle
                         Name="TestToggle"
                         ExpandDirection="Right"
                         Target="ToolBar1"
                         >
-                    </RstyxControls:LooseExpanderToggle>
+                    </RstyxUtils:LooseExpanderToggle>
                     </StackPanel>-->
                     
-                    <ToolBar Height="37" Name="ToolBar1" Width="164" Visibility="Visible" >
+                    <ToolBar Height="50" Name="ToolBar1" Width="164" Visibility="Visible" >
                         <Button Content="Button" Width="50"/>
                         <ToggleButton Content="TB"/>
                     </ToolBar>
+                    <ComboBox x:Name="comboBox">
+                        <ComboBoxItem>ComboBox Item #1</ComboBoxItem>
+                        <ComboBoxItem IsSelected="True">ComboBox Item #2</ComboBoxItem>
+                        <ComboBoxItem>ComboBox Item #3</ComboBoxItem>
+                    </ComboBox>
                 
                 <!--xmlns:Ribbon="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon"-->
                 <!--<Ribbon:RibbonToggleButton Height="28" Name="RibbonToggleButton1" Width="38" Content="RTB" IsChecked="True" />-->
@@ -406,14 +416,15 @@
             
             
             <DockPanel>
-                <Label Target="{Binding ElementName=ValidatingTextBox1}" Content="Test Double"/>
+                
+                <!--<Label Target="{Binding ElementName=ValidatingTextBox1}" Content="Test Double"/>
                 <TextBox
                     Name="ValidatingTextBox1"
                     Text="{Binding Path=ValidatingProperty1, Mode=TwoWay, StringFormat=\{0:0.0\}, NotifyOnValidationError=True, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"
                     Width="100"
-                    />
+                    />-->
                     <!--Text="{Binding Path=ValidatingProperty, Mode=TwoWay, StringFormat=\{0:0.0\}, NotifyOnValidationError=True, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged"-->
-                    <!--Text="{Binding Path=Textbox, Mode=TwoWay, Converter={x:Static RstyxConverters:ConverterProvider.DebugConverter}}"-->
+                    <!--Text="{Binding Path=Textbox, Mode=TwoWay, Converter={x:Static RstyxUtils:ConverterProvider.DebugConverter}}"-->
                     
                 <Label Target="{Binding ElementName=ValidatingTextBox2}" Content="Test Kilometer"/>
                 <TextBox
@@ -429,7 +440,7 @@
             <!--</Expander>-->
             
             <Expander Name="IconsPanel" Header="Icon Galerie" Margin="3" IsExpanded="True">
-                <RstyxControls:AvailableIcons />
+                <RstyxUtils:AvailableIcons />
             </Expander>
         </DockPanel>
         

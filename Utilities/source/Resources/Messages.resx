@@ -1067,4 +1067,8 @@
     <value>Die Datei ist keine gültige Verm.esn-Punktdatei (ungültige Dateigröße): %s</value>
     <comment>File Name: String</comment>
   </data>
+  <data name="UIResources_ErrorLoadingAppresources" xml:space="preserve">
+    <value>Anwendungsweite Ressorcen konnten nicht bereitgestellt werden (%s).</value>
+    <comment>Resource URI</comment>
+  </data>
 </root>
