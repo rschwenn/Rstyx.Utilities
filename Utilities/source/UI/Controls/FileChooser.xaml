@@ -69,10 +69,6 @@ FileChooser
             
             <!-- This Style inherits the current (global) Style for this type. -->
             <Style x:Key="FilePathTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-                
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Padding"  Value="3" />
-                
                 <Style.Triggers>
                     <MultiDataTrigger>
                       <MultiDataTrigger.Conditions>
@@ -94,8 +90,6 @@ FileChooser
                     </MultiDataTrigger>
                 </Style.Triggers>
             </Style>
-            <Style x:Key="FilePathTextBoxGridStyle" BasedOn="{StaticResource {x:Type TextBox}}">
-            </Style>
             
         </ResourceDictionary>
     </UserControl.Resources>
@@ -109,7 +103,8 @@ FileChooser
             ToolTip="Datei im Editor bearbeiten"
             Visibility="{Binding Path=EditButtonVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}"
             DockPanel.Dock="Right"
-            Margin="3,0,0,0" 
+            Margin="3,0,0,0"
+            Padding="1"
             TabIndex="3" 
             />
         <Button Name="FileDialogButton" 
@@ -119,6 +114,7 @@ FileChooser
             ToolTip="Dateiauswahl-Dialog"
             DockPanel.Dock="Right"
             Margin="3,0,0,0" 
+            Padding="1"
             TabIndex="2" 
             />
             
@@ -137,6 +133,7 @@ FileChooser
                 TabIndex="1"
                 Background="Transparent"
                 Style="{StaticResource FilePathTextBoxStyle}"
+                Margin="0"
                 >
             </TextBox>
             <TextBox Name="StyleProxy" Visibility="Collapsed" />

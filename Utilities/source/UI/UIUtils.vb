@@ -43,19 +43,20 @@ Namespace UI
              ''' <returns> The current WFP application's main window, or Null. </returns>
             Public Shared Function getMainWindow() As System.Windows.Window
                 SyncLock (SyncHandle)
-                    Dim AppMainWindow  As System.Windows.Window = Nothing
-                    Dim AppType  As String = String.Empty
+                    Dim AppMainWindow As System.Windows.Window = Nothing
+                    Dim AppType       As String = String.Empty
+                    Dim ModuleName    As String = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName
                     
-                    If (System.Windows.Application.Current isNot Nothing) then
+                    If (System.Windows.Application.Current IsNot Nothing) then
                         ' WPF Application (standalone or XPAB)
-                        If (System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName = "PresentationHost.exe") then
+                        If (ModuleName = "PresentationHost.exe") then
                             ' WPF Browser Application
                             AppType = "XPAB"
                         Else
                             ' WPF standalone Application
                             AppType = "WPF"
                             AppMainWindow = System.Windows.Application.Current.MainWindow
-                            If (Not AppMainWindow.IsInitialized) then
+                            If (Not AppMainWindow?.IsInitialized) then
                                 AppMainWindow = Nothing
                             End If
                         End If

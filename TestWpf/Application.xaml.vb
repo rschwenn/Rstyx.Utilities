@@ -34,7 +34,7 @@ Class Application
     ''' <param name="sender"> Event source </param>
     ''' <param name="e">      Event arguments </param>
     Private Sub Application_Startup(sender As Object, e As StartupEventArgs) Handles Me.Startup
-        Rstyx.Utilities.UI.Resources.UIResources.EnsureDefaultApplicationResources()
+        Rstyx.Utilities.UI.Resources.UIResources.EnsureThemePatchesApplied()
     End Sub
 End Class
 

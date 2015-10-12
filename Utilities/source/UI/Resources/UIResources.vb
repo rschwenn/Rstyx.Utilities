@@ -20,7 +20,7 @@ Namespace UI.Resources
             Private Shared _Icons                   As ResourceDictionary = Nothing
             Private Shared _IconRectangles          As Dictionary(Of String, System.Windows.Shapes.Rectangle) = Nothing
             
-            Private Shared AppResourcesLoaded       As Boolean = False
+            Private Shared ThemePatchesLoaded       As Boolean = False
             
             Private Const IconBrushSuffix           As String = "_IconBrush"
             
@@ -105,35 +105,28 @@ Namespace UI.Resources
         
         #Region "Public Methods"
             
-            ''' <summary> Ensures that some default application resources has been loaded and merged into <c>Application.Current.Resources.MergedDictionaries</c>. </summary>
+            ''' <summary> Ensures that theme patches has been applied at application resources level. </summary>
              ''' <remarks>
              ''' This should always work, even if WPF is hosted in a none WPF application.
              ''' </remarks>
-            Public Shared Sub EnsureDefaultApplicationResources()
-                Dim CurrentUri As String = "???"
+            Public Shared Sub EnsureThemePatchesApplied()
                 Try
-                    ' Ensure Application object exists (in case WPF is hosted in none WPF app).
-                    If (Application.Current Is Nothing) Then
-                        Dim tmp As Application = New Application()
-                        Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown
-                    End If
+                    EnsureApplicationObjectExists()
                     
                     ' Load and merge desired application resources.
-                    If (Not AppResourcesLoaded) Then
-                        CurrentUri = My.Settings.UIResources_ThemePatchGeneralUri
-                        Dim u As Uri = New Uri(CurrentUri, UriKind.Relative)
+                    If (Not ThemePatchesLoaded) Then
+                        Dim u As Uri = New Uri(My.Settings.UIResources_ThemePatchGeneralUri, UriKind.Relative)
                         Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
                         
                         ' For OS greater than Windows 7:
                         Dim OsVersion As Double
                         Double.TryParse(Environment.OSVersion.Version.Major & "." & Environment.OSVersion.Version.Minor, OsVersion)
                         If (OsVersion > 6.1) Then
-                            CurrentUri = My.Settings.UIResources_ThemePatchWin8Uri
-                            u  = New Uri(CurrentUri, UriKind.Relative)
+                            u = New Uri(My.Settings.UIResources_ThemePatchWin8Uri, UriKind.Relative)
                             Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
                         End If
                         
-                        AppResourcesLoaded = True
+                        ThemePatchesLoaded = True
                     End If
                 Catch ex As Exception
                     Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorLoadingAppresources, ex.Message))
@@ -144,6 +137,18 @@ Namespace UI.Resources
         #End Region
         
         #Region "Private Methods"
+            
+            ''' <summary> Ensures that <c>Application.Current</c> exists (even in if WPF is hosted in a none WPF application). </summary>
+             ''' <remarks>
+             ''' If <see cref="Application.Current"/> doesn't exist (none WPF application), it will be created
+             ''' and it's <see cref="Application.ShutdownMode"/> is set to <see cref="ShutdownMode.OnExplicitShutdown"/>.
+             ''' </remarks>
+            Private Shared Sub EnsureApplicationObjectExists()
+                If (Application.Current Is Nothing) Then
+                    Dim tmp As Application = New Application()
+                    Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown
+                End If
+            End Sub
             
             ''' <summary> Creates a rectangle filled with an icon of the given resource name from <see cref="Icons"/>. </summary>
              ''' <param name="ResourceName"> Resource name of the DrawingBrush resource in <see cref="Icons"/> (The "_IconBrush" suffix can be omitted). </param>
