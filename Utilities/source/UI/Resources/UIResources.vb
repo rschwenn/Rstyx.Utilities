@@ -115,6 +115,7 @@ Namespace UI.Resources
                     
                     ' Load and merge desired application resources.
                     If (Not ThemePatchesLoaded) Then
+                        
                         Dim u As Uri = New Uri(My.Settings.UIResources_ThemePatchGeneralUri, UriKind.Relative)
                         Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
                         

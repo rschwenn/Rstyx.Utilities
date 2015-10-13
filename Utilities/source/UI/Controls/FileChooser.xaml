@@ -125,7 +125,8 @@ FileChooser
                 Text="{Binding Path=Watermark, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl, AncestorLevel=1}}"
                 Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
                 Visibility="{Binding ElementName=FilePathTextBox, Path=Text.IsEmpty, Converter={x:Static RstyxConverters:ConverterProvider.VisibleIfTrueConverter}}"
-                Margin="5,2"
+                Margin="0"
+                Padding="{Binding ElementName=FilePathTextBox, Path=Padding}"
                 >
             </TextBlock>
             <TextBox Name="FilePathTextBox" 

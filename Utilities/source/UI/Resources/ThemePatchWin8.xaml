@@ -71,6 +71,10 @@ Patches global theme for Windows 8
         </Setter>
     </Style>
     
+    <Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource {x:Type GroupBox}}">
+        <Setter Property="BorderBrush" Value="#FF8A8A8A" />
+    </Style>
+    
 </ResourceDictionary>
 
 <!-- for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:-->

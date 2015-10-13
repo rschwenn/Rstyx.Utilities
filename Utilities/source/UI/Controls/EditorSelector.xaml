@@ -37,6 +37,7 @@ EditorSelector
         SelectedValuePath="Key"
         DisplayMemberPath="Value.DisplayName"
         Style="{StaticResource EditorComboBoxDisabler}"
+        Margin="0"
         >
     </ComboBox>
 

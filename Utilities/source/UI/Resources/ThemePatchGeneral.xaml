@@ -4,17 +4,25 @@ Patches global theme for my general needs.
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dummy="clr-namespace:Rstyx.Utilities.UI.Controls;assembly="
+    xmlns:RstyxUtils="http://schemas.rstyx.de/wpf/Utils"
     >
     
     <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Type CheckBox}}" >
-        <Setter Property="HorizontalAlignment" Value="Center" />
+        <!--<Setter Property="HorizontalAlignment" Value="Center" *** NO!!!  />-->
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,2" />
     </Style>
     
     <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource {x:Type ComboBox}}" >
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Margin"  Value="0,2" />
+        <Setter Property="Margin" Value="0,2" />
+    </Style>
+    
+    <Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource {x:Type GroupBox}}">
+        <Setter Property="Padding" Value="3,5,3,3" />
+        <Setter Property="Margin"  Value="5,8,5,5" />
     </Style>
     
     <Style TargetType="{x:Type Label}" BasedOn="{StaticResource {x:Type Label}}">
@@ -30,6 +38,11 @@ Patches global theme for my general needs.
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="4,2" />
         <Setter Property="Margin"  Value="0,2" />
+    </Style>
+    
+    
+    <Style TargetType="{x:Type RstyxUtils:FileChooser}" >
+        <Setter Property="Margin" Value="0,2" />
     </Style>
     
 </ResourceDictionary>

@@ -256,7 +256,7 @@
             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}" >
                 <Setter Property="VerticalContentAlignment" Value="Top" />
             </Style>
-            
+
         </ResourceDictionary>
     </Window.Resources>
     
@@ -308,7 +308,6 @@
                     Name="FileChoser1" 
                     FontSize="15" 
                     DockPanel.Dock="Bottom" 
-                    Margin="3" 
                     TabIndex="11"
                     InputFilePath="X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test.kv"
                     ChangesWorkingDir="true"
