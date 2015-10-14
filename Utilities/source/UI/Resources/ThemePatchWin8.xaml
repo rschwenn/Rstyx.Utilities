@@ -72,7 +72,7 @@ Patches global theme for Windows 8
     </Style>
     
     <Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource {x:Type GroupBox}}">
-        <Setter Property="BorderBrush" Value="#FF8A8A8A" />
+        <Setter Property="BorderBrush" Value="#FF999393" />
     </Style>
     
 </ResourceDictionary>
