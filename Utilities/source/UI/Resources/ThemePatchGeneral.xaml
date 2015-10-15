@@ -8,6 +8,17 @@ Patches global theme for my general needs.
     xmlns:RstyxUtils="http://schemas.rstyx.de/wpf/Utils"
     >
     
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}" >
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Margin"  Value="3" />
+        
+        <Style.Triggers>
+            <DataTrigger Value="False" Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled}">
+                <Setter Property="Opacity" Value="0.5" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    
     <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource {x:Type CheckBox}}" >
         <!--<Setter Property="HorizontalAlignment" Value="Center" *** NO!!!  />-->
         <Setter Property="VerticalAlignment" Value="Center" />

@@ -1,0 +1,101 @@
+<!-- 
+Style pool.
+    => Should be merged to resources in every single XAML:  <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/Styles.xaml" />
+    
+    - Shouldn't be used as shared resource because of interferences, when a single instance of i.e. "ProgressBar" is tried to use in more than one view.
+      - Example for shared merge:  <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/Styles.xaml" />)
+      - Example for direct acces of shared resource (without the need of merging a ResourceDictionary):
+        <ProgressBar Style="{Binding Path=[ProgressBarDefault], Source={x:Static RstyxControls:UIResources.Styles}}" />
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    
+    xmlns:Cinch="clr-namespace:Cinch;assembly=Cinch.WPF"
+    xmlns:RstyxControls="clr-namespace:Rstyx.Utilities.UI.Controls;assembly="
+    xmlns:RstyxConverters="clr-namespace:Rstyx.Utilities.UI.Binding.Converters;assembly="
+    >
+    
+    <!-- ProgressBar with my favourite behavior:
+         - Value bound to IStatusIndicator.Progress
+         - Value=0   => bar disappears
+         - Value=100 => Color changes to gray
+    -->
+    <Style x:Key="ProgressBarDefault" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}" >
+        
+        <Setter Property="Value"  Value="{Binding Path=Progress, Mode=OneWay}" />
+        <Setter Property="Width"  Value="120" />
+        <Setter Property="Height" Value="15" />
+        <Setter Property="Margin" Value="0" />
+        
+        <Style.Triggers>
+            <!-- If value=0: Hide the progress bar. -->
+            <Trigger Property="Value" Value="0">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            
+            <!-- If value=100: Set foreground color to gray after a delay. -->
+            <Trigger Property="Value" Value="100">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!-- StatusBarItem incl. default ProgressBar -->
+    <Style x:Key="SBI_ProgressBarDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
+        
+        <Setter Property="Padding" Value="3,0,3,0" />
+        
+        <Setter Property="Content">
+            <Setter.Value>
+                <ProgressBar Style="{StaticResource ProgressBarDefault}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- StatusBarItem incl. default EditorSelector -->
+    <Style x:Key="SBI_EditorSelectorDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
+        
+        <Setter Property="Padding" Value="3,0,2,0" />
+        
+        <Setter Property="Content">
+            <Setter.Value>
+                <RstyxControls:EditorSelector Opacity="0.85" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- StatusBarItem incl. default StatusText -->
+    <Style x:Key="SBI_StatusTextDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
+        <Setter Property="Padding" Value="8,0,8,0" />
+        <Setter Property="Content">
+            <Setter.Value>
+                <TextBlock
+                    Text="{Binding Path=StatusText, Mode=OneWay}"
+                    ToolTip="{Binding Path=StatusTextToolTip, Mode=OneWay}"
+                    >
+                 </TextBlock>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- StatusBarItem incl. default BusySignal (CircularProgressBar) -->
+    <Style x:Key="SBI_BusySignalDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
+        
+        <Setter Property="Padding" Value="3,0,3,0" />
+        
+        <Setter Property="Content">
+            <Setter.Value>
+                <Viewbox Width="18" Height="18"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
+                    <Cinch:CircularProgressBar Visibility="{Binding Path=IsInProgress, Converter={x:Static RstyxConverters:ConverterProvider.VisibleIfTrueConverter}}" />
+                </Viewbox>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    
+</ResourceDictionary>
+
+<!-- for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:-->

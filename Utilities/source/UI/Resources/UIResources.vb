@@ -19,8 +19,10 @@ Namespace UI.Resources
             
             Private Shared _Icons                   As ResourceDictionary = Nothing
             Private Shared _IconRectangles          As Dictionary(Of String, System.Windows.Shapes.Rectangle) = Nothing
+            Private Shared _Styles                  As ResourceDictionary = Nothing
             
             Private Shared ThemePatchesLoaded       As Boolean = False
+            Private Shared AppStylesLoaded          As Boolean = False
             
             Private Const IconBrushSuffix           As String = "_IconBrush"
             
@@ -101,9 +103,64 @@ Namespace UI.Resources
                 End Get
             End Property
             
+            ''' <summary> Returns the ResourceDictionary with WPF Styles. </summary>
+             ''' <remarks> Example for WPF usage inside an XAML object element tag: <c>x:Static Member="RstyxUtils:UIResources.Styles"</c>. </remarks>
+            Public Shared ReadOnly Property Styles() As ResourceDictionary
+                Get
+                    SyncLock (SyncHandle)
+                        If (_Styles Is Nothing) Then
+                            Try
+                                Logger.logDebug("Styles [Get]: Read IconResources.xaml.")
+                                Dim u As Uri = New Uri(My.Settings.UIResources_AppStylesUri, UriKind.Relative)
+                                _Styles = CType(Application.LoadComponent(u), ResourceDictionary)
+                                Logger.logDebug("Styles [Get]: Icon resources initialized.")
+                            Catch ex As Exception 
+                                Logger.logError(sprintf(Rstyx.Utilities.Resources.Messages.Global_ResourceNotFound, My.Settings.UIResources_AppStylesUri))
+                            End Try 
+                        End If
+                        Return _Styles
+                    End SyncLock
+                End Get
+            End Property
+            
+            ''' <summary> Gets a style from shared resoursec <see cref="Styles"/>. </summary>
+             ''' <param name="ResourceName"> Resource name of the Style resource in <see cref="Styles"/>. </param>
+             ''' <returns>                   The requested style, or <see langword="null"/>. </returns>
+            Public Shared ReadOnly Property Style(byVal ResourceName As String) As System.Windows.Style
+                Get
+                    Dim RetValue As System.Windows.Style = Nothing
+                    If (Styles.Contains(ResourceName)) Then
+                        RetValue = Styles.Item(ResourceName)
+                    End If
+                    Return RetValue
+                End Get
+            End Property
+            
         #End Region
         
         #Region "Public Methods"
+            
+            ''' <summary> Ensures that styles library has been loaded at application resources level. </summary>
+             ''' <remarks>
+             ''' This should always work, even if WPF is hosted in a none WPF application.
+             ''' </remarks>
+            Public Shared Sub EnsureAppStylesLoaded()
+                Try
+                    EnsureApplicationObjectExists()
+                    
+                    ' Load and merge desired application resources.
+                    If (Not AppStylesLoaded) Then
+                        
+                        Dim u As Uri = New Uri(My.Settings.UIResources_AppStylesUri, UriKind.Relative)
+                        Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
+                        
+                        AppStylesLoaded = True
+                    End If
+                Catch ex As Exception
+                    Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.UIResources_ErrorLoadingAppresources, ex.Message))
+                    Logger.logDebug(ex.StackTrace)
+                End Try
+            End Sub
             
             ''' <summary> Ensures that theme patches has been applied at application resources level. </summary>
              ''' <remarks>
@@ -116,6 +173,7 @@ Namespace UI.Resources
                     ' Load and merge desired application resources.
                     If (Not ThemePatchesLoaded) Then
                         
+                        ' General theme.
                         Dim u As Uri = New Uri(My.Settings.UIResources_ThemePatchGeneralUri, UriKind.Relative)
                         Application.Current.Resources.MergedDictionaries.Add(CType(Application.LoadComponent(u), ResourceDictionary))
                         
