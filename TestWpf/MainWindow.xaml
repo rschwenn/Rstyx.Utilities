@@ -27,7 +27,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/IconResources.xaml" />
-                <!--<ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/GlobalStyles_1.xaml" />-->
+                <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/Styles.xaml" />
                 <!--<ResourceDictionary Source="/PresentationFramework.Aero, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Aero.NormalColor.xaml" />-->
                 <!--<ResourceDictionary Source="/PresentationFramework.Classic, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Classic.xaml" />-->
                 <!--<ResourceDictionary Source="/PresentationFramework.Luna, Version=4.0.30319.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, ProcessorArchitecture=MSIL;component/themes/Luna.Homestead.xaml" />-->
@@ -443,7 +443,7 @@
             </Expander>
         </DockPanel>
         
-        <StatusBar Grid.Row="3" >
+        <StatusBar Grid.Row="3">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -451,35 +451,78 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
-            <StatusBarItem Grid.Column="0">
+            
+            <!-- Show LoggingConsole -->
+            <StatusBarItem Grid.Column="0" Style="{StaticResource SBI_LoggingConsoleDefault}" />
+            <!--<StatusBarItem Grid.Column="0"
+                Padding="3,0,3,0"
+                >
+                <Hyperlink TextDecorations="None"
+                    Command="{Binding Path=ShowFloatingConsoleViewCommand, Source={x:Static Logging:LogBox.Instance}}" 
+                    ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Caption}" 
+                    >
+                    <Viewbox
+                        Stretch="Uniform"
+                        StretchDirection="Both"
+                        Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=StatusBarItem, AncestorLevel=1}, Mode=OneWay}"
+                        >
+                        <Rectangle
+                            Fill="{Binding Path=ShowFloatingConsoleViewCommand.IconBrush, Source={x:Static Logging:LogBox.Instance}}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Stretch="UniformToFill"
+                            Height="10"
+                            Width="10"
+                            >
+                         </Rectangle>
+                    </Viewbox>
+                </Hyperlink>
+            </StatusBarItem>-->
+            <!--<StatusBarItem Grid.Column="0"
+                Padding="2,0,2,0"
+                Margin="0"
+                >
+                    <Viewbox
+                        Stretch="Uniform"
+                        StretchDirection="Both"
+                        Margin="0" 
+                        >
+                <Button
+                    Command="{Binding Path=ShowFloatingConsoleViewCommand, Source={x:Static Logging:LogBox.Instance}}" 
+                    ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Caption}" 
+                    Margin="0" 
+                    Padding="0"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    >
+                            <Rectangle
+                                Stretch="UniformToFill"
+                                Fill="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Button, AncestorLevel=1}, Path=Command.IconBrush}"
+                                Width="10"
+                                Height="10"
+                                >
+                            </Rectangle>
+                </Button>
+                    </Viewbox>
+            </StatusBarItem>-->
+            
+            <StatusBarItem Grid.Column="1">
                 <TextBlock Text="{Binding Path=StatusText, Mode=OneWay}" />
             </StatusBarItem>
-            
-            <!-- Circular Progress Bar -->
-            <!--<StatusBarItem Grid.Column="1"
-                Padding="3,0,3,3"
-                >
-                <Viewbox Width="18" Height="18"
-                    HorizontalAlignment="Center" 
-                    VerticalAlignment="Center">
-                    <Cinch:CircularProgressBar />
-                </Viewbox>
-            </StatusBarItem>-->
             
             <!-- Progress Bar -->
             <StatusBarItem Grid.Column="2"
                 Padding="3,0,3,3"
                 >
-                <ProgressBar Value="30" Width="130" Height="18"/>
-                <!--<ViewBox><ProgressBar Value="30" Width="130" /></ViewBox>-->
+                <ProgressBar Value="30" Width="130" Height="13"/>
             </StatusBarItem>
             
             <StatusBarItem Grid.Column="3">

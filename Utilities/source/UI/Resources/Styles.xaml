@@ -12,6 +12,7 @@ Style pool.
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     
     xmlns:Cinch="clr-namespace:Cinch;assembly=Cinch.WPF"
+    xmlns:Logging="clr-namespace:Rstyx.LoggingConsole;assembly=Rstyx.LoggingConsole"
     xmlns:RstyxControls="clr-namespace:Rstyx.Utilities.UI.Controls;assembly="
     xmlns:RstyxConverters="clr-namespace:Rstyx.Utilities.UI.Binding.Converters;assembly="
     >
@@ -20,12 +21,12 @@ Style pool.
          - Value bound to IStatusIndicator.Progress
          - Value=0   => bar disappears
          - Value=100 => Color changes to gray
-    -->
+         -->
     <Style x:Key="ProgressBarDefault" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}" >
         
         <Setter Property="Value"  Value="{Binding Path=Progress, Mode=OneWay}" />
         <Setter Property="Width"  Value="120" />
-        <Setter Property="Height" Value="15" />
+        <Setter Property="Height" Value="13" />
         <Setter Property="Margin" Value="0" />
         
         <Style.Triggers>
@@ -40,6 +41,7 @@ Style pool.
             </Trigger>
         </Style.Triggers>
     </Style>
+    
     
     <!-- StatusBarItem incl. default ProgressBar -->
     <Style x:Key="SBI_ProgressBarDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
@@ -65,6 +67,40 @@ Style pool.
         </Setter>
     </Style>
     
+    <!-- StatusBarItem incl. default LoggingConsole access -->
+    <!-- *** CAUTION: This style requires a default TextBlock.Padding="0"! *** -->
+    <Style x:Key="SBI_LoggingConsoleDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
+        
+        <Setter Property="Padding" Value="3,0,3,0" />
+        <Setter Property="Margin" Value="0" />
+        <!--<Setter Property="MaxHeight" Value="45" />-->
+        
+        <Setter Property="Content">
+            <Setter.Value>
+                <Hyperlink TextDecorations="None"
+                    Command="{Binding Path=ShowFloatingConsoleViewCommand, Source={x:Static Logging:LogBox.Instance}}" 
+                    ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Caption}"
+                    >
+                    <Viewbox
+                        Stretch="Uniform"
+                        StretchDirection="Both"
+                        Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=StatusBarItem, AncestorLevel=1}, Mode=OneWay}"
+                        >
+                        <Rectangle
+                            Fill="{Binding Path=ShowFloatingConsoleViewCommand.IconBrush, Source={x:Static Logging:LogBox.Instance}}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Stretch="UniformToFill"
+                            Height="10"
+                            Width="10"
+                            >
+                         </Rectangle>
+                    </Viewbox>
+                </Hyperlink>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <!-- StatusBarItem incl. default StatusText -->
     <Style x:Key="SBI_StatusTextDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         <Setter Property="Padding" Value="8,0,8,0" />
@@ -79,7 +115,7 @@ Style pool.
         </Setter>
     </Style>
     
-    <!-- StatusBarItem incl. default BusySignal (CircularProgressBar) -->
+    <!-- StatusBarItem incl. default BusySignal (CircularProgressBar / Width="18" Height="18") -->
     <Style x:Key="SBI_BusySignalDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         
         <Setter Property="Padding" Value="3,0,3,0" />
