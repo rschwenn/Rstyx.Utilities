@@ -22,12 +22,7 @@ Style pool.
          - Value=0   => bar disappears
          - Value=100 => Color changes to gray
          -->
-    <Style x:Key="ProgressBarDefault" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}" >
-        
-        <Setter Property="Value"  Value="{Binding Path=Progress, Mode=OneWay}" />
-        <Setter Property="Width"  Value="120" />
-        <Setter Property="Height" Value="13" />
-        <Setter Property="Margin" Value="0" />
+    <Style x:Key="ProgressBarDefaultTriggers" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}" >
         
         <Style.Triggers>
             <!-- If value=0: Hide the progress bar. -->
@@ -42,15 +37,34 @@ Style pool.
         </Style.Triggers>
     </Style>
     
+    <Style x:Key="ProgressBarDefault" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ProgressBarDefaultTriggers}" >
+        
+        <Setter Property="Value"  Value="{Binding Path=Progress, Mode=OneWay}" />
+        <Setter Property="Width"  Value="120" />
+        <Setter Property="Height" Value="13" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+    
     
     <!-- StatusBarItem incl. default ProgressBar -->
     <Style x:Key="SBI_ProgressBarDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         
+        <Setter Property="Width"  Value="120" />
+        <Setter Property="Margin" Value="3" />
         <Setter Property="Padding" Value="3,0,3,0" />
         
         <Setter Property="Content">
             <Setter.Value>
-                <ProgressBar Style="{StaticResource ProgressBarDefault}" />
+                <Viewbox
+                    Stretch="Fill" 
+                    StretchDirection="Both" 
+                    Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=StatusBarItem, AncestorLevel=1}, Mode=OneWay}"
+                    >
+                    <ProgressBar Style="{StaticResource ProgressBarDefaultTriggers}"
+                        Value="{Binding Path=Progress, Mode=OneWay}"
+                        >
+                    </ProgressBar>
+                </Viewbox>
             </Setter.Value>
         </Setter>
     </Style>
@@ -107,6 +121,7 @@ Style pool.
         <Setter Property="Content">
             <Setter.Value>
                 <TextBlock
+                    Padding="0,2,0,4"
                     Text="{Binding Path=StatusText, Mode=OneWay}"
                     ToolTip="{Binding Path=StatusTextToolTip, Mode=OneWay}"
                     >
