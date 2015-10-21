@@ -16,9 +16,8 @@ Style pool.
     xmlns:RstyxControls="clr-namespace:Rstyx.Utilities.UI.Controls;assembly="
     xmlns:RstyxConverters="clr-namespace:Rstyx.Utilities.UI.Binding.Converters;assembly="
     >
-    
-    <!-- ProgressBar with my favourite behavior:
-         - Value bound to IStatusIndicator.Progress
+
+    <!-- My favourite triggers for a ProgressBar:
          - Value=0   => bar disappears
          - Value=100 => Color changes to gray
          -->
@@ -36,7 +35,12 @@ Style pool.
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
+    <!-- ProgressBar with my favourite behavior:
+         - Value bound to IStatusIndicator.Progress
+         - Value=0   => bar disappears
+         - Value=100 => Color changes to gray
+         -->
     <Style x:Key="ProgressBarDefault" TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource ProgressBarDefaultTriggers}" >
         
         <Setter Property="Value"  Value="{Binding Path=Progress, Mode=OneWay}" />
@@ -44,9 +48,9 @@ Style pool.
         <Setter Property="Height" Value="13" />
         <Setter Property="Margin" Value="0" />
     </Style>
-    
-    
-    <!-- StatusBarItem incl. default ProgressBar -->
+
+
+    <!-- StatusBarItem incl. default ProgressBar (Auto-Height) -->
     <Style x:Key="SBI_ProgressBarDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         
         <Setter Property="Width"  Value="120" />
@@ -68,8 +72,8 @@ Style pool.
             </Setter.Value>
         </Setter>
     </Style>
-    
-    <!-- StatusBarItem incl. default EditorSelector -->
+
+    <!-- StatusBarItem incl. default EditorSelector (Auto-Height) -->
     <Style x:Key="SBI_EditorSelectorDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         
         <Setter Property="Padding" Value="3,0,2,0" />
@@ -80,8 +84,8 @@ Style pool.
             </Setter.Value>
         </Setter>
     </Style>
-    
-    <!-- StatusBarItem incl. default LoggingConsole access -->
+
+    <!-- StatusBarItem incl. default LoggingConsole access (Auto-Height) -->
     <!-- *** CAUTION: This style requires a default TextBlock.Padding="0"! *** -->
     <Style x:Key="SBI_LoggingConsoleDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         
@@ -115,7 +119,7 @@ Style pool.
         </Setter>
     </Style>
     
-    <!-- StatusBarItem incl. default StatusText -->
+    <!-- StatusBarItem incl. default StatusText (Auto-Height) -->
     <Style x:Key="SBI_StatusTextDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         <Setter Property="Padding" Value="8,0,8,0" />
         <Setter Property="Content">
