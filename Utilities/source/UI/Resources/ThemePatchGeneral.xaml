@@ -41,6 +41,15 @@ Patches global theme for my general needs.
         <Setter Property="Padding" Value="5,3" />
     </Style>
     
+    <Style TargetType="{x:Type TabControl}" BasedOn="{StaticResource {x:Type TabControl}}" >
+        <Setter Property="Background"       Value="{x:Null}" />
+        <Setter Property="BorderBrush"      Value="LightGray" />
+    </Style>
+    
+    <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}" >
+        <Setter Property="Padding"  Value="10,4" />
+    </Style>
+    
     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="Padding" Value="0" />
         <Setter Property="VerticalAlignment" Value="Center" />
