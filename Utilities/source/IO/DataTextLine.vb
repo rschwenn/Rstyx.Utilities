@@ -3,6 +3,7 @@ Imports System
 Imports System.Collections.ObjectModel
 Imports System.Globalization
 Imports System.Runtime.InteropServices
+Imports System.Text.RegularExpressions
 
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.StringUtils
@@ -676,9 +677,10 @@ Namespace IO
             End Sub
             
             ''' <summary> Splits <c>Me.Data</c> into words separated by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
-             ''' <returns> The words as <see cref="DataField"/>s. </returns>
+             ''' <returns> The words as <see cref="DataFieldSource"/>'s. </returns>
              ''' <remarks></remarks>
             Private Function getWords() As Collection(Of DataFieldSource)
+                
                 Dim RetValue As New Collection(Of DataFieldSource)
                 
                 If (Me.HasData) Then
@@ -687,9 +689,9 @@ Namespace IO
                     If (Char.IsWhiteSpace(Me.FieldDelimiter)) Then
                         ' Awk-like splitting.
                         WordRegEx = "\S+"
-                        Dim Matches As System.Text.RegularExpressions.MatchCollection = Me.Data.GetMatches(WordRegEx)
+                        Dim Matches As MatchCollection = Me.Data.GetMatches(WordRegEx)
                         
-                        For Each Match As System.Text.RegularExpressions.Match In Matches
+                        For Each Match As Match In Matches
                             RetValue.Add(New DataFieldSource(Match.Index, Match.Length, Match.Value))
                         Next
                     Else
@@ -697,29 +699,55 @@ Namespace IO
                         ' TODO: GetWords() can't recognize empty fields, because two subsequent delimiters are treated as part of field value.
                         ' ********************************************************************************************************************
                         WordRegEx = "[^" & Me.FieldDelimiter & "]+"  ' Doesn't find an empty field at line start.
-                        'WordRegEx = "[^" & Me.FieldDelimiter & "]*" ' Always find an empty field at line end, which isn't there.
                         
-                        ' Ensure last field will be considerd even if it's empty (hence Me.Data ends with delimiter).
-                        Dim DataTuned As String = Me.Data & " "
+                        ' Ensure first and last fields will be considerd even if empty (that is Me.Data starts and/or ends with delimiter).
+                        Dim DataStartsWithDelimiter As Boolean = Me.Data.StartsWith(Me.FieldDelimiter)
+                        Dim DataEndsWithDelimiter   As Boolean = Me.Data.EndsWith(Me.FieldDelimiter)
+                        Dim DataTuned               As String  = Me.Data
+                        Dim dL_Start                As Integer = 0
+                        
+                        If (DataStartsWithDelimiter) Then
+                            DataTuned = " " & DataTuned
+                            'dL_Start  = 1
+                        End If
+                        If (DataEndsWithDelimiter)   Then DataTuned = DataTuned & " "
                         
                         ' Hide masked (doubled) Delimiters.
-                        Dim MaskedDelimiter         As String = Me.FieldDelimiter & Me.FieldDelimiter
-                        Dim DoubledMaskedDelimiter  As String = "D1o2u3b4l5e6D7e8l9i0mM"
+                        Dim MaskedDelimiter         As String  = Me.FieldDelimiter & Me.FieldDelimiter
+                        Dim DoubledMaskedDelimiter  As String  = "D1o2u3b4l5e6D7e8l9i0mM"
                         Dim MaskedDelimitersCount   As Integer = 0
-                        Dim dL                      As Integer = DoubledMaskedDelimiter.Length - MaskedDelimiter.Length
+                        Dim dL_Delim                As Integer = DoubledMaskedDelimiter.Length - MaskedDelimiter.Length
                         
-                        Dim Matches As System.Text.RegularExpressions.MatchCollection = DataTuned.Replace(MaskedDelimiter, DoubledMaskedDelimiter).GetMatches(WordRegEx)
+                        Dim Matches As MatchCollection = DataTuned.Replace(MaskedDelimiter, DoubledMaskedDelimiter).GetMatches(WordRegEx)
                         
-                        ' Restore masked Delimiters, now as intended: non-masked (single).
-                        For Each Match As System.Text.RegularExpressions.Match In Matches
+                        ' Add words to return collection.
+                        For i As Integer = 0 To Matches.Count - 1
                             
-                            ' Correct source index and length because of masked delimiters.
-                            Dim LocalMaskedDelimitersCount  As Integer = Match.Value.GetMatches(DoubledMaskedDelimiter).Count
-                            Dim dIndex                      As Integer = dL * MaskedDelimitersCount
-                            Dim dLength                     As Integer = dL * LocalMaskedDelimitersCount
-                            MaskedDelimitersCount += LocalMaskedDelimitersCount
+                            Dim Match    As Match   = Matches(i)
+                            Dim WordText As String  = Nothing
+                            Dim dIndex   As Integer = dL_Start + (dL_Delim * MaskedDelimitersCount)
+                            Dim dLength  As Integer = 0
                             
-                            RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, Match.Value.Replace(DoubledMaskedDelimiter, Me.FieldDelimiter).Trim()))
+                            ' Correct value and length.
+                            If ((i = 0) AndAlso DataStartsWithDelimiter) Then
+                                dL_Start = 1
+                                WordText = String.Empty
+                                dLength  = Match.Length
+                            ElseIf ((i = (Matches.Count - 1)) AndAlso DataEndsWithDelimiter) Then
+                                WordText = String.Empty
+                                dLength  = Match.Length
+                            Else
+                                ' Change masked delimiters by single delimiters.
+                                WordText = Match.Value
+                                Dim LocalMaskedDelimitersCount As Integer = WordText.GetMatches(DoubledMaskedDelimiter).Count
+                                If (LocalMaskedDelimitersCount > 0) Then
+                                    dLength = dL_Delim * LocalMaskedDelimitersCount
+                                    MaskedDelimitersCount += LocalMaskedDelimitersCount
+                                    WordText = WordText.Replace(DoubledMaskedDelimiter, Me.FieldDelimiter).Trim()
+                                End If
+                            End If
+                            
+                            RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText))
                         Next
                     End If
                 End If

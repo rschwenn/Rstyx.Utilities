@@ -9,7 +9,7 @@ Namespace IO
         ''' <summary> The field won't be parsed at all. </summary>
         Ignore = 0
         
-        ''' <summary> The field is determined by a serial number (starting at 1), related to a list of words delimited by white space. </summary>
+        ''' <summary> The field is determined by a running number (starting at 1), related to a list of words delimited by a given delimiter. </summary>
         WordNumber = 1
         
         ''' <summary> The field is determined by a start column and a field length. </summary>
@@ -75,9 +75,9 @@ Namespace IO
                 If (Column < 0) Then Throw New System.ArgumentException("Column")
                 If (Length < 1) Then Throw New System.ArgumentException("Length")
                 
-                Me.Column      = Column
-                Me.Length      = Length
-                Me.Value = Value
+                Me.Column = Column
+                Me.Length = Length
+                Me.Value  = Value
             End Sub
             
         #End Region
@@ -229,7 +229,7 @@ Namespace IO
                     If (ColumnOrWord < 1) Then Throw New System.ArgumentException("ColumnOrWord")
                 Else
                     If (ColumnOrWord < 0) Then Throw New System.ArgumentException("ColumnOrWord")
-                    If (Length < 1) Then Throw New System.ArgumentException("Length")
+                    If (Length < 1)       Then Throw New System.ArgumentException("Length")
                 End If
                 
                 Me.Caption      = Caption

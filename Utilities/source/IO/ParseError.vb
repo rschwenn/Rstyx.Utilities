@@ -116,9 +116,9 @@ Namespace IO
                            FilePath    As String
                           )
                 If (Message.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Message")
-                If (LineNo < 1) Then Throw New System.ArgumentException("LineNo")
+                If (LineNo < 1)      Then Throw New System.ArgumentException("LineNo")
                 If (StartColumn < 0) Then Throw New System.ArgumentException("StartColumn")
-                If (EndColumn < 0) Then Throw New System.ArgumentException("EndColumn")
+                If (EndColumn < 0)   Then Throw New System.ArgumentException("EndColumn")
                 If ((StartColumn > 0) AndAlso (EndColumn <= StartColumn)) Then Throw New System.ArgumentException("EndColumn")
                 
                 Me.Level       = Level
