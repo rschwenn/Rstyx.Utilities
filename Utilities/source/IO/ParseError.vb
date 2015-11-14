@@ -40,27 +40,27 @@ Namespace IO
             End Sub
             
             ''' <summary> Creates a new instance of ParseError without source information. </summary>
-             ''' <param name="Level">       The degree of severity of the error. </param>
-             ''' <param name="Message">     The error Message. </param>
+             ''' <param name="Level">   The degree of severity of the error. </param>
+             ''' <param name="Message"> The error Message. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
-            Public Sub New(Level       As ParseErrorLevel,
-                           Message     As String
+            Public Sub New(Level   As ParseErrorLevel,
+                           Message As String
                           )
                 Me.New(Level, Message, Nothing, Nothing)
             End Sub
             
             ''' <summary> Creates a new instance of ParseError without source information. </summary>
-             ''' <param name="Level">       The degree of severity of the error. </param>
-             ''' <param name="Message">     The error Message. </param>
-             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
-             ''' <param name="FilePath">    Full path of the source file. May be <see langword="null"/>. </param>
+             ''' <param name="Level">    The degree of severity of the error. </param>
+             ''' <param name="Message">  The error Message. </param>
+             ''' <param name="Hints">    Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath"> Full path of the source file. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
-            Public Sub New(Level       As ParseErrorLevel,
-                           Message     As String,
-                           Hints       As String,
-                           FilePath    As String
+            Public Sub New(Level    As ParseErrorLevel,
+                           Message  As String,
+                           Hints    As String,
+                           FilePath As String
                           )
                 If (Message.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Message")
                 
@@ -106,7 +106,7 @@ Namespace IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is not greater than <paramref name="StartColumn"/>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is less than <paramref name="StartColumn"/>. </exception>
             Public Sub New(Level       As ParseErrorLevel,
                            LineNo      As Long,
                            StartColumn As Long,
@@ -116,10 +116,10 @@ Namespace IO
                            FilePath    As String
                           )
                 If (Message.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Message")
-                If (LineNo < 1)      Then Throw New System.ArgumentException("LineNo")
-                If (StartColumn < 0) Then Throw New System.ArgumentException("StartColumn")
-                If (EndColumn < 0)   Then Throw New System.ArgumentException("EndColumn")
-                If ((StartColumn > 0) AndAlso (EndColumn <= StartColumn)) Then Throw New System.ArgumentException("EndColumn")
+                If (LineNo < 1)              Then Throw New System.ArgumentException("LineNo")
+                If (StartColumn < 0)         Then Throw New System.ArgumentException("StartColumn")
+                If (EndColumn < 0)           Then Throw New System.ArgumentException("EndColumn")
+                If (EndColumn < StartColumn) Then Throw New System.ArgumentException("EndColumn")
                 
                 Me.Level       = Level
                 Me.LineNo      = LineNo
@@ -153,12 +153,11 @@ Namespace IO
             ''' <summary> The line number in the source file, starting at 1. </summary>
             Public ReadOnly LineNo          As Long
             
-            ''' <summary> The colulmn number in the source line determining the start of faulty string. </summary>
-             ''' <remarks> The first column is 1. Zero means "not determined". </remarks>
+            ''' <summary> The zero-based colulmn number in the source line determining the start of faulty string. </summary>
             Public ReadOnly StartColumn     As Long
             
-            ''' <summary> The colulmn number in the source line determining the end of faulty string (starting at 1). </summary>
-             ''' <remarks> Zero means "not determined". If not zero, it has to be greater than <see cref="ParseError.StartColumn"/>. </remarks>
+            ''' <summary> The zero-based colulmn number in the source line determining the end of faulty string. </summary>
+             ''' <remarks> Must not be less than <see cref="ParseError.StartColumn"/>. </remarks>
             Public ReadOnly EndColumn       As Long
             
             
@@ -195,20 +194,18 @@ Namespace IO
                                                            Optional FilePath As String = Nothing
                                                           ) As ParseError
                 Dim RetValue As ParseError
-                
                 Dim StartCol As Integer = 0
                 Dim EndCol   As Integer = 0
                 
-                ' Check 
-                    If (LineNo > 0) Then
-                        If ((SourceField IsNot Nothing) AndAlso SourceField.HasSource) Then
-                            StartCol = SourceField.Source.Column
-                            EndCol   = SourceField.Source.Column + SourceField.Source.Length
-                        End If
-                        RetValue = New ParseError(Level, LineNo, StartCol, EndCol, Message, Hints, FilePath)
-                    Else
-                        RetValue = New ParseError(Level, Message, Hints, FilePath)
+                If (LineNo > 0) Then
+                    If ((SourceField IsNot Nothing) AndAlso SourceField.HasSource) Then
+                        StartCol = SourceField.Source.Column
+                        EndCol   = SourceField.Source.Column + SourceField.Source.Length
                     End If
+                    RetValue = New ParseError(Level, LineNo, StartCol, EndCol, Message, Hints, FilePath)
+                Else
+                    RetValue = New ParseError(Level, Message, Hints, FilePath)
+                End If
                 
                 Return RetValue
             End Function

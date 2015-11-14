@@ -743,11 +743,11 @@ Namespace IO
                                 If (LocalMaskedDelimitersCount > 0) Then
                                     dLength = dL_Delim * LocalMaskedDelimitersCount
                                     MaskedDelimitersCount += LocalMaskedDelimitersCount
-                                    WordText = WordText.Replace(DoubledMaskedDelimiter, Me.FieldDelimiter).Trim()
+                                    WordText = WordText.Replace(DoubledMaskedDelimiter, Me.FieldDelimiter)
                                 End If
                             End If
                             
-                            RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText))
+                            RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText.Trim()))
                         Next
                     End If
                 End If

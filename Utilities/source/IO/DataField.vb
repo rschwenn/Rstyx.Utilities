@@ -65,15 +65,15 @@ Namespace IO
              ''' <param name="Value">  The string representing the field's value. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Value"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="Column"/> is less than Zero. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="Length"/> is less than 1. </exception>
+             ''' <exception cref="System.ArgumentException">     <paramref name="Column"/> is less than Zero. </exception>
+             ''' <exception cref="System.ArgumentException">     <paramref name="Length"/> is less than Zero. </exception>
             Public Sub New(Column As Integer,
                            Length As Integer,
                            Value  As String
                           )
                 If (Value Is Nothing) Then Throw New System.ArgumentNullException("SourceValue")
                 If (Column < 0) Then Throw New System.ArgumentException("Column")
-                If (Length < 1) Then Throw New System.ArgumentException("Length")
+                If (Length < 0) Then Throw New System.ArgumentException("Length")
                 
                 Me.Column = Column
                 Me.Length = Length
