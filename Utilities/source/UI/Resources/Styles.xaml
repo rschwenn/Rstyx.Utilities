@@ -53,10 +53,24 @@ Style pool.
     <!-- StatusBarItem incl. default ProgressBar (Auto-Height) -->
     <Style x:Key="SBI_ProgressBarDefault" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
         
+        <Setter Property="Padding" Value="3,0,3,0" />
+        
+        <Setter Property="Content">
+            <Setter.Value>
+                <ProgressBar Style="{StaticResource ProgressBarDefault}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!-- StatusBarItem incl. default ProgressBar (Auto-Height) -->
+    <!-- ONLY works as of Windows 8:  In XP and Win7 the ViewBox creates big grey ellipse and hides progressbar! -->
+    <Style x:Key="SBI_ProgressBarWin8" TargetType="{x:Type StatusBarItem}" BasedOn="{StaticResource {x:Type StatusBarItem}}" >
+
         <Setter Property="Width"  Value="120" />
         <Setter Property="Margin" Value="3" />
         <Setter Property="Padding" Value="3,0,3,0" />
-        
+
         <Setter Property="Content">
             <Setter.Value>
                 <Viewbox

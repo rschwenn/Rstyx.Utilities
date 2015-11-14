@@ -6,6 +6,7 @@ Patches global theme for Windows 8
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     >
     
+    <!-- Pretty silver button instead of dark grey FLAT. -->
     <Style TargetType="{x:Type Button}">
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
