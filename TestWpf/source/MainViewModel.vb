@@ -122,11 +122,14 @@ Public Class MainViewModel
         Public Sub TestPDF()
             
             Dim Files As New Collection(Of String)
-            Files.Add("T:\6340_1.pdf")
-            Files.Add("T:\6340_12.pdf")
-            Files.Add("T:\6340_2.pdf")
-            Files.Add("T:\Profil  km 255.2 + 9.90.pdf")
-            Files.Add("T:\Profil  km 255.2 + 76.38.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 82.30, Gleis 5500-re, Krbw Str 5544, Stütze 1.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 88.55, Gleis 5500-re, Krbw Str 5544, KUK.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 96.79, Gleis 5500-re, Krbw Str 5544, Stütze 2.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.66, Gleis 5500-li, Krbw Str 5544, Stütze 3.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.82, Gleis 5501-re, Krbw Str 5544, Stütze 3.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 16.98, Gleis 5501-re, Krbw Str 5544, KUK.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.76, Gleis 5500-li, Krbw Str 5544, Stütze 4.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.93, Gleis 5501-re, Krbw Str 5544, Stütze 4.pdf")
             
             #If DEBUG Then
                 Dim th As System.Threading.Thread = System.Threading.Thread.CurrentThread
@@ -233,8 +236,8 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                'Call TestPDF()
-                Call TestJPEG()
+                Call TestPDF()
+                'Call TestJPEG()
                 
                 'Dim d1 As Double = Double.NaN
                 'Dim d2 As Double = Double.NegativeInfinity

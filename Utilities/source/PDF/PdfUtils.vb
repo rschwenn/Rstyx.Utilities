@@ -69,8 +69,9 @@ Namespace PDF
                         Next
                         InputPDF.Close()
                         
-                    Catch ex As InvalidOperationException When ex.Message.Contains("not a valid PDF")
-                        Throw New InvalidOperationException(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_InvalidPdfDocument, FilePath))
+                    'Catch ex As InvalidOperationException When ex.Message.Contains("not a valid PDF")
+                    Catch ex As Exception
+                        Throw New InvalidOperationException(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_InvalidPdfDocument, FilePath), ex)
                     End Try
                 Next
                 
