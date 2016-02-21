@@ -137,6 +137,15 @@ Namespace My
                 Return CType(Me("UIResources_AppStylesUri"),String)
             End Get
         End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("G:\Tools\jEdit")>  _
+        Public ReadOnly Property AppUtils_jEdit_FallbackPath() As String
+            Get
+                Return CType(Me("AppUtils_jEdit_FallbackPath"),String)
+            End Get
+        End Property
     End Class
 End Namespace
 

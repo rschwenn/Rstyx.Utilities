@@ -198,13 +198,16 @@ Namespace Apps
              '''         <description> in %JEDIT_HOME% </description>
              '''     </item>
              '''     <item>
-             '''         <description> in G:\Tools\jEdit </description>
-             '''     </item>
-             '''     <item>
              '''         <description> in "%PROGRAMFILES%\jEdit" </description>
              '''     </item>
              '''     <item>
-             '''         <description> in "%PROGRAMFILES%\Tools\jEdit" </description>
+             '''         <description> in "%PROGRAMFILES(X86)%\jEdit" </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> in "%PROGRAMW6432%\jEdit" </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> in Application Setting "AppUtils_jEdit_FallbackPath" </description>
              '''     </item>
              '''     <item>
              '''         <description> in %PATH% without subdirectories </description>
@@ -628,29 +631,42 @@ Namespace Apps
                     end if
                 End if
                 
-                ' Search in 3 hard coded folders
-                If (not Success) Then
-                    jEditHome = "G:\Tools\jEdit"
-                    jEditJar = jEditHome & "\" & JarName
-                    if (File.Exists(jEditJar)) Then
-                        Success = true
-                    else
-                        Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im (hart kodierten) Verzeichnis '" & jEditHome & "'")
-                    end if
-                End if
-                
+                ' Search in %PROGRAMFILES%
                 If (not Success) Then
                     jEditHome = Environment.GetEnvironmentVariable("PROGRAMFILES") & "\jEdit"
                     jEditJar = jEditHome & "\" & JarName
                     if (File.Exists(jEditJar)) Then
                         Success = true
                     else
-                        Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im (hart kodierten) Verzeichnis '" & jEditHome & "'")
+                        Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES%='" & jEditHome & "'")
                     end if
                 End if
                 
+                ' Search in %PROGRAMFILES(X86)%
                 If (not Success) Then
-                    jEditHome = Environment.GetEnvironmentVariable("PROGRAMFILES") & "\Tools\jEdit"
+                    jEditHome = Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") & "\jEdit"
+                    jEditJar = jEditHome & "\" & JarName
+                    if (File.Exists(jEditJar)) Then
+                        Success = true
+                    else
+                        Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES(X86)%='" & jEditHome & "'")
+                    end if
+                End if
+                
+                ' Search in %PROGRAMW6432%
+                If (not Success) Then
+                    jEditHome = Environment.GetEnvironmentVariable("PROGRAMW6432") & "\jEdit"
+                    jEditJar = jEditHome & "\" & JarName
+                    if (File.Exists(jEditJar)) Then
+                        Success = true
+                    else
+                        Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMW6432%='" & jEditHome & "'")
+                    end if
+                End if
+                
+                ' Search in Application Setting "AppUtils_jEdit_FallbackPath"
+                If (not Success) Then
+                    jEditHome = My.Settings.AppUtils_jEdit_FallbackPath
                     jEditJar = jEditHome & "\" & JarName
                     if (File.Exists(jEditJar)) Then
                         Success = true
@@ -712,7 +728,8 @@ Namespace Apps
                     Logger.logDebug("getAvailableEditors(): jEdit ist nicht verfügbar, weil jEdit.jar nicht gefunden wurde.")
                 Else
                     ' Arguments: all for Java and basic for jEdit.
-                    Arguments = "-ms128m -mx1024m -Dawt.useSystemAAFontSettings=on -Dsun.java2d.noddraw=true -jar """ & AppPathJEdit & """ -reuseview -background "
+                    'Arguments = "-ms128m -mx1024m -Dawt.useSystemAAFontSettings=on -Dsun.java2d.noddraw=true -jar """ & AppPathJEdit & """ -reuseview -background "
+                    Arguments = "-jar """ & AppPathJEdit & """ -reuseview -background "
                             
                     ' Arguments: jEdit settings directory if needed.
                     if (JEDIT_SETTINGS.IsNotEmptyOrWhiteSpace()) Then

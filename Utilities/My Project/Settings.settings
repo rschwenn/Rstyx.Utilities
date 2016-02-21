@@ -29,5 +29,8 @@
     <Setting Name="UIResources_AppStylesUri" Type="System.String" Scope="Application">
       <Value Profile="(Default)">/Rstyx.Utilities;component/source/UI/Resources/Styles.xaml</Value>
     </Setting>
+    <Setting Name="AppUtils_jEdit_FallbackPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">G:\Tools\jEdit</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
