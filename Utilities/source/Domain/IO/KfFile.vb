@@ -109,26 +109,26 @@ Namespace Domain.IO
                                 p.Z                  = getDoubleFromVEDouble(oBR.ReadDouble())
                                 p.TrackPos.Kilometer = New Kilometer(getDoubleFromVEDouble(oBR.ReadDouble()))
                                 
-                                p.PositionPreInfo    = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
-                                p.Info               = Trim(FileEncoding.GetString(oBR.ReadBytes(13)))
-                                p.PositionPostInfo   = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                p.PositionPreInfo    = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Replace(vbNullChar, " "))
+                                p.Info               = FileEncoding.GetString(oBR.ReadBytes(13)).Replace(vbNullChar, " ").Trim()
+                                p.PositionPostInfo   = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Replace(vbNullChar, " "))
                                 
-                                p.HeightPreInfo      = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
-                                p.HeightInfo         = Trim(FileEncoding.GetString(oBR.ReadBytes(13)))
-                                p.HeightPostInfo     = CChar(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                p.HeightPreInfo      = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Replace(vbNullChar, " "))
+                                p.HeightInfo         = FileEncoding.GetString(oBR.ReadBytes(13)).Replace(vbNullChar, " ").Trim()
+                                p.HeightPostInfo     = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Replace(vbNullChar, " "))
                                 
-                                p.Kind               = Trim(FileEncoding.GetString(oBR.ReadBytes(4)))
+                                p.Kind               = FileEncoding.GetString(oBR.ReadBytes(4)).Replace(vbNullChar, " ").Trim()
                                 p.MarkType           = CStr(oBR.ReadByte)
                                 p.mp                 = CDbl(oBR.ReadInt16())
                                 p.mh                 = CDbl(oBR.ReadInt16())
                                 p.ObjectKey          = oBR.ReadInt32()
-                                p.MarkHints          = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))  ' Stability Code
-                                p.HeightSys          = Trim(FileEncoding.GetString(oBR.ReadBytes(3)))
-                                p.Job                = Trim(FileEncoding.GetString(oBR.ReadBytes(8)))
-                                p.sp                 = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))
-                                p.sh                 = Trim(FileEncoding.GetString(oBR.ReadBytes(1)))
+                                p.MarkHints          = FileEncoding.GetString(oBR.ReadBytes(1)).Replace(vbNullChar, " ").Trim()  ' Stability Code
+                                p.HeightSys          = FileEncoding.GetString(oBR.ReadBytes(3)).Replace(vbNullChar, " ").Trim()
+                                p.Job                = FileEncoding.GetString(oBR.ReadBytes(8)).Replace(vbNullChar, " ").Trim()
+                                p.sp                 = FileEncoding.GetString(oBR.ReadBytes(1)).Replace(vbNullChar, " ").Trim()
+                                p.sh                 = FileEncoding.GetString(oBR.ReadBytes(1)).Replace(vbNullChar, " ").Trim()
                                 
-                                Dim TrackNo As String = Trim(FileEncoding.GetString(oBR.ReadBytes(4)))
+                                Dim TrackNo As String = FileEncoding.GetString(oBR.ReadBytes(4)).Replace(vbNullChar, " ").Trim()
                                 p.TrackPos.TrackNo.TryParse(TrackNo)
                                 
                                 p.TrackPos.RailsCode = FileEncoding.GetString(oBR.ReadBytes(1))

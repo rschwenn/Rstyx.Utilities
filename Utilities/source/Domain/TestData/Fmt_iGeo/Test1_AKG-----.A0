@@ -13,7 +13,7 @@
 #
 # Berechnet durch     : intermetric Trassenbibliothek V190
 #
-# Feldnamen           : PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
+# Feldnameny           : PktNry | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
 #
 # PktNr        Punktnummer                                              (Achtung: ein doppeltes Filterzeichen "||" muss als ein einzelnes Filterzeichen "|" gelesen werden)
 # Y     [m]    Y-Grosskoordinate
