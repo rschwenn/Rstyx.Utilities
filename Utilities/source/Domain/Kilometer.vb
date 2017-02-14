@@ -230,7 +230,7 @@ Namespace Domain
                         Dim MiddleSign As String  = oMatch.Groups(2).Value
                         Dim Meter      As Double  = oMatch.Groups(3).Value.ConvertTo(Of Double)   ' unsigned
                         Dim SignKm     As Integer = Sign(Kilometer)
-                        Dim SignM      As Integer = If(InStr(MiddleSign, "-") > 0, SignM = -1, SignM = 1)
+                        Dim SignM      As Integer = If(InStr(MiddleSign, "-") > 0, -1, 1)
                         Dim SignTotal  As Integer = If(((SignM = -1) Or (SignKm = -1)), -1, 1)
                         
                         _Value = SignTotal * (Abs(Kilometer) * 1000 + Meter)
