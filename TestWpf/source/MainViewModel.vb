@@ -239,7 +239,7 @@ Public Class MainViewModel
             Try
                 Logger.logInfo("")
                 
-                Call TestPDF()
+                'Call TestPDF()
                 'Call TestJPEG()
                 
                 'Dim d1 As Double = Double.NaN
@@ -266,29 +266,29 @@ Public Class MainViewModel
                 ''Dim text As String = CStr(Nothing)
                 ''int2 = int3 '.GetValueOrDefault()
                 
-                Dim KV As New KvFile(Me.FilePath1)
-                Dim KF As New KfFile(Me.FilePath1)
-                Dim iP As New iPktFile(Me.FilePath1)
-                Dim TC As New TcFileReader(Me.FilePath1)
-                'TC.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0"
-                'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
-                'KV.CollectParseErrors = True
-                'TC.ShowParseErrorsInJedit = False
-                iP.Constraints = GeoPointConstraints.UniqueID
-                'TC.CollectParseErrors = True
-                'KV.Constraints = GeoPointConstraints.UniqueID 
-                'Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
-                'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
-                'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
-                'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
-                'TC.Load()
-                'Dim pts As New GeoPointOpenList(KV.PointStream, KV)
-                
-                Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
-                'KV2.Store(pts)
-                'KV2.Header = KV.Header
-               ' KV2.Store(KV.PointStream, KV)
-                'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
+                'Dim KV As New KvFile(Me.FilePath1)
+                'Dim KF As New KfFile(Me.FilePath1)
+                'Dim iP As New iPktFile(Me.FilePath1)
+                'Dim TC As New TcFileReader(Me.FilePath1)
+                ''TC.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0"
+                ''Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
+                ''KV.CollectParseErrors = True
+                ''TC.ShowParseErrorsInJedit = False
+                'iP.Constraints = GeoPointConstraints.UniqueID
+                ''TC.CollectParseErrors = True
+                ''KV.Constraints = GeoPointConstraints.UniqueID 
+                ''Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
+                ''Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
+                ''TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
+                ''Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
+                ''TC.Load()
+                ''Dim pts As New GeoPointOpenList(KV.PointStream, KV)
+                '
+                'Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
+                ''KV2.Store(pts)
+                ''KV2.Header = KV.Header
+                '' KV2.Store(KV.PointStream, KV)
+                ''iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 
                 Dim dtUTC As DateTime = DateTime.UtcNow
@@ -443,41 +443,51 @@ Public Class MainViewModel
                 'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_51\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
                 Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", ";;G:\Tools\jEdit_51\macros\Aktive_Datei;G:\Tools\jEdit_51\macros\Aktive_Datei", ";", Nothing)
                 Logger.logInfo(fi.FullName)
+                Logger.logInfo(Me.FilePath1)
                 
-                'Dim Field = "UserDomaiN"
-                'Dim TableName = "Standorte$y"
-                'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
+                Dim Field = "Symbol_Scale_Width"
+                Dim TableName = "Points$"
+                Dim Workbook = Me.FilePath1
                 
+                ' Siehe:  https://www.microsoft.com/de-DE/download/details.aspx?id=13255
+                ' Siehe:  https://www.microsoft.com/en-us/download/details.aspx?id=54920&751be11f-ede8-5a0c-058c-2ee190a24fa6=True&e6b34bbe-475b-1abd-2c51-b5034bcdd6d2=True&fa43d42b-25b5-4a42-fe9b-1634f450f5ee=True
+                ' ... Hinweise unter "Anweisungen zur Installation"
+                ' Siehe: https://www.connectionstrings.com/ace-oledb-12-0/info-and-download/
+                ' Provider   = "Microsoft.ACE.OLEDB.12.0",  XLSX => "Excel 12.0 Xml", XLSM =  "Excel 12.0 Macro"
                 'Dim DBconn  As OleDbConnection = Nothing
                 'Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
-                'CSB.DataSource = Workbook
+                ''CSB.DataSource = Workbook
+                'CSB.DataSource = Me.FilePath1
                 ''CSB.Provider   = "Microsoft.Jet.OLEDB.4.0"
                 ''CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
-                'CSB.Provider   = "yyMicrosoft.ACE.OLEDB.12.0"
-                'CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
+                'CSB.Provider   = "Microsoft.ACE.OLEDB.12.0"
+                'CSB.Add("Extended Properties", "Excel 12.0 Xml;ReadOnly=True")
                 'DBconn = New OleDbConnection(CSB.ConnectionString)
+                'Logger.logInfo(StringUtils.sprintf("ConnectionString = '%s'", CSB.ConnectionString))
                 'DBconn.Open()
                 'DBconn.Close()
                 
                 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
-                'Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                '    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
-                '    'Dim Table As DataTable = XLconn.getTable(TableName)
-                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, XLconn.TableContainsField(TableName, Field)))
-                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
-                '    
-                '    'Dim SQL = "SELECT * FROM " & TableName
-                '    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
-                '    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
-                '    
-                '    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                '    'Dim yes = Table.containsField(Field)
-                '    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
-                '    
-                '    For Each row As System.Data.DataRow In Table.AsEnumerable()
-                '        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
-                '    Next 
-                'End Using
+                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
+                Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                'Using Table As System.Data.DataTable = DBconn.getTable(TableName)
+                    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
+                    'Dim Table As DataTable = XLconn.getTable(TableName)
+                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
+                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+                    
+                    'Dim SQL = "SELECT * FROM " & TableName
+                    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+                    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
+                    
+                    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                    'Dim yes = Table.containsField(Field)
+                    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
+                    
+                    For Each row As System.Data.DataRow In Table.AsEnumerable()
+                        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Point_Key"), row("Symbol_Scale_Width")))
+                    Next 
+                End Using
                 
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))

@@ -65,13 +65,19 @@ Imports System.IO
                 
                 Dim DBconn  As OleDbConnection = Nothing
                 Try
-                    configureJetForExcel()
+                    'configureJetForExcel()
+                    ' => Instead of setting "TypeGuessRows = 0" (needing admin permissions!) in order to guess every table row's type,
+                    '    we expect the whole table column to be formatted as text! This way all value types are read as text.
                     
                     ' Init DB connection. (Jet/Excel setting "IMEX=1": If a column has mixed data type, all values are read as "text").
                     Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
                     CSB.DataSource = XlFilePath
-                    CSB.Provider   = "Microsoft.Jet.OLEDB.4.0"
-                    CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
+                    'CSB.Provider   = "Microsoft.Jet.OLEDB.4.0"
+                    'CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
+                    
+                    ' This works for xls and xlsx files. Extended properties HDR and IMEX seem to be ignored:
+                    CSB.Provider = "Microsoft.ACE.OLEDB.12.0"
+                    CSB.Add("Extended Properties", "Excel 12.0 Xml")
                     DBconn = New OleDbConnection(CSB.ConnectionString)
                     DBconn.Open()
                     

@@ -309,7 +309,7 @@
                     FontSize="15" 
                     DockPanel.Dock="Bottom" 
                     TabIndex="11"
-                    InputFilePath="X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test.kv"
+                    InputFilePath="X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Test.xlsx"
                     ChangesWorkingDir="true"
                     Watermark="Wasserzeichen"
                     >
