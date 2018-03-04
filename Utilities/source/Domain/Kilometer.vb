@@ -212,7 +212,6 @@ Namespace Domain
                 reset()
                 
                 If (KilometerString.IsNotEmptyOrWhiteSpace()) Then
-                    Dim KilometerValue As Double = Double.NaN
                     
                     Dim Pattern As String = "^ *([+\-]? *[0-9]*[.]*[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *$"
                     Dim oMatch  As Match  = Regex.Match(KilometerString, Pattern, RegexOptions.IgnoreCase)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TestWpf", "TestWpf\TestWpf.vbproj", "{648DE3EA-EEF2-41FC-9BBC-7BF0FE4F205D}"
 EndProject
@@ -40,8 +40,12 @@ Global
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Release|x86.ActiveCfg = Release|Any CPU
+		{0540C80D-0672-425A-A4D7-E8D83C4CCB06}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {112AF0B1-A698-463E-BDD2-2E8B0A9F9D93}
 	EndGlobalSection
 EndGlobal

@@ -122,17 +122,77 @@ Public Class MainViewModel
         End Sub
         
         
+        Public Sub TestOrder()
+            
+            Dim Files As New Collection(Of String)
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.0 + 17.60.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.0 + 68.33.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.0 - 27.18.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.2 - 73.95.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.2 + 20.05.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.8 + 84.82.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.0 - 67.10 b.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.0 - 67.10.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.1 + 22.03.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.1 + 75.78.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.2 - 22.01.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.9 + 29.88.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 1.4 + 76.54.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.1 - 12.13.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.1 - 67.04.pdf")
+            
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  00220.06.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0884.82.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  -67.pdf")
+            
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 82.30, Gleis 5500-re, Krbw Str 5544, Stütze 1.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.93, Gleis 5500-li, Krbw Str 5544, Stütze 4.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 88.55, Gleis 5500-re, Krbw Str 5544, KUK.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 96.79, Gleis 5500-re, Krbw Str 5544, Stütze 2.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.66, Gleis 5500-li, Krbw Str 5544, Stütze 3.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.82, Gleis 5501-re, Krbw Str 5544, Stütze 3.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 16.98, Gleis 5501-re, Krbw Str 5544, KUK.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.93, Gleis 5501-re, Krbw Str 5544, Stütze 4.pdf")
+            
+            #If DEBUG Then
+                Dim th As System.Threading.Thread = System.Threading.Thread.CurrentThread
+                System.Diagnostics.Debug.Print(sprintf("TestPDF: Current thread ID = %d,  ApartmentState = %s,  IsThreadPoolThread = %s,  IsBackground = %s", th.ManagedThreadId, th.GetApartmentState().ToString(), th.IsThreadPoolThread, th.IsBackground))
+            #End If
+            
+            For Each FilePath As String In Files.OrderBy(Function(ByVal PathName) PathName, New AlphanumericKmComparer(IgnoreCase:=True))
+                Logger.logInfo(FilePath)
+            Next
+            
+        End Sub
+        
         Public Sub TestPDF()
             
             Dim Files As New Collection(Of String)
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 82.30, Gleis 5500-re, Krbw Str 5544, Stütze 1.pdf")
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 88.55, Gleis 5500-re, Krbw Str 5544, KUK.pdf")
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 96.79, Gleis 5500-re, Krbw Str 5544, Stütze 2.pdf")
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.66, Gleis 5500-li, Krbw Str 5544, Stütze 3.pdf")
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.82, Gleis 5501-re, Krbw Str 5544, Stütze 3.pdf")
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 16.98, Gleis 5501-re, Krbw Str 5544, KUK.pdf")
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.76, Gleis 5500-li, Krbw Str 5544, Stütze 4.pdf")
-            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.93, Gleis 5501-re, Krbw Str 5544, Stütze 4.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 82.30, Gleis 5500-re, Krbw Str 5544, Stütze 1.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 88.55, Gleis 5500-re, Krbw Str 5544, KUK.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 96.79, Gleis 5500-re, Krbw Str 5544, Stütze 2.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.66, Gleis 5500-li, Krbw Str 5544, Stütze 3.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 14.82, Gleis 5501-re, Krbw Str 5544, Stütze 3.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 16.98, Gleis 5501-re, Krbw Str 5544, KUK.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.76, Gleis 5500-li, Krbw Str 5544, Stütze 4.pdf")
+            'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.93, Gleis 5501-re, Krbw Str 5544, Stütze 4.pdf")
+            
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.0 - 27.18.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.0 - 67.10.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.0 + 17.60 b.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.0 + 17.60.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.0 + 68.33.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.1 + 22.03.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.1 + 75.78.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.8 + 84.82.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  0.9 + 29.88.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km  1.4 + 76.54.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km -0.1 - 12.13.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km   -0.1 - 67.04.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km -0.2 - 22.01.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km -0.2 - 73.95.pdf")
+            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\Profil  km a 0.2 + 20.05.pdf")
+            
             
             #If DEBUG Then
                 Dim th As System.Threading.Thread = System.Threading.Thread.CurrentThread
@@ -236,10 +296,11 @@ Public Class MainViewModel
             
             'Dim TcReader As TcFileReader
             
-            Try
+            'Try
                 Logger.logInfo("")
                 
-                'Call TestPDF()
+                'Call TestOrder()
+                Call TestPDF()
                 'Call TestJPEG()
                 
                 'Dim d1 As Double = Double.NaN
@@ -445,63 +506,63 @@ Public Class MainViewModel
                 Logger.logInfo(fi.FullName)
                 Logger.logInfo(Me.FilePath1)
                 
-                Dim Field = "Symbol_Scale_Width"
-                Dim TableName = "Points$"
-                Dim Workbook = Me.FilePath1
-                
-                ' Siehe:  https://www.microsoft.com/de-DE/download/details.aspx?id=13255
-                ' Siehe:  https://www.microsoft.com/en-us/download/details.aspx?id=54920&751be11f-ede8-5a0c-058c-2ee190a24fa6=True&e6b34bbe-475b-1abd-2c51-b5034bcdd6d2=True&fa43d42b-25b5-4a42-fe9b-1634f450f5ee=True
-                ' ... Hinweise unter "Anweisungen zur Installation"
-                ' Siehe: https://www.connectionstrings.com/ace-oledb-12-0/info-and-download/
-                ' Provider   = "Microsoft.ACE.OLEDB.12.0",  XLSX => "Excel 12.0 Xml", XLSM =  "Excel 12.0 Macro"
-                'Dim DBconn  As OleDbConnection = Nothing
-                'Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
+                'Dim Field = "Symbol_Scale_Width"
+                'Dim TableName = "Points$"
+                'Dim Workbook = Me.FilePath1
+                '
+                '' Siehe:  https://www.microsoft.com/de-DE/download/details.aspx?id=13255
+                '' Siehe:  https://www.microsoft.com/en-us/download/details.aspx?id=54920&751be11f-ede8-5a0c-058c-2ee190a24fa6=True&e6b34bbe-475b-1abd-2c51-b5034bcdd6d2=True&fa43d42b-25b5-4a42-fe9b-1634f450f5ee=True
+                '' ... Hinweise unter "Anweisungen zur Installation"
+                '' Siehe: https://www.connectionstrings.com/ace-oledb-12-0/info-and-download/
+                '' Provider   = "Microsoft.ACE.OLEDB.12.0",  XLSX => "Excel 12.0 Xml", XLSM =  "Excel 12.0 Macro"
+                ''Dim DBconn  As OleDbConnection = Nothing
+                ''Dim CSB As OleDbConnectionStringBuilder = New OleDbConnectionStringBuilder()
                 ''CSB.DataSource = Workbook
-                'CSB.DataSource = Me.FilePath1
+                ''CSB.DataSource = Me.FilePath1
                 ''CSB.Provider   = "Microsoft.Jet.OLEDB.4.0"
                 ''CSB.Add("Extended Properties", "Excel 8.0;HDR=Yes;IMEX=1;")
-                'CSB.Provider   = "Microsoft.ACE.OLEDB.12.0"
-                'CSB.Add("Extended Properties", "Excel 12.0 Xml;ReadOnly=True")
-                'DBconn = New OleDbConnection(CSB.ConnectionString)
-                'Logger.logInfo(StringUtils.sprintf("ConnectionString = '%s'", CSB.ConnectionString))
-                'DBconn.Open()
-                'DBconn.Close()
-                
-                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
-                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
-                Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                'Using Table As System.Data.DataTable = DBconn.getTable(TableName)
-                    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
-                    'Dim Table As DataTable = XLconn.getTable(TableName)
-                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
-                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
-                    
-                    'Dim SQL = "SELECT * FROM " & TableName
-                    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
-                    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
-                    
-                    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                    'Dim yes = Table.containsField(Field)
-                    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
-                    
-                    For Each row As System.Data.DataRow In Table.AsEnumerable()
-                        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Point_Key"), row("Symbol_Scale_Width")))
-                    Next 
-                End Using
+                ''CSB.Provider   = "Microsoft.ACE.OLEDB.12.0"
+                ''CSB.Add("Extended Properties", "Excel 12.0 Xml;ReadOnly=True")
+                ''DBconn = New OleDbConnection(CSB.ConnectionString)
+                ''Logger.logInfo(StringUtils.sprintf("ConnectionString = '%s'", CSB.ConnectionString))
+                ''DBconn.Open()
+                ''DBconn.Close()
+                '
+                ''Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
+                ''Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
+                'Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                ''Using Table As System.Data.DataTable = DBconn.getTable(TableName)
+                '    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
+                '    'Dim Table As DataTable = XLconn.getTable(TableName)
+                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
+                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+                '    
+                '    'Dim SQL = "SELECT * FROM " & TableName
+                '    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+                '    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
+                '    
+                '    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                '    'Dim yes = Table.containsField(Field)
+                '    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
+                '    
+                '    For Each row As System.Data.DataRow In Table.AsEnumerable()
+                '        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Point_Key"), row("Symbol_Scale_Width")))
+                '    Next 
+                'End Using
                 
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
                 'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
                 
-            Catch ex As ParseException
-                'Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
-                'TcReader.ParseErrors.ShowInJEdit()
-                Logger.logError(ex, "==> Fehler...")
-                
-            Catch ex As System.Exception
-                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
-                'Throw New RemarkException("test_1(): Unerwarteter Fehler.", ex)
-            End Try
+            'Catch ex As ParseException
+            '    'Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
+            '    'TcReader.ParseErrors.ShowInJEdit()
+            '    Logger.logError(ex, "==> Fehler...")
+            '    
+            'Catch ex As System.Exception
+            '    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+            '    'Throw New RemarkException("test_1(): Unerwarteter Fehler.", ex)
+            'End Try
         End Sub
         
         Protected Overrides Sub showHelpFile()

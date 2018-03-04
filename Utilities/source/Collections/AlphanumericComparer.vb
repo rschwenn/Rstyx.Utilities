@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 
 Namespace Collections
     
-    ''' <summary> A <see cref="System.Collections.Generic.IComparer(Of String)"/> that does numeric comparing for numbers in the strings. </summary>
+    ''' <summary> A <see cref="System.Collections.Generic.IComparer(Of String)"/> that does numeric comparing for integer numbers in the strings. </summary>
      ''' <remarks> 
      ''' <para>
      ''' In contrast to standard string comparing this class says that "String 2" &lt; "String 10". 

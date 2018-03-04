@@ -142,6 +142,7 @@
     <Compile Include="My Project\Settings.vb" />
     <Compile Include="source\Apps\AppInfo.vb" />
     <Compile Include="source\Apps\AppUtils.vb" />
+    <Compile Include="source\Collections\AlphaNumericKmComparer.vb" />
     <Compile Include="source\Domain\ClearanceGauge\Enums.vb" />
     <Compile Include="source\Domain\ClearanceGauge\MinimumClearanceDBAG.vb" />
     <Compile Include="source\Domain\GeoIPoint.vb" />

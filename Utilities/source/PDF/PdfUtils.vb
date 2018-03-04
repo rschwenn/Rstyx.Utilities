@@ -40,8 +40,13 @@ Namespace PDF
             ''' <param name="DeleteInput"> If <see langword="true"/>, the input files will be deleted after joining. </param>
             ''' <returns> The newly created <see cref="File"/>. </returns>
             ''' <remarks>
+            ''' <para>
+            ''' The input files are joined orderes by file name. Ordering is done using <see cref="AlphanumericKmComparer"/>
+            ''' </para>
+            ''' <para>
             ''' Every page of created PDF file gets a related bookmark, which is the input file name.
-            ''' If an input file containes more than 1 pages, the corresponding bookmarks will end with a suffix "(index)".
+            ''' If an input file containes more than 1 page, the corresponding bookmarks will end with a suffix "(index)".
+            ''' </para>
             ''' </remarks>
             ''' <exception cref="System.ArgumentNullException"> <paramref name="InputPaths"/> is <see langword="null"/>. </exception>
             ''' <exception cref="System.ArgumentNullException"> <paramref name="OutputPath"/> is <see langword="null"/>. </exception>
@@ -56,7 +61,7 @@ Namespace PDF
                 Dim OutputPdfFile As File         = New File()
                 Dim OutputPDFDoc  As Document = OutputPdfFile.Document
                 
-                For Each FilePath As String In If(Order, InputPaths.OrderBy(Function(ByVal PathName) PathName, New AlphanumericComparer(IgnoreCase:=True)), InputPaths)
+                For Each FilePath As String In If(Order, InputPaths.OrderBy(Function(ByVal PathName) PathName, New AlphanumericKmComparer(IgnoreCase:=True)), InputPaths)
                     
                     ' Open the document to import pages from it.
                     Try
