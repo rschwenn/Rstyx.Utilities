@@ -8,7 +8,7 @@ Imports Rstyx.Utilities.Math
 
 Namespace Domain.ClearanceGauge
     
-    ''' <summary> Minimum clearance outline for DBAG railway track. </summary>
+    ''' <summary> Minimum clearance outline for DBAG railway track ("Grenzlinie"). </summary>
     Public Class MinimumClearanceDBAG
         
         #Region "Private Fields"
@@ -113,7 +113,7 @@ Namespace Domain.ClearanceGauge
         #Region "Input Properties"
             
             Private _RailsConfig    As RailPair
-            Private _OHLType   As ClearanceOptionalPart = ClearanceOptionalPart.None
+            Private _OHLType        As ClearanceOptionalPart = ClearanceOptionalPart.None
         
             ''' <summary> Gets or sets the rails configuration (geometry and speed). </summary>
              ''' <remarks> The getter never returns <see langword="null"/>. </remarks>
@@ -187,7 +187,7 @@ Namespace Domain.ClearanceGauge
             
         #End Region
         
-        #Region "Definition of polygons"
+        #Region "Definition of Polygons"
             
             ''' <summary> Creates the definition of reference line G2. </summary>
             ''' <remarks> See EBO, appendix 8 (http://www.gesetze-im-internet.de/ebo/anlage_8.html) </remarks>
@@ -464,7 +464,7 @@ Namespace Domain.ClearanceGauge
                 Return dX
             End Function
             
-            ''' <summary> Calculates the delta according to EBO, appendix 3, Pt. 2.3, named "Q" (Quasistatische Seitenneigung). </summary>
+            ''' <summary> Calculates the delta according to EBO, appendix 3, Pt. 1.5, Table 2.3, named "Q" (Quasistatische Seitenneigung). </summary>
              ''' <param name="Point">              A point in canted rails system. </param>
              ''' <param name="PointHeightAboveHc"> The height of the point above hc (negative means under hc) (for performance). </param>
              ''' <returns> The horizontal delta for <paramref name="Point"/><c>.X</c> </returns>
@@ -604,7 +604,7 @@ Namespace Domain.ClearanceGauge
                 ' Consider cant base.
                 'NormalizedCant = NormalizeCant()
                 
-                ' Cant: Unsigned + relative.
+                ' Cant: Relative.
                 RelativeCant = Double.NaN
                 If (Not Double.IsNaN(Me.RailsConfig.Cant)) Then
                     If (Not Double.IsNaN(Me.RailsConfig.Radius)) Then

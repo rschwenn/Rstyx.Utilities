@@ -125,7 +125,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets the Cant (negative, if right running surface is higher). </summary>
-             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property Cant() As Double
                 Get
                     Return _Cant
@@ -133,7 +133,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets the CantBase. </summary>
-             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property CantBase() As Double
                 Get
                     Return _CantBase
@@ -141,7 +141,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Left Running Surface in track system. </summary>
-             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSLeft() As Point
                 Get
                     Return _RSLeft
@@ -149,7 +149,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Higher Running Surface in track system. </summary>
-             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSHigher() As Point
                 Get
                     Dim RetRS As Point = If((_Cant < 0), RSRight, RSLeft)
@@ -158,7 +158,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Lower Running Surface in track system. </summary>
-             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSLower() As Point
                 Get
                     Dim RetRS As Point = If((_Cant < 0), RSLeft, RSRight)
@@ -167,7 +167,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Right Running Surface in track system. </summary>
-             ''' <remarks> This value can e set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property RSRight() As Point
                 Get
                     Return _RSRight

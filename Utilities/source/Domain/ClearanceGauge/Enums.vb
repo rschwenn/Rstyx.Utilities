@@ -18,7 +18,7 @@ Namespace Domain.ClearanceGauge
         ''' <summary> No clearance determined. </summary>
         None = 0
         
-        ''' <summary> The Clearance which has to be keept free in every case (Grenzlinie). </summary>
+        ''' <summary> The Clearance which has to be kept free in every case (Grenzlinie). </summary>
         MinimumClearance = 1
         
     End Enum
