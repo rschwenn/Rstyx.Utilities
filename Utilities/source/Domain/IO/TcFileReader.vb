@@ -238,6 +238,8 @@ Namespace Domain.IO
                         End Select
                     Next
                     
+                    Logger.logDebug(Me.ToReport(OnlySummary:=False))
+                    
                     ' Throw exception if parsing errors has occurred.
                     If (Me.ParseErrors.HasErrors) Then
                         Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
@@ -245,7 +247,7 @@ Namespace Domain.IO
                         Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_NoPoints, Me.FilePath))
                     End If
                     
-                    Logger.logDebug(Me.ToReport(OnlySummary:=False))
+                    'Logger.logDebug(Me.ToReport(OnlySummary:=False))
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadSuccess, Me.TotalPointCount, Me.FilePath))
                     
                     Me.DataLineBuffer.Clear()
