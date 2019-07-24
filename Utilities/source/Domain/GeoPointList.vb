@@ -203,7 +203,7 @@ Namespace Domain
                 Return ChangeIDs(IDChangeTab:=IDChangeTab, CancelToken:=CancelToken, StatusIndicator:=Nothing)
             End Function
             
-            ''' <summary> Changes point ID's of this list according to a ID change table. </summary>
+            ''' <summary> Changes point ID's of this list according to an ID change table. </summary>
              ''' <param name="IDChangeTab">     Table with Point ID pairs (source => target). </param>
              ''' <param name="CancelToken">     A CancellationToken that can signal a cancel request (may be CancellationToken.None). </param>
              ''' <param name="StatusIndicator"> The object that will get status reporting (i.g. the view model). May be <see langword="null"/>. </param>

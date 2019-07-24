@@ -20,7 +20,7 @@ Namespace Domain
         KnownHeight = 2
                 
         ''' <summary> Values in canted rails system are required. </summary>
-         ''' <remarks> This requires a point that implements the <see cref="IPointAtTrackGeometry"/>. </remarks>
+         ''' <remarks> This requires a point that implements the <see cref="IPointAtTrackGeometry"/> interface. </remarks>
         KnownCantedRailsSystem = 4
         
         ''' <summary> The point's ID has to be unique in a list of points. </summary>
@@ -280,13 +280,14 @@ Namespace Domain
             ''' <summary> Verifies that this point fulfills all given <paramref name="Constraints"/>. </summary>
              ''' <param name="Constraints"> A set of <see cref="GeoPointConstraints"/> to verify for this point. </param>
              ''' <param name="FieldX">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
-             ''' <param name="FieldY">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
-             ''' <param name="FieldZ">  The parsed data field of X coordinate. May be <see langword="null"/>. </param>
+             ''' <param name="FieldY">  The parsed data field of Y coordinate. May be <see langword="null"/>. </param>
+             ''' <param name="FieldZ">  The parsed data field of Z coordinate. May be <see langword="null"/>. </param>
              ''' <remarks>
              ''' If any of the <see cref="GeoPointConstraints"/> is violated, a <see cref="ParseException"/> will be thrown.
              ''' In this case, a <see cref="ParseError"/> will be created and delivered with the <see cref="ParseException"/>.
              ''' The <see cref="ParseError"/> will contain error source information if available.
              ''' Therefore, <see cref="GeoPoint.SourceLineNo"/> and <see cref="GeoPoint.SourcePath"/> should be set for this point.
+             ''' The Datafields may be given in order to highlight violation position exactly in source file.
              ''' </remarks>
              ''' <exception cref="ParseException"> At least one constraint is violated. </exception>
             Public Sub VerifyConstraints(Constraints As GeoPointConstraints,

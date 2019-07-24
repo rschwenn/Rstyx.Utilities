@@ -103,8 +103,10 @@ Namespace Collections
                         Dim result  As Integer
                         
                         If (Char.IsDigit(space1(0)) AndAlso Char.IsDigit(space2(0))) Then
-                            Dim thisNumericChunk As Integer = Integer.Parse(str1)
-                            Dim thatNumericChunk As Integer = Integer.Parse(str2)
+                            'Dim thisNumericChunk As Long = Long.Parse(str1)  ' Long:  max. 19 digits.
+                            'Dim thatNumericChunk As Long = Long.Parse(str2)
+                            Dim thisNumericChunk As Double = Double.Parse(str1)
+                            Dim thatNumericChunk As Double = Double.Parse(str2)
                             result = thisNumericChunk.CompareTo(thatNumericChunk)
                         Else
                             result = str1.CompareTo(str2)
