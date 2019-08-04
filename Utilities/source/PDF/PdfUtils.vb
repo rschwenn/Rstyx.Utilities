@@ -14,7 +14,7 @@ Imports Rstyx.Utilities.Collections
 
 Namespace PDF
     
-    ''' <summary> Static utility methods for dealing with PDF. </summary>
+    ''' <summary> Static utility methods for dealing with PDF. Depends on https://pdfclown.org/ library. </summary>
     Public NotInheritable Class PdfUtils
         
         #Region "Private Fields"
@@ -41,7 +41,7 @@ Namespace PDF
             ''' <returns> The newly created <see cref="File"/>. </returns>
             ''' <remarks>
             ''' <para>
-            ''' The input files are joined orderes by file name. Ordering is done using <see cref="AlphanumericKmComparer"/>
+            ''' The input files are joined ordered by file name. Ordering is done using <see cref="AlphanumericKmComparer"/>
             ''' </para>
             ''' <para>
             ''' Every page of created PDF file gets a related bookmark, which is the input file name.

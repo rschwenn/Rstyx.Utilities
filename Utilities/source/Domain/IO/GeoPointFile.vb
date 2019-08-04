@@ -13,40 +13,6 @@ Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain.IO
     
-    ' ''' <summary> Supported file formats for reading and writing a <see cref="GeoPointList"/> to or from. </summary>
-    ' Public Enum GeoPointFileFormat As Integer
-    '     
-    '     ''' <summary> No format specified. </summary>
-    '     None = 0
-    '     
-    '     ''' <summary> VE Ascii. </summary>
-    '     KV = 1
-    '     
-    '     ''' <summary> VE binary. </summary>
-    '     KF = 2
-    '     
-    '     ''' <summary> iPkt (Ascii). </summary>
-    '     iPkt = 3
-    '     
-    ' End Enum
-    ' 
-    ' ''' <summary> Types of points implementing <see cref="IGeoPoint"/>. </summary>
-    ' Public Enum GeoPointType As Integer
-    '     
-    '     ''' <summary> No format specified (hence default <see cref="GeoPoint"/>). </summary>
-    '     None = 0
-    '     
-    '     ''' <summary> Verm.esn (<see cref="GeoVEPoint"/>). </summary>
-    '     VE = 1
-    '     
-    '     ''' <summary> iPkt (<see cref="GeoIPoint"/>). </summary>
-    '     iPkt = 2
-    '     
-    '     ''' <summary> Point with track geometry values (<see cref="GeoTcPoint"/>). </summary>
-    '     TC = 3
-    '     
-    ' End Enum
-    
     ''' <summary> The base class for reading and writing GeoPoint files. </summary>
      ''' <remarks>
      ''' A derived class will support read and write exactly one discrete file type.

@@ -66,7 +66,7 @@ Namespace IO
                 End Set
             End Property
             
-            ''' <summary> The encoding to use for the file.  Defaults to <see cref="Encoding.Default"/> </summary>
+            ''' <summary> The encoding to use for the file. Defaults to <see cref="Encoding.Default"/> </summary>
             Public Property FileEncoding()          As Encoding = Encoding.Default
             
             ''' <summary> The minimum buffer size, in number of 16-bit characters. Defaults to 1024. </summary>
@@ -89,9 +89,8 @@ Namespace IO
             ''' <summary> The default header lines for the file. Defaults to an empty collection. </summary>
             Public Property DefaultHeader()         As New Collection(Of String)
             
-            ' ''' <summary> A character that delimits words in <see cref="DataTextLine.Data"/>. </summary>
-            ' ''' <remarks> A whitespace character means the whole whitespace between words. </remarks>
-            'Public Property FieldDelimiter() As Char
+            ''' <summary> Header lines which won't be stored when found in the file. Defaults to an empty collection. </summary>
+            Public Property HeaderDiscardLines()    As New Collection(Of String)
             
         #End Region
         
@@ -157,7 +156,7 @@ Namespace IO
              ''' <exception cref="System.ArgumentOutOfRangeException">   <see cref="DataFile.BufferSize"/> is less than or equal to zero. </exception>
              ''' <exception cref="System.OutOfMemoryException">          There is insufficient memory to allocate a buffer for the returned string. </exception>
              ''' <exception cref="System.IO.IOException">                An I/O error occurs. </exception>
-            Public ReadOnly Iterator Property DataLineStream() As IEnumerable(Of DataTextLine)
+            Public ReadOnly Overridable Iterator Property DataLineStream() As IEnumerable(Of DataTextLine)
                 Get
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     If (Me.FileEncoding Is Nothing)        Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingEncoding)
@@ -186,7 +185,7 @@ Namespace IO
                             If (CheckHeaderLine) Then
                                 If (DataLine.IsCommentLine) Then
                                     IsHeaderLine = True
-                                    If (Not Me.DefaultHeader.Contains(DataLine.Comment)) Then
+                                    If ((Not Me.DefaultHeader.Contains(DataLine.Comment)) AndAlso (Not Me.HeaderDiscardLines.Contains(DataLine.Comment))) Then
                                         Me.Header.Add(DataLine.Comment)
                                     End If
                                 Else
@@ -209,7 +208,7 @@ Namespace IO
             ''' <summary> Returns the buffered data lines of the whole text file. </summary>
              ''' <remarks>
              ''' This property never returns <see langword="null"/>.
-             ''' This collection is empty until <see cref="DataFile.Load"/> has been invoked successfully
+             ''' This collection is empty until <see cref="DataFile.Load"/> has been invoked successfully.
              ''' and it will be cleared by <see cref="DataFile.Reset"/> and <see cref="DataFile.DataLineStream"/>.
              ''' </remarks>
             Public ReadOnly Property DataLineBuffer() As Collection(Of DataTextLine)
@@ -272,7 +271,7 @@ Namespace IO
             Protected Overridable Function CreateFileHeader(MetaData As Object) As StringBuilder
                 
                 Dim HeaderLines      As New StringBuilder()
-                Dim IndividualHeader As IHeader = Nothing
+                Dim IndividualHeader As IHeader
                 
                 ' Individual Header.
                 If ((MetaData IsNot Nothing) AndAlso (TypeOf MetaData Is IHeader)) Then
