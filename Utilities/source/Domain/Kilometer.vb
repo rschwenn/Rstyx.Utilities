@@ -23,6 +23,10 @@ Namespace Domain
     
     
     ''' <summary> Represents a Kilometer, supporting several notations. </summary>
+    ''' <remarks>
+    ''' The properties of this class (except <see cref="Kilometer.Text"/>) are read-only. They can be set at instantiation 
+    ''' or by the <see cref="Kilometer.Parse(String)"/> or <see cref="Kilometer.TryParse(String)"/> methods only.
+    ''' </remarks>
     Public Class Kilometer
         
         #Region "Private Fields"
@@ -34,6 +38,7 @@ Namespace Domain
         #Region "Constuctor"
             
             ''' <summary> Creates a new Kilometer. </summary>
+            ''' <remarks>  </remarks>
             Public Sub New()
             End Sub
             
@@ -48,7 +53,7 @@ Namespace Domain
              ''' </para>
              ''' </remarks>
             Public Sub New(ByVal Number As Double)
-                parseNumber(Number)
+                ParseNumber(Number)
             End Sub
             
             ''' <summary> Creates a new Kilometer, initialized from a number with given <see cref="KilometerStatus"/>. </summary>
@@ -63,12 +68,15 @@ Namespace Domain
              ''' </remarks>
             Public Sub New(ByVal Number As Double, ByVal Status As KilometerStatus)
                 
-                parseNumber(Number)
+                ParseNumber(Number)
                 
-                ' Status hasn't been determined by TDB yet.
+                ' Status hasn't been determined by TDB as "Incoming" yet.
                 If (Not (_Status = KilometerStatus.SkipIncoming)) Then
                     _Status = Status
                 End If
+                
+                ' Re-create Me.Text with newly set Me.Status.
+                _Text = ToString()
             End Sub
             
             ''' <summary> Creates a new Kilometer, initialized from a string. </summary>
@@ -97,6 +105,35 @@ Namespace Domain
                 End If
             End Sub
             
+            ''' <summary> Creates a new Kilometer, initialized from a string. </summary>
+             ''' <param name="KilometerString"> A usual Kilometer notation or a numerical String. </param>
+             ''' <param name="Status"> The known <see cref="KilometerStatus"/>. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If parsing has been successful, the properties provide the recognized values. Otherwise they will be set to <c>Double.NaN</c>.
+             ''' </para>
+             ''' <para>
+             ''' First, the string will be tried to be recognized as Kilometer notation, on failure as double number.
+             ''' If double number is greater than 90.000.000 it will be treated as TDB notation.
+             ''' </para>
+             ''' <para>
+             ''' This constructor throws an exception if <paramref name="KilometerString"/> couldn't be parsed succesfully.
+             ''' To avoid an exception, use the parameterless constructor and call <see cref="Kilometer.TryParse"/>.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or <c>String.Empty</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="KilometerString"/> isn't a valid Kilometer notation. </exception>
+            Public Sub New(ByVal KilometerString As String, ByVal Status As KilometerStatus)
+                
+                Me.New(KilometerString)
+                
+                
+                ' Status hasn't been determined as "Incoming" yet.
+                If (Not (_Status = KilometerStatus.SkipIncoming)) Then
+                    _Status = Status
+                End If
+            End Sub
+            
         #End Region
         
         #Region "Properties"
@@ -104,6 +141,7 @@ Namespace Domain
             Private _Value      As Double = Double.NaN
             Private _TDBValue   As Double = Double.NaN
             Private _Status     As KilometerStatus = KilometerStatus.Unknown
+            Private _Text       As String = Nothing
             
             ''' <summary> The ordinary Kilometer value. Defaults to <c>Double.NaN</c>. </summary>
             Public ReadOnly Property Value() As Double
@@ -124,6 +162,21 @@ Namespace Domain
                 Get
                     Return _Status
                 End Get
+            End Property
+            
+            ''' <summary> The Kilometer notation text, i.e. "12.3 + 45.678" </summary>
+            ''' <remarks>
+            ''' This property will be set at construction or by the <see cref="Kilometer.Parse(String)"/> 
+            ''' or <see cref="Kilometer.TryParse(String)"/> methods, as all other properties.
+            ''' However, in contrast, this property also may be set directly.
+            ''' </remarks>
+            Public Property Text() As String
+                Get
+                    Return _Text
+                End Get
+                Set(ByVal KmText As String)
+                    _Text = KmText
+                End Set
             End Property
             
         #End Region
@@ -209,7 +262,7 @@ Namespace Domain
              ''' </remarks>
             Public Function TryParse(ByVal KilometerString As String) As Boolean
                 Dim success As Boolean = False
-                reset()
+                Reset()
                 
                 If (KilometerString.IsNotEmptyOrWhiteSpace()) Then
                     
@@ -221,7 +274,7 @@ Namespace Domain
                         Dim DoubleValue As Double
                         If (Double.TryParse(KilometerString, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, DoubleValue)) Then
                             success = True
-                            parseNumber(DoubleValue)
+                            ParseNumber(DoubleValue)
                         End If
                     Else
                         ' Valid Kilometer notation.
@@ -232,7 +285,7 @@ Namespace Domain
                         Dim SignM      As Integer = If(InStr(MiddleSign, "-") > 0, -1, 1)
                         Dim SignTotal  As Integer = If(((SignM = -1) Or (SignKm = -1)), -1, 1)
                         
-                        _Value = SignTotal * (Abs(Kilometer) * 1000 + Meter)
+                        _Value    =  SignTotal * (Abs(Kilometer) * 1000 + Meter)
                         _TDBValue = (SignTotal * (Abs(Kilometer) * 100000 + Meter)) + 100000000
                         
                         If (Meter >= 100) Then
@@ -240,6 +293,8 @@ Namespace Domain
                         Else
                             _Status = KilometerStatus.Normal
                         End If
+                        
+                        _Text = KilometerString.Replace("   ", " ")
                         
                         success = True
                     End If
@@ -249,6 +304,7 @@ Namespace Domain
             End Function
             
             ''' <summary> Checks if <see cref="Value"/> isn't <c>Double.NAN</c>. </summary>
+             ''' <returns> <see langword="true"/> if this Kilometer has a value. </returns>
             Public Function HasValue() As Boolean
                 Return (Not Double.IsNaN(_Value))
             End Function
@@ -263,7 +319,7 @@ Namespace Domain
              ''' <returns> A <see cref="Kilometer"/> which represents the sum of the operands. </returns>
              ''' <remarks>
              ''' CAUTION: 
-             ''' The <see cref="Kilometer.Status"/> property of the operands will be ignored for this operation.
+             ''' The <see cref="Kilometer.Status"/> and <see cref="Kilometer.Text"/> properties of the operands will be ignored for this operation.
              ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> or <paramref name="Km2"/> is <see langword="null"/>. </exception>
@@ -281,7 +337,7 @@ Namespace Domain
              ''' <returns> A <see cref="Kilometer"/> which represents the sum of the operands. </returns>
              ''' <remarks>
              ''' CAUTION: 
-             ''' The <see cref="Kilometer.Status"/> property of the operands will be ignored for this operation.
+             ''' The <see cref="Kilometer.Status"/> and <see cref="Kilometer.Text"/> properties of the operands will be ignored for this operation.
              ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> is <see langword="null"/>. </exception>
@@ -298,7 +354,7 @@ Namespace Domain
              ''' <returns> A <see cref="Kilometer"/> which represents the difference of the operands. </returns>
              ''' <remarks>
              ''' CAUTION: 
-             ''' The <see cref="Kilometer.Status"/> property of the operands will be ignored for this operation.
+             ''' The <see cref="Kilometer.Status"/> and <see cref="Kilometer.Text"/> properties of the operands will be ignored for this operation.
              ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> or <paramref name="Km2"/> is <see langword="null"/>. </exception>
@@ -316,7 +372,7 @@ Namespace Domain
              ''' <returns> A <see cref="Kilometer"/> which represents the difference of the operands. </returns>
              ''' <remarks>
              ''' CAUTION: 
-             ''' The <see cref="Kilometer.Status"/> property of the operands will be ignored for this operation.
+             ''' The <see cref="Kilometer.Status"/> and <see cref="Kilometer.Text"/> properties of the operands will be ignored for this operation.
              ''' The resulting  <see cref="Kilometer.Status"/> will be <see cref="KilometerStatus.Unknown"/>.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Km1"/> or <paramref name="Km2"/> is <see langword="null"/>. </exception>
@@ -333,6 +389,7 @@ Namespace Domain
         #Region "Overrides"
             
             ''' <summary> Returns a formatted Kilometer output. </summary>
+             ''' <returns> A Kilometer notation with precision set to 3. </returns>
             Public Overrides Function ToString() As String
                 Return Me.ToKilometerNotation(Precision:=3)
             End Function
@@ -348,21 +405,22 @@ Namespace Domain
              ''' If double number is greater than 90.000.000, it will be treated as TDB notation.
              ''' </para>
              ''' </remarks>
-            Private Sub parseNumber(ByVal Number As Double)
+            Private Sub ParseNumber(ByVal Number As Double)
                 
                 If (Number > 90000000) Then
-                    parseTDB(Number)
+                    ParseTDB(Number)
                 Else
                     Dim Kilometer  As Double = Truncate(Number / 100) / 10
                     Dim Meter      As Double = Number - (Kilometer * 1000)
                     _Value    = Number
                     _TDBValue = (Kilometer * 100000) + Meter + 100000000
+                    _Text     = ToString()
                 End If
             End Sub
             
             ''' <summary> Parses a double TDB notation and sets all properties. </summary>
              ''' <param name="TDB"> A usual Kilometer notation or a numerical String. </param>
-            Private Sub parseTDB(ByVal TDB As Double)
+            Private Sub ParseTDB(ByVal TDB As Double)
                 
                 Dim Kilometer As Double = Truncate((TDB - 100000000) / 10000) / 10
                 Dim Meter     As Double = TDB - 100000000 - (Kilometer * 100000)
@@ -375,13 +433,16 @@ Namespace Domain
                 Else
                     _Status = KilometerStatus.Normal
                 End If
+                
+                _Text = ToString()
             End Sub
             
             ''' <summary> Resets all Properties to <c>Double.NaN</c> or unknown. </summary>
-            Public Sub reset()
+            Public Sub Reset()
                 _Status   = KilometerStatus.Unknown
                 _TDBValue = Double.NaN
                 _Value    = Double.NaN
+                _Text     = Nothing
             End Sub
             
         #End Region

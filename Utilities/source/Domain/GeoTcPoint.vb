@@ -41,6 +41,7 @@ Namespace Domain
                     Dim SourceTcPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
                     
                     Me.CantBase   = SourceTcPoint.CantBase
+                    Me.AbLGS      = SourceTcPoint.AbLGS
                     Me.ActualCant = SourceTcPoint.ActualCant
                     Me.G          = SourceTcPoint.G
                     Me.H          = SourceTcPoint.H
@@ -63,6 +64,7 @@ Namespace Domain
                     Me.R          = SourceTcPoint.R
                     Me.RG         = SourceTcPoint.RG
                     Me.Ra         = SourceTcPoint.Ra
+                    Me.RaLGS      = SourceTcPoint.RaLGS
                     Me.Ri         = SourceTcPoint.Ri
                     Me.St         = SourceTcPoint.St
                     Me.TM         = SourceTcPoint.TM
@@ -126,6 +128,12 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property ZLGS()          As Double = Double.NaN Implements IPointAtTrackGeometry.ZLGS
             
+            ''' <inheritdoc/>
+            Public Property RaLGS()         As Double = Double.NaN Implements IPointAtTrackGeometry.RaLGS
+            
+            ''' <inheritdoc/>
+            Public Property AbLGS()         As Double = Double.NaN Implements IPointAtTrackGeometry.AbLGS
+            
             
             ''' <inheritdoc/>
             Public Property QG()            As Double = Double.NaN Implements IPointAtTrackGeometry.QG
@@ -157,7 +165,7 @@ Namespace Domain
             Public Property L()             As Double = Double.NaN Implements IPointAtTrackGeometry.L
             
             ''' <inheritdoc/>
-            Public Property TM()            As Double = Double.NaN Implements IPointAtTrackGeometry.Tm
+            Public Property Tm()            As Double = Double.NaN Implements IPointAtTrackGeometry.Tm
             
             ''' <inheritdoc/>
             Public Property QT()            As Double = Double.NaN Implements IPointAtTrackGeometry.QT
@@ -305,8 +313,8 @@ Namespace Domain
             ''' <summary> Returns a formatted output of most fields of this GeoTcPoint. </summary>
              ''' <returns> Formatted output. </returns>
             Public Overrides Function ToString() As String
-                Return StringUtils.sprintf("%+20s %10.3f %10.3f %8.3f %8.3f   %8.3f %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f   %-16s %12.3f %12.3f%9.3f",
-                                           Me.ID, Me.Km.Value, Me.St.Value, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.RG, Me.Ra, Me.Ueb * 1000, Me.ActualCant * 1000, Me.ZSOK, Me.Info, Me.Y, Me.X, Me.Z)
+                Return StringUtils.sprintf("%+20s %11.3f (%1d) %10.3f %8.3f %8.3f   %8.3f %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f %7.0f %9.3f  %-16s %12.3f %12.3f%9.3f",
+                                           Me.ID, Me.Km.Value, Me.Km.Status, Me.St.Value, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.RG, Me.Ra, Me.Ueb * 1000, Me.ActualCant * 1000, Me.ZSOK, Me.RaLGS, Me.ZDGM, Me.Info, Me.Y, Me.X, Me.Z)
             End Function
             
         #End Region

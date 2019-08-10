@@ -22,7 +22,7 @@ Namespace Resources
     '''<summary>
     '''  Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
     Public Class Messages
@@ -335,6 +335,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Tangentenabrückung/Abstichmaß der Gradiente ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_AbLGS() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_AbLGS", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 1 Typ ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_AttKey1() As String
@@ -587,6 +596,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Kilometer in Hektormeterschreibweise nach RiL883 der Deutschen Bahn ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_KmText() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_KmText", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Abwicklungsmass (Tunnelprofil) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_L() As String
@@ -736,6 +754,15 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_RailsCode() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_RailsCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ausrundungsradius der Gradiente ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_RaLGS() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_RaLGS", resourceCulture)
             End Get
         End Property
         
@@ -2054,7 +2081,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd              PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe   Info              Rechtswert     Hochwert    Hoehe ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd              PunktNr   Km   (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info               Rechtswert     Hochwert    Hoehe ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcBlock_TableHeader() As String
             Get

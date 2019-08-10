@@ -438,7 +438,7 @@
     <comment>File Name: String; Block Start Line: Long; Block End Line: Long</comment>
   </data>
   <data name="TcBlock_TableHeader" xml:space="preserve">
-    <value> lfd              PunktNr  Kilometer    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe   Info              Rechtswert     Hochwert    Hoehe</value>
+    <value> lfd              PunktNr   Km   (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info               Rechtswert     Hochwert    Hoehe</value>
   </data>
   <data name="TcBlock_ToReport_Comment" xml:space="preserve">
     <value>Beschreibung:  %s</value>
@@ -1070,5 +1070,14 @@
   <data name="UIResources_ErrorLoadingAppresources" xml:space="preserve">
     <value>Anwendungsweite Ressourcen konnten nicht bereitgestellt werden: %s</value>
     <comment>Exception Message: String</comment>
+  </data>
+  <data name="Domain_Label_AbLGS" xml:space="preserve">
+    <value>Tangentenabrückung/Abstichmaß der Gradiente</value>
+  </data>
+  <data name="Domain_Label_KmText" xml:space="preserve">
+    <value>Kilometer in Hektormeterschreibweise nach RiL883 der Deutschen Bahn</value>
+  </data>
+  <data name="Domain_Label_RaLGS" xml:space="preserve">
+    <value>Ausrundungsradius der Gradiente</value>
   </data>
 </root>

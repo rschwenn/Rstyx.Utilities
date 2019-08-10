@@ -162,6 +162,13 @@ Namespace Domain
         ''' <summary> Height coordinate of gradient design (vertical curve set). </summary>
         Property ZLGS()         As Double
         
+        ''' <summary> Radius of gradient design element (vertical curve set). </summary>
+        Property RaLGS()        As Double
+        
+        ' Tangentenabrückung/Abstichmaß der Gradiente (+ = Wanne, - = Kuppe)  of gradient design (vertical curve set).
+        ''' <summary> Height gap between gradient tangent and running surface of rail (+ = valley, - = hill) of gradient design (vertical curve set). </summary>
+        Property AbLGS()        As Double
+        
         
         ''' <summary> Canted track coordinate system: Perpendicular distance in running surface of rail plane to the alignment. </summary>
         Property QG()           As Double

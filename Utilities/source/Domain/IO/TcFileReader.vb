@@ -872,6 +872,8 @@ Namespace Domain.IO
                         Me.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.Ignore, 99, 99)
                         Me.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.Ignore, 99, 99)
                         Me.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.RaLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RaLGS,    DataFieldPositionType.Ignore, 99, 99)
+                        Me.AbLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_AbLGS,    DataFieldPositionType.Ignore, 99, 99)
                         Me.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.Ignore, 99, 99)
                         Me.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.Ignore, 99, 99)
                         Me.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.Ignore, 99, 99)
@@ -879,6 +881,7 @@ Namespace Domain.IO
                         Me.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.Ignore, 99, 99)
                         Me.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.Ignore, 99, 99)
                         Me.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.Ignore, 99, 99)
+                        Me.KmText   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.Ignore, 99, 99)
                         Me.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.Ignore, 99, 99)
                         Me.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.Ignore, 99, 99)
                     End If
@@ -887,6 +890,7 @@ Namespace Domain.IO
                 Public Delimiter As Char = " "c
                 
                 Public KmStatus As DataFieldDefinition(Of KilometerStatus)
+                Public KmText   As DataFieldDefinition(Of String)
                 Public H        As DataFieldDefinition(Of Double)
                 Public QG       As DataFieldDefinition(Of Double)
                 Public HG       As DataFieldDefinition(Of Double)
@@ -908,6 +912,8 @@ Namespace Domain.IO
                 Public QGS      As DataFieldDefinition(Of Double)
                 Public HGS      As DataFieldDefinition(Of Double)
                 Public ZLGS     As DataFieldDefinition(Of Double)
+                Public RaLGS    As DataFieldDefinition(Of Double)
+                Public AbLGS    As DataFieldDefinition(Of Double)
                 Public Text     As DataFieldDefinition(Of String)
                 Public Comment  As DataFieldDefinition(Of String)
             End Class
@@ -1042,7 +1048,7 @@ Namespace Domain.IO
                             
                             Dim FieldName As String = Trim(FieldNames(i - 1))
                             
-                            ' A0: PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | Text | Kommentar
+                            ' A0: PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | KmText | RaLGS | AbLGS | Text | Kommentar
                             
                             Select Case FieldName
                                 Case "PktNr"     : RecordDef.ID       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.WordNumber, i, 0)
@@ -1072,6 +1078,8 @@ Namespace Domain.IO
                                 Case "QT"        : RecordDef.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.WordNumber, i, 0)
                                 Case "ZSOK"      : RecordDef.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.WordNumber, i, 0)
                                 Case "ZLGS"      : RecordDef.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "RaLGS"     : RecordDef.RaLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RaLGS,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "AbLGS"     : RecordDef.AbLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_AbLGS,    DataFieldPositionType.WordNumber, i, 0)
                                 Case "RG"        : RecordDef.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.WordNumber, i, 0)
                                 Case "LG"        : RecordDef.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.WordNumber, i, 0)
                                 Case "QGT"       : RecordDef.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.WordNumber, i, 0)
@@ -1079,6 +1087,7 @@ Namespace Domain.IO
                                 Case "QGS"       : RecordDef.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.WordNumber, i, 0)
                                 Case "HGS"       : RecordDef.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.WordNumber, i, 0)
                                 Case "KmStatus"  : RecordDef.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.WordNumber, i, 0)
+                                Case "KmText"    : RecordDef.KmText   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                                 Case "Text"      : RecordDef.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                                 Case "Kommentar" : RecordDef.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                             End Select
@@ -1224,7 +1233,7 @@ Namespace Domain.IO
                                     p.SourceLineNo = DataLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
-                                    ' Calculate values not having read.
+                                    ' Calculate values not have been read.
                                     p.TryParseActualCant()
                                     p.transformHorizontalToCanted()
                                     If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
@@ -1327,58 +1336,74 @@ Namespace Domain.IO
                                     Dim FieldX As DataField(Of Double) = DataLine.ParseField(RecDef.X)
                                     Dim FieldZ As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
                                     
-                                    p.Y    = FieldY.Value
-                                    p.X    = FieldX.Value
-                                    p.Z    = FieldZ.Value
+                                    p.Y     = FieldY.Value
+                                    p.X     = FieldX.Value
+                                    p.Z     = FieldZ.Value
                                     
                                     ' Track values.
-                                    p.St   = DataLine.ParseField(RecDef.St).Value
-                                    p.Km   = DataLine.ParseField(RecDef.Km).Value
-                                    p.Q    = DataLine.ParseField(RecDef.Q).Value
-                                    p.H    = DataLine.ParseField(RecDef.H).Value
-                                    p.HSOK = DataLine.ParseField(RecDef.HSOK).Value
+                                    p.St    = DataLine.ParseField(RecDef.St).Value
+                                    p.Km    = DataLine.ParseField(RecDef.Km).Value
+                                    p.Q     = DataLine.ParseField(RecDef.Q).Value
+                                    p.H     = DataLine.ParseField(RecDef.H).Value
+                                    p.HSOK  = DataLine.ParseField(RecDef.HSOK).Value
                                     
-                                    p.QG   = DataLine.ParseField(RecDef.QG).Value
-                                    p.HG   = DataLine.ParseField(RecDef.HG).Value
+                                    p.QG    = DataLine.ParseField(RecDef.QG).Value
+                                    p.HG    = DataLine.ParseField(RecDef.HG).Value
                                     
-                                    UebL   = DataLine.ParseField(RecDef.UebL).Value
-                                    UebR   = DataLine.ParseField(RecDef.UebR).Value
-                                    p.Ueb  = DataLine.ParseField(RecDef.Ueb).Value
-                                    p.Heb  = DataLine.ParseField(RecDef.Heb).Value
+                                    UebL    = DataLine.ParseField(RecDef.UebL).Value
+                                    UebR    = DataLine.ParseField(RecDef.UebR).Value
+                                    p.Ueb   = DataLine.ParseField(RecDef.Ueb).Value
+                                    p.Heb   = DataLine.ParseField(RecDef.Heb).Value
                                     
-                                    p.G    = DataLine.ParseField(RecDef.G).Value
-                                    p.Ri   = DataLine.ParseField(RecDef.Ri).Value
-                                    p.Ra   = DataLine.ParseField(RecDef.Ra).Value
+                                    p.G     = DataLine.ParseField(RecDef.G).Value
+                                    p.Ri    = DataLine.ParseField(RecDef.Ri).Value
+                                    p.Ra    = DataLine.ParseField(RecDef.Ra).Value
                                     
-                                    p.V    = DataLine.ParseField(RecDef.V).Value
-                                    p.R    = DataLine.ParseField(RecDef.R).Value
-                                    p.L    = DataLine.ParseField(RecDef.L).Value
+                                    p.V     = DataLine.ParseField(RecDef.V).Value
+                                    p.R     = DataLine.ParseField(RecDef.R).Value
+                                    p.L     = DataLine.ParseField(RecDef.L).Value
                                     
-                                    p.HDGM = DataLine.ParseField(RecDef.HDGM).Value
-                                    p.ZDGM = DataLine.ParseField(RecDef.ZDGM).Value
+                                    p.HDGM  = DataLine.ParseField(RecDef.HDGM).Value
+                                    p.ZDGM  = DataLine.ParseField(RecDef.ZDGM).Value
                                     
-                                    p.Tm   = DataLine.ParseField(RecDef.Tm).Value
-                                    p.QT   = DataLine.ParseField(RecDef.QT).Value
+                                    p.Tm    = DataLine.ParseField(RecDef.Tm).Value
+                                    p.QT    = DataLine.ParseField(RecDef.QT).Value
 
-                                    p.ZSOK = DataLine.ParseField(RecDef.ZSOK).Value
-                                    p.ZLGS = DataLine.ParseField(RecDef.ZLGS).Value
+                                    p.ZSOK  = DataLine.ParseField(RecDef.ZSOK).Value
+                                    p.ZLGS  = DataLine.ParseField(RecDef.ZLGS).Value
+                                    p.RaLGS = DataLine.ParseField(RecDef.RaLGS).Value
+                                    p.AbLGS = DataLine.ParseField(RecDef.AbLGS).Value
 
-                                    p.RG   = DataLine.ParseField(RecDef.RG).Value
-                                    p.LG   = DataLine.ParseField(RecDef.LG).Value
-                                    p.QGT  = DataLine.ParseField(RecDef.QGT).Value
-                                    p.HGT  = DataLine.ParseField(RecDef.HGT).Value
-                                    p.QGS  = DataLine.ParseField(RecDef.QGS).Value
-                                    p.HGS  = DataLine.ParseField(RecDef.HGS).Value
+                                    p.RG    = DataLine.ParseField(RecDef.RG).Value
+                                    p.LG    = DataLine.ParseField(RecDef.LG).Value
+                                    p.QGT   = DataLine.ParseField(RecDef.QGT).Value
+                                    p.HGT   = DataLine.ParseField(RecDef.HGT).Value
+                                    p.QGS   = DataLine.ParseField(RecDef.QGS).Value
+                                    p.HGS   = DataLine.ParseField(RecDef.HGS).Value
                                     
-                                    ' Kilometer Status.
-                                    If (Not Double.IsNaN(p.Km.Value)) Then
-                                        Dim KmStat As KilometerStatus = DataLine.ParseField(RecDef.KmStatus).Value
+                                    ' Kilometer: Text and Status.
+                                    Dim KmStat As KilometerStatus = DataLine.ParseField(RecDef.KmStatus).Value
+                                    Dim KmText As String          = DataLine.ParseField(RecDef.KmText).Value
+                                    If (Double.IsNaN(p.Km.Value)) Then
+                                        ' Not Km value yet => Parse KmText and set Status if available.
+                                        If (KmText.IsNotEmptyOrWhiteSpace()) Then
+                                            If (KmStat = KilometerStatus.Unknown) Then
+                                                p.Km = New Kilometer(KmText)
+                                            Else
+                                                p.Km = New Kilometer(KmText, KmStat)
+                                            End If
+                                        End If
+                                    Else
+                                        ' Km value already there => Set KmText and Status if available.
                                         If (Not KmStat = KilometerStatus.Unknown) Then
                                             p.Km = New Kilometer(p.Km.TDBValue, KmStat)
                                         End If
+                                        If (KmText.IsNotEmptyOrWhiteSpace()) Then
+                                            p.Km.Text = KmText
+                                        End If
                                     End If
                                     
-                                    ' Point info and comment.
+                                    ' Point text/info and comment.
                                     p.Info    = DataLine.ParseField(RecDef.Text).Value
                                     p.Comment = DataLine.ParseField(RecDef.Comment).Value
                                     If (p.Comment.IsEmptyOrWhiteSpace() AndAlso DataLine.HasComment) Then p.Comment = DataLine.Comment
@@ -1443,7 +1468,7 @@ Namespace Domain.IO
                                         End If
                                     End If
                                     
-                                    ' Calculate values not having read.
+                                    ' Calculate values not have been read.
                                     p.TryParseActualCant(TryComment:=True)
                                     p.transformHorizontalToCanted()
                                     If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
