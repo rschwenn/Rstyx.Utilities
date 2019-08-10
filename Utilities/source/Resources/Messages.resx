@@ -438,7 +438,7 @@
     <comment>File Name: String; Block Start Line: Long; Block End Line: Long</comment>
   </data>
   <data name="TcBlock_TableHeader" xml:space="preserve">
-    <value> lfd              PunktNr   Km   (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info               Rechtswert     Hochwert    Hoehe</value>
+    <value> lfd              PunktNr   Km    (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info               Rechtswert     Hochwert    Hoehe</value>
   </data>
   <data name="TcBlock_ToReport_Comment" xml:space="preserve">
     <value>Beschreibung:  %s</value>

@@ -34,8 +34,8 @@ Namespace Domain.IO
      ''' <listheader> <term> <b>Program</b> </term>  <description> Output Type </description></listheader>
      ''' <item> <term> Verm.esn (Version 6.22) </term>  <description> "Umformung", from THW or D3 module (one-line or two-line records) </description></item>
      ''' <item> <term> Verm.esn (Version 8.40) </term>  <description> "Umformung", from THW or D3 module (one-line or two-line records) </description></item>
-     ''' <item> <term> iTrassePC (Version 2.0) </term>  <description> "A1", "A5" </description></item>
-     ''' <item> <term> iGeo (Version 1.2.2)    </term>  <description> "A0", "A1", "A5" </description></item>
+     ''' <item> <term> iTrassePC (Version 2.0) </term>  <description> "A1" </description></item>
+     ''' <item> <term> iGeo (Version 1.3)      </term>  <description> "A0", "A1" </description></item>
      ''' </list>
      ''' <list type="bullet">
      ''' <listheader> <b>Restrictions to the input file :</b> </listheader>
@@ -385,14 +385,11 @@ Namespace Domain.IO
                 ''' <summary> Output format "A1" of iGeo or iTrassePC. </summary>
                 A1  = 2
                 
-                ''' <summary> Output format "A5" of iGeo or iTrassePC. </summary>
-                A5  = 3
-                
                 ''' <summary> Output of Verm.esn module "THW". </summary>
-                THW = 4
+                THW = 3
                 
                 ''' <summary> Output of Verm.esn module "D3". </summary>
-                D3  = 5
+                D3  = 4
                 
             End Enum
             
@@ -484,7 +481,7 @@ Namespace Domain.IO
                                                                               BrokenMessage = sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.THW.ToDisplayString(), TcBlockFormat.D3.ToDisplayString())
                                                                               
                                                                           Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
-                                                                              BrokenMessage = sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.A1.ToDisplayString(), TcBlockFormat.A5.ToDisplayString())
+                                                                              BrokenMessage = sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.A0.ToDisplayString(), TcBlockFormat.A1.ToDisplayString())
                                                                       End Select
                                                                  End If
                                                                  
@@ -527,7 +524,7 @@ Namespace Domain.IO
                                                                               
                                                                           Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
                                                                               Select Case BlockType.Format
-                                                                                  Case TcBlockFormat.A0, TcBlockFormat.A1, TcBlockFormat.A5
+                                                                                  Case TcBlockFormat.A0, TcBlockFormat.A1
                                                                                       'o.k.
                                                                                   Case Else
                                                                                       IsValidRule = False
@@ -584,8 +581,6 @@ Namespace Domain.IO
                         
                         If (Me.Format = TcBlockFormat.A1) Then
                             RetValue &= " (Format A1)"
-                        ElseIf(Me.Format = TcBlockFormat.A5) Then
-                            RetValue &= " (Format A5)"
                         Else
                             RetValue &= " (Format ??)"
                         End If
@@ -594,7 +589,7 @@ Namespace Domain.IO
                         RetValue = "iGeo"
                         
                         If (Me.Version = TcBlockVersion.Current) Then
-                            RetValue &= " 1.2.2"
+                            RetValue &= " 1.3"
                         Else
                             RetValue &= " v??" 
                         End If
@@ -603,8 +598,6 @@ Namespace Domain.IO
                             RetValue &= " (Format A0)"
                         ElseIf(Me.Format = TcBlockFormat.A1) Then
                             RetValue &= " (Format A1)"
-                        ElseIf(Me.Format = TcBlockFormat.A5) Then
-                            RetValue &= " (Format A5)"
                         Else
                             RetValue &= " (Format ??)"
                         End If
@@ -1271,7 +1264,7 @@ Namespace Domain.IO
                 Return Block
             End Function
             
-            ''' <summary> Reads a block of iGeo/iTrassePC output (A0, A1, A5). </summary>
+            ''' <summary> Reads a block of iGeo/iTrassePC output (A0, A1). </summary>
              ''' <param name="DataLines">  The data cache holding the block of interest. </param>
              ''' <param name="SourceBlock"> Determines the block type and it's position in <paramref name="DataLines"/>. </param>
              ''' <returns> The complete <see cref="TcBlock"/> read from <paramref name="DataLines"/>. </returns>
@@ -1657,7 +1650,7 @@ Namespace Domain.IO
                 If (SourceBlock.HasData) Then Logger.logDebug(sprintf("  First Data Line      : %d", DataLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
-            ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A0, A1, A5), especially block type and geometry reference info and first data line. </summary>
+            ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A0, A1), especially block type and geometry reference info and first data line. </summary>
              ''' <param name="DataLines">   [In]  The data cache holding the block of interest. </param>
              ''' <param name="SourceBlock"> [In/Out] Info about block source in <paramref name="DataLines"/>. </param>
              ''' <param name="Block">       [Out] The TcBlock to fill with info. </param>
@@ -1680,7 +1673,6 @@ Namespace Domain.IO
                 ' Supported Format strings.
                 Const Fmt_A0 = "A0 : Alles EDV"
                 Const Fmt_A1 = "A1 : PktNr  Y  X  Z  St/Km"  ' kleinster gemeinsamer Nenner von iTrassePC und iGeo
-                Const Fmt_A5 = "A5 : Alles"
                 
                 Block.BlockType.Program  = SourceBlock.BlockType.Program
                 Block.BlockType.Version  = TcBlockVersion.Current
@@ -1712,11 +1704,6 @@ Namespace Domain.IO
                                             
                                             FormatFound = True
                                             Block.BlockType.Format = TcBlockFormat.A1
-                                            
-                                        ElseIf (kvp.Value = Fmt_A5) Then
-                                            
-                                            FormatFound = True
-                                            Block.BlockType.Format = TcBlockFormat.A5
                                         End If
                                     
                                     Case "Datei":               CommentEnd = True
@@ -2059,207 +2046,6 @@ Namespace Domain.IO
                 iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), A1RecordDef)
                 BlockType.Program = TcBlockProgram.iTrassePC
                 iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), A1RecordDef)
-                
-                ' iGeo, A5
-                BlockType.Program = TcBlockProgram.iGeo
-                BlockType.Format  = TcBlockFormat.A5
-                BlockType.Version = TcBlockVersion.Current
-                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionIGeo With {
-                    _
-                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
-                                                               DataFieldPositionType.WordNumber, 1, 0),
-                    _
-                    .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
-                                                               DataFieldPositionType.WordNumber, 2, 0),
-                    _
-                    .X    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,
-                                                               DataFieldPositionType.WordNumber, 3, 0),
-                    _
-                    .Z    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,
-                                                               DataFieldPositionType.WordNumber, 4, 0,
-                                                               DataFieldOptions.ZeroAsNaN),
-                    _
-                    .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.WordNumber, 5, 0),
-                    _
-                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.WordNumber, 6, 0),
-                    _
-                    .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
-                                                               DataFieldPositionType.WordNumber, 7, 0),
-                    _
-                    .H    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,
-                                                               DataFieldPositionType.WordNumber, 8, 0),
-                    _
-                    .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
-                                                               DataFieldPositionType.WordNumber, 9, 0),
-                    _
-                    .QG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,
-                                                               DataFieldPositionType.WordNumber, 10, 0),
-                    _
-                    .HG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,
-                                                               DataFieldPositionType.WordNumber, 11, 0),
-                    _
-                    .UebL = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,
-                                                               DataFieldPositionType.WordNumber, 12, 0),
-                    _
-                    .UebR = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,
-                                                               DataFieldPositionType.WordNumber, 13, 0),
-                    _
-                    .Ueb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,
-                                                               DataFieldPositionType.WordNumber, 14, 0),
-                    _
-                    .Heb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,
-                                                               DataFieldPositionType.WordNumber, 15, 0),
-                    _
-                    .G    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,
-                                                               DataFieldPositionType.WordNumber, 16, 0),
-                    _
-                    .Ri   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,
-                                                               DataFieldPositionType.WordNumber, 17, 0),
-                    _
-                    .Ra   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,
-                                                               DataFieldPositionType.WordNumber, 18, 0),
-                    _
-                    .V    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,
-                                                               DataFieldPositionType.WordNumber, 19, 0),
-                    _
-                    .R    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,
-                                                               DataFieldPositionType.WordNumber, 20, 0),
-                    _
-                    .L    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,
-                                                               DataFieldPositionType.WordNumber, 21, 0),
-                    _
-                    .HDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,
-                                                               DataFieldPositionType.WordNumber, 22, 0),
-                    _
-                    .ZDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,
-                                                               DataFieldPositionType.WordNumber, 23, 0),
-                    _
-                    .Tm   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,
-                                                               DataFieldPositionType.WordNumber, 24, 0),
-                    _
-                    .QT   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,
-                                                               DataFieldPositionType.WordNumber, 25, 0),
-                    _
-                    .ZSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,
-                                                               DataFieldPositionType.WordNumber, 26, 0),
-                    _
-                    .ZLGS = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,
-                                                               DataFieldPositionType.WordNumber, 27, 0),
-                    _
-                    .RG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,
-                                                               DataFieldPositionType.WordNumber, 28, 0),
-                    _
-                    .LG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,
-                                                               DataFieldPositionType.WordNumber, 29, 0),
-                    _
-                    .QGT  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,
-                                                               DataFieldPositionType.WordNumber, 30, 0,
-                                                               DataFieldOptions.ZeroAsNaN),
-                    _
-                    .HGT  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,
-                                                               DataFieldPositionType.WordNumber, 31, 0,
-                                                               DataFieldOptions.ZeroAsNaN),
-                    _
-                    .QGS  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,
-                                                               DataFieldPositionType.WordNumber, 32, 0,
-                                                               DataFieldOptions.ZeroAsNaN),
-                    _
-                    .HGS  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,
-                                                               DataFieldPositionType.WordNumber, 33, 0,
-                                                               DataFieldOptions.ZeroAsNaN),
-                    _
-                    .KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus,
-                                                               DataFieldPositionType.WordNumber, 34, 0),
-                    _
-                    .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
-                                                               DataFieldPositionType.WordNumber, 35, 0,
-                                                               DataFieldOptions.NotRequired),
-                    _
-                    .Comment = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,
-                                                               DataFieldPositionType.Ignore, 99, 99)
-                    })
-                '
-                ' iTrassePC, A5
-                BlockType.Program = TcBlockProgram.iTrassePC
-                BlockType.Format  = TcBlockFormat.A5
-                BlockType.Version = TcBlockVersion.Current
-                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionIGeo(InitIgnore:=True) With {
-                    _
-                    .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
-                                                               DataFieldPositionType.WordNumber, 1, 0),
-                    _
-                    .Y    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,
-                                                               DataFieldPositionType.WordNumber, 2, 0),
-                    _
-                    .X    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,
-                                                               DataFieldPositionType.WordNumber, 3, 0),
-                    _
-                    .Z    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,
-                                                               DataFieldPositionType.WordNumber, 4, 0),
-                    _
-                    .St   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,
-                                                               DataFieldPositionType.WordNumber, 5, 0),
-                    _
-                    .Km   = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,
-                                                               DataFieldPositionType.WordNumber, 6, 0),
-                    _
-                    .Q    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,
-                                                               DataFieldPositionType.WordNumber, 7, 0),
-                    _
-                    .H    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,
-                                                               DataFieldPositionType.WordNumber, 8, 0),
-                    _
-                    .HSOK = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,
-                                                               DataFieldPositionType.WordNumber, 9, 0),
-                    _
-                    .QG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,
-                                                               DataFieldPositionType.WordNumber, 10, 0),
-                    _
-                    .HG   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,
-                                                               DataFieldPositionType.WordNumber, 11, 0),
-                    _
-                    .UebL = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,
-                                                               DataFieldPositionType.WordNumber, 12, 0),
-                    _
-                    .UebR = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,
-                                                               DataFieldPositionType.WordNumber, 13, 0),
-                    _
-                    .Ueb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,
-                                                               DataFieldPositionType.WordNumber, 14, 0),
-                    _
-                    .Heb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,
-                                                               DataFieldPositionType.WordNumber, 15, 0),
-                    _
-                    .G    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,
-                                                               DataFieldPositionType.WordNumber, 16, 0),
-                    _
-                    .Ri   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,
-                                                               DataFieldPositionType.WordNumber, 17, 0),
-                    _
-                    .Ra   = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,
-                                                               DataFieldPositionType.WordNumber, 18, 0),
-                    _
-                    .V    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,
-                                                               DataFieldPositionType.WordNumber, 19, 0),
-                    _
-                    .R    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,
-                                                               DataFieldPositionType.WordNumber, 20, 0),
-                    _
-                    .L    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,
-                                                               DataFieldPositionType.WordNumber, 21, 0),
-                    _
-                    .HDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,
-                                                               DataFieldPositionType.WordNumber, 22, 0),
-                    _
-                    .ZDGM = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,
-                                                               DataFieldPositionType.WordNumber, 23, 0),
-                    _
-                    .Text = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,
-                                                               DataFieldPositionType.WordNumber, 24, 0,
-                                                               DataFieldOptions.NotRequired)
-                    })
             End Sub
             
         #End Region

@@ -24,7 +24,7 @@ Namespace Domain
     
     ''' <summary> Represents a Kilometer, supporting several notations. </summary>
     ''' <remarks>
-    ''' The properties of this class (except <see cref="Kilometer.Text"/>) are read-only. They can be set at instantiation 
+    ''' The properties of this class (except <see cref="Kilometer.Text"/>) are read-only. They can be set at construction 
     ''' or by the <see cref="Kilometer.Parse(String)"/> or <see cref="Kilometer.TryParse(String)"/> methods only.
     ''' </remarks>
     Public Class Kilometer

@@ -471,9 +471,6 @@
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A1" xml:space="preserve">
     <value>Ausgabe A1</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A5" xml:space="preserve">
-    <value>Ausgabe A5</value>
-  </data>
   <data name="Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_D3" xml:space="preserve">
     <value>D3 (7-Linien)</value>
   </data>
