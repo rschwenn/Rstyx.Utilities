@@ -210,7 +210,7 @@ Namespace Domain
              ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
              ''' </para>
              ''' <para>
-             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
+             ''' If this transformation isn't possible, the target values will be set to <c>Double.NaN</c>.
              ''' </para>
             Public Sub transformHorizontalToCanted()
                 
@@ -221,14 +221,25 @@ Namespace Domain
                     
                 ElseIf (Not (Double.IsNaN(Me.Ueb) OrElse Double.IsNaN(Me.CantBase) OrElse Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsTolerance(0, 0.001))) Then
                     
-                    Dim sf  As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
-                    Dim cbh As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
-                    Dim phi As Double  = sf * Atan(Abs(Me.Ueb) / cbh) * (-1)
-                    Dim X0  As Double  = Abs(Me.Ueb) / 2
-                    Dim Y0  As Double  = sf * (Me.CantBase - cbh) / 2
+                    'Dim sf      As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
+                    'Dim cbh     As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
+                    'Dim phi     As Double  = sf * Atan(Abs(Me.Ueb) / cbh) * (-1)
+                    'Dim X0      As Double  = Abs(Me.Ueb) / 2
+                    'Dim Y0      As Double  = sf * (Me.CantBase - cbh) / 2
+                    '
+                    'Me.QG = (Me.Q - Y0) * Cos(phi) + (Me.HSOK - X0) * Sin(phi)
+                    'Me.HG = (Me.HSOK - X0) * Cos(phi) - (Me.Q - Y0) * Sin(phi)
                     
-                    Me.QG = (Me.Q - Y0) * Cos(phi) + (Me.HSOK - X0) * Sin(phi)
-                    Me.HG = (Me.HSOK - X0) * Cos(phi) - (Me.Q - Y0) * Sin(phi)
+                    ' 19.08.2019 (Angleichung an iGeo und VermEsn:  Nullpunkt wird nur in der Höhe verschoben um u/2)
+                    Dim sf      As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
+                    Dim phi     As Double  = sf * Asin(Abs(Me.Ueb) / Me.CantBase) * (-1)
+                    Dim CosPhi  As Double  = Cos(phi)
+                    Dim SinPhi  As Double  = Sin(phi)
+                    Dim X0      As Double  = Abs(Me.Ueb) / 2
+                    Dim Y0      As Double  = 0.0
+                    
+                    Me.QG = (Me.Q - Y0) * CosPhi + (Me.HSOK - X0) * SinPhi
+                    Me.HG = (Me.HSOK - X0) * CosPhi - (Me.Q - Y0) * SinPhi
                 Else
                     Me.QG = Double.NaN
                     Me.HG = Double.NaN
@@ -241,7 +252,7 @@ Namespace Domain
              ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
              ''' </para>
              ''' <para>
-             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
+             ''' If this transformation isn't possible, the target values will be set to <c>Double.NaN</c>.
              ''' </para>
              ''' </remarks>
             Public Sub transformCantedToHorizontal()
@@ -253,13 +264,24 @@ Namespace Domain
                     
                 ElseIf (Not (Double.IsNaN(Me.Ueb) OrElse Double.IsNaN(Me.CantBase) OrElse Double.IsNaN(Me.Ra) OrElse Me.Ra.EqualsTolerance(0, 0.001))) Then
                     
+                    'Dim sf      As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
+                    'Dim cbh     As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
+                    'Dim phi     As Double  = sf * Atan(Abs(Me.Ueb) / cbh) * (-1)
+                    'Dim CosPhi  As Double  = Cos(phi)
+                    'Dim SinPhi  As Double  = Sin(phi)
+                    'Dim X0      As Double  = Abs(Me.Ueb) / 2
+                    'Dim Y0      As Double  = sf * (Me.CantBase - cbh) / 2
+                    '
+                    'Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)
+                    'Me.Q    = Y0 + (Me.QG - (Me.HSOK - X0) * SinPhi) / CosPhi
+                    
+                    ' 19.08.2019 (Angleichung an iGeo und VermEsn:  Nullpunkt wird nur in der Höhe verschoben um u/2)
                     Dim sf      As Integer = Sign(Me.Ra) * Sign(Me.Ueb)
-                    Dim cbh     As Double  = Sqrt(Pow(Me.CantBase, 2) - Pow(Me.Ueb, 2))
-                    Dim phi     As Double  = sf * Atan(Abs(Me.Ueb) / cbh) * (-1)
+                    Dim phi     As Double  = sf * Asin(Abs(Me.Ueb) / Me.CantBase) * (-1)
                     Dim CosPhi  As Double  = Cos(phi)
                     Dim SinPhi  As Double  = Sin(phi)
                     Dim X0      As Double  = Abs(Me.Ueb) / 2
-                    Dim Y0      As Double  = sf * (Me.CantBase - cbh) / 2
+                    Dim Y0      As Double  = 0.0
                     
                     Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)
                     Me.Q    = Y0 + (Me.QG - (Me.HSOK - X0) * SinPhi) / CosPhi
@@ -378,68 +400,6 @@ Namespace Domain
                 
                 Return Cant / 1000
             End Function
-            
-        #End Region
-        
-        #Region "Backup (Old Methods)"
-            
-            ''' <summary> Transforms <see cref="GeoTcPoint.Q"/> and <see cref="GeoTcPoint.HSOK"/> to <see cref="GeoTcPoint.QG"/> and <see cref="GeoTcPoint.HG"/> if possible. </summary>
-             ''' <para>
-             ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
-             ''' </para>
-             ''' <para>
-             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
-             ''' </para>
-            Private Sub transformHorizontalToCanted_old()
-                
-                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
-                    Me.QG = Me.Q
-                    Me.HG = Me.HSOK
-                    
-                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
-                    Dim sf  As Integer = Sign(Me.Ra)
-                    Dim phi As Double  = sf * Atan(Me.Ueb / Me.CantBase) * (-1)
-                    Dim X0  As Double  = Abs(Me.CantBase / 2 * Sin(phi))
-                    Dim Y0  As Double  = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Cos(phi)))
-                    
-                    Me.QG = (Me.Q - Y0) * Cos(phi) + (Me.HSOK - X0) * Sin(phi)
-                    Me.HG = (Me.HSOK - X0) * Cos(phi) - (Me.Q - Y0) * Sin(phi)
-                Else
-                    Me.QG = Double.NaN
-                    Me.HG = Double.NaN
-                End If
-            End Sub
-            
-            ''' <summary> Transforms <see cref="GeoTcPoint.QG"/> and <see cref="GeoTcPoint.HG"/> to <see cref="GeoTcPoint.Q"/> and <see cref="GeoTcPoint.HSOK"/> if possible. </summary>
-             ''' <remarks>
-             ''' <para>
-             ''' Sign of cant: Positive is treated as "normal", negative as "inverse".
-             ''' </para>
-             ''' <para>
-             ''' If this transformation isn't possible, the target values will be <c>Double.NaN</c>.
-             ''' </para>
-             ''' </remarks>
-            Private Sub transformCantedToHorizontal_old()
-                
-                If ((Me.Ueb > -0.0005) And (Me.Ueb < 0.0005)) Then
-                    Me.Q    = Me.QG
-                    Me.HSOK = Me.HG
-                    
-                ElseIf (Not (Double.IsNaN(Me.Ra) OrElse (Me.Ra = 0.0))) Then
-                    Dim sf      As Integer = Sign(Me.Ra)
-                    Dim phi     As Double = sf * Atan(Me.Ueb / Me.CantBase) * (-1)
-                    Dim CosPhi  As Double = Cos(phi)
-                    Dim SinPhi  As Double = Sin(phi)
-                    Dim X0      As Double = Abs(Me.CantBase / 2 * Sin(phi))
-                    Dim Y0      As Double = sf * (Me.CantBase / 2 - (Me.CantBase / 2 * Cos(phi)))
-                    
-                    Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)
-                    Me.Q = Y0 + Me.QG / CosPhi - (Me.HSOK - X0) * SinPhi
-                Else
-                    Me.Q    = Double.NaN
-                    Me.HSOK = Double.NaN
-                End If
-            End Sub
             
         #End Region
         
