@@ -125,26 +125,15 @@ Public Class MainViewModel
         Public Sub TestOrder()
             
             Dim Files As New Collection(Of String)
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.0 + 17.60.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.0 + 68.33.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.0 - 27.18.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.2 - 73.95.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.2 + 20.05.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.8 + 84.82.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.0 - 67.10 b.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.0 - 67.10.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.1 + 22.03.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0.1 + 75.78.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.2 - 22.01.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 0.9 + 29.88.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km 1.4 + 76.54.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.1 - 12.13.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km -0.1 - 67.04.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot - Sortierung absteigend\Profil N94-118.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot - Sortierung absteigend\Profil N94-127.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot - Sortierung absteigend\Profil N94-129   N94-128.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot - Sortierung absteigend\Profil N95-1s   N95-2s.pdf")
             
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  00220.06.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  0884.82.pdf")
-            Files.Add("D:\daten\Batchplot_negative_Km\Einzelplots_Test\km  -67.pdf")
-            
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot_negative_Km\Profil  km 0.1 + 75.78.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot_negative_Km\Profil  km -0.2 - 22.01.pdf")
+            Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot_negative_Km\Profil  km -0.1 - 12.13.pdf")
+
             'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 82.30, Gleis 5500-re, Krbw Str 5544, Stütze 1.pdf")
             'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.93, Gleis 5500-li, Krbw Str 5544, Stütze 4.pdf")
             'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.4 + 88.55, Gleis 5500-re, Krbw Str 5544, KUK.pdf")
@@ -299,7 +288,7 @@ Public Class MainViewModel
             'Try
                 Logger.logInfo("")
                 
-                'Call TestOrder()
+                Call TestOrder()
                 'Call TestPDF()
                 'Call TestJPEG()
                 

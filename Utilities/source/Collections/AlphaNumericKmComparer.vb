@@ -193,7 +193,8 @@ Namespace Collections
                 
                 If (InputString.IsNotEmptyOrWhiteSpace()) Then
                     
-                    Dim Pattern As String = " *([+\-]? *[0-9]*[.]*[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *"
+                    'Dim Pattern As String = " *([+\-]? *[0-9]*[.]*[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *"
+                    Dim Pattern As String = " *([+\-]? *[0-9]+\.[0-9]+)([-+ ]+)([0-9]*[.]*[0-9]+) *"
                     Dim oMatch  As Match  = Regex.Match(InputString, Pattern, RegexOptions.IgnoreCase)
                     
                     If (oMatch.Success) Then
