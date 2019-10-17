@@ -1408,18 +1408,27 @@ Namespace Domain.IO
                                     p.SourceLineNo = DataLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
-                                    ' Resolve Ambiguities.
+                                    ' Justify Cant and Resolve Ambiguities.
                                     ' TODO: Check tolerances and infinities.
                                     Dim NoRadius As Boolean = (Double.IsNaN(p.Ra) OrElse p.Ra.EqualsTolerance(0, 0.001))
                                     If (p.Ueb.EqualsTolerance(0, 0.001) AndAlso NoRadius) Then
                                         ' Ignore minimal cant if radius is unknown or zero.
                                         p.Ueb = 0.0
                                     End If
-                                    If ( (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, 0.001))) AndAlso NoRadius) Then
-                                        ' Ensure that sign of cant is determinable by setting a special radius.
-                                        Dim CantSign As Double = UebL - UebR
-                                        If (Not Double.IsNaN(CantSign)) Then
-                                            p.Ra = If(CantSign < 0, Double.NegativeInfinity, Double.PositiveInfinity)
+                                    'If ( (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, 0.001))) AndAlso NoRadius) Then
+                                    If (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, 0.001))) Then
+                                        If (NoRadius) Then
+                                            ' Ensure that sign of cant is determinable by setting a special radius.
+                                            Dim CantSign As Double = UebL - UebR
+                                            If (Not Double.IsNaN(CantSign)) Then
+                                                p.Ra = If(CantSign < 0, Double.NegativeInfinity, Double.PositiveInfinity)
+                                            End If
+                                        Else
+                                            ' Cant sign: Calculate from UebL, UebR and radius.
+                                            Dim CantSign As Double = Sign(UebL - UebR) * Sign(p.Ra)
+                                            If (Not Double.IsNaN(CantSign)) Then
+                                                p.Ueb = CantSign * Abs(p.Ueb)
+                                            End If
                                         End If
                                     End If
                                     If (Block.BlockType.Format = TcBlockFormat.A1) Then
