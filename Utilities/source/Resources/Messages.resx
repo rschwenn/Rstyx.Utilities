@@ -873,10 +873,10 @@
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
   <data name="Domain_Label_AttKey1" xml:space="preserve">
-    <value>Attribut 1 Typ</value>
+    <value>Attribut 1 Name</value>
   </data>
   <data name="Domain_Label_AttKey2" xml:space="preserve">
-    <value>Attribut 2 Typ</value>
+    <value>Attribut 2 Name</value>
   </data>
   <data name="Domain_Label_AttValue1" xml:space="preserve">
     <value>Attribut 1 Wert</value>
@@ -1079,5 +1079,8 @@
   </data>
   <data name="Domain_Label_RaLGS" xml:space="preserve">
     <value>Ausrundungsradius der Gradiente</value>
+  </data>
+  <data name="Domain_Label_FreeData" xml:space="preserve">
+    <value>Freie Daten</value>
   </data>
 </root>

@@ -1,5 +1,6 @@
 ﻿
 Imports System
+Imports System.Collections.Generic
 
 Namespace Domain
     
@@ -41,6 +42,9 @@ Namespace Domain
     
     ''' <summary> A set of properties describing a geodetic point. </summary>
     Public Interface IGeoPointInfo
+            
+        ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>
+        Property Attributes()   As Dictionary(Of String, String)
         
         ''' <summary> A comment. </summary>
         Property Comment()      As String

@@ -1,5 +1,6 @@
 ﻿
 Imports System
+Imports System.Collections.Generic
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.Math.MathExtensions
 Imports Rstyx.Utilities.StringUtils
@@ -54,7 +55,7 @@ Namespace Domain
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
-               GetPropsFromIGeoPoint(SourcePoint)
+               Me.GetPropsFromIGeoPoint(SourcePoint)
             End Sub
             
         #End Region
@@ -109,6 +110,7 @@ Namespace Domain
                 If (SourcePoint IsNot Nothing) Then
                     Me.ID              = SourcePoint.ID
                     
+                    Me.Attributes      = SourcePoint.Attributes
                     Me.Info            = SourcePoint.Info
                     Me.HeightInfo      = SourcePoint.HeightInfo
                     Me.Comment         = SourcePoint.Comment
@@ -157,6 +159,9 @@ Namespace Domain
         #End Region
         
         #Region "IGeoPointInfo Members"
+            
+            ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>
+            Public Property Attributes()    As Dictionary(Of String, String) = Nothing Implements IGeoPointInfo.Attributes
             
             ''' <inheritdoc/>
             Public Property Info()          As String = String.Empty Implements IGeoPointInfo.Info

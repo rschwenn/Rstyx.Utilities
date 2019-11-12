@@ -1,6 +1,6 @@
 ﻿
-Imports Rstyx.Utilities.Domain
-Imports Rstyx.Utilities.IO
+'Imports Rstyx.Utilities.Domain
+'Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
@@ -28,7 +28,7 @@ Namespace Domain
             Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
                 
-                 Me.CoordType = "YXZ"
+                Me.CoordType = "YXZ"
                 
                 ' iPkt specials.
                 If (TypeOf SourcePoint Is GeoIPoint) Then

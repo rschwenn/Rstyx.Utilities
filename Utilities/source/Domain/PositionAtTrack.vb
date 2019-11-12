@@ -19,7 +19,7 @@ Namespace Domain
         ''' <summary> Code of track rails (right, left, single). </summary>
         Public Property RailsCode       As String = String.Empty
         
-        ''' <summary> Name or number of track rails (at a railway mstation). </summary>
+        ''' <summary> Name or number of track rails (at a railway station). </summary>
         Public Property RailsNameNo     As String = String.Empty
         
         ''' <summary> Textual specification of track side (i.e.: left, right, l, r, +, -). </summary>

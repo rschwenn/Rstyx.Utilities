@@ -344,7 +344,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 1 Typ ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 1 Name ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_AttKey1() As String
             Get
@@ -353,7 +353,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 2 Typ ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 2 Name ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_AttKey2() As String
             Get
@@ -439,6 +439,15 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_Flags() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_Flags", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Freie Daten ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_FreeData() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_FreeData", resourceCulture)
             End Get
         End Property
         

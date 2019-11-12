@@ -104,7 +104,7 @@ Namespace IO
                 End Set
             End Property
             
-            ''' <summary> Returns all data fields of <c>Me.Data</c> delimited by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
+            ''' <summary> Returns all data fields of <see cref="DataTextLine.Data"/> delimited by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
              ''' <returns> All data fields. </returns>
              ''' <remarks> The collection will be created lazy at access to this property. </remarks>
             Public ReadOnly Property Words() As Collection(Of DataFieldSource)
@@ -141,7 +141,7 @@ Namespace IO
                 Return RetValue
             End Function
             
-            ''' <summary> Parses <c>Me.Data</c> for a given data field determined by <paramref name="FieldDef"/>. </summary>
+            ''' <summary> Parses <see cref="DataTextLine.Data"/> for a given data field determined by <paramref name="FieldDef"/>. </summary>
              ''' <typeparam name="TFieldValue"> The type to parse the field into. </typeparam>
              ''' <param name="FieldDef">        The parsing instructions. </param>
              ''' <returns>                      The resulting DataField object. </returns>
@@ -155,7 +155,7 @@ Namespace IO
              ''' then the <c>.Value</c> of returned data field will be a default value.
              ''' </para>
              ''' <para>
-             ''' If the field's start column does exist in <c>Me.Data</c>, it doesn't matter if the field's end would be behind <c>Me.Data</c>'s end: 
+             ''' If the field's start column does exist in <see cref="DataTextLine.Data"/>, it doesn't matter if the field's end would be behind <see cref="DataTextLine.Data"/>'s end: 
              ''' The field will be taken shorter than intended without complaing.
              ''' </para>
              ''' The following conditions are recognized as parse errors.
@@ -205,7 +205,7 @@ Namespace IO
                 Return Field
             End Function
             
-            ''' <summary> Tries to parse <c>Me.Data</c> for a given data field determined by <paramref name="FieldDef"/>. </summary>
+            ''' <summary> Tries to parse <see cref="DataTextLine.Data"/> for a given data field determined by <paramref name="FieldDef"/>. </summary>
              ''' <typeparam name="TFieldValue"> The type to parse the field into. </typeparam>
              ''' <param name="FieldDef">        The parsing instructions. </param>
              ''' <param name="Result">          The resulting DataField object. </param>
@@ -221,7 +221,7 @@ Namespace IO
              ''' then <paramref name="Result"/><c>.Value</c> will be a default value and the function returns <see langword="true"/> (success).
              ''' </para>
              ''' <para>
-             ''' If the field's start column does exist in <c>Me.Data</c>, it doesn't matter if the field's end would be behind <c>Me.Data</c>'s end: 
+             ''' If the field's start column does exist in <see cref="DataTextLine.Data"/>, it doesn't matter if the field's end would be behind <see cref="DataTextLine.Data"/>'s end: 
              ''' The field will be taken shorter than intended without complaing.
              ''' </para>
              ''' The following conditions are recognized as parse errors.
@@ -676,7 +676,7 @@ Namespace IO
                 End If
             End Sub
             
-            ''' <summary> Splits <c>Me.Data</c> into words separated by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
+            ''' <summary> Splits <see cref="DataTextLine.Data"/> into words separated by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
              ''' <returns> The words as <see cref="DataFieldSource"/>'s. </returns>
              ''' <remarks></remarks>
             Private Function getWords() As Collection(Of DataFieldSource)

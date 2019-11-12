@@ -89,6 +89,9 @@ Namespace Domain.IO
                                     Dim KeyInt     As Integer
                                     If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = KeyInt.ToString()
                                     
+                                    p.SourcePath   = FilePath
+                                    p.SourceLineNo = DataLine.SourceLineNo
+                                    
                                     p.ObjectKey    = KeyText
                                     
                                     p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
@@ -105,10 +108,19 @@ Namespace Domain.IO
                                     p.AttValue1    = DataLine.ParseField(RecDef.AttValue1  ).Value
                                     p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
                                     p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
-                                    p.Comment      = DataLine.ParseField(RecDef.Comment    ).Value
                                     
-                                    p.SourcePath   = FilePath
-                                    p.SourceLineNo = DataLine.SourceLineNo
+                                    ' Attributes and comment from free data.
+                                    Dim FreeData     As String = DataLine.ParseField(RecDef.FreeData).Value
+                                    Dim FreeFields() As String = FreeData.Split("|"c)
+                                    Dim i As Integer
+                                    For i = 0 To FreeFields.Length - 3 Step 2
+                                        If (i = 0) Then p.Attributes = New Dictionary(Of String, String)
+                                        p.Attributes.Add(FreeFields(i), FreeFields(i + 1))
+                                    Next
+                                    p.Comment = FreeFields(i)
+                                    If (FreeFields.Length > (i + 1)) Then
+                                        p.Comment &= "|" & FreeFields(i + 1)
+                                    End If
                                     
                                     ' Parse time stamp if given (DataLine.ParseField is unable to do it).
                                     If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
@@ -182,7 +194,7 @@ Namespace Domain.IO
                     
                     Me.Reset(Nothing)
                     
-                    Dim PointFmt   As String = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim PointFmt   As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s%s"
                     Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = True  ' iGeo ignores all but the first point with same ID => hence don't write more than once.
                     
@@ -212,6 +224,14 @@ Namespace Domain.IO
                                 Dim KeyInt  As Integer
                                 If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = sprintf("%6.6d", KeyInt)
                                 
+                                ' Attributes.
+                                Dim AttString As String = String.Empty
+                                If (p.Attributes IsNot Nothing) Then
+                                    For Each kvp As KeyValuePair(Of String, String) In p.Attributes
+                                        AttString &= kvp.Key & "|" & kvp.Value & "|"
+                                    Next
+                                End If
+                                
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt, PointCount,
                                                       p.CalcCode.TrimToMaxLength(2),
@@ -231,6 +251,7 @@ Namespace Domain.IO
                                                       p.AttValue1.TrimToMaxLength(25),
                                                       p.AttKey2.TrimToMaxLength(2),
                                                       p.AttValue2.TrimToMaxLength(25),
+                                                      AttString,
                                                       p.Comment
                                                      ))
                                 
@@ -289,7 +310,7 @@ Namespace Domain.IO
                     Me.Z            = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Z          , DataFieldPositionType.ColumnAndLength,  90, 14, DataFieldOptions.NotRequired)
                     Me.TimeStamp    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_TimeStamp  , DataFieldPositionType.ColumnAndLength, 105, 19, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.CoordSys     = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_CoordSys   , DataFieldPositionType.ColumnAndLength, 125,  6, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.Flags        = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Flags      , DataFieldPositionType.ColumnAndLength, 132,  4, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                    Me.Flags        = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Flags      , DataFieldPositionType.ColumnAndLength, 132,  4, DataFieldOptions.NotRequired)
                     Me.wp           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_wp         , DataFieldPositionType.ColumnAndLength, 137,  4, DataFieldOptions.NotRequired)
                     Me.wh           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_wh         , DataFieldPositionType.ColumnAndLength, 142,  4, DataFieldOptions.NotRequired)
                     Me.Info         = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Info       , DataFieldPositionType.ColumnAndLength, 147, 25, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
@@ -297,7 +318,7 @@ Namespace Domain.IO
                     Me.AttValue1    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttValue1  , DataFieldPositionType.ColumnAndLength, 176, 25, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.AttKey2      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttKey2    , DataFieldPositionType.ColumnAndLength, 202,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.AttValue2    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttValue2  , DataFieldPositionType.ColumnAndLength, 205, 25, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.Comment      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Comment    , DataFieldPositionType.ColumnAndLength, 231, Integer.MaxValue, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                    Me.FreeData     = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_FreeData   , DataFieldPositionType.ColumnAndLength, 231, Integer.MaxValue, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                 End Sub
                 
                 #Region "Public Fields"
@@ -321,7 +342,7 @@ Namespace Domain.IO
                     Public AttValue1    As DataFieldDefinition(Of String)
                     Public AttKey2      As DataFieldDefinition(Of String)
                     Public AttValue2    As DataFieldDefinition(Of String)
-                    Public Comment      As DataFieldDefinition(Of String)
+                    Public FreeData     As DataFieldDefinition(Of String)
                 #End Region
             End Class
         
