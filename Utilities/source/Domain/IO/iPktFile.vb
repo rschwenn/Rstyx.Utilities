@@ -1,7 +1,6 @@
 ﻿
 Imports System
 Imports System.Collections.Generic
-'Imports System.Collections.ObjectModel
 Imports System.IO
 
 Imports Rstyx.Utilities.IO
@@ -15,7 +14,10 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.iPktFile")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.iPktFile")
+            
+            Private Shared ReadOnly CooPrecisionDefault As Integer =  5
+            Private Shared ReadOnly CooPrecisionBLh     As Integer = 10
             
         #End Region
         
@@ -110,17 +112,7 @@ Namespace Domain.IO
                                     p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
                                     
                                     ' Attributes and comment from free data.
-                                    Dim FreeData     As String = DataLine.ParseField(RecDef.FreeData).Value
-                                    Dim FreeFields() As String = FreeData.Split("|"c)
-                                    Dim i As Integer
-                                    For i = 0 To FreeFields.Length - 3 Step 2
-                                        If (i = 0) Then p.Attributes = New Dictionary(Of String, String)
-                                        p.Attributes.Add(FreeFields(i), FreeFields(i + 1))
-                                    Next
-                                    p.Comment = FreeFields(i)
-                                    If (FreeFields.Length > (i + 1)) Then
-                                        p.Comment &= "|" & FreeFields(i + 1)
-                                    End If
+                                    p.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
                                     
                                     ' Parse time stamp if given (DataLine.ParseField is unable to do it).
                                     If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
@@ -179,7 +171,6 @@ Namespace Domain.IO
                     End Try
                 End Get
             End Property
-                
             
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
@@ -194,7 +185,9 @@ Namespace Domain.IO
                     
                     Me.Reset(Nothing)
                     
-                    Dim PointFmt   As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s%s"
+                    'Dim PointFmt  As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s%s"
+                    Dim PointFmt   As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim CoordFmt   As String  = "%14.5f"
                     Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = True  ' iGeo ignores all but the first point with same ID => hence don't write more than once.
                     
@@ -224,12 +217,11 @@ Namespace Domain.IO
                                 Dim KeyInt  As Integer
                                 If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = sprintf("%6.6d", KeyInt)
                                 
-                                ' Attributes.
-                                Dim AttString As String = String.Empty
-                                If (p.Attributes IsNot Nothing) Then
-                                    For Each kvp As KeyValuePair(Of String, String) In p.Attributes
-                                        AttString &= kvp.Key & "|" & kvp.Value & "|"
-                                    Next
+                                ' Format for coordinates.
+                                If (p.CoordType.Trim() = "BLh") Then
+                                    CoordFmt = "%14." & CooPrecisionBLh & "f"
+                                Else
+                                    CoordFmt = "%14." & CooPrecisionDefault & "f"
                                 End If
                                 
                                 ' Write line.
@@ -241,7 +233,9 @@ Namespace Domain.IO
                                                       p.GraficsEcc,
                                                       p.ID.TrimToMaxLength(20),
                                                       p.CoordType.TrimToMaxLength(3),
-                                                      p.Y, p.X, p.Z,
+                                                      sprintf(CoordFmt, p.Y),
+                                                      sprintf(CoordFmt, p.X),
+                                                      sprintf(CoordFmt, p.Z),
                                                       sprintf("%19s", TimeStamp),
                                                       p.CoordSys.TrimToMaxLength(6),
                                                       p.Flags.TrimToMaxLength(4),
@@ -251,8 +245,7 @@ Namespace Domain.IO
                                                       p.AttValue1.TrimToMaxLength(25),
                                                       p.AttKey2.TrimToMaxLength(2),
                                                       p.AttValue2.TrimToMaxLength(25),
-                                                      AttString,
-                                                      p.Comment
+                                                      p.GetFreeDataText()
                                                      ))
                                 
                             Catch ex As InvalidIDException

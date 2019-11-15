@@ -329,14 +329,14 @@ Public Class MainViewModel
                 
                 'Dim KV As New KvFile(Me.FilePath1)
                 'Dim KF As New KfFile(Me.FilePath1)
-                Dim iP As New iPktFile(Me.FilePath1)
-                'Dim TC As New TcFileReader(Me.FilePath1)
+                'Dim iP As New iPktFile(Me.FilePath1)
+                Dim TC As New TcFileReader(Me.FilePath1)
                 'TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
                 'TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
                 'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 'KV.CollectParseErrors = True
                 'TC.ShowParseErrorsInJedit = False
-                iP.Constraints = GeoPointConstraints.UniqueID
+                'iP.Constraints = GeoPointConstraints.UniqueID
                 'TC.CollectParseErrors = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
                 'Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
@@ -344,12 +344,13 @@ Public Class MainViewModel
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 Try
-                    iP.Load()
+                    TC.Load()
                 Catch ex As Exception
                 Finally
                     'Logger.logInfo(TC.ToReport(OnlySummary:=True))
                 End Try
-                Dim pts As New GeoPointOpenList(iP.PointStream, iP)
+                'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
+                Dim pts As New GeoPointOpenList(TC.PointStream, TC)
                 
                 Dim iP2 As New iPktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\Utilities\source\Domain\TestData\Fmt_iGeo\Test_Attr_out.ipkt")
                 iP2.Store(pts)

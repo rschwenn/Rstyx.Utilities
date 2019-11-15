@@ -1,6 +1,5 @@
 ﻿
-'Imports Rstyx.Utilities.Domain
-'Imports Rstyx.Utilities.IO
+Imports System.Collections.Generic
 Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
@@ -11,7 +10,8 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared MaxIDLength As Integer = 20
+            Private Shared ReadOnly MaxIDLength     As Integer = 20
+            Private Shared ReadOnly AttSeparator    As Char    = "|"
             
         #End Region
         
@@ -140,6 +140,62 @@ Namespace Domain
             
         #End Region
         
+        #Region "Public Methods"
+            
+            ''' <summary> A given String will be parsed for attributes and a comment. May be <see langword="null"/>. </summary>
+             ''' <param name="FreeDataText"> The string to parse. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' <paramref name="FreeDataText"/> is required to look <b>like in ipkt, A0, A1</b>: <code>AttName|AttValue|AttName|AttValue|comment</code>. 
+             ''' There may be zero, one or more attributes (name/value pairs). The attribute names are trimmed.
+             ''' </para>
+             ''' <para>
+             ''' This method clears and sets the <see cref="GeoPoint.Attributes"/> and <see cref="GeoPoint.Comment"/> properties.
+             ''' </para>
+             ''' </remarks>
+            Public Sub ParseFreeData(FreeDataText As String)
+                
+                Me.Attributes = Nothing
+                Me.Comment    = String.Empty
+                
+                If (FreeDataText.IsNotEmptyOrWhiteSpace()) Then
+                    
+                    Dim FreeFields() As String = FreeDataText.Split(AttSeparator)
+                    Dim i As Integer
+                    For i = 0 To FreeFields.Length - 3 Step 2
+                        If (i = 0) Then Me.Attributes = New Dictionary(Of String, String)
+                        Me.Attributes.Add(FreeFields(i).Trim(), FreeFields(i + 1))
+                    Next
+                    Me.Comment = FreeFields(i)
+                    If (FreeFields.Length > (i + 1)) Then
+                        Me.Comment &= AttSeparator & FreeFields(i + 1)
+                    End If
+                End If
+            End Sub
+            
+            Public Function GetFreeDataText() As String
+                
+                Dim FreeDataText As String = String.Empty
+                                
+                ' Attributes.
+                If (Me.Attributes?.Count > 0) Then
+                    Dim AttString As String = String.Empty
+                    For Each kvp As KeyValuePair(Of String, String) In Me.Attributes
+                        AttString &= kvp.Key & AttSeparator & kvp.Value & AttSeparator
+                    Next
+                    FreeDataText &= AttString
+                End If
+                
+                ' Comment.
+                If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
+                    FreeDataText &= Me.Comment
+                End If
+                
+                Return FreeDataText
+            End Function
+            
+        #End Region
+
     End Class
 
 End Namespace

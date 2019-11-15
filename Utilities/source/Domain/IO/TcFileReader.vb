@@ -876,11 +876,12 @@ Namespace Domain.IO
                         Me.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.Ignore, 99, 99)
                         Me.KmText   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.Ignore, 99, 99)
                         Me.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.Ignore, 99, 99)
+                        Me.FreeData = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.Ignore, 99, 99)
                     End If
                 End Sub
                 
                 Public Delimiter As Char = " "c
+                Public LineEndCommentToken As String = Nothing
                 
                 Public KmStatus As DataFieldDefinition(Of KilometerStatus)
                 Public KmText   As DataFieldDefinition(Of String)
@@ -908,7 +909,7 @@ Namespace Domain.IO
                 Public RaLGS    As DataFieldDefinition(Of Double)
                 Public AbLGS    As DataFieldDefinition(Of Double)
                 Public Text     As DataFieldDefinition(Of String)
-                Public Comment  As DataFieldDefinition(Of String)
+                Public FreeData As DataFieldDefinition(Of String)
             End Class
             
             ''' <summary> Definition of a Verm.esn TC source record. </summary>
@@ -1035,6 +1036,7 @@ Namespace Domain.IO
                         Dim RecordDef As New TcRecordDefinitionIGeo(InitIgnore:=True)
                         
                         RecordDef.Delimiter = "|"c
+                        RecordDef.LineEndCommentToken = Nothing
                         Dim FieldNames() As String = BlockType.FieldNames.Split(RecordDef.Delimiter)
                         
                         For i As Integer = 1 To FieldNames.Length
@@ -1082,7 +1084,7 @@ Namespace Domain.IO
                                 Case "KmStatus"  : RecordDef.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.WordNumber, i, 0)
                                 Case "KmText"    : RecordDef.KmText   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                                 Case "Text"      : RecordDef.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
-                                Case "Kommentar" : RecordDef.Comment  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                                Case "Kommentar" : RecordDef.FreeData = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_FreeData, DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                             End Select
                         Next
                         
@@ -1148,7 +1150,6 @@ Namespace Domain.IO
                         Dim RecDef        As TcRecordDefinitionVermEsn = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn)
                         Dim RecLen        As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
                         Dim RecIdx        As Integer = SourceBlock.DataStartIndex - RecLen
-                        Dim ID1           As String = Nothing
                         Dim FieldID       As DataField(Of String) = Nothing
                         Dim LastRecEmpty  As Boolean = False
                         Dim DataLine      As DataTextLine = Nothing
@@ -1303,6 +1304,7 @@ Namespace Domain.IO
                         Dim RecIdx    As Integer = SourceBlock.DataStartIndex - 1
                         Dim DataLine  As DataTextLine = Nothing
                         Dim FieldID   As DataField(Of String) = Nothing
+                        Dim IpktAux   As New GeoIPoint()
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - 1)
                             Try
@@ -1311,14 +1313,14 @@ Namespace Domain.IO
                                 
                                 If (DataLines(RecIdx).HasData) Then
                                     
-                                    DataLine = New DataTextLine(DataLines(RecIdx).Data, LineStartCommentToken:="#", LineEndCommentToken:="#")
+                                    DataLine = New DataTextLine(DataLines(RecIdx).Data, LineStartCommentToken:="#", LineEndCommentToken:=RecDef.LineEndCommentToken)
                                     DataLine.SourceLineNo = DataLines(RecIdx).SourceLineNo
                                     DataLine.FieldDelimiter = RecDef.Delimiter
                                     
-                                    Dim UebL     As Double = Double.NaN
-                                    Dim UebR     As Double = Double.NaN
+                                    Dim UebL As Double = Double.NaN
+                                    Dim UebR As Double = Double.NaN
                                     
-                                    Dim p        As New GeoTcPoint()
+                                    Dim p    As New GeoTcPoint()
                                     
                                     ' ID
                                     FieldID = DataLine.ParseField(RecDef.ID) 
@@ -1396,11 +1398,24 @@ Namespace Domain.IO
                                         End If
                                     End If
                                     
-                                    ' Point text/info and comment.
-                                    p.Info    = DataLine.ParseField(RecDef.Text).Value
-                                    p.Comment = DataLine.ParseField(RecDef.Comment).Value
-                                    If (p.Comment.IsEmptyOrWhiteSpace() AndAlso DataLine.HasComment) Then p.Comment = DataLine.Comment
-                                    If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
+                                    ' Attributes and comment.
+                                    Dim FreeDataText As String
+                                    If (Block.BlockType.Format = TcBlockFormat.A0) Then
+                                        ' A0:
+                                        FreeDataText = DataLine.ParseField(RecDef.FreeData).Value
+                                        FreeDataText.Replace(RecDef.Delimiter & RecDef.Delimiter, RecDef.Delimiter)  ' Demask masked attribute delimiters.
+                                    Else
+                                        ' A1:
+                                        FreeDataText = DataLine.Comment
+                                    End If
+                                    IpktAux.ParseFreeData(FreeDataText)
+                                    p.Attributes = IpktAux.Attributes
+                                    p.Comment    = IpktAux.Comment
+                                    'If (p.Comment.IsEmptyOrWhiteSpace() AndAlso DataLine.HasComment) Then p.Comment = DataLine.Comment
+                                    
+                                    ' Point info/text.
+                                    p.Info = DataLine.ParseField(RecDef.Text).Value
+                                    'If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
@@ -1415,7 +1430,6 @@ Namespace Domain.IO
                                         ' Ignore minimal cant if radius is unknown or zero.
                                         p.Ueb = 0.0
                                     End If
-                                    'If ( (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, 0.001))) AndAlso NoRadius) Then
                                     If (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, 0.001))) Then
                                         If (NoRadius) Then
                                             ' Ensure that sign of cant is determinable by setting a special radius.
@@ -1437,7 +1451,6 @@ Namespace Domain.IO
                                             p.HSOK = Double.NaN
                                         End If
                                     End If
-
                                     
                                     ' Correct Zero to NaN.
                                     If (Block.BlockType.Program = TcBlockProgram.iTrassePC) Then
@@ -1681,7 +1694,7 @@ Namespace Domain.IO
                 
                 ' Supported Format strings.
                 Const Fmt_A0 = "A0 : Alles EDV"
-                Const Fmt_A1 = "A1 : PktNr  Y  X  Z  St/Km"  ' kleinster gemeinsamer Nenner von iTrassePC und iGeo
+                Const Fmt_A1 = "A1 : PktNr  Y  X  Z  St/Km"  ' kleinster gemeinsamer Nenner von iTrassePC und iGeo.
                 
                 Block.BlockType.Program  = SourceBlock.BlockType.Program
                 Block.BlockType.Version  = TcBlockVersion.Current
@@ -2024,6 +2037,8 @@ Namespace Domain.IO
                 BlockType.Format  = TcBlockFormat.A1
                 BlockType.Version = TcBlockVersion.Current
                 Dim A1RecordDef As New TcRecordDefinitionIGeo(InitIgnore:=True) With {
+                    _
+                    .LineEndCommentToken = "#",
                     _
                     .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.WordNumber, 1, 0),
