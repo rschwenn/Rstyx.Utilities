@@ -86,7 +86,7 @@ Namespace IO
         
         #Region "Properties"
             
-            ''' <summary> A character that delimits words in <see cref="DataTextLine.Data"/>. </summary>
+            ''' <summary> A character that delimits words in <see cref="DataTextLine.Data"/> Defaults to a whitespace. </summary>
             ''' <remarks>
             ''' A whitespace character means the whole whitespace between words.
             ''' Setting this property resets the <see cref="DataTextLine.Words"/> property.
@@ -747,7 +747,8 @@ Namespace IO
                                 End If
                             End If
                             
-                            RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText.Trim()))
+                            'RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText.Trim()))
+                            RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText))
                         Next
                     End If
                 End If
