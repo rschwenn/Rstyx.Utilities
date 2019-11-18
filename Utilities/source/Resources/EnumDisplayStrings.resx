@@ -606,6 +606,21 @@
   <data name="Rstyx_Utilities_Domain_GeoPointConstraints_UniqueIDPerBlock" xml:space="preserve">
     <value>eindeutige ID je Block erforderlich</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_None" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_Rails" xml:space="preserve">
+    <value>Gleis</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_Platform" xml:space="preserve">
+    <value>Bahnsteig</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_FixPoint" xml:space="preserve">
+    <value>Festpunkt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_RailsFixPoint" xml:space="preserve">
+    <value>GVP</value>
+  </data>
   <data name="Rstyx_Utilities_IO_DataFieldOptions_MissingAsZero" xml:space="preserve">
     <value>Fehlenden Wert als "0" ansehen</value>
   </data>

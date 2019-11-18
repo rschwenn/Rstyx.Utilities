@@ -1,6 +1,7 @@
 ﻿
 Imports System
 Imports System.Collections.Generic
+Imports System.Text.RegularExpressions
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.Math.MathExtensions
 Imports Rstyx.Utilities.StringUtils
@@ -32,6 +33,26 @@ Namespace Domain
         
     End Enum
     
+    ''' <summary> Supported point kinds. </summary>
+    Public Enum GeoPointKind As Integer
+        
+        ''' <summary> Not a supported point kind. </summary>
+        None = 0
+        
+        ''' <summary> Rails axis. </summary>
+        Rails = 1
+        
+        ''' <summary> Platform edge. </summary>
+        Platform = 2
+                
+        ''' <summary> General fix point. </summary>
+        FixPoint = 3
+        
+        ''' <summary> Rails fix point. </summary>
+        RailsFixPoint = 4
+        
+    End Enum
+    
     
     ''' <summary> Representation of a geodetic point including some point info. </summary>
      ''' <remarks></remarks>
@@ -42,9 +63,24 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
             
+            Private Shared InfoKindPatterns As Dictionary(Of String, GeoPointKind)
+            
         #End Region
         
         #Region "Constuctor"
+            
+            ''' <summary> Static initializations. </summary>
+            Shared Sub New()
+                InfoKindPatterns = New Dictionary(Of String, GeoPointKind)
+                InfoKindPatterns.Add("u *=? *([+-]? *[0-9]+)\s*", GeoPointKind.Rails)
+                InfoKindPatterns.Add("Gls|Gleis"                , GeoPointKind.Rails)
+                InfoKindPatterns.Add("Bst|Bstg"                 , GeoPointKind.Platform)
+                InfoKindPatterns.Add("PS4|GVP"                  , GeoPointKind.RailsFixPoint)
+                InfoKindPatterns.Add("PS3|HFP"                  , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS2|LFP|PPB"              , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS1|GPSC"                 , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS0|NXO|DBRF"             , GeoPointKind.FixPoint)
+            End Sub
             
             ''' <summary> Creates a new GeoPoint. </summary>
             Public Sub New()
@@ -115,6 +151,7 @@ Namespace Domain
                     Me.HeightInfo      = SourcePoint.HeightInfo
                     Me.Comment         = SourcePoint.Comment
                     Me.Kind            = SourcePoint.Kind
+                    Me.KindText        = SourcePoint.KindText
                     Me.MarkType        = SourcePoint.MarkType
                     Me.MarkHints       = SourcePoint.MarkHints
                     Me.ObjectKey       = SourcePoint.ObjectKey
@@ -160,6 +197,9 @@ Namespace Domain
         
         #Region "IGeoPointInfo Members"
             
+            ''' <inheritdoc/>
+            Public Property ActualCant()    As Double = Double.NaN Implements IGeoPointInfo.ActualCant
+            
             ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>
             Public Property Attributes()    As Dictionary(Of String, String) = Nothing Implements IGeoPointInfo.Attributes
             
@@ -173,7 +213,10 @@ Namespace Domain
             Public Property Comment()       As String = String.Empty Implements IGeoPointInfo.Comment
             
             ''' <inheritdoc/>
-            Public Property Kind()          As String = String.Empty Implements IGeoPointInfo.Kind
+            Public Property Kind()          As GeoPointKind = GeoPointKind.None Implements IGeoPointInfo.Kind
+            
+            ''' <inheritdoc/>
+            Public Property KindText()      As String = String.Empty Implements IGeoPointInfo.KindText
             
             ''' <inheritdoc/>
             Public Property MarkType()      As String = String.Empty Implements IGeoPointInfo.MarkType
@@ -385,6 +428,72 @@ Namespace Domain
             
         #End Region
         
+        #Region "Public Methods"
+            
+            ''' <summary> Guesses the point kind from <see cref="GeoPoint.Info"/> property (somewhat heuristic). </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' The following patterns and tokens somewhere in <see cref="GeoPoint.Info"/> lead to guessing the point kind: 
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Pattern</b>  </term>  <description> Point Kind </description></listheader>
+             ''' <item> <term> u[=]?[+-]?[0-9]+      </term>  <description> Actual rails with actual cant      </description></item>
+             ''' <item> <term> Gls, Gleis            </term>  <description> Actual rails (without actual cant) </description></item>
+             ''' <item> <term> Bstg, Bst             </term>  <description> Platform                           </description></item>
+             ''' <item> <term> PS4, GVP              </term>  <description> Rails fix point                    </description></item>
+             ''' <item> <term> PS3, HFP              </term>  <description> Other fix point                    </description></item>
+             ''' <item> <term> PS2, LFP, PPB         </term>  <description> Other fix point                    </description></item>
+             ''' <item> <term> PS1, GPSC             </term>  <description> Other fix point                    </description></item>
+             ''' <item> <term> PS0, NXO, DBRF, DBREF </term>  <description> Other fix point                    </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' When an actual rails point has been determined by a cant pattern, 
+             ''' this cant pattern (inclusive trailing whitespace) will be removed from info text, 
+             ''' because it will be added to the code part of PointInfoText
+             ''' when the point is written to a ipkt file. All other tokens are kept in info text.
+             ''' </para>
+             ''' <para>
+             ''' This method changes the following properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/>       </term>  <description> Cleared and maybe set. </description></item>
+             ''' <item> <term> <see cref="GeoPoint.ActualCant"/> </term>  <description> Cleared and maybe set. </description></item>
+             ''' <item> <term> <see cref="GeoPoint.MarkType"/>   </term>  <description> Cleared, but not set.  </description></item>
+             ''' <item> <term> <see cref="GeoPoint.Info"/>       </term>  <description> A found cant pattern will be removed. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub ParseInfoForKindHints()
+                
+                Me.Kind       = GeoPointKind.None
+                Me.ActualCant = Double.NaN
+                Me.MarkType   = String.Empty
+                
+                If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
+                    
+                    ' Test patterns against Me.Info (for patterns: see Shared Sub New()).
+                    For Each kvp As KeyValuePair(Of String, GeoPointKind) In InfoKindPatterns
+                        
+                        Dim oMatch As Match = Regex.Match(Me.Info, kvp.Key, RegexOptions.IgnoreCase)
+                        
+                        If (oMatch.Success) Then
+                            
+                            Me.Kind = kvp.Value
+                            
+                            ' Rails: set actual cant and remove cant pattern from info.
+                            If ((kvp.Value = GeoPointKind.Rails) AndAlso (oMatch.Groups.Count > 1)) Then
+                                Me.ActualCant = CDbl(oMatch.Groups(1).Value.Replace(" ", String.Empty)) / 1000
+                                Me.Info       = Me.Info.Remove(oMatch.Index, oMatch.Length).TrimEnd()
+                            End If
+                            
+                            Exit For
+                        End If
+                    Next
+                End If
+            End Sub
+            
+        #End Region
+            
         #Region "Overrides"
             
             ''' <summary> Returns point ID and info. </summary>

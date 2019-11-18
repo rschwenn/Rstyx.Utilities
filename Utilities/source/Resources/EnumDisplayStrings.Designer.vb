@@ -1240,6 +1240,51 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_FixPoint", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Bahnsteig ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_Platform() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_Platform", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleis ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_Rails() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_Rails", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die GVP ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_RailsFixPoint() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_RailsFixPoint", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die eindeutig ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Normal() As String

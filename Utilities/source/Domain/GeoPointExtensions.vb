@@ -34,7 +34,6 @@ Namespace Domain
          ''' If <paramref name="SourcePointList"/> is already a <see cref="GeoPointOpenList"/>, then the same instance will be returned.
          ''' Otherwise a new instance of <see cref="GeoPointOpenList"/> will be created.
          ''' </remarks>
-         ''' <exception cref="InvalidIDException"> There are at least two points in <paramref name="SourcePointList"/>'s with same <see cref="IGeoPoint.ID"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function AsGeoPointOpenList(SourcePointList As IEnumerable(Of IGeoPoint)) As GeoPointOpenList
             If (SourcePointList Is Nothing) Then

@@ -117,7 +117,7 @@ Namespace Domain.IO
                                 p.HeightInfo         = FileEncoding.GetString(oBR.ReadBytes(13)).Left(vbNullChar).Trim()
                                 p.HeightPostInfo     = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
                                 
-                                p.Kind               = FileEncoding.GetString(oBR.ReadBytes(4)).Left(vbNullChar).Trim()
+                                p.KindText           = FileEncoding.GetString(oBR.ReadBytes(4)).Left(vbNullChar).Trim()
                                 p.MarkType           = CStr(oBR.ReadByte)
                                 p.mp                 = CDbl(oBR.ReadInt16())
                                 p.mh                 = CDbl(oBR.ReadInt16())
@@ -329,7 +329,7 @@ Namespace Domain.IO
                 oBW.Write(GetByteArray(FileEncoding, p.HeightInfo, 13, " "c))
                 oBW.Write(CByte(Asc(p.HeightPostInfo)))
                 
-                oBW.Write(GetByteArray(FileEncoding, p.Kind, 4, " "c))
+                oBW.Write(GetByteArray(FileEncoding, p.KindText, 4, " "c))
                 oBW.Write(MarkType)
                 oBW.Write(mp)
                 oBW.Write(mh)

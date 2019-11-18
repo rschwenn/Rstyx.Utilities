@@ -291,17 +291,24 @@ Public Class MainViewModel
                 'Call TestOrder()
                 'Call TestPDF()
                 'Call TestJPEG()
-            
-                Dim Km1 As Kilometer = New Kilometer("-0.1 - 212.13")
-                Dim Km2 As Kilometer = New Kilometer("-0.1 - 12.13")
-                Dim Km3 As Kilometer = New Kilometer("0.0 - 0.13")
-                Dim Km4 As Kilometer = New Kilometer("0.0 + 0.13")
-                Dim Km5 As Kilometer = New Kilometer("0.1 + 12.13")
-                Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km1.ToKilometerNotation(2), Km1.TDBValue))
-                Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km2.ToKilometerNotation(2), Km2.TDBValue))
-                Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km3.ToKilometerNotation(2), Km3.TDBValue))
-                Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
-                Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
+                
+                Dim p As New GeoIPoint ()
+                'p.ParseTextForKindCodes(Me.Textbox)
+                'Logger.logInfo(sprintf("  Punktart = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkType, p.ActualCant * 1000, p.Info))
+                p.Info = Me.Textbox
+                p.ParseInfoForKindHints()
+                Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, p.Kind.ToDisplayString(), p.ActualCant * 1000, p.Info))
+                
+                'Dim Km1 As Kilometer = New Kilometer("-0.1 - 212.13")
+                'Dim Km2 As Kilometer = New Kilometer("-0.1 - 12.13")
+                'Dim Km3 As Kilometer = New Kilometer("0.0 - 0.13")
+                'Dim Km4 As Kilometer = New Kilometer("0.0 + 0.13")
+                'Dim Km5 As Kilometer = New Kilometer("0.1 + 12.13")
+                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km1.ToKilometerNotation(2), Km1.TDBValue))
+                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km2.ToKilometerNotation(2), Km2.TDBValue))
+                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km3.ToKilometerNotation(2), Km3.TDBValue))
+                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
+                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
                 
                 'Dim d1 As Double = Double.NaN
                 'Dim d2 As Double = Double.NegativeInfinity
@@ -330,7 +337,7 @@ Public Class MainViewModel
                 'Dim KV As New KvFile(Me.FilePath1)
                 'Dim KF As New KfFile(Me.FilePath1)
                 'Dim iP As New iPktFile(Me.FilePath1)
-                Dim TC As New TcFileReader(Me.FilePath1)
+                ' Dim TC As New TcFileReader(Me.FilePath1)
                 'TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
                 'TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
                 'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
@@ -343,17 +350,17 @@ Public Class MainViewModel
                 'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
-                Try
-                    TC.Load()
-                Catch ex As Exception
-                Finally
-                    'Logger.logInfo(TC.ToReport(OnlySummary:=True))
-                End Try
-                'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
-                Dim pts As New GeoPointOpenList(TC.PointStream, TC)
-                
-                Dim iP2 As New iPktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\Utilities\source\Domain\TestData\Fmt_iGeo\Test_Attr_out.ipkt")
-                iP2.Store(pts)
+                ' Try
+                '     TC.Load()
+                ' Catch ex As Exception
+                ' Finally
+                '     'Logger.logInfo(TC.ToReport(OnlySummary:=True))
+                ' End Try
+                ' 'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
+                ' Dim pts As New GeoPointOpenList(TC.PointStream, TC)
+                ' 
+                ' Dim iP2 As New iPktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\Utilities\source\Domain\TestData\Fmt_iGeo\Test_Attr_out.ipkt")
+                ' iP2.Store(pts)
                 
                 'Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
                 'KV2.Store(pts)
@@ -362,7 +369,7 @@ Public Class MainViewModel
                 'iP.Store(pts, "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test_out.ipkt")
                 
                 
-                Dim dtUTC As DateTime = DateTime.UtcNow
+                'Dim dtUTC As DateTime = DateTime.UtcNow
                 'Logger.logInfo(dtUTC.ToLongDateString())
                 'Logger.logInfo(dtUTC.ToShortDateString())
                 'Logger.logInfo(dtUTC.ToLongTimeString())
@@ -512,9 +519,9 @@ Public Class MainViewModel
                 'Throw New InvalidDataException("+++++++++++++++++++++++++++")
                 
                 'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_51\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
-                Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", ";;G:\Tools\jEdit_51\macros\Aktive_Datei;G:\Tools\jEdit_51\macros\Aktive_Datei", ";", Nothing)
-                Logger.logInfo(fi.FullName)
-                Logger.logInfo(Me.FilePath1)
+                'Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", ";;G:\Tools\jEdit_51\macros\Aktive_Datei;G:\Tools\jEdit_51\macros\Aktive_Datei", ";", Nothing)
+                'Logger.logInfo(fi.FullName)
+                'Logger.logInfo(Me.FilePath1)
                 
                 'Dim Field = "Symbol_Scale_Width"
                 'Dim TableName = "Points$"

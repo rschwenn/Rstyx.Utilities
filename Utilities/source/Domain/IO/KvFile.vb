@@ -87,7 +87,7 @@ Namespace Domain.IO
                                     p.TrackPos.Kilometer = DataLine.ParseField(RecDef.Km).Value
                                     p.Info               = DataLine.ParseField(RecDef.PositionInfo).Value
                                     p.HeightInfo         = DataLine.ParseField(RecDef.HeightInfo).Value
-                                    p.Kind               = DataLine.ParseField(RecDef.PointKind).Value
+                                    p.KindText           = DataLine.ParseField(RecDef.PointKind).Value
                                     p.TrackPos.TrackNo   = DataLine.ParseField(RecDef.TrackNo).Value
                                     p.TrackPos.RailsCode = DataLine.ParseField(RecDef.RailsCode).Value
                                     p.HeightSys          = DataLine.ParseField(RecDef.HeightSys).Value
@@ -196,7 +196,7 @@ Namespace Domain.IO
                                                       p.TrackPos.Kilometer.Value,
                                                       P.Info.TrimToMaxLength(13),
                                                       P.HeightInfo.TrimToMaxLength(13),
-                                                      P.Kind.TrimToMaxLength(4),
+                                                      P.KindText.TrimToMaxLength(4),
                                                       p.TrackPos.TrackNo,
                                                       p.TrackPos.RailsCode.TrimToMaxLength(1),
                                                       P.HeightSys.TrimToMaxLength(3),

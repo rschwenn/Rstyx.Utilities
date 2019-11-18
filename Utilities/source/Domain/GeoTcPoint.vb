@@ -42,7 +42,6 @@ Namespace Domain
                     
                     Me.CantBase   = SourceTcPoint.CantBase
                     Me.AbLGS      = SourceTcPoint.AbLGS
-                    Me.ActualCant = SourceTcPoint.ActualCant
                     Me.G          = SourceTcPoint.G
                     Me.H          = SourceTcPoint.H
                     Me.HDGM       = SourceTcPoint.HDGM
@@ -183,9 +182,6 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property Ri()            As Double = Double.NaN Implements IPointAtTrackGeometry.Ri
             
-            
-            ''' <inheritdoc/>
-            Public Property ActualCant()    As Double = Double.NaN Implements IPointAtTrackGeometry.ActualCant
             
             ''' <inheritdoc/>
             Public Property Ueb()           As Double = Double.NaN Implements IPointAtTrackGeometry.Ueb
@@ -368,7 +364,6 @@ Namespace Domain
                                                ) As Double
                 Dim Cant    As Double  = Double.NaN
                 Dim ui      As String  = String.Empty
-                Dim success As Boolean = false
                 
                 If (Pointinfo.IsNotEmptyOrWhiteSpace()) Then
                     ' 1. search for "u=..."
@@ -393,8 +388,8 @@ Namespace Domain
                     If (ui.IsNotEmpty()) Then
                         ' 3. Cant value found.
                         Cant = cdbl(ui)
-                        If (Absolute) Then Cant = Abs(Cant.ConvertTo(Of Double))
-                        If (EditCantSource) Then Pointinfo = Pointinfo.replace(oMatch.Groups(0).Value, String.Empty)
+                        If (Absolute) Then Cant = Abs(Cant)
+                        If (EditCantSource) Then Pointinfo = Pointinfo.Replace(oMatch.Groups(0).Value, String.Empty)
                     End If
                 End If
                 

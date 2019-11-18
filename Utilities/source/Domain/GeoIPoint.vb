@@ -1,5 +1,7 @@
 ﻿
 Imports System.Collections.Generic
+Imports System.Math
+Imports System.Text.RegularExpressions
 Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain
@@ -58,7 +60,7 @@ Namespace Domain
                     Me.Comment = sprintf(" %12.4f  %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s  # %-s",
                                          SourceVEPoint.TrackPos.Kilometer.Value,
                                          SourceVEPoint.HeightInfo.TrimToMaxLength(13),
-                                         SourceVEPoint.Kind.TrimToMaxLength(4),
+                                         SourceVEPoint.KindText.TrimToMaxLength(4),
                                          SourceVEPoint.TrackPos.TrackNo,
                                          SourceVEPoint.TrackPos.RailsCode.TrimToMaxLength(1),
                                          SourceVEPoint.HeightSys.TrimToMaxLength(3),
@@ -173,6 +175,8 @@ Namespace Domain
                 End If
             End Sub
             
+            ''' <summary> Gets a FreeData text for ipkt file, containing attributes and comment. </summary>
+            ''' <returns> The FreeData text for ipkt file. </returns>
             Public Function GetFreeDataText() As String
                 
                 Dim FreeDataText As String = String.Empty
@@ -193,6 +197,99 @@ Namespace Domain
                 
                 Return FreeDataText
             End Function
+            
+            ''' <summary> A given string will be parsed for iGeo point kind codes. </summary>
+             ''' <param name="PointInfoText"> The string to parse. May be <see langword="null"/>. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' Point kind codes in <paramref name="PointInfoText"/> are required to have the expected format: 
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Format / Pattern</b> </term>  <description> Point Kind </description></listheader>
+             ''' <item> <term> -b                   </term>  <description> Platform                                 </description></item>
+             ''' <item> <term> -i[u[=]?[+-]?[0-9]+] </term>  <description> Actual rails [with actual cant]          </description></item>
+             ''' <item> <term> -v[0-9]+             </term>  <description> Rails fix point [with numeric mark type] </description></item>
+             ''' <item> <term> -f[0-9]+             </term>  <description> Other fix point [with numeric mark type] </description></item>
+             ''' <item> <term>  </term>  <description>  </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' This method clears and sets the following properties:
+             ''' <list type="bullet">
+             ''' <item><description> <see cref="GeoPoint.Kind"/> </description></item>
+             ''' <item><description> <see cref="GeoIPoint.ActualCant"/> </description></item>
+             ''' <item><description> <see cref="GeoPoint.MarkType"/> </description></item>
+             ''' <item><description> <see cref="GeoPoint.Info"/> </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub ParseTextForKindCodes(PointInfoText As String)
+                
+                Me.Kind       = GeoPointKind.None
+                Me.ActualCant = Double.NaN
+                Me.MarkType   = String.Empty
+                Me.Info       = String.Empty
+                
+                If (PointInfoText.IsNotEmptyOrWhiteSpace()) Then
+                    
+                    ' Find delimiter between code and info text.
+                    Dim DelimIndex As Integer
+                    Dim CodePart   As String
+                    Dim InfoPart   As String  = Nothing
+                    Dim FirstHash  As Integer = PointInfoText.IndexOf("#"c)
+                    Dim FirstX     As Integer = PointInfoText.IndexOf("x", System.StringComparison.OrdinalIgnoreCase)
+                    
+                    If ((FirstHash > 0) AndAlso (FirstX > 0)) Then
+                        DelimIndex = Min(FirstHash, FirstX)
+                    Else
+                        DelimIndex = Max(FirstHash, FirstX)
+                    End If
+                    
+                    ' Determine code and info parts of input text.
+                    If (DelimIndex > 0) Then
+                        CodePart = PointInfoText.Substring(0, DelimIndex).Trim()
+                        If (PointInfoText.Length > (DelimIndex + 1)) Then
+                            InfoPart = PointInfoText.Substring(DelimIndex + 1)
+                        End If
+                    Else
+                        ' Decide later ...
+                        CodePart = PointInfoText
+                        InfoPart = PointInfoText
+                    End If
+                    
+                    ' Code part: Find point kind.
+                    If (CodePart.IsNotEmptyOrWhiteSpace()) Then
+                                    
+                        Dim Pattern As String = "^\s*\w?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iu)=?([+-]?[0-9]+)|(-i))"
+                        Dim oMatch  As Match  = Regex.Match(CodePart, Pattern)
+                        
+                        If (oMatch.Success) Then
+                            For i As Integer = 2 To 9
+                                If (oMatch.Groups(i).Success) Then
+                                    Dim Key As String = oMatch.Groups(i).Value
+                                    Select Case Key
+                                        Case "-b":   Me.Kind = GeoPointKind.Platform
+                                        Case "-v":   Me.Kind = GeoPointKind.RailsFixPoint  : Me.MarkType = oMatch.Groups(i + 1).Value
+                                        Case "-f":   Me.Kind = GeoPointKind.FixPoint       : Me.MarkType = oMatch.Groups(i + 1).Value
+                                        Case "-iu":  Me.Kind = GeoPointKind.Rails          : Me.ActualCant = CDbl(oMatch.Groups(i + 1).Value) / 1000
+                                        Case "-i":   Me.Kind = GeoPointKind.Rails
+                                    End Select
+                                    Exit For
+                                End If
+                            Next
+                        Else
+                            ' Thre's a code part but w/o supported code or with invalid syntax.
+                        End If
+                    End If
+                    
+                    ' Info part: store.
+                    If (InfoPart.IsNotEmptyOrWhiteSpace()) Then
+                        If ((DelimIndex > 0) OrElse (Me.Kind = GeoPointKind.None)) Then
+                            ' Input text is splitted or else it's not splitted and doesn't contain codes.
+                            Me.Info = InfoPart
+                        End If
+                    End If
+                End If
+            End Sub
             
         #End Region
 

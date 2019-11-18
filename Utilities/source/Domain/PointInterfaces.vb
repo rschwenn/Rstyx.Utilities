@@ -42,6 +42,10 @@ Namespace Domain
     
     ''' <summary> A set of properties describing a geodetic point. </summary>
     Public Interface IGeoPointInfo
+        
+        ''' <summary> Actual rails cant in [m]. </summary>
+         ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>
+        Property ActualCant()   As Double
             
         ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>
         Property Attributes()   As Dictionary(Of String, String)
@@ -56,7 +60,10 @@ Namespace Domain
         Property HeightInfo     As String
         
         ''' <summary> The point's kind or type. </summary>
-        Property Kind()         As String
+        Property Kind()         As GeoPointKind
+        
+        ''' <summary> The point's kind or type (free text). </summary>
+        Property KindText()     As String
         
         ''' <summary> The type of marking used to realize the point. </summary>
         Property MarkType()     As String
@@ -222,10 +229,6 @@ Namespace Domain
         ''' <summary> Azimuth of alignment tangent in [rad]. </summary>
         Property Ri()           As Double
         
-        
-        ''' <summary> Actual cant in [m]. </summary>
-         ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>
-        Property ActualCant()   As Double
         
         ''' <summary> Cant (Superelevation) in [m]. </summary>
          ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>

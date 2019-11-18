@@ -1411,11 +1411,9 @@ Namespace Domain.IO
                                     IpktAux.ParseFreeData(FreeDataText)
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
-                                    'If (p.Comment.IsEmptyOrWhiteSpace() AndAlso DataLine.HasComment) Then p.Comment = DataLine.Comment
                                     
-                                    ' Point info/text.
+                                    ' Point text/info.
                                     p.Info = DataLine.ParseField(RecDef.Text).Value
-                                    'If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = p.Comment
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
