@@ -293,11 +293,11 @@ Public Class MainViewModel
                 'Call TestJPEG()
                 
                 Dim p As New GeoIPoint ()
-                'p.ParseTextForKindCodes(Me.Textbox)
-                'Logger.logInfo(sprintf("  Punktart = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkType, p.ActualCant * 1000, p.Info))
-                p.Info = Me.Textbox
-                p.ParseInfoForKindHints()
-                Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, p.Kind.ToDisplayString(), p.ActualCant * 1000, p.Info))
+                p.ParseTextForKindCodes(Me.Textbox)
+                Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkTypeAB, p.MarkType, p.ActualCant * 1000, p.Info))
+                'p.Info = Me.Textbox
+                'p.ParseInfoForKindHints()
+                'Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, p.Kind.ToDisplayString(), p.ActualCant * 1000, p.Info))
                 
                 'Dim Km1 As Kilometer = New Kilometer("-0.1 - 212.13")
                 'Dim Km2 As Kilometer = New Kilometer("-0.1 - 12.13")

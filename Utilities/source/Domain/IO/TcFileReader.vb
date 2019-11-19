@@ -312,7 +312,7 @@ Namespace Domain.IO
                 End Get
             End Property
             
-            ''' <summary> Writes the points collection to the point file. </summary>
+            ''' <summary> NOT Implemented: Would write the points collection to a file. </summary>
              ''' <param name="PointList"> The points to store. </param>
              ''' <param name="MetaData">  An object providing the header for <paramref name="PointList"/>. May be <see langword="null"/>. </param>
              ''' <remarks>

@@ -287,15 +287,18 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Parses actual cant value from <see cref=" GeoTcPoint.Info"/> and maybe <see cref=" GeoTcPoint.Comment"/> property. </summary>
-             ''' <param name="TryComment">     If <see langword="true"/> and no cant has been found in <see cref=" GeoTcPoint.Info"/>, the <see cref=" GeoTcPoint.Comment"/> will be parsed, too. </param>
+            ' ********************************************************************************************************************
+            ' TODO: DEPRECATED - use GeoPoint.ParseInfoForKindHints() instead.
+            ' ********************************************************************************************************************
+            ''' <summary> Parses actual cant value from <see cref="GeoTcPoint.Info"/> and maybe <see cref="GeoTcPoint.Comment"/> property. </summary>
+             ''' <param name="TryComment">     If <see langword="true"/> and no cant has been found in <see cref="GeoTcPoint.Info"/>, the <see cref="GeoTcPoint.Comment"/> will be parsed, too. </param>
              ''' <param name="Strict">         If <see langword="true"/>, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first integer number is used. </param>
              ''' <param name="Absolute">       If <see langword="true"/>, the parsed Cant value is always positive. </param>
-             ''' <param name="EditCantSource"> If <see langword="true"/>, the Cant pattern substring is removed from <see cref=" GeoTcPoint.Info"/>. </param>
+             ''' <param name="EditCantSource"> If <see langword="true"/>, the Cant pattern substring is removed from <see cref="GeoTcPoint.Info"/>. </param>
              ''' <returns> <see langword="true"/> on success. </returns>
              ''' <remarks> 
              ''' <para>
-             ''' The measured cant will be parsed from <see cref=" GeoTcPoint.Info"/> following these rules:
+             ''' The measured cant will be parsed from <see cref="GeoTcPoint.Info"/> following these rules:
              ''' </para>
              ''' <para>
              ''' Case 1: If the string "u= xxx" is found anywhere then "xxx" will be treated as measured cant.
@@ -305,7 +308,7 @@ Namespace Domain
              ''' then the first integer number will be used, if any.
              ''' </para>
              ''' <para>
-             ''' The found cant will be assigned to the <see cref=" GeoTcPoint"/><c>.ActualCant</c> property.
+             ''' The found cant will be assigned to the <see cref="GeoTcPoint"/>.<see cref="GeoTcPoint.ActualCant"/> property.
              ''' </para>
              ''' </remarks>
             Public Function TryParseActualCant(Optional byVal TryComment As Boolean = False,
@@ -339,6 +342,9 @@ Namespace Domain
         
         #Region "Private Methods"
             
+            ' ********************************************************************************************************************
+            ' TODO: DEPRECATED - use GeoPoint.ParseInfoForKindHints() instead.
+            ' ********************************************************************************************************************
             ''' <summary> Parses Cant value from a Pointinfo string. </summary>
              ''' <param name="Pointinfo">      [Input and Output] The Pointinfo string to parse. </param>
              ''' <param name="strict">         If <see langword="true"/>, only the pattern "u=..." is recognized. Otherwise, if this pattern isn't found, the first integer number is used. </param>
