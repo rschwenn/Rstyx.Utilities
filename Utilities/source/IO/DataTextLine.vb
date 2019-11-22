@@ -27,7 +27,7 @@ Namespace IO
             Private Sub New()
             End Sub
             
-            ''' <summary> Creates a new instance and splits the given <paramref name="TextLine"/> immediately. </summary>
+            ''' <summary> Creates a new instance and splits the given <paramref name="TextLine"/> immediately into data and comment. </summary>
              ''' <param name="TextLine">              The original text line. </param>
              ''' <param name="LineStartCommentToken"> A string preluding a comment line. May be <see langword="null"/>. </param>
              ''' <param name="LineEndCommentToken">   A string preluding a comment at line end. May be <see langword="null"/>. Won't be recognized if <paramref name="TextLine"/> starts with <paramref name="LineStartCommentToken"/>. </param>
@@ -86,11 +86,11 @@ Namespace IO
         
         #Region "Properties"
             
-            ''' <summary> A character that delimits words in <see cref="DataTextLine.Data"/> Defaults to a whitespace. </summary>
-            ''' <remarks>
-            ''' A whitespace character means the whole whitespace between words.
-            ''' Setting this property resets the <see cref="DataTextLine.Words"/> property.
-            ''' </remarks>
+            ''' <summary> A character that delimits words in <see cref="DataTextLine.Data"/>. Defaults to a whitespace. </summary>
+             ''' <remarks>
+             ''' A whitespace character means the whole whitespace between words.
+             ''' Setting this property resets the <see cref="DataTextLine.Words"/> property to <see langword="null"/>.
+             ''' </remarks>
             Public Property FieldDelimiter() As Char
                 Get
                     Return _FieldDelimiter
@@ -106,7 +106,7 @@ Namespace IO
             
             ''' <summary> Returns all data fields of <see cref="DataTextLine.Data"/> delimited by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
              ''' <returns> All data fields. </returns>
-             ''' <remarks> The collection will be created lazy at access to this property. </remarks>
+             ''' <remarks> The collection will be created lazy at the time this property is accessed. </remarks>
             Public ReadOnly Property Words() As Collection(Of DataFieldSource)
                 Get
                     If (_Words Is Nothing) Then _Words = getWords()
@@ -260,7 +260,7 @@ Namespace IO
                                                           <Out> ByRef Result As DataField(Of TFieldValue)
                                                          ) As Boolean
                 
-                Dim TargetType           As Type = GetType(TFieldValue)
+                Dim TargetType           As Type    = GetType(TFieldValue)
                 Dim TargetTypeIsNullable As Boolean = (TargetType.IsGenericType AndAlso (TargetType.GetGenericTypeDefinition() Is GetType(Nullable(Of))))
                 'Dim TargetTypeIsNullable As Boolean = (TargetType.Name = "Nullable`1")
                 
@@ -605,7 +605,7 @@ Namespace IO
         
         #Region "Private Methods"
             
-            ''' <summary> Splits the given <paramref name="TextLine"/> and provides the result via output parameters. </summary>
+            ''' <summary> Splits the given <paramref name="TextLine"/> into data and comment and provides the result via output parameters. </summary>
              ''' <param name="TextLine">              The text line to parse / split </param>
              ''' <param name="LineStartCommentToken"> A string preluding a comment line. May be <see langword="null"/>. </param>
              ''' <param name="LineEndCommentToken">   A string preluding a comment at line end. May be <see langword="null"/>. </param>

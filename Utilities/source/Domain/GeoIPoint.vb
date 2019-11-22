@@ -25,14 +25,38 @@ Namespace Domain
             
             ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
-             ''' <remarks></remarks>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then all properties will be taken.
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoVEPoint"/>, then the following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term> TrackPos.TrackNo   </term>  <description> StrNr </description></item>
+             ''' <item> <term> TrackPos.RailsCode </term>  <description> StrRi </description></item>
+             ''' <item> <term> TrackPos.Kilometer </term>  <description> StrKm </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoTCPoint"/>, then the following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term> Km </term>  <description> StrKm </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' The following attributes will be converted to properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
+             ''' <item> <term> VArtAB   </term>  <description> MarkTypeAB </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
                 
-                Me.CoordType = "YXZ"
-                
-                ' iPkt specials.
                 If (TypeOf SourcePoint Is GeoIPoint) Then
                     
                     Dim SourceIPoint As GeoIPoint = DirectCast(SourcePoint, GeoIPoint)
@@ -47,32 +71,72 @@ Namespace Domain
                     Me.GraficsCode = SourceIPoint.GraficsCode
                     Me.GraficsDim  = SourceIPoint.GraficsDim
                     Me.GraficsEcc  = SourceIPoint.GraficsEcc
+                    Me.MarkTypeAB  = SourceIPoint.MarkTypeAB
                     
-                ElseIf (TypeOf SourcePoint Is GeoVEPoint) Then
-                        
-                    Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
-                        
-                    'If (Me.ObjectKey.IsEmptyOrWhiteSpace() OrElse (Me.ObjectKey = "0")) Then
-                    '    Me.ObjectKey = SourceIPoint.Kind
-                    'End If
+                Else
+                    Me.CoordType = "YXZ"
                     
-                    ' Take VE specials as comment.
-                    Me.Comment = sprintf(" %12.4f  %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s  # %-s",
-                                         SourceVEPoint.TrackPos.Kilometer.Value,
-                                         SourceVEPoint.HeightInfo.TrimToMaxLength(13),
-                                         SourceVEPoint.KindText.TrimToMaxLength(4),
-                                         SourceVEPoint.TrackPos.TrackNo,
-                                         SourceVEPoint.TrackPos.RailsCode.TrimToMaxLength(1),
-                                         SourceVEPoint.HeightSys.TrimToMaxLength(3),
-                                         SourceVEPoint.mp,
-                                         SourceVEPoint.mh, 
-                                         SourceVEPoint.MarkHints.TrimToMaxLength(1),
-                                         SourceVEPoint.MarkType.TrimToMaxLength(3),
-                                         SourceVEPoint.sp.TrimToMaxLength(1),
-                                         SourceVEPoint.sh.TrimToMaxLength(1),
-                                         SourceVEPoint.Job.TrimToMaxLength(8),
-                                         SourceVEPoint.Comment
-                                        )
+                    Dim PropertyName   As String
+                    Dim AttributeName  As String
+                    Dim AttStringValue As String
+                    
+                    ' Source is VermEsn: Convert VE-unique properties to attributes.
+                    If (TypeOf SourcePoint Is GeoVEPoint) Then
+                            
+                        Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
+                        
+                        PropertyName = "TrackPos.TrackNo"
+                        If (SourceVEPoint.TrackPos.TrackNo IsNot Nothing) Then
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Attributes.ContainsKey(AttributeName)) Then
+                                Attributes.Add(AttributeName, sprintf("%4s", SourceVEPoint.TrackPos.TrackNo))
+                            End If
+                        End If
+                        
+                        PropertyName = "TrackPos.RailsCode"
+                        If (SourceVEPoint.TrackPos.RailsCode.IsNotEmptyOrWhiteSpace()) Then 
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Attributes.ContainsKey(AttributeName)) Then
+                                Attributes.Add(AttributeName, SourceVEPoint.TrackPos.RailsCode)
+                            End If
+                        End If
+                        
+                        PropertyName = "TrackPos.Kilometer"
+                        If (SourceVEPoint.TrackPos.Kilometer.HasValue()) Then 
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Attributes.ContainsKey(AttributeName)) Then
+                                Attributes.Add(AttributeName, sprintf("%11.4f", SourceVEPoint.TrackPos.Kilometer.Value))
+                            End If
+                        End If
+                    End If
+                    
+                    
+                    ' Source is TC: Convert TC-unique properties to attributes.
+                    If (TypeOf SourcePoint Is GeoTcPoint) Then
+                            
+                        Dim SourceTCPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
+                        
+                        PropertyName = "Km"
+                        If (SourceTCPoint.Km.HasValue()) Then 
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Attributes.ContainsKey(AttributeName)) Then
+                                Attributes.Add(AttributeName, sprintf("%11.4f", SourceTCPoint.Km.Value))
+                            End If
+                        End If
+                    End If
+                    
+                    
+                    ' Convert selected attributes to properties.
+                    PropertyName = "MarkTypeAB"
+                    If (Me.MarkTypeAB.IsEmpty()) Then
+                        AttStringValue = GetAttValueByPropertyName(PropertyName)
+                        If (AttStringValue IsNot Nothing) Then
+                            If (Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)) Then
+                                Attributes.Remove(AttributeNames(PropertyName))
+                            End If
+                        End If
+                    End If
+                    
                 End If
             End Sub
             
@@ -111,7 +175,7 @@ Namespace Domain
             Public Property AttValue2   As String = Nothing
             
             ''' <summary> Special mark type (iGeo Trassen-Absteckbuch). </summary>
-            Public Property MarkTypeAB  As Char = " "c
+            Public Property MarkTypeAB  As Char = vbNullChar
             
         #End Region
         
@@ -201,7 +265,7 @@ Namespace Domain
                 Return FreeDataText
             End Function
             
-            ''' <summary> A given string will be parsed for iGeo point kind codes. </summary>
+            ''' <summary> A given string will be parsed for iGeo point kind codes and remaining info text. </summary>
              ''' <param name="PointInfoText"> The string to parse. May be <see langword="null"/>. </param>
              ''' <remarks>
              ''' <para>
@@ -286,6 +350,10 @@ Namespace Domain
                             Next
                         Else
                             ' There's a code part but w/o supported code or with invalid syntax.
+                            If (DelimIndex > 0) Then
+                                ' Re-join splitted text (see below).
+                                InfoPart = PointInfoText
+                            End If
                         End If
                     End If
                     

@@ -830,7 +830,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punktinformation ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkttext ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Text() As String
             Get

@@ -64,6 +64,7 @@ Namespace Domain.IO
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                         Dim RecDef      As New RecordDefinition()
                         Dim PointCount  As Integer = 0
+                        Dim IpktAux     As New GeoIPoint()
                         
                         For Each DataLine As DataTextLine In Me.DataLineStream
                             
@@ -73,16 +74,16 @@ Namespace Domain.IO
                                 Try
     		                        Dim p As New GeoVEPoint()
                                     
-                                    FieldID = DataLine.ParseField(RecDef.PointID)
-                                    p.ID    = FieldID.Value
-                                    
+                                    ' Keep some data fields for later issue tracking.
+                                    FieldID                            = DataLine.ParseField(RecDef.PointID)
                                     Dim FieldY As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
                                     Dim FieldX As DataField(Of Double) = DataLine.ParseField(RecDef.X)
                                     Dim FieldZ As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
                                     
-                                    p.Y = FieldY.Value
-                                    p.X = FieldX.Value
-                                    p.Z = FieldZ.Value
+                                    p.ID = FieldID.Value
+                                    p.Y  = FieldY.Value
+                                    p.X  = FieldX.Value
+                                    p.Z  = FieldZ.Value
                                     
                                     p.TrackPos.Kilometer = DataLine.ParseField(RecDef.Km).Value
                                     p.Info               = DataLine.ParseField(RecDef.PositionInfo).Value
@@ -99,11 +100,34 @@ Namespace Domain.IO
                                     p.sh                 = DataLine.ParseField(RecDef.sh).Value
                                     p.Job                = DataLine.ParseField(RecDef.Job).Value
                                     p.ObjectKey          = DataLine.ParseField(RecDef.ObjectKey).Value
-                                    p.Comment            = DataLine.ParseField(RecDef.Comment).Value
                                     
                                     p.SourcePath         = FilePath
                                     p.SourceLineNo       = DataLine.SourceLineNo
                                     
+                                    ' Attributes and comment from free data.
+                                    IpktAux.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
+                                    p.Attributes    = IpktAux.Attributes
+                                    p.Comment       = IpktAux.Comment
+                                    
+                                    ' Smoothing.
+                                    If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty
+                                    p.SetKindFromKindText()
+                                    p.SetKindFromMarkType()
+                                    
+                                    ' Editing.
+                                    If (p.Kind = GeoPointKind.Rails) Then
+                                        p.ParseInfoForActualCant()
+                                    End If
+                                    If (p.Kind = GeoPointKind.None) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                                            p.ParseInfoForKindHints()
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                            p.ParseInfoForActualCant()
+                                        End If
+                                    End If
+                                    p.SetKindTextFromKind(Override:=False)
+                                    
+                                    ' Verifying.
                                     If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                     p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
                                     PointCount += 1
@@ -274,7 +298,7 @@ Namespace Domain.IO
                     Me.sh           = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_sh        , DataFieldPositionType.ColumnAndLength, 129,  1, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.Job          = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Job       , DataFieldPositionType.ColumnAndLength, 132,  8, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.ObjectKey    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_ObjectKey , DataFieldPositionType.ColumnAndLength, 141,  7, DataFieldOptions.NotRequired + DataFieldOptions.Trim + DataFieldOptions.ZeroAsNaN)
-                    Me.Comment      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Comment   , DataFieldPositionType.ColumnAndLength, 149,  Integer.MaxValue, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                    Me.FreeData     = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Comment   , DataFieldPositionType.ColumnAndLength, 149,  Integer.MaxValue, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                 End Sub
                 
                 #Region "Public Fields"
@@ -297,7 +321,7 @@ Namespace Domain.IO
                     Public sh           As DataFieldDefinition(Of String)
                     Public Job          As DataFieldDefinition(Of String)
                     Public ObjectKey    As DataFieldDefinition(Of String)
-                    Public Comment      As DataFieldDefinition(Of String)
+                    Public FreeData     As DataFieldDefinition(Of String)
                 #End Region
             End Class
         

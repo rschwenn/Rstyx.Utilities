@@ -1240,6 +1240,33 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Alle Punktarten aus Info ableiten ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_GuessAllKindsFromInfo() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_GuessAllKindsFromInfo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleis-Überhöhung aus Info ableiten ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_ParseCantFromInfo() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_ParseCantFromInfo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint() As String

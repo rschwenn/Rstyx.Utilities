@@ -74,26 +74,23 @@ Namespace Domain.IO
                                 Try
     		                        Dim p As New GeoIPoint()
                                     
-                                    FieldID = DataLine.ParseField(RecDef.PointID)
-                                    p.ID    = FieldID.Value
-                                    
+                                    ' Keep some data fields for later issue tracking.
+                                    FieldID                                = DataLine.ParseField(RecDef.PointID)
                                     Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
                                     Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
                                     Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
                                     Dim FieldTime  As DataField(Of String) = DataLine.ParseField(RecDef.TimeStamp)
                                     
-                                    p.Y = FieldY.Value
-                                    p.X = FieldX.Value
-                                    p.Z = FieldZ.Value
+                                    p.ID = FieldID.Value
+                                    p.Y  = FieldY.Value
+                                    p.X  = FieldX.Value
+                                    p.Z  = FieldZ.Value
                                     
                                     ' Object key: Remove leading zero's if integer.
                                     Dim KeyText    As String = DataLine.ParseField(RecDef.ObjectKey).Value
                                     Dim KeyInt     As Integer
                                     If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = KeyInt.ToString()
-                                    
-                                    p.SourcePath   = FilePath
-                                    p.SourceLineNo = DataLine.SourceLineNo
-                                    
+                                    If (KeyText = "0") Then KeyText = String.Empty
                                     p.ObjectKey    = KeyText
                                     
                                     p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
@@ -105,14 +102,13 @@ Namespace Domain.IO
                                     p.Flags        = DataLine.ParseField(RecDef.Flags      ).Value
                                     p.wp           = DataLine.ParseField(RecDef.wp         ).Value
                                     p.wh           = DataLine.ParseField(RecDef.wh         ).Value
-                                    p.Info         = DataLine.ParseField(RecDef.Info       ).Value
                                     p.AttKey1      = DataLine.ParseField(RecDef.AttKey1    ).Value
                                     p.AttValue1    = DataLine.ParseField(RecDef.AttValue1  ).Value
                                     p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
                                     p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
                                     
-                                    ' Attributes and comment from free data.
-                                    p.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
+                                    p.SourcePath   = FilePath
+                                    p.SourceLineNo = DataLine.SourceLineNo
                                     
                                     ' Parse time stamp if given (DataLine.ParseField is unable to do it).
                                     If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
@@ -130,6 +126,22 @@ Namespace Domain.IO
                                         End If
                                     End If
                                     
+                                    ' Attributes and comment from free data.
+                                    p.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
+                                    
+                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                                    p.ParseTextForKindCodes(DataLine.ParseField(RecDef.Text).Value)
+                                    
+                                    ' Editing.
+                                    If (p.Kind = GeoPointKind.None) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                                            p.ParseInfoForKindHints()
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                            p.ParseInfoForActualCant()
+                                        End If
+                                    End If
+                                    
+                                    ' Verifying.
                                     If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                     p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
                                     PointCount += 1
@@ -224,6 +236,18 @@ Namespace Domain.IO
                                     CoordFmt = "%14." & CooPrecisionDefault & "f"
                                 End If
                                 
+                        
+                                ' Maybe convert properties to attributes in order to take place in .ipkt.
+                                ' HeightInfo
+                                ' KindText
+                                ' HeightSys
+                                ' mp
+                                ' mh 
+                                ' MarkHints
+                                ' sp
+                                ' sh
+                                'Job
+                                
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt, PointCount,
                                                       p.CalcCode.TrimToMaxLength(2),
@@ -240,7 +264,7 @@ Namespace Domain.IO
                                                       p.CoordSys.TrimToMaxLength(6),
                                                       p.Flags.TrimToMaxLength(4),
                                                       p.wp, p.wh,
-                                                      p.Info.TrimToMaxLength(25),
+                                                      p.GetIpktText().TrimToMaxLength(25),
                                                       p.AttKey1.TrimToMaxLength(2),
                                                       p.AttValue1.TrimToMaxLength(25),
                                                       p.AttKey2.TrimToMaxLength(2),
@@ -306,7 +330,7 @@ Namespace Domain.IO
                     Me.Flags        = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Flags      , DataFieldPositionType.ColumnAndLength, 132,  4, DataFieldOptions.NotRequired)
                     Me.wp           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_wp         , DataFieldPositionType.ColumnAndLength, 137,  4, DataFieldOptions.NotRequired)
                     Me.wh           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_wh         , DataFieldPositionType.ColumnAndLength, 142,  4, DataFieldOptions.NotRequired)
-                    Me.Info         = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Info       , DataFieldPositionType.ColumnAndLength, 147, 25, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                    Me.Text         = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Text       , DataFieldPositionType.ColumnAndLength, 147, 25, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                     Me.AttKey1      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttKey1    , DataFieldPositionType.ColumnAndLength, 173,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.AttValue1    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttValue1  , DataFieldPositionType.ColumnAndLength, 176, 25, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                     Me.AttKey2      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_AttKey2    , DataFieldPositionType.ColumnAndLength, 202,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
@@ -330,7 +354,7 @@ Namespace Domain.IO
                     Public Flags        As DataFieldDefinition(Of String)
                     Public wp           As DataFieldDefinition(Of Double)
                     Public wh           As DataFieldDefinition(Of Double)
-                    Public Info         As DataFieldDefinition(Of String)
+                    Public Text         As DataFieldDefinition(Of String)
                     Public AttKey1      As DataFieldDefinition(Of String)
                     Public AttValue1    As DataFieldDefinition(Of String)
                     Public AttKey2      As DataFieldDefinition(Of String)

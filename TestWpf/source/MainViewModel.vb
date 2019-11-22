@@ -292,9 +292,9 @@ Public Class MainViewModel
                 'Call TestPDF()
                 'Call TestJPEG()
                 
-                Dim p As New GeoIPoint ()
-                p.ParseTextForKindCodes(Me.Textbox)
-                Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkTypeAB, p.MarkType, p.ActualCant * 1000, p.Info))
+                'Dim p As New GeoIPoint ()
+                'p.ParseTextForKindCodes(Me.Textbox)
+                'Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkTypeAB, p.MarkType, p.ActualCant * 1000, p.Info))
                 'p.Info = Me.Textbox
                 'p.ParseInfoForKindHints()
                 'Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, p.Kind.ToDisplayString(), p.ActualCant * 1000, p.Info))
@@ -335,6 +335,8 @@ Public Class MainViewModel
                 ''int2 = int3 '.GetValueOrDefault()
                 
                 'Dim KV As New KvFile(Me.FilePath1)
+                Dim KV As New KvFile("D:\Daten\koo\Test-KV.kv")
+                
                 'Dim KF As New KfFile(Me.FilePath1)
                 'Dim iP As New iPktFile(Me.FilePath1)
                 ' Dim TC As New TcFileReader(Me.FilePath1)
@@ -347,20 +349,20 @@ Public Class MainViewModel
                 'TC.CollectParseErrors = True
                 'KV.Constraints = GeoPointConstraints.UniqueID 
                 'Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
-                'Dim pts As GeoPointOpenList = KV.Load(Me.FilePath1)
+                'Dim pts As GeoPointOpenList = KV.Load()
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
-                ' Try
-                '     TC.Load()
-                ' Catch ex As Exception
-                ' Finally
-                '     'Logger.logInfo(TC.ToReport(OnlySummary:=True))
-                ' End Try
+                Try
+                    KV.Load()
+                Catch ex As Exception
+                Finally
+                    'Logger.logInfo(TC.ToReport(OnlySummary:=True))
+                End Try
                 ' 'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
-                ' Dim pts As New GeoPointOpenList(TC.PointStream, TC)
-                ' 
-                ' Dim iP2 As New iPktFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\Utilities\source\Domain\TestData\Fmt_iGeo\Test_Attr_out.ipkt")
-                ' iP2.Store(pts)
+                Dim pts As New GeoPointOpenList(KV.PointStream, KV)
+                 
+                Dim iP2 As New iPktFile("D:\Daten\koo\Test-KV_out.ipkt")
+                iP2.Store(pts)
                 
                 'Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
                 'KV2.Store(pts)

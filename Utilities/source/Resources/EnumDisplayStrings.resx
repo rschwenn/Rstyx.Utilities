@@ -621,6 +621,15 @@
   <data name="Rstyx_Utilities_Domain_GeoPointKind_RailsFixPoint" xml:space="preserve">
     <value>GVP</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_None" xml:space="preserve">
+    <value>keine</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_ParseCantFromInfo" xml:space="preserve">
+    <value>Gleis-Überhöhung aus Info ableiten</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_GuessAllKindsFromInfo" xml:space="preserve">
+    <value>Alle Punktarten aus Info ableiten</value>
+  </data>
   <data name="Rstyx_Utilities_IO_DataFieldOptions_MissingAsZero" xml:space="preserve">
     <value>Fehlenden Wert als "0" ansehen</value>
   </data>

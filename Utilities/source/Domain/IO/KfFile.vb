@@ -102,7 +102,6 @@ Namespace Domain.IO
     		                    Dim p As New GeoVEPoint()
                                 
                                 Dim PointNo As Double = oBR.ReadDouble()
-                                'Dim PointID As String = sprintf("%.6f", PointNo)
                                 
                                 p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
                                 p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
@@ -132,7 +131,26 @@ Namespace Domain.IO
                                 p.TrackPos.TrackNo.TryParse(TrackNo)
                                 
                                 p.TrackPos.RailsCode = FileEncoding.GetString(oBR.ReadBytes(1))
+                                    
+                                ' Smoothing.
+                                If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty
+                                p.SetKindFromKindText()
+                                p.SetKindFromMarkType()
                                 
+                                ' Editing.
+                                If (p.Kind = GeoPointKind.Rails) Then
+                                    p.ParseInfoForActualCant()
+                                End If
+                                If (p.Kind = GeoPointKind.None) Then
+                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                                        p.ParseInfoForKindHints()
+                                    ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                        p.ParseInfoForActualCant()
+                                    End If
+                                End If
+                                p.SetKindTextFromKind(Override:=False)
+                                
+                                ' Point ID and constraints.
                                 If (i = 0) Then
                                     Me.HeaderKF = p
                                 ElseIf (PointNo = GhostPointID) Then
@@ -141,7 +159,6 @@ Namespace Domain.IO
                                     InvalidPointIDCount +=1
                                 Else
                                     Try
-                                        'p.ID = PointID
                                         p.ParseID(PointNo)
                                         If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                         p.VerifyConstraints(Me.Constraints)

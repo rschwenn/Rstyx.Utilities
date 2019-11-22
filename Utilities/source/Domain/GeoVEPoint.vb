@@ -1,5 +1,6 @@
 ﻿
 Imports System
+Imports System.Collections.Generic
 Imports System.Math
 
 Imports Rstyx.Utilities.Domain
@@ -14,6 +15,15 @@ Namespace Domain
     ''' </remarks>
     Public Class GeoVEPoint
         Inherits GeoPoint
+        
+        #Region "Private Fields"
+            
+            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoVEPoint")
+            
+            Private Shared Kind2KindText As Dictionary(Of GeoPointKind, String)
+            Private Shared KindText2Kind As Dictionary(Of String, GeoPointKind)
+            
+        #End Region
         
         #Region "ID Definition Fields"
             
@@ -35,6 +45,35 @@ Namespace Domain
         #End Region
         
         #Region "Constuctor"
+            
+            ''' <summary> Static initializations. </summary>
+            Shared Sub New()
+                ' Mapping:  Kind => KindText
+                Kind2KindText = New Dictionary(Of GeoPointKind, String)
+                Kind2KindText.Add(GeoPointKind.None,          ""    )
+                Kind2KindText.Add(GeoPointKind.FixPoint,      "PSx" )
+                Kind2KindText.Add(GeoPointKind.Platform,      "Bstg")
+                Kind2KindText.Add(GeoPointKind.Rails,         "Gls" )
+                Kind2KindText.Add(GeoPointKind.RailsFixPoint, "GVPV")
+                
+                ' Mapping:  KindText => Kind
+                KindText2Kind = New Dictionary(Of String, GeoPointKind)
+                KindText2Kind.Add("Gls" , GeoPointKind.Rails)
+                KindText2Kind.Add("Bstg", GeoPointKind.Platform)
+                KindText2Kind.Add("DBRF", GeoPointKind.FixPoint)
+                KindText2Kind.Add("GPSC", GeoPointKind.FixPoint)
+                KindText2Kind.Add("GVP" , GeoPointKind.RailsFixPoint)
+                KindText2Kind.Add("HBH" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("HFP" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("LFP" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("NXO" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PPB" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS0" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS1" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS2" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS3" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS4" , GeoPointKind.RailsFixPoint)
+            End Sub
             
             ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of <see cref="GeoVEPoint.DefaultMaxIDLength"/>. </summary>
             Public Sub New()
@@ -62,14 +101,40 @@ Namespace Domain
             ''' <see cref="GeoVEPoint.DefaultMaxIDLength"/> and inititializes it's properties from a given <see cref="IGeoPoint"/>.
             ''' </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
-             ''' <remarks></remarks>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoVEPoint"/>, then all properties will be taken.
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoTCPoint"/>, then the following properties will be taken:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>GeoVEPoint Property Name</b> </term>  <description> <b>GeoTCPoint Property Name</b> </description></listheader>
+             ''' <item> <term> TrackPos.Kilometer   </term>  <description> Km </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then the following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term> MarkTypeAB </term>  <description> VArtAB </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' The following attributes will be converted to properties, if the properties have no value yet:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
+             ''' <item> <term> StrNr </term>  <description> TrackPos.TrackNo   </description></item>
+             ''' <item> <term> StrRi </term>  <description> TrackPos.RailsCode </description></item>
+             ''' <item> <term> StrKm </term>  <description> TrackPos.Kilometer </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
                 
                 Me.New()
                 Me.GetPropsFromIGeoPoint(SourcePoint)
                 
-                ' KV + TC specials.
                 If (TypeOf SourcePoint Is GeoVEPoint) Then
                     
                     Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
@@ -80,11 +145,68 @@ Namespace Domain
                     Me.PositionPreInfo  = SourceVEPoint.PositionPreInfo
                     Me.TrackPos         = SourceVEPoint.TrackPos
                     
-                ElseIf (TypeOf SourcePoint Is GeoTcPoint) Then
+                Else
+                    Dim PropertyName   As String
+                    Dim AttributeName  As String
+                    Dim AttStringValue As String
                     
-                    Dim SourceTcPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
+                    ' Source is TC:  Take compatible properties.
+                    If (TypeOf SourcePoint Is GeoTcPoint) Then
+                        
+                        Dim SourceTcPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
+                        
+                        Me.TrackPos.Kilometer = SourceTcPoint.Km
+                    End If
                     
-                    Me.TrackPos.Kilometer = SourceTcPoint.Km
+                    
+                    ' Source is ipkt:  Convert ipkt-unique properties to attributes.
+                    If (TypeOf SourcePoint Is GeoIPoint) Then
+                        
+                        Dim SourceIPoint As GeoIPoint = DirectCast(SourcePoint, GeoIPoint)
+                        
+                        PropertyName = "MarkTypeAB"
+                        If (SourceIPoint.MarkTypeAB.IsNotEmpty()) Then
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Attributes.ContainsKey(AttributeName)) Then
+                                Attributes.Add(AttributeName, SourceIPoint.MarkTypeAB)
+                            End If
+                        End If
+                    End If
+                    
+                    
+                    ' Convert selected attributes to properties.
+                    PropertyName = "TrackPos.TrackNo"
+                    If (Me.TrackPos.TrackNo Is Nothing) Then
+                        AttStringValue = GetAttValueByPropertyName(PropertyName)
+                        If (AttStringValue IsNot Nothing) Then
+                            If (Integer.TryParse(AttStringValue, Me.TrackPos.TrackNo)) Then
+                                Attributes.Remove(AttributeNames(PropertyName))
+                            End If
+                        End If
+                    End If
+                    
+                    PropertyName = "TrackPos.RailsCode"
+                    If (Me.TrackPos.RailsCode.IsEmptyOrWhiteSpace()) Then
+                        AttStringValue = GetAttValueByPropertyName(PropertyName)
+                        If (AttStringValue IsNot Nothing) Then
+                            AttStringValue = AttStringValue.Trim()
+                            If (AttStringValue.Length = 1) Then
+                                Me.TrackPos.RailsCode = AttStringValue
+                                Attributes.Remove(AttributeNames(PropertyName))
+                            End If
+                        End If
+                    End If
+                    
+                    PropertyName = "TrackPos.Kilometer"
+                    If (Not Me.TrackPos.Kilometer.HasValue()) Then
+                        AttStringValue = GetAttValueByPropertyName(PropertyName)
+                        If (AttStringValue IsNot Nothing) Then
+                            If (Me.TrackPos.Kilometer.TryParse(AttStringValue)) Then
+                                Attributes.Remove(AttributeNames(PropertyName))
+                            End If
+                        End If
+                    End If
+                    
                 End If
             End Sub
             
@@ -216,6 +338,61 @@ Namespace Domain
                     Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDOutOfIntRange, TargetID.ToString(), MinIntegerID, MaxIntegerID))
                 End If
                 _ID = sprintf("%.0f", TargetID * PointNoFactor)
+            End Sub
+            
+            ''' <summary> Tries to set unknown <see cref="GeoPoint.Kind"/> according to <see cref="GeoPoint.MarkType"/>. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> and <see cref="GeoPoint.MarkType"/> is not emty or zero, 
+             ''' then <see cref="GeoPoint.Kind"/> will be set to <c>FixPoint</c>
+             ''' </para>
+             ''' <para>
+             ''' This method changes the following properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Reset to <c>None</c> and maybe set. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub SetKindFromMarkType()
+                If (Me.Kind = GeoPointKind.None) Then
+                    If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Not (Me.MarkType = "0"))) Then
+                        Me.Kind = GeoPointKind.FixPoint
+                    End If
+                End If
+            End Sub
+            
+            ''' <summary> Tries to set <see cref="GeoPoint.Kind"/> according to <see cref="GeoPoint.KindText"/>. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' There are some internal mappings for this.
+             ''' </para>
+             ''' <para>
+             ''' This method changes the following properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Reset to <c>None</c> and maybe set. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub SetKindFromKindText()
+                Me.Kind = GeoPointKind.None
+                If (KindText2Kind.ContainsKey(Me.KindText)) Then
+                    Me.Kind = KindText2Kind(Me.KindText)
+                End If
+            End Sub
+            
+            ''' <summary> Sets <see cref="GeoPoint.KindText"/> according to <see cref="GeoPoint.Kind"/>. </summary>
+             ''' <param name="Override"> If <see langword="False"/>, <see cref="GeoPoint.KindText"/> will be changed only if it's empty. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' There are internal mappings for this.
+             ''' </para>
+             ''' </remarks>
+            Public Sub SetKindTextFromKind(Override As Boolean)
+                If (Override OrElse Me.KindText.IsNotEmptyOrWhiteSpace()) Then
+                    Me.KindText = Kind2KindText(Me.Kind)
+                End If
             End Sub
             
         #End Region

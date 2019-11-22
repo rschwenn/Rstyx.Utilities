@@ -547,7 +547,7 @@
     <value>Radialer Abstand zum Tunnelprofil</value>
   </data>
   <data name="Domain_Label_Text" xml:space="preserve">
-    <value>Punktinformation</value>
+    <value>Punkttext</value>
   </data>
   <data name="Domain_Label_Tm" xml:space="preserve">
     <value>Tunnelmeter</value>

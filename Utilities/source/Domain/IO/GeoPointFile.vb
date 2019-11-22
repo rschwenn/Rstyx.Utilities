@@ -55,7 +55,7 @@ Namespace Domain.IO
            ''' <summary> Determines logical constraints for the intended usage of points. Defaults to <c>None</c>. </summary>
             ''' <remarks>
             ''' <para>
-            ''' If any of these contraints is violated while loading (and only while loading) the file, a <see cref="ParseError"/> will be created.
+            ''' If any of these contraints is violated while readding (and only while readding) the file, a <see cref="ParseError"/> will be created.
             ''' </para>
             ''' <para>
             ''' If the <see cref="IEnumerable(Of IGeoPoint)"/> returned by <see cref="GeoPointFile.PointStream"/> is intended to be converted to a <see cref="GeoPointList"/>
@@ -63,8 +63,11 @@ Namespace Domain.IO
             ''' by <see cref="GeoPointFile.PointStream"/> automatically and error tracking is more verbose (incl. error display in jEdit).
             ''' </para>
             ''' </remarks>
-           Public Property Constraints() As GeoPointConstraints
+           Public Property Constraints() As GeoPointConstraints = GeoPointConstraints.None
             
+           ''' <summary> Determines editing optiond for read points. Defaults to <c>None</c>. </summary>
+           Public Property EditOptions() As GeoPointEditOptions = GeoPointEditOptions.None
+           
         #End Region
         
         #Region "Methods"

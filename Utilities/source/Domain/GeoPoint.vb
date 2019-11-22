@@ -33,6 +33,29 @@ Namespace Domain
         
     End Enum
     
+    ''' <summary> Point edit options (i.e. for applying while reading from file). </summary>
+    <Flags>
+    Public Enum GeoPointEditOptions As Integer
+        
+        ''' <summary> No editing is applied. </summary>
+        None = 0
+        
+        ''' <summary> Tries to parse <see cref="GeoPoint.ActualCant"/> from the point's <see cref="GeoPoint.Info"/>. </summary>
+         ''' <remarks>
+         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> or <c>Rails</c>, then <see cref="GeoPoint.ParseInfoForActualCant()"/> 
+         ''' should be invoked to guess point kind. 
+         ''' </remarks>
+        ParseCantFromInfo = 1
+        
+        ''' <summary> Tries to guess the point's <see cref="GeoPoint.Kind"/> from it's <see cref="GeoPoint.Info"/>. </summary>
+         ''' <remarks>
+         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c>, then <see cref="GeoPoint.ParseInfoForKindHints()"/> 
+         ''' should be invoked to guess point kind. 
+         ''' </remarks>
+        GuessAllKindsFromInfo = 2
+        
+    End Enum
+    
     ''' <summary> Supported point kinds. </summary>
     Public Enum GeoPointKind As Integer
         
@@ -63,7 +86,10 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
             
-            Private Shared InfoKindPatterns As Dictionary(Of String, GeoPointKind)
+            Private   Shared ReadOnly InfoKindPatterns As Dictionary(Of String, GeoPointKind)
+            Private   Shared ReadOnly InfoCantPattern  As String
+            
+            Protected Shared ReadOnly AttributeNames   As Dictionary(Of String, String)
             
         #End Region
         
@@ -71,15 +97,26 @@ Namespace Domain
             
             ''' <summary> Static initializations. </summary>
             Shared Sub New()
+                ' Patterns for recognizing point kind from info text.
+                InfoCantPattern = "u *=? *([+-]? *[0-9]+)\s*"
+                
                 InfoKindPatterns = New Dictionary(Of String, GeoPointKind)
-                InfoKindPatterns.Add("u *=? *([+-]? *[0-9]+)\s*", GeoPointKind.Rails)
-                InfoKindPatterns.Add("Gls|Gleis"                , GeoPointKind.Rails)
-                InfoKindPatterns.Add("Bst|Bstg"                 , GeoPointKind.Platform)
-                InfoKindPatterns.Add("PS4|GVP"                  , GeoPointKind.RailsFixPoint)
-                InfoKindPatterns.Add("PS3|HFP"                  , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS2|LFP|PPB"              , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS1|GPSC"                 , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS0|NXO|DBRF"             , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add(InfoCantPattern, GeoPointKind.Rails)
+                InfoKindPatterns.Add("Gls|Gleis"    , GeoPointKind.Rails)
+                InfoKindPatterns.Add("Bst|Bstg"     , GeoPointKind.Platform)
+                InfoKindPatterns.Add("PS4|GVP"      , GeoPointKind.RailsFixPoint)
+                InfoKindPatterns.Add("PS3|HFP"      , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS2|LFP|PPB"  , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS1|GPSC"     , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS0|NXO|DBRF" , GeoPointKind.FixPoint)
+                
+                ' Mapping:  property name => attribute name.
+                AttributeNames = New Dictionary(Of String, String)
+                AttributeNames.Add("MarkTypeAB"        , "VArtAB")
+                AttributeNames.Add("TrackPos.TrackNo"  , "StrNr")
+                AttributeNames.Add("TrackPos.RailsCode", "StrRi")
+                AttributeNames.Add("TrackPos.Kilometer", "StrKm")
+                AttributeNames.Add("Km"                , "StrKm")
             End Sub
             
             ''' <summary> Creates a new GeoPoint. </summary>
@@ -147,6 +184,7 @@ Namespace Domain
                     Me.ID              = SourcePoint.ID
                     
                     Me.Attributes      = SourcePoint.Attributes
+                    Me.ActualCant      = SourcePoint.ActualCant
                     Me.Info            = SourcePoint.Info
                     Me.HeightInfo      = SourcePoint.HeightInfo
                     Me.Comment         = SourcePoint.Comment
@@ -197,11 +235,24 @@ Namespace Domain
         
         #Region "IGeoPointInfo Members"
             
+            Private _Attributes As Dictionary(Of String, String)
+            
+            ''' <summary> A bunch of free attributes (key/value pairs). </summary>
+             ''' <remarks>
+             ''' The Getter never returns <see langword="null"/> but rather an empty dictionary.
+             ''' </remarks>
+            Public Property Attributes()    As Dictionary(Of String, String) Implements IGeoPointInfo.Attributes
+                Get
+                    If (_Attributes Is Nothing) Then _Attributes = New Dictionary(Of String, String)
+                    Return _Attributes
+                End Get
+            Set (value As Dictionary(Of String, String))
+                _Attributes = value
+            End Set
+            End Property
+            
             ''' <inheritdoc/>
             Public Property ActualCant()    As Double = Double.NaN Implements IGeoPointInfo.ActualCant
-            
-            ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>
-            Public Property Attributes()    As Dictionary(Of String, String) = Nothing Implements IGeoPointInfo.Attributes
             
             ''' <inheritdoc/>
             Public Property Info()          As String = String.Empty Implements IGeoPointInfo.Info
@@ -458,7 +509,6 @@ Namespace Domain
              ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
              ''' <item> <term> <see cref="GeoPoint.Kind"/>       </term>  <description> Cleared and maybe set. </description></item>
              ''' <item> <term> <see cref="GeoPoint.ActualCant"/> </term>  <description> Cleared and maybe set. </description></item>
-             ''' <item> <term> <see cref="GeoPoint.MarkType"/>   </term>  <description> Cleared, but not set.  </description></item>
              ''' <item> <term> <see cref="GeoPoint.Info"/>       </term>  <description> A found cant pattern will be removed. </description></item>
              ''' </list>
              ''' </para>
@@ -467,7 +517,6 @@ Namespace Domain
                 
                 Me.Kind       = GeoPointKind.None
                 Me.ActualCant = Double.NaN
-                Me.MarkType   = String.Empty
                 
                 If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
                     
@@ -491,6 +540,77 @@ Namespace Domain
                     Next
                 End If
             End Sub
+            
+            ''' <summary> Parses actual cant from <see cref="GeoPoint.Info"/> property. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' The cant is recognizes by this pattern in <see cref="GeoPoint.Info"/>:  u[=]?[+-]?[0-9]+
+             ''' </para>
+             ''' <para>
+             ''' When cant has been found, 
+             ''' this cant pattern (inclusive trailing whitespace) will be removed from info text, 
+             ''' because it will be added to the code part of PointInfoText
+             ''' when the point is written to a ipkt file. All other tokens are kept in info text.
+             ''' </para>
+             ''' <para>
+             ''' This method changes the following properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
+             ''' <item> <term> <see cref="GeoPoint.ActualCant"/> </term>  <description> Cleared and maybe set. </description></item>
+             ''' <item> <term> <see cref="GeoPoint.Info"/>       </term>  <description> A found cant pattern will be removed. </description></item>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/>       </term>  <description> Only if cant has been found, kind will be changed to <c>Rails</c>. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub ParseInfoForActualCant()
+                
+                Me.ActualCant = Double.NaN
+                
+                If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
+                    
+                    Dim oMatch As Match = Regex.Match(Me.Info, InfoCantPattern, RegexOptions.IgnoreCase)
+                    
+                    If (oMatch.Success) Then
+                        
+                        ' Rails: set actual cant and remove cant pattern from info.
+                        If (oMatch.Groups.Count > 1) Then
+                            Me.ActualCant = CDbl(oMatch.Groups(1).Value.Replace(" ", String.Empty)) / 1000
+                            Me.Info       = Me.Info.Remove(oMatch.Index, oMatch.Length).TrimEnd()
+                            Me.Kind       = GeoPointKind.Rails
+                        End If
+                        
+                    End If
+                End If
+            End Sub
+            
+            ''' <summary>
+             ''' Gets the value of an attribute which name is determined by the given property name
+             ''' and the <see cref="AttributeNames"/> assignment table.
+             ''' </summary>
+             ''' <param name="PropertyName"> The name of the target property. May be <see langword="null"/> </param>
+             ''' <returns> The attribute's string value. May be <see langword="null"/> </returns>
+             ''' <remarks>
+             ''' If <paramref name="PropertyName"/> is a key in <see cref="AttributeNames"/> the matching dictionary value
+             ''' is the attribute name to look for. If this attribute exists in <see cref="Attributes"/>, 
+             ''' it's value will be returned.
+             ''' </remarks>
+            Public Function GetAttValueByPropertyName(PropertyName As String) As String
+                
+                Dim AttValue As String = Nothing
+                
+                If (PropertyName.IsNotEmptyOrWhiteSpace()) Then
+                    If (AttributeNames.ContainsKey(PropertyName)) Then
+                        Dim AttName As String = AttributeNames(PropertyName)
+                        If (AttName.IsNotEmptyOrWhiteSpace()) Then
+                            If (Me.Attributes.ContainsKey(AttName)) Then
+                                AttValue = Me.Attributes(AttName)
+                            End If
+                        End If
+                    End If
+                End If
+                
+                Return AttValue
+            End Function
             
         #End Region
             
