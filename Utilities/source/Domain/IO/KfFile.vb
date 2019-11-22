@@ -366,4 +366,4 @@ Namespace Domain.IO
     
 End Namespace
 
-' for jEdit:  :collapseFolds=3::tabSize=4::tabSize=4:
+' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

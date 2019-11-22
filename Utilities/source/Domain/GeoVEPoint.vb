@@ -395,6 +395,33 @@ Namespace Domain
                 End If
             End Sub
             
+            ''' <summary> Gets a point info text of max. 13 chars for kv file, containing cant (if any) and info. </summary>
+             ''' <returns> The point info text for kv file. </returns>
+            Public Function GetKVInfo() As String
+                
+                Dim KVText As String = String.Empty
+                
+                If (Not Double.IsNaN(Me.ActualCant)) Then
+                    KVText &= sprintf("u=%3.0f ", Me.ActualCant * 1000)
+                    KVText &= Me.Info
+                    
+                    ' If text is too long, try to shrink cant pattern.
+                    If (KVText.Length > 13) Then
+                        KVText = KVText.Replace("u= ", "u=")
+                    End If
+                    If (KVText.Length > 13) Then
+                        KVText = KVText.Replace("u= ", "u=")
+                    End If
+                Else
+                    KVText &= Me.Info
+                End If
+                
+                ' Ensure the limit of maximum 13 characters.
+                KVText = KVText.TrimToMaxLength(13)
+                
+                Return KVText
+            End Function
+            
         #End Region
         
         #Region "Static Methods"
@@ -499,4 +526,4 @@ Namespace Domain
 
 End Namespace
 
-' for jEdit:  :collapseFolds=3::tabSize=4::tabSize=4:
+' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

@@ -252,7 +252,7 @@ Namespace Domain
                 If (Me.Attributes?.Count > 0) Then
                     Dim AttString As String = String.Empty
                     For Each kvp As KeyValuePair(Of String, String) In Me.Attributes
-                        AttString &= kvp.Key & AttSeparator & kvp.Value & AttSeparator
+                        AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
                     Next
                     FreeDataText &= AttString
                 End If
@@ -368,7 +368,7 @@ Namespace Domain
             End Sub
             
             ''' <summary> Gets a point text for ipkt file, containing iGeo point kind codes and info. </summary>
-            ''' <returns> The point text for ipkt file. </returns>
+             ''' <returns> The point text for ipkt file. </returns>
             Public Function GetIpktText() As String
                 
                 Dim IpktText As String = String.Empty
@@ -405,4 +405,4 @@ Namespace Domain
 
 End Namespace
 
-' for jEdit:  :collapseFolds=3::tabSize=4::tabSize=4:
+' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

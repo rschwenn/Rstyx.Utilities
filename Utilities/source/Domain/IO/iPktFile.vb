@@ -236,17 +236,14 @@ Namespace Domain.IO
                                     CoordFmt = "%14." & CooPrecisionDefault & "f"
                                 End If
                                 
-                        
-                                ' Maybe convert properties to attributes in order to take place in .ipkt.
+                                ' Maybe convert properties to attributes in order to take place in .ipkt:
                                 ' HeightInfo
                                 ' KindText
                                 ' HeightSys
-                                ' mp
-                                ' mh 
+                                ' mp, mh
+                                ' sp, sh
                                 ' MarkHints
-                                ' sp
-                                ' sh
-                                'Job
+                                ' Job
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt, PointCount,
@@ -369,4 +366,4 @@ Namespace Domain.IO
     
 End Namespace
 
-' for jEdit:  :collapseFolds=3::tabSize=4::tabSize=4:
+' for jEdit:  :collapseFolds=2::tabSize=4::indentSize=4:

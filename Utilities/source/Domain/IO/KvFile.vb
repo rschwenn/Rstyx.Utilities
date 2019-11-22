@@ -211,6 +211,10 @@ Namespace Domain.IO
                                 ' Check for unique ID, if PointList is unique (since Point ID may have changed while converting to VE point).
                                 If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                 
+                                ' Maybe convert properties to attributes in order to take place in .kv:
+                                ' mp, mh
+                                ' CoordSys
+                                
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
                                                       P.ID,
@@ -218,7 +222,7 @@ Namespace Domain.IO
                                                       If(Double.IsNaN(P.X), 0, P.X),
                                                       If(Double.IsNaN(P.Z), 0, P.Z),
                                                       p.TrackPos.Kilometer.Value,
-                                                      P.Info.TrimToMaxLength(13),
+                                                      P.GetKVInfo(),
                                                       P.HeightInfo.TrimToMaxLength(13),
                                                       P.KindText.TrimToMaxLength(4),
                                                       p.TrackPos.TrackNo,
