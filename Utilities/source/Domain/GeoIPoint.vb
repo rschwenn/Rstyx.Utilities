@@ -1,5 +1,6 @@
 ﻿
 Imports System.Collections.Generic
+Imports System.Linq
 Imports System.Math
 Imports System.Text.RegularExpressions
 Imports Rstyx.Utilities.StringUtils
@@ -131,9 +132,8 @@ Namespace Domain
                     If (Me.MarkTypeAB.IsEmpty()) Then
                         AttStringValue = GetAttValueByPropertyName(PropertyName)
                         If (AttStringValue IsNot Nothing) Then
-                            If (Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)) Then
-                                Attributes.Remove(AttributeNames(PropertyName))
-                            End If
+                            Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)
+                            Attributes.Remove(AttributeNames(PropertyName))
                         End If
                     End If
                     
@@ -243,15 +243,17 @@ Namespace Domain
             End Sub
             
             ''' <summary> Gets a FreeData text for ipkt file, containing attributes and comment. </summary>
-            ''' <returns> The FreeData text for ipkt file. </returns>
+             ''' <returns> The FreeData text for ipkt file. </returns>
             Public Function GetFreeDataText() As String
                 
                 Dim FreeDataText As String = String.Empty
                                 
                 ' Attributes.
                 If (Me.Attributes?.Count > 0) Then
-                    Dim AttString As String = String.Empty
-                    For Each kvp As KeyValuePair(Of String, String) In Me.Attributes
+                    Dim AttString   As String = String.Empty
+                    Dim OrderedAtts As IOrderedEnumerable(Of KeyValuePair(Of String, String)) = 
+                                                 Me.Attributes.OrderBy(Of String)(Function(ByVal kvp) kvp.Key)
+                    For Each kvp As KeyValuePair(Of String, String) In OrderedAtts
                         AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
                     Next
                     FreeDataText &= AttString
@@ -295,7 +297,7 @@ Namespace Domain
                 Me.Kind       = GeoPointKind.None
                 Me.ActualCant = Double.NaN
                 Me.MarkType   = String.Empty
-                Me.MarkTypeAB = " "c
+                Me.MarkTypeAB = vbNullChar
                 Me.Info       = String.Empty
                 
                 If (PointInfoText.IsNotEmptyOrWhiteSpace()) Then

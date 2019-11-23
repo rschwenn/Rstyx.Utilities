@@ -82,14 +82,21 @@ Namespace Domain
     Public Class GeoPoint
         Implements IGeoPoint
         
+        #Region "Public Fields"
+            
+            Public  Shared ReadOnly AttributeNames   As Dictionary(Of String, String)
+            
+        #End Region
+        
         #Region "Private Fields"
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
             
-            Private   Shared ReadOnly InfoKindPatterns As Dictionary(Of String, GeoPointKind)
-            Private   Shared ReadOnly InfoCantPattern  As String
+            Private Shared ReadOnly InfoCantPattern  As String
+            Private Shared ReadOnly InfoKindPatterns As Dictionary(Of String, GeoPointKind)
             
-            Protected Shared ReadOnly AttributeNames   As Dictionary(Of String, String)
+            Private Shared ReadOnly Kind2KindText    As Dictionary(Of GeoPointKind, String)
+            Private Shared ReadOnly KindText2Kind    As Dictionary(Of String, GeoPointKind)
             
         #End Region
         
@@ -97,10 +104,20 @@ Namespace Domain
             
             ''' <summary> Static initializations. </summary>
             Shared Sub New()
-                ' Patterns for recognizing point kind from info text.
-                InfoCantPattern = "u *=? *([+-]? *[0-9]+)\s*"
                 
+                ' Mapping:  property name => attribute name.
+                AttributeNames = New Dictionary(Of String, String)
+                AttributeNames.Add("MarkTypeAB"        , "VArtAB")
+                AttributeNames.Add("TrackPos.TrackNo"  , "StrNr")
+                AttributeNames.Add("TrackPos.RailsCode", "StrRi")
+                AttributeNames.Add("TrackPos.Kilometer", "StrKm")
+                AttributeNames.Add("Km"                , "StrKm")
+                AttributeNames.Add("KindText"          , "PArt")
+                AttributeNames.Add("HeightSys"         , "SysH")
+                
+                ' Patterns for recognizing point kind from info text.
                 InfoKindPatterns = New Dictionary(Of String, GeoPointKind)
+                InfoCantPattern  = "u *=? *([+-]? *[0-9]+)\s*"
                 InfoKindPatterns.Add(InfoCantPattern, GeoPointKind.Rails)
                 InfoKindPatterns.Add("Gls|Gleis"    , GeoPointKind.Rails)
                 InfoKindPatterns.Add("Bst|Bstg"     , GeoPointKind.Platform)
@@ -110,13 +127,32 @@ Namespace Domain
                 InfoKindPatterns.Add("PS1|GPSC"     , GeoPointKind.FixPoint)
                 InfoKindPatterns.Add("PS0|NXO|DBRF" , GeoPointKind.FixPoint)
                 
-                ' Mapping:  property name => attribute name.
-                AttributeNames = New Dictionary(Of String, String)
-                AttributeNames.Add("MarkTypeAB"        , "VArtAB")
-                AttributeNames.Add("TrackPos.TrackNo"  , "StrNr")
-                AttributeNames.Add("TrackPos.RailsCode", "StrRi")
-                AttributeNames.Add("TrackPos.Kilometer", "StrKm")
-                AttributeNames.Add("Km"                , "StrKm")
+                ' Mapping:  Kind => KindText.
+                Kind2KindText = New Dictionary(Of GeoPointKind, String)
+                Kind2KindText.Add(GeoPointKind.None,          ""    )
+                Kind2KindText.Add(GeoPointKind.FixPoint,      "PSx" )
+                Kind2KindText.Add(GeoPointKind.Platform,      "Bstg")
+                Kind2KindText.Add(GeoPointKind.Rails,         "Gls" )
+                Kind2KindText.Add(GeoPointKind.RailsFixPoint, "GVPV")
+                
+                ' Mapping:  KindText => Kind.
+                KindText2Kind = New Dictionary(Of String, GeoPointKind)
+                KindText2Kind.Add("Gls" , GeoPointKind.Rails)
+                KindText2Kind.Add("Bstg", GeoPointKind.Platform)
+                KindText2Kind.Add("DBRF", GeoPointKind.FixPoint)
+                KindText2Kind.Add("GPSC", GeoPointKind.FixPoint)
+                KindText2Kind.Add("GVPV", GeoPointKind.RailsFixPoint)
+                KindText2Kind.Add("GVP" , GeoPointKind.RailsFixPoint)
+                KindText2Kind.Add("HBH" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("HFP" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("LFP" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("NXO" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PPB" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS0" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS1" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS2" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS3" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PS4" , GeoPointKind.RailsFixPoint)
             End Sub
             
             ''' <summary> Creates a new GeoPoint. </summary>
@@ -611,6 +647,39 @@ Namespace Domain
                 
                 Return AttValue
             End Function
+            
+            ''' <summary> Tries to set <see cref="GeoPoint.Kind"/> according to <see cref="GeoPoint.KindText"/>. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' There are some internal mappings for this.
+             ''' </para>
+             ''' <para>
+             ''' This method changes the following properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Reset to <c>None</c> and maybe set. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub SetKindFromKindText()
+                Me.Kind = GeoPointKind.None
+                If (KindText2Kind.ContainsKey(Me.KindText)) Then
+                    Me.Kind = KindText2Kind(Me.KindText)
+                End If
+            End Sub
+            
+            ''' <summary> Sets <see cref="GeoPoint.KindText"/> according to <see cref="GeoPoint.Kind"/>. </summary>
+             ''' <param name="Override"> If <see langword="False"/>, <see cref="GeoPoint.KindText"/> will be changed only if it's empty. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' There are internal mappings for this.
+             ''' </para>
+             ''' </remarks>
+            Public Sub SetKindTextFromKind(Override As Boolean)
+                If (Override OrElse Me.KindText.IsEmptyOrWhiteSpace()) Then
+                    Me.KindText = Kind2KindText(Me.Kind)
+                End If
+            End Sub
             
         #End Region
             

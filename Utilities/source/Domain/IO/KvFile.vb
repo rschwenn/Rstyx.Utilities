@@ -211,6 +211,11 @@ Namespace Domain.IO
                                 ' Check for unique ID, if PointList is unique (since Point ID may have changed while converting to VE point).
                                 If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                 
+                                ' Helper.
+                                Dim ip As GeoIPoint = New GeoIPoint()
+                                ip.Attributes = p.Attributes
+                                ip.Comment    = p.Comment
+                                
                                 ' Maybe convert properties to attributes in order to take place in .kv:
                                 ' mp, mh
                                 ' CoordSys
@@ -236,7 +241,7 @@ Namespace Domain.IO
                                                       P.sh.TrimToMaxLength(1),
                                                       P.Job.TrimToMaxLength(8),
                                                       P.ObjectKey.TrimToMaxLength(7),
-                                                      p.Comment
+                                                      ip.GetFreeDataText()
                                                      ))
                                 PointCount += 1
                                 

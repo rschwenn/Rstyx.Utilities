@@ -20,9 +20,6 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoVEPoint")
             
-            Private Shared Kind2KindText As Dictionary(Of GeoPointKind, String)
-            Private Shared KindText2Kind As Dictionary(Of String, GeoPointKind)
-            
         #End Region
         
         #Region "ID Definition Fields"
@@ -45,35 +42,6 @@ Namespace Domain
         #End Region
         
         #Region "Constuctor"
-            
-            ''' <summary> Static initializations. </summary>
-            Shared Sub New()
-                ' Mapping:  Kind => KindText
-                Kind2KindText = New Dictionary(Of GeoPointKind, String)
-                Kind2KindText.Add(GeoPointKind.None,          ""    )
-                Kind2KindText.Add(GeoPointKind.FixPoint,      "PSx" )
-                Kind2KindText.Add(GeoPointKind.Platform,      "Bstg")
-                Kind2KindText.Add(GeoPointKind.Rails,         "Gls" )
-                Kind2KindText.Add(GeoPointKind.RailsFixPoint, "GVPV")
-                
-                ' Mapping:  KindText => Kind
-                KindText2Kind = New Dictionary(Of String, GeoPointKind)
-                KindText2Kind.Add("Gls" , GeoPointKind.Rails)
-                KindText2Kind.Add("Bstg", GeoPointKind.Platform)
-                KindText2Kind.Add("DBRF", GeoPointKind.FixPoint)
-                KindText2Kind.Add("GPSC", GeoPointKind.FixPoint)
-                KindText2Kind.Add("GVP" , GeoPointKind.RailsFixPoint)
-                KindText2Kind.Add("HBH" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("HFP" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("LFP" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("NXO" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PPB" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS0" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS1" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS2" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS3" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS4" , GeoPointKind.RailsFixPoint)
-            End Sub
             
             ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a <see cref="GeoVEPoint.MaxIDLength"/> of <see cref="GeoVEPoint.DefaultMaxIDLength"/>. </summary>
             Public Sub New()
@@ -149,6 +117,7 @@ Namespace Domain
                     Dim PropertyName   As String
                     Dim AttributeName  As String
                     Dim AttStringValue As String
+                    Dim AttIntValue    As Integer
                     
                     ' Source is TC:  Take compatible properties.
                     If (TypeOf SourcePoint Is GeoTcPoint) Then
@@ -179,9 +148,10 @@ Namespace Domain
                     If (Me.TrackPos.TrackNo Is Nothing) Then
                         AttStringValue = GetAttValueByPropertyName(PropertyName)
                         If (AttStringValue IsNot Nothing) Then
-                            If (Integer.TryParse(AttStringValue, Me.TrackPos.TrackNo)) Then
-                                Attributes.Remove(AttributeNames(PropertyName))
+                            If (Integer.TryParse(AttStringValue, AttIntValue)) Then
+                                Me.TrackPos.TrackNo = AttIntValue
                             End If
+                            Attributes.Remove(AttributeNames(PropertyName))
                         End If
                     End If
                     
@@ -192,8 +162,8 @@ Namespace Domain
                             AttStringValue = AttStringValue.Trim()
                             If (AttStringValue.Length = 1) Then
                                 Me.TrackPos.RailsCode = AttStringValue
-                                Attributes.Remove(AttributeNames(PropertyName))
                             End If
+                            Attributes.Remove(AttributeNames(PropertyName))
                         End If
                     End If
                     
@@ -201,9 +171,8 @@ Namespace Domain
                     If (Not Me.TrackPos.Kilometer.HasValue()) Then
                         AttStringValue = GetAttValueByPropertyName(PropertyName)
                         If (AttStringValue IsNot Nothing) Then
-                            If (Me.TrackPos.Kilometer.TryParse(AttStringValue)) Then
-                                Attributes.Remove(AttributeNames(PropertyName))
-                            End If
+                            Me.TrackPos.Kilometer.TryParse(AttStringValue)
+                            Attributes.Remove(AttributeNames(PropertyName))
                         End If
                     End If
                     
@@ -350,76 +319,56 @@ Namespace Domain
              ''' This method changes the following properties:
              ''' <list type="table">
              ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
-             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Reset to <c>None</c> and maybe set. </description></item>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Maybe changed. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' <see cref="GeoPoint.Kind"/> is set due to these rules:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>MarkType Value </b> </term>  <description> <b> Kind Value </b> </description></listheader>
+             ''' <item> <term> empty or zero </term>  <description> no change </description></item>
+             ''' <item> <term> 1, 2, 3, 4    </term>  <description> <c>RailsFixPoint</c> </description></item>
+             ''' <item> <term> other value   </term>  <description> <c>FixPoint</c> </description></item>
              ''' </list>
              ''' </para>
              ''' </remarks>
             Public Sub SetKindFromMarkType()
                 If (Me.Kind = GeoPointKind.None) Then
                     If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Not (Me.MarkType = "0"))) Then
+                        
                         Me.Kind = GeoPointKind.FixPoint
+                        
+                        Dim MarkTypeInt As Integer
+                        If (Integer.TryParse(Me.MarkType, MarkTypeInt)) Then
+                            If (MarkTypeInt < 5) Then
+                                Me.Kind = GeoPointKind.RailsFixPoint
+                            End If
+                        End If
                     End If
-                End If
-            End Sub
-            
-            ''' <summary> Tries to set <see cref="GeoPoint.Kind"/> according to <see cref="GeoPoint.KindText"/>. </summary>
-             ''' <remarks>
-             ''' <para>
-             ''' There are some internal mappings for this.
-             ''' </para>
-             ''' <para>
-             ''' This method changes the following properties:
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
-             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Reset to <c>None</c> and maybe set. </description></item>
-             ''' </list>
-             ''' </para>
-             ''' </remarks>
-            Public Sub SetKindFromKindText()
-                Me.Kind = GeoPointKind.None
-                If (KindText2Kind.ContainsKey(Me.KindText)) Then
-                    Me.Kind = KindText2Kind(Me.KindText)
-                End If
-            End Sub
-            
-            ''' <summary> Sets <see cref="GeoPoint.KindText"/> according to <see cref="GeoPoint.Kind"/>. </summary>
-             ''' <param name="Override"> If <see langword="False"/>, <see cref="GeoPoint.KindText"/> will be changed only if it's empty. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' There are internal mappings for this.
-             ''' </para>
-             ''' </remarks>
-            Public Sub SetKindTextFromKind(Override As Boolean)
-                If (Override OrElse Me.KindText.IsNotEmptyOrWhiteSpace()) Then
-                    Me.KindText = Kind2KindText(Me.Kind)
                 End If
             End Sub
             
             ''' <summary> Gets a point info text of max. 13 chars for kv file, containing cant (if any) and info. </summary>
-             ''' <returns> The point info text for kv file. </returns>
+             ''' <returns> The point info text for kv file, i.e. 'u= 23  info'. </returns>
             Public Function GetKVInfo() As String
                 
-                Dim KVText As String = String.Empty
+                Dim KVText As String
                 
                 If (Not Double.IsNaN(Me.ActualCant)) Then
-                    KVText &= sprintf("u=%3.0f ", Me.ActualCant * 1000)
-                    KVText &= Me.Info
-                    
-                    ' If text is too long, try to shrink cant pattern.
-                    If (KVText.Length > 13) Then
-                        KVText = KVText.Replace("u= ", "u=")
-                    End If
-                    If (KVText.Length > 13) Then
-                        KVText = KVText.Replace("u= ", "u=")
+                    If (Me.Info.Length < 7) Then
+                        KVText = sprintf("u=%3.0f  %-s", Me.ActualCant * 1000, Me.Info)
+                    ElseIf (Me.Info.Length = 7) Then
+                        KVText = sprintf("u=%3.0f %-s", Me.ActualCant * 1000, Me.Info)
+                    ElseIf (Me.Info.Length = 8) Then
+                        KVText = sprintf("u=%2.0f %-s", Me.ActualCant * 1000, Me.Info)
+                    Else
+                        KVText = sprintf("u=%.0f %-s", Me.ActualCant * 1000, Me.Info)
                     End If
                 Else
-                    KVText &= Me.Info
+                    KVText = Me.Info
                 End If
                 
-                ' Ensure the limit of maximum 13 characters.
-                KVText = KVText.TrimToMaxLength(13)
-                
-                Return KVText
+                Return KVText.TrimToMaxLength(13)
             End Function
             
         #End Region

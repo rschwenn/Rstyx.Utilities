@@ -54,6 +54,14 @@ Namespace Domain.IO
              ''' <para>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </para>
+             ''' <para>
+             ''' The following point attributes will be converted to properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
+             ''' <item> <term>  SysH  </term>  <description>  HeightSys  </description></item>
+             ''' <item> <term>  PArt  </term>  <description>  KindText   </description></item>
+             ''' </list>
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
@@ -128,6 +136,22 @@ Namespace Domain.IO
                                     
                                     ' Attributes and comment from free data.
                                     p.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
+                    
+                                    ' Convert selected attributes to properties, which don't belong to .ipkt file.
+                                    Dim PropertyName   As String
+                                    Dim AttStringValue As String
+                                    PropertyName = "HeightSys"
+                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
+                                    If (AttStringValue IsNot Nothing) Then
+                                        P.HeightSys = AttStringValue.Trim()
+                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                    End If
+                                    PropertyName = "KindText"
+                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
+                                    If (AttStringValue IsNot Nothing) Then
+                                        P.KindText = AttStringValue.Trim()
+                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                    End If
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
                                     p.ParseTextForKindCodes(DataLine.ParseField(RecDef.Text).Value)
@@ -140,6 +164,7 @@ Namespace Domain.IO
                                             p.ParseInfoForActualCant()
                                         End If
                                     End If
+                                    p.SetKindTextFromKind(Override:=False)
                                     
                                     ' Verifying.
                                     If (UniqueID) Then Me.VerifyUniqueID(p.ID)
@@ -187,9 +212,19 @@ Namespace Domain.IO
             ''' <summary> Writes the points collection to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
              ''' <param name="MetaData">  An object providing the header for <paramref name="PointList"/>. May be <see langword="null"/>. </param>
-             ''' <exception cref="System.InvalidOperationException">     <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
+             ''' <remarks>
+             ''' <para>
+             ''' The following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term>  HeightSys  </term>  <description>  SysH  </description></item>
+             ''' <item> <term>  KindText   </term>  <description>  PArt  </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, Me.FilePath))
@@ -197,7 +232,6 @@ Namespace Domain.IO
                     
                     Me.Reset(Nothing)
                     
-                    'Dim PointFmt  As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%14.5f|%14.5f|%14.5f|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s%s"
                     Dim PointFmt   As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
                     Dim CoordFmt   As String  = "%14.5f"
                     Dim PointCount As Integer = 0
@@ -236,14 +270,24 @@ Namespace Domain.IO
                                     CoordFmt = "%14." & CooPrecisionDefault & "f"
                                 End If
                                 
-                                ' Maybe convert properties to attributes in order to take place in .ipkt:
-                                ' HeightInfo
-                                ' KindText
-                                ' HeightSys
-                                ' mp, mh
-                                ' sp, sh
-                                ' MarkHints
-                                ' Job
+                                ' Convert properties to attributes in order to take place in .ipkt.
+                                '   (More candidates: HeightInfo, mp, mh, sp, sh, MarkHints, Job)
+                                Dim PropertyName   As String
+                                Dim AttributeName  As String
+                                PropertyName = "HeightSys"
+                                If (p.HeightSys.IsNotEmptyOrWhiteSpace()) Then
+                                    AttributeName = GeoPoint.AttributeNames(PropertyName) 
+                                    If (Not p.Attributes.ContainsKey(AttributeName)) Then
+                                        p.Attributes.Add(AttributeName, p.HeightSys)
+                                    End If
+                                End If
+                                PropertyName = "KindText"
+                                If (p.KindText.IsNotEmptyOrWhiteSpace()) Then 
+                                    AttributeName = GeoPoint.AttributeNames(PropertyName) 
+                                    If (Not p.Attributes.ContainsKey(AttributeName)) Then
+                                        p.Attributes.Add(AttributeName, sprintf("%-4s", p.KindText))
+                                    End If
+                                End If
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt, PointCount,
