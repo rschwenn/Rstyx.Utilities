@@ -438,7 +438,7 @@
     <comment>File Name: String; Block Start Line: Long; Block End Line: Long</comment>
   </data>
   <data name="TcBlock_TableHeader" xml:space="preserve">
-    <value> lfd              PunktNr   Km    (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info               Rechtswert     Hochwert    Hoehe</value>
+    <value> lfd              PunktNr   Km    (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info             Punktart    Rechtswert     Hochwert    Hoehe</value>
   </data>
   <data name="TcBlock_ToReport_Comment" xml:space="preserve">
     <value>Beschreibung:  %s</value>
@@ -815,7 +815,7 @@
     <comment>Default Header Line #2 for KV file</comment>
   </data>
   <data name="KvFile_Label_DefaultHeader3" xml:space="preserve">
-    <value> PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr</value>
+    <value> PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr  Attribute_und_Kommentar</value>
     <comment>Default Header Line #3 for KV file</comment>
   </data>
   <data name="IDCollection_RepeatedID" xml:space="preserve">
@@ -1082,5 +1082,8 @@
   </data>
   <data name="Domain_Label_FreeData" xml:space="preserve">
     <value>Freie Daten</value>
+  </data>
+  <data name="GeoPointList_TableHeader" xml:space="preserve">
+    <value>            Punkt-ID      RechtsWert       HochWert      Höhe   Ueb  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe    </value>
   </data>
 </root>

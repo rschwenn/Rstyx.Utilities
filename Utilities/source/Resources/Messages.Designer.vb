@@ -1307,6 +1307,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die             Punkt-ID      RechtsWert       HochWert      Höhe   Ueb  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe     ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointList_TableHeader() As String
+            Get
+                Return ResourceManager.GetString("GeoPointList_TableHeader", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Anwendungsfehler (Application_DispatcherUnhandledException). ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Global_DispatcherUnhandledException() As String
@@ -1739,7 +1748,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die  PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr  Attribute_und_Kommentar ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KvFile_Label_DefaultHeader3() As String
             Get
@@ -2090,7 +2099,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd              PunktNr   Km    (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info               Rechtswert     Hochwert    Hoehe ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd              PunktNr   Km    (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info             Punktart    Rechtswert     Hochwert    Hoehe ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcBlock_TableHeader() As String
             Get

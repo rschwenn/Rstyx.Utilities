@@ -295,8 +295,9 @@ Public Class MainViewModel
                 'Dim p As New GeoIPoint ()
                 'p.ParseTextForKindCodes(Me.Textbox)
                 'Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkTypeAB, p.MarkType, p.ActualCant * 1000, p.Info))
-                'p.Info = Me.Textbox
-                'p.ParseInfoForKindHints()
+                'p.Info    = Me.Textbox
+                'p.Comment = " HB 22.33"
+                'p.ParseInfoForKindHints(TryComment:=False)
                 'Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, p.Kind.ToDisplayString(), p.ActualCant * 1000, p.Info))
                 
                 'Dim Km1 As Kilometer = New Kilometer("-0.1 - 212.13")
@@ -335,14 +336,15 @@ Public Class MainViewModel
                 ''int2 = int3 '.GetValueOrDefault()
                 
                 'Dim KV As New KvFile(Me.FilePath1)
-                Dim KV As New KvFile("D:\Daten\koo\Test-KV.kv")
+                'Dim KV As New KvFile("D:\Daten\koo\Test-KV.kv")
                 
                 'Dim KF As New KfFile(Me.FilePath1)
                 'Dim iP As New iPktFile(Me.FilePath1)
                 ' Dim TC As New TcFileReader(Me.FilePath1)
                 'TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
                 'TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
-                'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
+                Dim TC As New TcFileReader("D:\Daten\koo\80005677_5026_Test.A0")
+                TC.EditOptions = GeoPointEditOptions.GuessAllKindsFromInfo
                 'KV.CollectParseErrors = True
                 'TC.ShowParseErrorsInJedit = False
                 'iP.Constraints = GeoPointConstraints.UniqueID
@@ -353,16 +355,17 @@ Public Class MainViewModel
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 Try
-                    KV.Load()
+                    TC.Load()
                 Catch ex As Exception
+                    Logger.logError(ex, "Crash...")
                 Finally
-                    'Logger.logInfo(TC.ToReport(OnlySummary:=True))
+                    Logger.logInfo(TC.ToReport(OnlySummary:=False))
                 End Try
                 ' 'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
-                Dim pts As New GeoPointOpenList(KV.PointStream, KV)
-                 
-                Dim iP2 As New iPktFile("D:\Daten\koo\Test-KV_out.ipkt")
-                iP2.Store(pts)
+                'Dim pts As New GeoPointOpenList(KV.PointStream, KV)
+                ' 
+                'Dim iP2 As New iPktFile("D:\Daten\koo\Test-KV_out.ipkt")
+                'iP2.Store(pts)
                 
                 'Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
                 'KV2.Store(pts)

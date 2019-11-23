@@ -42,14 +42,14 @@ Namespace Domain
         
         ''' <summary> Tries to parse <see cref="GeoPoint.ActualCant"/> from the point's <see cref="GeoPoint.Info"/>. </summary>
          ''' <remarks>
-         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> or <c>Rails</c>, then <see cref="GeoPoint.ParseInfoForActualCant()"/> 
+         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> or <c>Rails</c>, then <see cref="GeoPoint.ParseInfoForActualCant"/> 
          ''' should be invoked to guess point kind. 
          ''' </remarks>
         ParseCantFromInfo = 1
         
         ''' <summary> Tries to guess the point's <see cref="GeoPoint.Kind"/> from it's <see cref="GeoPoint.Info"/>. </summary>
          ''' <remarks>
-         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c>, then <see cref="GeoPoint.ParseInfoForKindHints()"/> 
+         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c>, then <see cref="GeoPoint.ParseInfoForKindHints"/> 
          ''' should be invoked to guess point kind. 
          ''' </remarks>
         GuessAllKindsFromInfo = 2
@@ -118,14 +118,14 @@ Namespace Domain
                 ' Patterns for recognizing point kind from info text.
                 InfoKindPatterns = New Dictionary(Of String, GeoPointKind)
                 InfoCantPattern  = "u *=? *([+-]? *[0-9]+)\s*"
-                InfoKindPatterns.Add(InfoCantPattern, GeoPointKind.Rails)
-                InfoKindPatterns.Add("Gls|Gleis"    , GeoPointKind.Rails)
-                InfoKindPatterns.Add("Bst|Bstg"     , GeoPointKind.Platform)
-                InfoKindPatterns.Add("PS4|GVP"      , GeoPointKind.RailsFixPoint)
-                InfoKindPatterns.Add("PS3|HFP"      , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS2|LFP|PPB"  , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS1|GPSC"     , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS0|NXO|DBRF" , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add(InfoCantPattern  , GeoPointKind.Rails)
+                InfoKindPatterns.Add("Gls|Gleis"      , GeoPointKind.Rails)
+                InfoKindPatterns.Add("Bst|Bstg|Bahnst", GeoPointKind.Platform)
+                InfoKindPatterns.Add("PS4|GVP"        , GeoPointKind.RailsFixPoint)
+                InfoKindPatterns.Add("PS3|HFP|HB|HP"  , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS2|LFP|PPB"    , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS1|GPSC"       , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PS0|NXO|DBRF"   , GeoPointKind.FixPoint)
                 
                 ' Mapping:  Kind => KindText.
                 Kind2KindText = New Dictionary(Of GeoPointKind, String)
@@ -518,16 +518,17 @@ Namespace Domain
         #Region "Public Methods"
             
             ''' <summary> Guesses the point kind from <see cref="GeoPoint.Info"/> property (somewhat heuristic). </summary>
+             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
              ''' <remarks>
              ''' <para>
-             ''' The following patterns and tokens somewhere in <see cref="GeoPoint.Info"/> lead to guessing the point kind: 
+             ''' The following patterns somewhere in <see cref="GeoPoint.Info"/> lead to guessing the point kind: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Pattern</b>  </term>  <description> Point Kind </description></listheader>
              ''' <item> <term> u[=]?[+-]?[0-9]+      </term>  <description> Actual rails with actual cant      </description></item>
              ''' <item> <term> Gls, Gleis            </term>  <description> Actual rails (without actual cant) </description></item>
-             ''' <item> <term> Bstg, Bst             </term>  <description> Platform                           </description></item>
+             ''' <item> <term> Bstg, Bst, Bahnst     </term>  <description> Platform                           </description></item>
              ''' <item> <term> PS4, GVP              </term>  <description> Rails fix point                    </description></item>
-             ''' <item> <term> PS3, HFP              </term>  <description> Other fix point                    </description></item>
+             ''' <item> <term> PS3, HFP, HB, HP      </term>  <description> Other fix point                    </description></item>
              ''' <item> <term> PS2, LFP, PPB         </term>  <description> Other fix point                    </description></item>
              ''' <item> <term> PS1, GPSC             </term>  <description> Other fix point                    </description></item>
              ''' <item> <term> PS0, NXO, DBRF, DBREF </term>  <description> Other fix point                    </description></item>
@@ -549,38 +550,57 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub ParseInfoForKindHints()
+            Public Sub ParseInfoForKindHints(Optional byVal TryComment As Boolean = False)
                 
                 Me.Kind       = GeoPointKind.None
                 Me.ActualCant = Double.NaN
                 
-                If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
+                Dim i           As Integer = 0
+                Dim SearchCount As Integer = If(TryComment, 2, 1)
+                Dim SearchText  As String  = Me.Info
+                Dim Success     As Boolean = False
+                
+                Do
+                    i += 1
                     
-                    ' Test patterns against Me.Info (for patterns: see Shared Sub New()).
-                    For Each kvp As KeyValuePair(Of String, GeoPointKind) In InfoKindPatterns
+                    If (SearchText.IsNotEmptyOrWhiteSpace()) Then
                         
-                        Dim oMatch As Match = Regex.Match(Me.Info, kvp.Key, RegexOptions.IgnoreCase)
-                        
-                        If (oMatch.Success) Then
+                        ' Test patterns against SearchText (for patterns: see Shared Sub New()).
+                        For Each kvp As KeyValuePair(Of String, GeoPointKind) In InfoKindPatterns
                             
-                            Me.Kind = kvp.Value
+                            Dim oMatch As Match = Regex.Match(SearchText, kvp.Key, RegexOptions.IgnoreCase)
                             
-                            ' Rails: set actual cant and remove cant pattern from info.
-                            If ((kvp.Value = GeoPointKind.Rails) AndAlso (oMatch.Groups.Count > 1)) Then
-                                Me.ActualCant = CDbl(oMatch.Groups(1).Value.Replace(" ", String.Empty)) / 1000
-                                Me.Info       = Me.Info.Remove(oMatch.Index, oMatch.Length).TrimEnd()
+                            If (oMatch.Success) Then
+                                
+                                Success = True
+                                Me.Kind = kvp.Value
+                                
+                                ' Rails: set actual cant and remove cant pattern from SearchText.
+                                If ((kvp.Value = GeoPointKind.Rails) AndAlso (oMatch.Groups.Count > 1)) Then
+                                    Me.ActualCant = CDbl(oMatch.Groups(1).Value.Replace(" ", String.Empty)) / 1000
+                                    SearchText    = SearchText.Remove(oMatch.Index, oMatch.Length).TrimEnd()
+                                    If (i = 1) Then
+                                        Me.Info = SearchText
+                                    Else
+                                        Me.Comment = SearchText
+                                    End If
+                                End If
+                                
+                                Exit For
                             End If
-                            
-                            Exit For
-                        End If
-                    Next
-                End If
+                        Next
+                    End If
+                    
+                    SearchText = Me.Comment
+                    
+                Loop Until (Success OrElse (i = SearchCount))
             End Sub
             
             ''' <summary> Parses actual cant from <see cref="GeoPoint.Info"/> property. </summary>
+             ''' <param name="TryComment"> If <see langword="true"/> and no cant has been found in <see cref="GeoPoint.Info"/>, the <see cref="GeoPoint.Comment"/> will be parsed, too. </param>
              ''' <remarks>
              ''' <para>
-             ''' The cant is recognizes by this pattern in <see cref="GeoPoint.Info"/>:  u[=]?[+-]?[0-9]+
+             ''' The cant is recognizes by this pattern in <see cref="GeoPoint.Info"/>:  u *[=]? *([+-]? *[0-9])+
              ''' </para>
              ''' <para>
              ''' When cant has been found, 
@@ -598,7 +618,7 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub ParseInfoForActualCant()
+            Public Sub ParseInfoForActualCant(Optional byVal TryComment As Boolean = False)
                 
                 Me.ActualCant = Double.NaN
                 
@@ -606,15 +626,17 @@ Namespace Domain
                     
                     Dim oMatch As Match = Regex.Match(Me.Info, InfoCantPattern, RegexOptions.IgnoreCase)
                     
+                    If ((Not oMatch.Success) AndAlso TryComment AndAlso Me.Comment.IsNotEmptyOrWhiteSpace()) Then
+                        oMatch = Regex.Match(Me.Comment, InfoCantPattern, RegexOptions.IgnoreCase)
+                    End If
+                    
                     If (oMatch.Success) Then
-                        
                         ' Rails: set actual cant and remove cant pattern from info.
                         If (oMatch.Groups.Count > 1) Then
                             Me.ActualCant = CDbl(oMatch.Groups(1).Value.Replace(" ", String.Empty)) / 1000
                             Me.Info       = Me.Info.Remove(oMatch.Index, oMatch.Length).TrimEnd()
                             Me.Kind       = GeoPointKind.Rails
                         End If
-                        
                     End If
                 End If
             End Sub

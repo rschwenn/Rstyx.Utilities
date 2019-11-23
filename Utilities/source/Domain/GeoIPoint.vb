@@ -251,9 +251,8 @@ Namespace Domain
                 ' Attributes.
                 If (Me.Attributes?.Count > 0) Then
                     Dim AttString   As String = String.Empty
-                    Dim OrderedAtts As IOrderedEnumerable(Of KeyValuePair(Of String, String)) = 
-                                                 Me.Attributes.OrderBy(Of String)(Function(ByVal kvp) kvp.Key)
-                    For Each kvp As KeyValuePair(Of String, String) In OrderedAtts
+                    
+                    For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
                         AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
                     Next
                     FreeDataText &= AttString

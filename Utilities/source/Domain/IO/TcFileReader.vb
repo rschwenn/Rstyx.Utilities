@@ -57,12 +57,8 @@ Namespace Domain.IO
             Private VermEsnRecordDefinitions    As New Dictionary(Of String, TcRecordDefinitionVermEsn)  ' Key = getKeyForRecordDefinition(TcBlockType)
             Private iGeoRecordDefinitions       As New Dictionary(Of String, TcRecordDefinitionIGeo)     ' Key = getKeyForRecordDefinition(TcBlockType)
             
-            Private _Blocks                     As New Collection(Of TcBlock)
-            
             Private Const RHO                   As Double = 200 / System.Math.PI
-            Private Const DoublePipeMask        As String = "D1o2u3b4l5e6P7i8p9e0"
-            
-            Private _TotalLinesCount            As Long
+            'Private Const DoublePipeMask        As String = "D1o2u3b4l5e6P7i8p9e0"
             
         #End Region
         
@@ -72,7 +68,12 @@ Namespace Domain.IO
             Public Sub New()
                 ' Don't recognize a header because the general logic doesn't match to TC file.
                 Me.SeparateHeader = False
+                
+                ' Commentlines are o.k. but line end comments are not.
                 Me.LineStartCommentToken = "#"
+                
+                ' By default recognize rails points and parse actual cant.
+                Me.EditOptions = GeoPointEditOptions.ParseCantFromInfo
                 
                 setRecordDefinitionsVermEsn()
                 setRecordDefinitionsIGeo()
@@ -120,11 +121,7 @@ Namespace Domain.IO
                  ''' This collection is empty until <see cref="TcFileReader.Load"/> has been invoked successfully
                  ''' and it will be cleared by <see cref="TcFileReader.Reset"/>.
                  ''' </remarks>
-                Public ReadOnly Property Blocks() As Collection(Of TcBlock)
-                    Get
-                        Return _Blocks
-                    End Get
-                End Property
+                Public ReadOnly Property Blocks() As New Collection(Of TcBlock)
                 
             #End Region
             
@@ -295,7 +292,7 @@ Namespace Domain.IO
             ''' <summary> Reads the point file and provides the points as (not lazy established) enumerable. </summary>
              ''' <returns> All read points of all <see cref="TcFileReader.Blocks"/> as flat list. See <b>remarks</b> for details. </returns>
              ''' <remarks>
-             ''' The file will be read if it hasn't been yet
+             ''' This enumeration will be empty until <see cref="TcFileReader.Load"/> has been invoked successfully.
              ''' <para>
              ''' This method is for convenience only - see <see cref="TcFileReader.Load"/>.
              ''' </para>
@@ -918,9 +915,9 @@ Namespace Domain.IO
                 
                 Public ID_Length As Integer
                 
-                Public Com      As DataFieldDefinition(Of String)
-                Public Com2     As DataFieldDefinition(Of String)
-                Public QKm      As DataFieldDefinition(Of Double)
+                Public Com       As DataFieldDefinition(Of String)
+                Public Com2      As DataFieldDefinition(Of String)
+                Public QKm       As DataFieldDefinition(Of Double)
             End Class
             
         #End Region
@@ -1147,6 +1144,7 @@ Namespace Domain.IO
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
+                        
                         Dim RecDef        As TcRecordDefinitionVermEsn = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn)
                         Dim RecLen        As Integer = If(Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine, 2, 1)
                         Dim RecIdx        As Integer = SourceBlock.DataStartIndex - RecLen
@@ -1179,12 +1177,12 @@ Namespace Domain.IO
                                     If (Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) Then
                                         FieldID    = DataLine.ParseField(RecDef.ID)
                                         VEPoint.ID = FieldID.Value  ' Verify ID format.
-                                        ID2 = VEPoint.ID
-                                        p.Y = DataLine.ParseField(RecDef.Y).Value
-                                        p.X = DataLine.ParseField(RecDef.X).Value
-                                        p.Z = DataLine.ParseField(RecDef.Z).Value
+                                        ID2        = VEPoint.ID
+                                        p.Y        = DataLine.ParseField(RecDef.Y).Value
+                                        p.X        = DataLine.ParseField(RecDef.X).Value
+                                        p.Z        = DataLine.ParseField(RecDef.Z).Value
                                         p.CoordSys = Block.TrackRef.CoordSys
-                                        Com2 = DataLine.ParseField(RecDef.Com2).Value.Trim()
+                                        Com2       = DataLine.ParseField(RecDef.Com2).Value.Trim()
                                         If (RecDef.St IsNot Nothing) Then p.St = DataLine.ParseField(RecDef.St).Value
                                         
                                         ' Get second line of this record.
@@ -1219,7 +1217,6 @@ Namespace Domain.IO
                                     ' Point info.
                                     p.Info = DataLine.ParseField(RecDef.Com).Value.Trim()
                                     If (p.Info.IsEmptyOrWhiteSpace()) Then p.Info = Com2
-                                    'If (DataLine.HasComment) Then p.Comment = DataLine.Comment
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
@@ -1227,8 +1224,17 @@ Namespace Domain.IO
                                     p.SourceLineNo = DataLine.SourceLineNo
                                     p.TrackRef     = Block.TrackRef
                                     
+                                    ' Editing.
+                                    If (p.Kind = GeoPointKind.None) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                                            p.ParseInfoForKindHints()
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                            p.ParseInfoForActualCant()
+                                        End If
+                                    End If
+                                    p.SetKindTextFromKind(Override:=False)
+                                    
                                     ' Calculate values not have been read.
-                                    p.TryParseActualCant()
                                     p.transformHorizontalToCanted()
                                     If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
@@ -1412,8 +1418,38 @@ Namespace Domain.IO
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
                                     
-                                    ' Point text/info.
-                                    p.Info = DataLine.ParseField(RecDef.Text).Value
+                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                                    IpktAux.ParseTextForKindCodes(DataLine.ParseField(RecDef.Text).Value)
+                                    p.ActualCant = IpktAux.ActualCant
+                                    p.Info       = IpktAux.Info
+                                    p.Kind       = IpktAux.Kind
+                                    p.MarkType   = IpktAux.MarkType
+                    
+                                    ' Convert selected attributes to properties, which don't belong to .A0 file.
+                                    Dim PropertyName   As String
+                                    Dim AttStringValue As String
+                                    PropertyName = "HeightSys"
+                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
+                                    If (AttStringValue IsNot Nothing) Then
+                                        P.HeightSys = AttStringValue.Trim()
+                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                    End If
+                                    PropertyName = "KindText"
+                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
+                                    If (AttStringValue IsNot Nothing) Then
+                                        P.KindText = AttStringValue.Trim()
+                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                    End If
+                                    
+                                    ' Editing.
+                                    If (p.Kind = GeoPointKind.None) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                                            p.ParseInfoForKindHints(TryComment:=True)
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                            p.ParseInfoForActualCant(TryComment:=True)
+                                        End If
+                                    End If
+                                    p.SetKindTextFromKind(Override:=False)
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
@@ -1482,7 +1518,6 @@ Namespace Domain.IO
                                     End If
                                     
                                     ' Calculate values not have been read.
-                                    p.TryParseActualCant(TryComment:=True)
                                     p.transformHorizontalToCanted()
                                     If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z))    Then p.Z    = p.ZSOK + p.HSOK
@@ -1620,22 +1655,18 @@ Namespace Domain.IO
                                 End If
                                 
                                 ' Check for: Gradient and Km name, and also for system names.
-                                'If (Block.BlockType.Format = TcBlockFormat.THW) Then
-                                    
-                                    Pattern = "^\s*(.*?)\s*:\s*(\S*.*\S+)\s*"
-                                    oMatch = Regex.Match(FullLine, Pattern)
-                                    
-                                    If (oMatch.Success) Then
-                                        Dim Key   As String  = oMatch.Groups(1).Value
-                                        Dim Value As String  = oMatch.Groups(2).Value
-                                        Select Case Key
-                                            Case "Gradiente":            Block.TrackRef.NameOfGradientLine = getNameFromMatch(Value, False)
-                                            Case "Reduktion auf Trasse": Block.TrackRef.NameOfKmAlignment  = getNameFromMatch(Value, False)
-                                            Case "Lagesystem":           Block.TrackRef.CoordSys           = Value.Trim()
-                                            Case "Höhensystem":          Block.TrackRef.HeightSys          = Value.Trim()
-                                        End Select
-                                    End If
-                                'End If
+                                Pattern = "^\s*(.*?)\s*:\s*(\S*.*\S+)\s*"
+                                oMatch = Regex.Match(FullLine, Pattern)
+                                If (oMatch.Success) Then
+                                    Dim Key   As String  = oMatch.Groups(1).Value
+                                    Dim Value As String  = oMatch.Groups(2).Value
+                                    Select Case Key
+                                        Case "Gradiente":            Block.TrackRef.NameOfGradientLine = getNameFromMatch(Value, False)
+                                        Case "Reduktion auf Trasse": Block.TrackRef.NameOfKmAlignment  = getNameFromMatch(Value, False)
+                                        Case "Lagesystem":           Block.TrackRef.CoordSys           = Value.Trim()
+                                        Case "Höhensystem":          Block.TrackRef.HeightSys          = Value.Trim()
+                                    End Select
+                                End If
                             End If
                             
                         Else
@@ -1685,7 +1716,6 @@ Namespace Domain.IO
                 
                 Dim DataLine     As DataTextLine
                 Dim Comment      As New StringBuilder()
-                Dim FormatFound  As Boolean = False
                 Dim CommentEnd   As Boolean = False
                 Dim kvp          As KeyValuePair(Of String, String)
                 Dim i            As Integer = SourceBlock.StartIndex
@@ -1716,13 +1746,11 @@ Namespace Domain.IO
                                     Case "Format"
                                         If (kvp.Value = Fmt_A0) Then
                                             
-                                            FormatFound = True
                                             Block.BlockType.Format = TcBlockFormat.A0
                                             Block.BlockType.SubFormat = TcBlockSubFormat.CSV
                                             
                                         ElseIf (kvp.Value.IsMatchingTo(Fmt_A1)) Then
                                             
-                                            FormatFound = True
                                             Block.BlockType.Format = TcBlockFormat.A1
                                         End If
                                     
@@ -1764,11 +1792,6 @@ Namespace Domain.IO
                 
                 ' Set record definition. Only now, because for A0 the format and field names are required.
                 SourceBlock.RecordDefinition = getIGeoRecordDefinition(Block.BlockType)
-                'If (Block.BlockType.Format = TcBlockFormat.A0) Then
-                '    SourceBlock.RecordDefinition = getIGeoRecordDefinition(Block.BlockType)
-                'Else
-                '    SourceBlock.RecordDefinition = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
-                'End If
                 
                 Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))

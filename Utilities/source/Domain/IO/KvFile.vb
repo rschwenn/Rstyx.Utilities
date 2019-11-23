@@ -28,7 +28,7 @@ Namespace Domain.IO
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader1)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader2)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader3)
-                Me.DefaultHeader.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------")
+                Me.DefaultHeader.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
                 
                 Logger.logDebug("New(): KvFile instantiated")
             End Sub
@@ -106,8 +106,8 @@ Namespace Domain.IO
                                     
                                     ' Attributes and comment from free data.
                                     IpktAux.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
-                                    p.Attributes    = IpktAux.Attributes
-                                    p.Comment       = IpktAux.Comment
+                                    p.Attributes = IpktAux.Attributes
+                                    p.Comment    = IpktAux.Comment
                                     
                                     ' Smoothing.
                                     If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty

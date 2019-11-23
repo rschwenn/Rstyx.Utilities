@@ -149,7 +149,7 @@ Namespace Domain
             ''' <summary> Returns a list of all points in one string. </summary>
             Public Overrides Function ToString() As String
                 
-                Dim PointFmt  As String = " %20s %15.5f%15.5f%10.4f  %-13s %-13s %-4s  %8s %8s %5.0f %5.0f  %5s %5s  %5s %5s  %-8s %7s"
+                Dim PointFmt  As String = " %20s %15.5f%15.5f%10.4f %5.0f  %-10s %-4s %4s %3d  %-6s %-6s  %-25s %-13s"
                 Dim PointList As New System.Text.StringBuilder()
                 
                 ' Header lines.
@@ -165,17 +165,17 @@ Namespace Domain
                     'PointList.AppendLine("#-----------------------------------------------------------------------------------------------------------------------------------------------------")
                 End If
                 
+                PointList.AppendLine(Rstyx.Utilities.Resources.Messages.GeoPointList_TableHeader.ToHeadLine("-", Padding:=False))
+                
                 ' Points.
                 For Each p As IGeoPoint In Me
                     
-                    PointList.AppendLine(sprintf(PointFmt, P.ID, If(Double.IsNaN(P.Y), 0, P.Y), If(Double.IsNaN(P.X), 0, P.X), If(Double.IsNaN(P.Z), 0, P.Z),
-                                         P.Info.TrimToMaxLength(13), P.HeightInfo.TrimToMaxLength(13),
-                                         P.KindText.TrimToMaxLength(4), P.CoordSys.TrimToMaxLength(8), P.HeightSys.TrimToMaxLength(8), P.mp, P.mh, 
-                                         P.MarkHints.TrimToMaxLength(5), P.MarkType.TrimToMaxLength(5), P.sp.TrimToMaxLength(5), P.sh.TrimToMaxLength(5),
-                                         P.Job.TrimToMaxLength(8), P.ObjectKey.TrimToMaxLength(7)
+                    PointList.AppendLine(sprintf(PointFmt, P.ID, If(Double.IsNaN(P.Y), "", P.Y), If(Double.IsNaN(P.X), "", P.X), If(Double.IsNaN(P.Z), "", P.Z),
+                                         p.ActualCant * 1000, P.Kind.ToDisplayString(), P.KindText, P.MarkType, p.Attributes?.Count,
+                                         P.CoordSys, P.HeightSys, P.Info, P.HeightInfo
                                         ))
                 Next
-                'PointList.AppendLine("------------------------------------------------------------------------------------------------------------------------------------------------------")
+                
                 Return PointList.ToString()
             End Function
             
