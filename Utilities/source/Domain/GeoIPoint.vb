@@ -319,6 +319,9 @@ Namespace Domain
                         CodePart = PointInfoText.Substring(0, DelimIndex).Trim()
                         If (PointInfoText.Length > (DelimIndex + 1)) Then
                             InfoPart = PointInfoText.Substring(DelimIndex + 1)
+                            If (InfoPart.IsNotEmptyOrWhiteSpace() AndAlso InfoPart.StartsWith(" ")) Then
+                                InfoPart = InfoPart.Substring(1)
+                            End If
                         End If
                     Else
                         ' Decide later ...

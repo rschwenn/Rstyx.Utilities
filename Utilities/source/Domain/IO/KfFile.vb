@@ -76,7 +76,8 @@ Namespace Domain.IO
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
                     Try 
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, FilePath))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, Me.FilePath))
+                        Logger.logInfo(Me.GetPointEditOptionsLogText())
                         If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                         
                         Dim UniqueID            As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))

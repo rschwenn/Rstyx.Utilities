@@ -114,6 +114,7 @@ Namespace Domain
                 AttributeNames.Add("Km"                , "StrKm")
                 AttributeNames.Add("KindText"          , "PArt")
                 AttributeNames.Add("HeightSys"         , "SysH")
+                AttributeNames.Add("CoordSys"          , "SysL")
                 
                 ' Patterns for recognizing point kind from info text.
                 InfoKindPatterns = New Dictionary(Of String, GeoPointKind)

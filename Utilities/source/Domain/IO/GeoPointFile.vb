@@ -147,6 +147,19 @@ Namespace Domain.IO
                 Return Me.CreateFileHeader(IndividualHeader)
             End Function
             
+            ''' <summary> Gets a log entry, that documents <see cref="GeoPointFile.EditOptions"/>. </summary>
+            Protected Function GetPointEditOptionsLogText() As String
+                Dim LogText As String
+                If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                    LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_3
+                ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                    LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2
+                Else
+                    LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_1
+                End If
+                Return LogText
+            End Function
+            
         #End Region
         
         #Region "Protected Overrides"

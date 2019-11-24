@@ -1253,6 +1253,33 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen:  - Punktart aus Info:  Nein ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_EditOptions_1() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_EditOptions_1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen:  - Punktart aus Info:  Ja  (nur Gleispunkte) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_EditOptions_2() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_EditOptions_2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen:  - Punktart aus Info:  Ja  (alle unterstützten Punktarten) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_EditOptions_3() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_EditOptions_3", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Änderung der Punkt-ID (%s) fehlgeschlagen: Neue %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointList_ChangeIDInvalidID() As String
@@ -2266,6 +2293,15 @@ Namespace Resources
         Public Shared ReadOnly Property TcFileReader_LoadParsingFailed() As String
             Get
                 Return ResourceManager.GetString("TcFileReader_LoadParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese Datei mit Trassenkoordinaten &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TcFileReader_LoadStart() As String
+            Get
+                Return ResourceManager.GetString("TcFileReader_LoadStart", resourceCulture)
             End Get
         End Property
         

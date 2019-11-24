@@ -59,7 +59,8 @@ Namespace Domain.IO
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
                     Try 
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadStart, FilePath))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadStart, Me.FilePath))
+                        Logger.logInfo(Me.GetPointEditOptionsLogText())
                         
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                         Dim RecDef      As New RecordDefinition()
@@ -108,6 +109,16 @@ Namespace Domain.IO
                                     IpktAux.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
+                    
+                                    ' Convert selected attributes to properties, which don't belong to .kv file.
+                                    Dim PropertyName   As String
+                                    Dim AttStringValue As String
+                                    PropertyName   = "CoordSys"
+                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
+                                    If (AttStringValue IsNot Nothing) Then
+                                        P.CoordSys = AttStringValue.Trim()
+                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                    End If
                                     
                                     ' Smoothing.
                                     If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty
@@ -216,9 +227,17 @@ Namespace Domain.IO
                                 ip.Attributes = p.Attributes
                                 ip.Comment    = p.Comment
                                 
-                                ' Maybe convert properties to attributes in order to take place in .kv:
-                                ' mp, mh
-                                ' CoordSys
+                                ' Convert properties to attributes in order to take place in .kv.
+                                '   (More candidates: mp, mh)
+                                Dim PropertyName   As String
+                                Dim AttributeName  As String
+                                PropertyName = "CoordSys"
+                                If (p.CoordSys.IsNotEmptyOrWhiteSpace()) Then
+                                    AttributeName = GeoPoint.AttributeNames(PropertyName) 
+                                    If (Not p.Attributes.ContainsKey(AttributeName)) Then
+                                        p.Attributes.Add(AttributeName, p.CoordSys)
+                                    End If
+                                End If
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,

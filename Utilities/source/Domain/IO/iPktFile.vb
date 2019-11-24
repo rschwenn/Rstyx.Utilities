@@ -68,7 +68,8 @@ Namespace Domain.IO
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
                     Try 
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, FilePath))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, Me.FilePath))
+                        Logger.logInfo(Me.GetPointEditOptionsLogText())
                         
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                         Dim RecDef      As New RecordDefinition()
@@ -140,13 +141,13 @@ Namespace Domain.IO
                                     ' Convert selected attributes to properties, which don't belong to .ipkt file.
                                     Dim PropertyName   As String
                                     Dim AttStringValue As String
-                                    PropertyName = "HeightSys"
+                                    PropertyName   = "HeightSys"
                                     AttStringValue = p.GetAttValueByPropertyName(PropertyName)
                                     If (AttStringValue IsNot Nothing) Then
                                         P.HeightSys = AttStringValue.Trim()
                                         p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
                                     End If
-                                    PropertyName = "KindText"
+                                    PropertyName   = "KindText"
                                     AttStringValue = p.GetAttValueByPropertyName(PropertyName)
                                     If (AttStringValue IsNot Nothing) Then
                                         P.KindText = AttStringValue.Trim()

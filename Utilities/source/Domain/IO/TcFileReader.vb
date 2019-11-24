@@ -153,7 +153,8 @@ Namespace Domain.IO
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Sub Load()
                 Try
-                    Logger.logDebug(sprintf("Load TC file '%s'", Me.FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadStart, Me.FilePath))
+                    Logger.logInfo(Me.GetPointEditOptionsLogText())
                     
                     Dim DataLine        As DataTextLine
                     Dim kvp             As KeyValuePair(Of String, String)

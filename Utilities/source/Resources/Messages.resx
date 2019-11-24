@@ -1086,4 +1086,17 @@
   <data name="GeoPointList_TableHeader" xml:space="preserve">
     <value>            Punkt-ID      RechtsWert       HochWert      Höhe   Ueb  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe    </value>
   </data>
+  <data name="GeoPointFile_EditOptions_1" xml:space="preserve">
+    <value>  Optionen:  - Punktart aus Info:  Nein</value>
+  </data>
+  <data name="GeoPointFile_EditOptions_2" xml:space="preserve">
+    <value>  Optionen:  - Punktart aus Info:  Ja  (nur Gleispunkte)</value>
+  </data>
+  <data name="GeoPointFile_EditOptions_3" xml:space="preserve">
+    <value>  Optionen:  - Punktart aus Info:  Ja  (alle unterstützten Punktarten)</value>
+  </data>
+  <data name="TcFileReader_LoadStart" xml:space="preserve">
+    <value>Lese Datei mit Trassenkoordinaten '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
 </root>
