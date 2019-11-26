@@ -154,6 +154,7 @@ Namespace Domain
                 KindText2Kind.Add("PS2" , GeoPointKind.FixPoint)
                 KindText2Kind.Add("PS3" , GeoPointKind.FixPoint)
                 KindText2Kind.Add("PS4" , GeoPointKind.RailsFixPoint)
+                KindText2Kind.Add("PSx" , GeoPointKind.FixPoint)
             End Sub
             
             ''' <summary> Creates a new GeoPoint. </summary>

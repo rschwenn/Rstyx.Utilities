@@ -30,7 +30,7 @@ Namespace IO
         
         #Region "Methods - File Search"
             
-            ''' <summary> Returns the full path of the file that matches one of a given file filters and is found first in the Folders list. </summary>
+            ''' <summary> Returns a <see cref="System.IO.FileInfo"/> instance for the file that matches one of a given file filters and is found first in the Folders list. </summary>
              ''' <param name="FileFilters">    File filters without path (wildcards allowed), delimited by a given delimiter. </param>
              ''' <param name="Folders">        Folders that should be searched. Absolute or relative (but not "..\" or ".\"), delimited by a given delimiter. Embedded Environment variables (quoted by "%") are expanded. </param>
              ''' <param name="DelimiterRegEx"> The Delimiter for both the FileFilter and Folder lists (Regular Expression). Defaults to ";" (if it's <see langword="null"/>). </param>
