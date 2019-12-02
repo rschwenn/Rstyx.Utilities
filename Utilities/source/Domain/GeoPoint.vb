@@ -107,14 +107,14 @@ Namespace Domain
                 
                 ' Mapping:  property name => attribute name.
                 AttributeNames = New Dictionary(Of String, String)
-                AttributeNames.Add("MarkTypeAB"        , "VArtAB")
-                AttributeNames.Add("TrackPos.TrackNo"  , "StrNr")
-                AttributeNames.Add("TrackPos.RailsCode", "StrRi")
-                AttributeNames.Add("TrackPos.Kilometer", "StrKm")
-                AttributeNames.Add("Km"                , "StrKm")
-                AttributeNames.Add("KindText"          , "PArt")
-                AttributeNames.Add("HeightSys"         , "SysH")
-                AttributeNames.Add("CoordSys"          , "SysL")
+                AttributeNames.Add("MarkTypeAB"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB    )   ' "VArtAB"
+                AttributeNames.Add("TrackPos.TrackNo"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo       )   ' "StrNr"
+                AttributeNames.Add("TrackPos.RailsCode", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode)   ' "StrRi"
+                AttributeNames.Add("TrackPos.Kilometer", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       )   ' "StrKm"
+                AttributeNames.Add("Km"                , Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       )   ' "StrKm"
+                AttributeNames.Add("KindText"          , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText      )   ' "PArt"
+                AttributeNames.Add("HeightSys"         , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys     )   ' "SysH"
+                AttributeNames.Add("CoordSys"          , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys      )   ' "SysL"
                 
                 ' Patterns for recognizing point kind from info text.
                 InfoKindPatterns = New Dictionary(Of String, GeoPointKind)

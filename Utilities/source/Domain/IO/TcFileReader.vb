@@ -694,6 +694,9 @@ Namespace Domain.IO
                 
                 #Region "Properties"
                     
+                    ''' <summary> A bunch of free attributes (key/value pairs). </summary>
+                    Public Property Attributes()        As New Dictionary(Of String, String)
+                    
                     ''' <summary> Type of TC block determining it's origin and format. </summary>
                     Public Property BlockType()         As New TcBlockType()
                     
@@ -742,6 +745,19 @@ Namespace Domain.IO
                         
                         Return List.ToString()
                     End Function
+                    
+                    ''' <summary> Tries to extract attributes from <see cref="TcBlock.Comment"/>. </summary>
+                     ''' <remarks> On success the <see cref="TcBlock.Attributes"/> collection will be expanded. </remarks>
+                    Public Sub ParseCommentForAttributes()
+                        If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
+                            Dim CommentLines() As String = Me.Comment.splitLines()
+                            For i As Integer = 0 To CommentLines.Length - 1
+                                Dim ip As New GeoIPoint()
+                                ip.ParseFreeData(CommentLines(i))
+                                Me.Attributes.AddRangeUnique(ip.Attributes)
+                            Next
+                        End If
+                    End Sub
                     
                 #End Region
                 
@@ -1429,13 +1445,13 @@ Namespace Domain.IO
                                     ' Convert selected attributes to properties, which don't belong to .A0 file.
                                     Dim PropertyName   As String
                                     Dim AttStringValue As String
-                                    PropertyName = "HeightSys"
+                                    PropertyName   = "HeightSys"
                                     AttStringValue = p.GetAttValueByPropertyName(PropertyName)
                                     If (AttStringValue IsNot Nothing) Then
                                         P.HeightSys = AttStringValue.Trim()
                                         p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
                                     End If
-                                    PropertyName = "KindText"
+                                    PropertyName   = "KindText"
                                     AttStringValue = p.GetAttValueByPropertyName(PropertyName)
                                     If (AttStringValue IsNot Nothing) Then
                                         P.KindText = AttStringValue.Trim()
@@ -1695,6 +1711,7 @@ Namespace Domain.IO
                 
                 Block.Comment = Comment.ToString()
                 Block.Points.Header.Add(Block.Comment)
+                Block.ParseCommentForAttributes()
                 
                 Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
@@ -1790,6 +1807,7 @@ Namespace Domain.IO
                 
                 Block.Comment = Comment.ToString()
                 Block.Points.Header.Add(Block.Comment)
+                Block.ParseCommentForAttributes()
                 
                 ' Set record definition. Only now, because for A0 the format and field names are required.
                 SourceBlock.RecordDefinition = getIGeoRecordDefinition(Block.BlockType)

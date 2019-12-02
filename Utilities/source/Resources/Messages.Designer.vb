@@ -335,6 +335,96 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die SysL ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_CoordSys() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_CoordSys", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die SysH ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_HeightSys() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_HeightSys", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die PArt ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_KindText() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_KindText", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die VArtAB ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_MarkTypeAB() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_MarkTypeAB", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die StrKm ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_TrackKm() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_TrackKm", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die StrNr ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_TrackNo() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_TrackNo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die StrRi ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_TrackRailsCode() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_TrackRailsCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die StrGleis ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_TrackRailsName() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_TrackRailsName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die StrMaxV ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_TrackSpeed() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_TrackSpeed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die StrAb ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_TrackZone() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_TrackZone", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Tangentenabrückung/Abstichmaß der Gradiente ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_AbLGS() As String

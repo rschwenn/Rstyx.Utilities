@@ -384,6 +384,36 @@
     <value>Das Feld '%s' existiert nicht oder ist leer (%d. Feld).</value>
     <comment>Field Caption: String; Word Number: Integer</comment>
   </data>
+  <data name="Domain_AttName_CoordSys" xml:space="preserve">
+    <value>SysL</value>
+  </data>
+  <data name="Domain_AttName_HeightSys" xml:space="preserve">
+    <value>SysH</value>
+  </data>
+  <data name="Domain_AttName_KindText" xml:space="preserve">
+    <value>PArt</value>
+  </data>
+  <data name="Domain_AttName_MarkTypeAB" xml:space="preserve">
+    <value>VArtAB</value>
+  </data>
+  <data name="Domain_AttName_TrackKm" xml:space="preserve">
+    <value>StrKm</value>
+  </data>
+  <data name="Domain_AttName_TrackNo" xml:space="preserve">
+    <value>StrNr</value>
+  </data>
+  <data name="Domain_AttName_TrackRailsCode" xml:space="preserve">
+    <value>StrRi</value>
+  </data>
+  <data name="Domain_AttName_TrackRailsName" xml:space="preserve">
+    <value>StrGleis</value>
+  </data>
+  <data name="Domain_AttName_TrackZone" xml:space="preserve">
+    <value>StrAb</value>
+  </data>
+  <data name="Domain_AttName_TrackSpeed" xml:space="preserve">
+    <value>StrMaxV</value>
+  </data>
   <data name="Domain_Label_Com" xml:space="preserve">
     <value>Kommentar</value>
   </data>
