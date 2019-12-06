@@ -700,33 +700,31 @@ Namespace IO
                         ' ********************************************************************************************************************
                         WordRegEx = "[^" & Me.FieldDelimiter & "]+"  ' Doesn't find an empty field at line start.
                         
-                        ' Ensure first and last fields will be considerd even if empty (that is Me.Data starts and/or ends with delimiter).
-                        Dim DataStartsWithDelimiter As Boolean = Me.Data.StartsWith(Me.FieldDelimiter)
-                        Dim DataEndsWithDelimiter   As Boolean = Me.Data.EndsWith(Me.FieldDelimiter)
-                        Dim DataTuned               As String  = Me.Data
-                        Dim dL_Start                As Integer = 0
-                        
-                        If (DataStartsWithDelimiter) Then
-                            DataTuned = " " & DataTuned
-                            'dL_Start  = 1
-                        End If
-                        If (DataEndsWithDelimiter)   Then DataTuned = DataTuned & " "
-                        
                         ' Hide masked (doubled) Delimiters.
                         Dim MaskedDelimiter         As String  = Me.FieldDelimiter & Me.FieldDelimiter
                         Dim DoubledMaskedDelimiter  As String  = "D1o2u3b4l5e6D7e8l9i0mM"
                         Dim MaskedDelimitersCount   As Integer = 0
                         Dim dL_Delim                As Integer = DoubledMaskedDelimiter.Length - MaskedDelimiter.Length
+                        Dim dL_Start                As Integer = 0
+                        Dim DataTuned               As String  = Me.Data.Replace(MaskedDelimiter, DoubledMaskedDelimiter)
                         
-                        Dim Matches As MatchCollection = DataTuned.Replace(MaskedDelimiter, DoubledMaskedDelimiter).GetMatches(WordRegEx)
+                        ' Ensure first and last fields will be considerd even if empty (that is Me.Data starts and/or ends with delimiter).
+                        Dim DataStartsWithDelimiter As Boolean = DataTuned.StartsWith(Me.FieldDelimiter)
+                        Dim DataEndsWithDelimiter   As Boolean = DataTuned.EndsWith(Me.FieldDelimiter)
+                        If (DataStartsWithDelimiter) Then
+                            DataTuned = " " & DataTuned
+                        End If
+                        If (DataEndsWithDelimiter) Then DataTuned &= " "
+                        
+                        Dim Matches As MatchCollection = DataTuned.GetMatches(WordRegEx)
                         
                         ' Add words to return collection.
                         For i As Integer = 0 To Matches.Count - 1
                             
                             Dim Match    As Match   = Matches(i)
-                            Dim WordText As String  = Nothing
                             Dim dIndex   As Integer = dL_Start + (dL_Delim * MaskedDelimitersCount)
                             Dim dLength  As Integer = 0
+                            Dim WordText As String
                             
                             ' Correct value and length.
                             If ((i = 0) AndAlso DataStartsWithDelimiter) Then
@@ -747,7 +745,6 @@ Namespace IO
                                 End If
                             End If
                             
-                            'RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText.Trim()))
                             RetValue.Add(New DataFieldSource(Match.Index - dIndex, Match.Length - dLength, WordText))
                         Next
                     End If

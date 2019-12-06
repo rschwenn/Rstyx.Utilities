@@ -1426,7 +1426,6 @@ Namespace Domain.IO
                                     If (Block.BlockType.Format = TcBlockFormat.A0) Then
                                         ' A0:
                                         FreeDataText = DataLine.ParseField(RecDef.FreeData).Value
-                                        FreeDataText.Replace(RecDef.Delimiter & RecDef.Delimiter, RecDef.Delimiter)  ' Demask masked attribute delimiters.
                                     Else
                                         ' A1:
                                         FreeDataText = DataLine.Comment
