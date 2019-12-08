@@ -344,7 +344,7 @@ Public Class MainViewModel
                 'TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
                 'TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
                 Dim TC As New TcFileReader("D:\Daten\A0\Test_Attr_14.A0")
-                'TC.EditOptions = GeoPointEditOptions.GuessAllKindsFromInfo
+                TC.EditOptions = GeoPointEditOptions.GuessAllKindsFromInfo
                 'KV.CollectParseErrors = True
                 'TC.ShowParseErrorsInJedit = False
                 'iP.Constraints = GeoPointConstraints.UniqueID
