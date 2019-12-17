@@ -23,10 +23,10 @@ Namespace Domain
     
     
     ''' <summary> Represents a Kilometer, supporting several notations. </summary>
-    ''' <remarks>
-    ''' The properties of this class (except <see cref="Kilometer.Text"/>) are read-only. They can be set at construction 
-    ''' or by the <see cref="Kilometer.Parse(String)"/> or <see cref="Kilometer.TryParse(String)"/> methods only.
-    ''' </remarks>
+     ''' <remarks>
+     ''' The properties of this class (except <see cref="Kilometer.Text"/>) are read-only. They can be set at construction 
+     ''' or by the <see cref="Kilometer.Parse(String)"/> or <see cref="Kilometer.TryParse(String)"/> methods only.
+     ''' </remarks>
     Public Class Kilometer
         
         #Region "Private Fields"
@@ -80,18 +80,27 @@ Namespace Domain
             End Sub
             
             ''' <summary> Creates a new Kilometer, initialized from a string. </summary>
-             ''' <param name="KilometerString"> A usual Kilometer notation or a numerical String. </param>
+             ''' <param name="KilometerString"> A usual Kilometer notation or a (special) numerical String. </param>
              ''' <remarks>
              ''' <para>
              ''' If parsing has been successful, the properties provide the recognized values. Otherwise they will be set to <c>Double.NaN</c>.
              ''' </para>
              ''' <para>
              ''' First, the string will be tried to be recognized as Kilometer notation, on failure as double number.
+             ''' The double number may be preceeded or followed by an asterisk in order to set <see cref="Kilometer.Status"/>.
              ''' If double number is greater than 90.000.000 it will be treated as TDB notation.
              ''' </para>
              ''' <para>
-             ''' This constructor throws an exception if <paramref name="KilometerString"/> couldn't be parsed succesfully.
-             ''' To avoid an exception, use the parameterless constructor and call <see cref="Kilometer.TryParse"/>.
+             ''' Examples for <paramref name="KilometerString"/>: 
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
+             ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
+             ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
+             ''' <item> <term>  12.3456         </term>  <description>   12.3456, staus = normal   </description></item>
+             ''' <item> <term> *12.3456         </term>  <description>   12.3456, staus = incoming </description></item>
+             ''' <item> <term>  12.3456*        </term>  <description>   12.3456, staus = outgoing </description></item>
+             ''' </list>
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or <c>String.Empty</c>. </exception>
@@ -106,7 +115,7 @@ Namespace Domain
             End Sub
             
             ''' <summary> Creates a new Kilometer, initialized from a string. </summary>
-             ''' <param name="KilometerString"> A usual Kilometer notation or a numerical String. </param>
+             ''' <param name="KilometerString"> A usual Kilometer notation or a (special) numerical String. </param>
              ''' <param name="Status"> The known <see cref="KilometerStatus"/>. </param>
              ''' <remarks>
              ''' <para>
@@ -114,11 +123,20 @@ Namespace Domain
              ''' </para>
              ''' <para>
              ''' First, the string will be tried to be recognized as Kilometer notation, on failure as double number.
+             ''' The double number may be preceeded or followed by an asterisk in order to set <see cref="Kilometer.Status"/>.
              ''' If double number is greater than 90.000.000 it will be treated as TDB notation.
              ''' </para>
              ''' <para>
-             ''' This constructor throws an exception if <paramref name="KilometerString"/> couldn't be parsed succesfully.
-             ''' To avoid an exception, use the parameterless constructor and call <see cref="Kilometer.TryParse"/>.
+             ''' Examples for <paramref name="KilometerString"/>: 
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
+             ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
+             ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
+             ''' <item> <term>  12.3456         </term>  <description>   12.3456, staus = normal   </description></item>
+             ''' <item> <term> *12.3456         </term>  <description>   12.3456, staus = incoming </description></item>
+             ''' <item> <term>  12.3456*        </term>  <description>   12.3456, staus = outgoing </description></item>
+             ''' </list>
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or <c>String.Empty</c>. </exception>
@@ -126,7 +144,6 @@ Namespace Domain
             Public Sub New(ByVal KilometerString As String, ByVal Status As KilometerStatus)
                 
                 Me.New(KilometerString)
-                
                 
                 ' Status hasn't been determined as "Incoming" yet.
                 If (Not (_Status = KilometerStatus.SkipIncoming)) Then
@@ -231,14 +248,27 @@ Namespace Domain
             End Function
             
             ''' <summary> Parses a string as usual Kilometer notation. </summary>
-             ''' <param name="KilometerString"> A usual Kilometer notation or a numerical String. </param>
+             ''' <param name="KilometerString"> A usual Kilometer notation or a (special) numerical String. </param>
              ''' <remarks>
              ''' <para>
              ''' If parsing has been successful, the properties provide the recognized values. Otherwise they will be set to <c>Double.NaN</c>.
              ''' </para>
              ''' <para>
              ''' First, the string will be tried to be recognized as Kilometer notation, on failure as double number.
+             ''' The double number may be preceeded or followed by an asterisk in order to set <see cref="Kilometer.Status"/>.
              ''' If double number is greater than 90.000.000 it will be treated as TDB notation.
+             ''' </para>
+             ''' <para>
+             ''' Examples for <paramref name="KilometerString"/>: 
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
+             ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
+             ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
+             ''' <item> <term>  12.3456         </term>  <description>   12.3456, staus = normal   </description></item>
+             ''' <item> <term> *12.3456         </term>  <description>   12.3456, staus = incoming </description></item>
+             ''' <item> <term>  12.3456*        </term>  <description>   12.3456, staus = outgoing </description></item>
+             ''' </list>
              ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or empty or whitespace only. </exception>
@@ -249,7 +279,7 @@ Namespace Domain
             End Sub
             
             ''' <summary> Tries to parse a string as usual Kilometer notation. </summary>
-             ''' <param name="KilometerString"> A usual Kilometer notation or a numerical String. </param>
+             ''' <param name="KilometerString"> A usual Kilometer notation or a (special) numerical String. </param>
              ''' <returns> <see langword="true"/> if the string has been parsed successful as Kilometer, otherwise <see langword="false"/>. </returns>
              ''' <remarks>
              ''' <para>
@@ -257,7 +287,20 @@ Namespace Domain
              ''' </para>
              ''' <para>
              ''' First, the string will be tried to be recognized as Kilometer notation, on failure as double number.
+             ''' The double number may be preceeded or followed by an asterisk in order to set <see cref="Kilometer.Status"/>.
              ''' If double number is greater than 90.000.000 it will be treated as TDB notation.
+             ''' </para>
+             ''' <para>
+             ''' Examples for <paramref name="KilometerString"/>: 
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
+             ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
+             ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
+             ''' <item> <term>  12.3456         </term>  <description>   12.3456, staus = normal   </description></item>
+             ''' <item> <term> *12.3456         </term>  <description>   12.3456, staus = incoming </description></item>
+             ''' <item> <term>  12.3456*        </term>  <description>   12.3456, staus = outgoing </description></item>
+             ''' </list>
              ''' </para>
              ''' </remarks>
             Public Function TryParse(ByVal KilometerString As String) As Boolean
@@ -270,9 +313,20 @@ Namespace Domain
                     Dim oMatch  As Match  = Regex.Match(KilometerString, Pattern, RegexOptions.IgnoreCase)
                     
                     If (Not oMatch.Success) Then
-                        ' No valid Kilometer notation => maybe numeric.
+                        ' No valid Kilometer notation => maybe numeric or special numeric notation (*<number> or <number>*).
                         Dim DoubleValue As Double
-                        If (Double.TryParse(KilometerString, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, DoubleValue)) Then
+                        Dim KmString    As String = KilometerString.Trim()
+                        
+                        If (KmString.Left(1) = "*") Then
+                            _Status  = KilometerStatus.SkipIncoming
+                            KmString = KmString.Substring(1)
+                        ElseIf (KmString.Right(1) = "*") Then
+                            _Status  = KilometerStatus.SkipOutgoing
+                            KmString = KmString.Substring(0, KmString.Length - 1)
+                        End If
+                        
+                        If (Double.TryParse(KmString, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo, DoubleValue)) Then
+                            ' Numeric string.
                             success = True
                             ParseNumber(DoubleValue)
                         End If
