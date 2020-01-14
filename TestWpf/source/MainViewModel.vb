@@ -23,6 +23,7 @@ Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Collections
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.Domain.IO
+Imports Rstyx.Utilities.Math.MathExtensions
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.PDF.PdfUtils
 Imports Rstyx.Utilities.UI.ViewModel
@@ -197,8 +198,8 @@ Public Class MainViewModel
             
         End Sub
         
-        Public Sub TestJPEG()
-            Dim SourceImage As Bitmap = New Bitmap("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Test.JPG")
+        Public Sub TestJPEG_1()
+            Dim SourceImage As Bitmap = New Bitmap("D:\Daten\LRP\Fotos\02070001.JPG")
             
             Const TargetWidth  As Integer = 512
             Const TargetHeight As Integer = 768
@@ -274,7 +275,7 @@ Public Class MainViewModel
                 TargetImage.MakeTransparent()
                 TargetImage.SetPixel(X1, Y1, FlagColor)
                 
-                TargetImage.Save("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Test_Ziel.JPG", ImageFormat.Jpeg)
+                TargetImage.Save("D:\Daten\LRP\Fotos\Test_Ziel.jpg", ImageFormat.Jpeg)
             'End If
             
             
@@ -302,8 +303,8 @@ Public Class MainViewModel
                 
                 'Dim Km1 As Kilometer = New Kilometer("-0.1 - 212.13")
                 'Dim Km2 As Kilometer = New Kilometer("-0.1 - 12.13")
-                'Dim Km3 As Kilometer = New Kilometer("0.0 - 0.13")
-                'Dim Km4 As Kilometer = New Kilometer("0.0 + 0.13")
+                'Dim Km3 As Kilometer = New Kilometer("*12.3456")
+                'Dim Km4 As Kilometer = New Kilometer("123.4567*")
                 'Dim Km5 As Kilometer = New Kilometer("0.1 + 12.13")
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km1.ToKilometerNotation(2), Km1.TDBValue))
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km2.ToKilometerNotation(2), Km2.TDBValue))
@@ -311,7 +312,10 @@ Public Class MainViewModel
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
                 
-                'Dim d1 As Double = Double.NaN
+                Dim d1 As Double = Double.NaN
+                d1.TryParse("+Unendlich")
+                Logger.logInfo(sprintf("%+5.3f", d1))
+                
                 'Dim d2 As Double = Double.NegativeInfinity
                 'Dim d3 As Double = Double.PositiveInfinity
                 'Logger.logInfo(d2.ToString())
@@ -343,8 +347,8 @@ Public Class MainViewModel
                 ' Dim TC As New TcFileReader(Me.FilePath1)
                 'TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
                 'TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
-                Dim TC As New TcFileReader("D:\Daten\A0\Test_Attr_14.A0")
-                TC.EditOptions = GeoPointEditOptions.GuessAllKindsFromInfo
+                'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Ulm_LiRa_4700_Endzu.A0")
+                'TC.EditOptions = GeoPointEditOptions.GuessAllKindsFromInfo
                 'KV.CollectParseErrors = True
                 'TC.ShowParseErrorsInJedit = False
                 'iP.Constraints = GeoPointConstraints.UniqueID
@@ -355,11 +359,11 @@ Public Class MainViewModel
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 Try
-                    TC.Load()
+                    'TC.Load()
                 Catch ex As Exception
                     Logger.logError(ex, "Crash...")
                 Finally
-                    Logger.logInfo(TC.ToReport(OnlySummary:=False))
+                    'Logger.logInfo(TC.ToReport(OnlySummary:=False))
                 End Try
                 ' 'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
                 'Dim pts As New GeoPointOpenList(KV.PointStream, KV)

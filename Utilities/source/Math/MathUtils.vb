@@ -46,12 +46,23 @@ Namespace Math
              ''' <param name="Result"> The parsing result. <c>Double.NaN</c> if parsing fails. </param>
              ''' <param name="Value">  String to parse. </param>
              ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
-             ''' <remarks></remarks>
+             ''' <remarks>
+             ''' If <c>Double.TryParse</c> fails, then special parsing will be done for "unendlich", "+unendlich", "-unendlich".
+             ''' </remarks>
             <System.Runtime.CompilerServices.Extension()> 
             Public Function TryParse(<out> ByRef Result As Double, Value As String) As Boolean
                 Dim success As Boolean = False
                 
-                If (Value.IsNotEmptyOrWhiteSpace()) Then success = Double.TryParse(Value, Result)
+                If (Value.IsNotEmptyOrWhiteSpace()) Then
+                    success = Double.TryParse(Value, Result)
+                    
+                    If (Not success) Then
+                        Select Case Value.ToLowerInvariant()
+                            Case "unendlich", "+unendlich" :  Result = Double.PositiveInfinity : success = True
+                            Case "-unendlich"              :  Result = Double.NegativeInfinity : success = True
+                        End Select
+                    End If
+                End If
                 
                 If (Not success) Then Result = Double.NaN
                 
