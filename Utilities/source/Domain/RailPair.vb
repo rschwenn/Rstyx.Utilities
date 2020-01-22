@@ -7,10 +7,24 @@ Imports Rstyx.Utilities.Math
 
 Namespace Domain
     
+    ''' <summary> Fixing kinds of rails. </summary>
+    Public Enum RailFixing As Integer
+        
+        ''' <summary> Rails isn't fixed. </summary>
+        None = 0
+        
+        ''' <summary> Rails is normally fixed. </summary>
+        Fixed = 1
+        
+        ''' <summary> Rails is strong fixed (cant tolerance max. 5 mm). </summary>
+        StrongFixed = 2
+        
+    End Enum
+    
     ''' <summary> A pair of rails at a discrete spot (cross section). </summary>
      ''' <remarks>
      ''' Any change to this RailPair is signaled by firing the <see cref="RailPair.RailsConfigChanged"/> event.
-     ''' To be valid, the <see cref="RailPair.reconfigure"/> method has to be applied successfuly.
+     ''' To be valid, the <see cref="RailPair.Reconfigure"/> method has to be applied successfuly.
      ''' </remarks>
     Public Class RailPair
         Inherits Cinch.ValidatingObject
@@ -69,6 +83,7 @@ Namespace Domain
         
         #Region "Properties"
             
+            Private _Fixing         As RailFixing = RailFixing.None
             Private _Speed          As Double = Double.NaN
             Private _Radius         As Double = Double.NaN
             Private _VerticalRadius As Double = Double.NaN
@@ -78,6 +93,18 @@ Namespace Domain
             Private _RSLeft         As Point
             Private _RSRight        As Point
             Private _IsConfigured   As Boolean
+            
+            
+            ''' <summary> Gets or sets the rails fixing kind. </summary>
+            Public Property Fixing() As RailFixing
+                Get
+                    Return _Fixing
+                End Get
+                Set(value As RailFixing)
+                    _Fixing = value
+                    RaiseRailsConfigChanged()
+                End Set
+            End Property
             
             ''' <summary> Gets or sets the speed. </summary>
             Public Property Speed() As Double
