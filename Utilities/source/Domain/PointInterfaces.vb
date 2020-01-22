@@ -174,6 +174,7 @@ Namespace Domain
         Property ZLGS()         As Double
         
         ''' <summary> Radius of gradient design element (vertical curve set). </summary>
+         ''' <remarks> Sign:  positive = increasing gradient,  negative = decreasing gradient  (+ = valley, - = hill). </remarks>
         Property RaLGS()        As Double
         
         ' Tangentenabrückung/Abstichmaß der Gradiente (+ = Wanne, - = Kuppe)  of gradient design (vertical curve set).

@@ -9,7 +9,7 @@ Namespace Domain
     
     ''' <summary> A pair of rails at a discrete spot (cross section). </summary>
      ''' <remarks>
-     ''' Any Change to this RailPair is signaled by firing the <see cref="RailPair.RailsConfigChanged"/> event.
+     ''' Any change to this RailPair is signaled by firing the <see cref="RailPair.RailsConfigChanged"/> event.
      ''' To be valid, the <see cref="RailPair.reconfigure"/> method has to be applied successfuly.
      ''' </remarks>
     Public Class RailPair
@@ -23,7 +23,7 @@ Namespace Domain
             Private Shared NonPositiveSpeed         As Cinch.SimpleRule
             
             Private IsCantDeficiencyValid   As Boolean = False
-            Private AbsRadius               As Double = Double.NaN
+            Private AbsRadius               As Double  = Double.NaN
             
         #End Region
         
@@ -46,7 +46,7 @@ Namespace Domain
             
             ''' <summary> Creates a new RailPair with unknown configuration. </summary>
             Public Sub New()
-                Me.reset()
+                Me.Reset()
                 Me.AddRule(UnknownConfigurationRule)
                 Me.AddRule(NonPositiveSpeed)
             End Sub
@@ -61,7 +61,7 @@ Namespace Domain
             ''' <summary> A given cant lower than this value, will be snapped to Zero cant. </summary>
             Public Shared CantZeroSnap          As Double = 0.001
             
-            ''' <summary> A given radius lower than this value, will be snapped to infinity radius resp. tangent (with sign!). </summary>
+            ''' <summary> A given radius lower than this value will be snapped to infinity radius resp. tangent (with sign!). </summary>
              ''' <remarks> Default is 100. This way an input radius lower than 100 will be rejected. </remarks>
             Public Shared RadiusInfinitySnap    As Double = 100.0
             
@@ -71,6 +71,7 @@ Namespace Domain
             
             Private _Speed          As Double = Double.NaN
             Private _Radius         As Double = Double.NaN
+            Private _VerticalRadius As Double = Double.NaN
             Private _CantDeficiency As Double = Double.NaN
             Private _Cant           As Double = Double.NaN
             Private _CantBase       As Double = Double.NaN
@@ -79,7 +80,7 @@ Namespace Domain
             Private _IsConfigured   As Boolean
             
             ''' <summary> Gets or sets the speed. </summary>
-            Public Property Speed()  As Double
+            Public Property Speed() As Double
                 Get
                     Return _Speed
                 End Get
@@ -90,7 +91,30 @@ Namespace Domain
                 End Set
             End Property
             
+            ''' <summary> Gets or sets the radius of gradient design element (vertical curve set). </summary>
+             ''' <remarks>
+             ''' Sign:  positive = increasing gradient,  negative = decreasing gradient  (+ = valley, - = hill).  
+             ''' <see cref="RadiusInfinitySnap"/> will be applied.
+             ''' </remarks>
+            Public Property VerticalRadius() As Double
+                Get
+                    Return _VerticalRadius
+                End Get
+                Set(value As Double)
+                    If (Double.IsNaN(value)) Then
+                        _VerticalRadius = Double.NaN
+                        
+                    ElseIf (Abs(value) < RadiusInfinitySnap) Then
+                        _VerticalRadius = If(value < 0, Double.NegativeInfinity, Double.PositiveInfinity)
+                    Else
+                        _VerticalRadius = value
+                    End If
+                    RaiseRailsConfigChanged()
+                End Set
+            End Property
+            
             ''' <summary> Gets or sets the radius. </summary>
+            ''' <remarks> <see cref="RadiusInfinitySnap"/> will be applied. </remarks>
             Public Property Radius()  As Double
                 Get
                     Return _Radius
@@ -223,7 +247,7 @@ Namespace Domain
              ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
              ''' <exception cref="System.ArgumentException"> At least one coordinate of the points is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> RunningSurface1 and RunningSurface2 are equal. </exception>
-            Public Sub reconfigure(RunningSurface1 As Point, RunningSurface2 As Point)
+            Public Sub Reconfigure(RunningSurface1 As Point, RunningSurface2 As Point)
                 
                 If (Double.IsNaN(RunningSurface1.X) OrElse Double.IsNaN(RunningSurface1.Y)) Then Throw New System.ArgumentException("RunningSurface1: at least one coordinate is NaN")
                 If (Double.IsNaN(RunningSurface2.X) OrElse Double.IsNaN(RunningSurface2.Y)) Then Throw New System.ArgumentException("RunningSurface2: at least one coordinate is NaN")
@@ -257,7 +281,7 @@ Namespace Domain
              ''' <exception cref="System.ArgumentException"> Cant is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> CantBase is <c>Double.NaN</c> or less than 0.001. </exception>
              ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
-            Public Sub reconfigure(Cant As Double, CantBase As Double)
+            Public Sub Reconfigure(Cant As Double, CantBase As Double)
                 
                 If (Double.IsNaN(Cant))         Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant, "Cant")
                 If (Double.IsNaN(CantBase))     Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase, "CantBase")
@@ -301,19 +325,20 @@ Namespace Domain
              ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry"/><c>.Ueb</c>) is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry"/><c>.CantBase</c>) is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="PointGeometry"/><c>.Ra</c>) is <c>Double.NaN</c>, but Cant isn't Zero. </exception>
-            Public Sub reconfigure(PointGeometry As GeoTcPoint)
+            Public Sub Reconfigure(PointGeometry As GeoTcPoint)
                 
                 If (PointGeometry Is Nothing)              Then Throw New System.ArgumentNullException("PointGeometry")
                 If (Double.IsNaN(PointGeometry.Ueb))       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant)
                 If (Double.IsNaN(PointGeometry.CantBase))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase)
                 
-                Me.Radius = PointGeometry.Ra
+                Me.Radius         = PointGeometry.Ra
+                Me.VerticalRadius = PointGeometry.RaLGS
                 
                 If (Not PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
                     If (Double.IsNaN(Me.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
                 End If
                 
-                Me.reconfigure(PointGeometry.Ueb * Sign(Me.Radius), PointGeometry.CantBase)
+                Me.Reconfigure(PointGeometry.Ueb * Sign(Me.Radius), PointGeometry.CantBase)
             End Sub
             
             ''' <summary> Tells if a given point is inside of canted train. </summary>
@@ -327,7 +352,7 @@ Namespace Domain
                 If (Double.IsNaN(Point.X))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownPointDistance, "Point.X")
                 If (Double.IsNaN(_Cant))    Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant)
                 
-                Dim RetValue As Boolean = False
+                Dim RetValue As Boolean
                 
                 If (Not _Cant.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
                     RetValue = (Sign(Point.X) = Sign(_Cant))
@@ -384,22 +409,22 @@ Namespace Domain
             End Sub
             
             ''' <summary> Resets the configuration of this RailPair to "unknown". </summary>
-            Public Sub reset()
-                Me.Speed        = Double.NaN
-                Me.Radius       = Double.NaN
-                _CantDeficiency = Double.NaN
-                _Cant           = Double.NaN
-                _CantBase       = Double.NaN
-                _RSLeft         = New Point(Double.NaN, Double.NaN)
-                _RSRight        = New Point(Double.NaN, Double.NaN)
-                _IsConfigured   = False
+            Public Sub Reset()
+                Me.Speed          = Double.NaN
+                Me.VerticalRadius = Double.NaN
+                Me.Radius         = Double.NaN
+                _CantDeficiency   = Double.NaN
+                _Cant             = Double.NaN
+                _CantBase         = Double.NaN
+                _RSLeft           = New Point(Double.NaN, Double.NaN)
+                _RSRight          = New Point(Double.NaN, Double.NaN)
+                _IsConfigured     = False
                 IsCantDeficiencyValid = False
                 RaiseRailsConfigChanged()
             End Sub
             
-            ''' <summary> Creates a <see cref="GeoTcPoint"/> whith cant, cant base and radius of this rail pair. </summary>
+            ''' <summary> Creates a <see cref="GeoTcPoint"/> whith cant, cant base, vertical radius and radius of this rail pair. </summary>
              ''' <returns> The "GeometryPoint". </returns>
-             ''' <remarks></remarks>
             Public Function ToGeometryPoint() As GeoTcPoint
                 
                 Dim GeometryPoint As New GeoTcPoint()
@@ -415,6 +440,7 @@ Namespace Domain
                 GeometryPoint.ID       = "GeometryPoint"
                 GeometryPoint.Ueb      = Me.Cant * Sign(Me.Radius)
                 GeometryPoint.CantBase = Me.CantBase
+                GeometryPoint.RaLGS    = Me.VerticalRadius
                 
                 Return GeometryPoint
             End Function
