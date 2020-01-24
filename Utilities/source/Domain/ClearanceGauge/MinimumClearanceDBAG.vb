@@ -19,10 +19,18 @@ Namespace Domain.ClearanceGauge
             Const hc    As Double  = 0.500   ' Wankpolhöhe.
             Const bw2   As Double  = 0.975   ' Half width of pantograph.
             
+            Private Shared MinBaseLine          As Polygon
             Private Shared Table212i            As LinearTabFunction
             Private Shared Table212a            As LinearTabFunction
+            Private Shared Table23aF0           As LinearTabFunction
+            Private Shared Table23aF1           As LinearTabFunction
+            Private Shared Table23aF2           As LinearTabFunction
+            Private Shared Table23bF0           As LinearTabFunction
+            Private Shared Table23bF1           As LinearTabFunction
+            Private Shared Table23bF2           As LinearTabFunction
             Private Shared OHLTable22           As LinearTabFunction
-            Private Shared MinBaseLine          As Polygon
+            Private Shared Table23a             As Dictionary(Of RailFixing , LinearTabFunction)
+            Private Shared Table23b             As Dictionary(Of RailFixing , LinearTabFunction)
             Private Shared OHLCharacteristics   As Dictionary(Of ClearanceOptionalPart , OHLKeyData)
             
             Private Shared RHO                  As Double = 180 / PI
@@ -308,15 +316,85 @@ Namespace Domain.ClearanceGauge
 
         #End Region
         
-        #Region "Definition of interpolation Tables"
+        #Region "Definition of interpolation tables"
             
             Private Shared Sub CreateTables()
                 
                 Table212i  = New LinearTabFunction()
                 Table212a  = New LinearTabFunction()
+                Table23aF0 = New LinearTabFunction()
+                Table23aF1 = New LinearTabFunction()
+                Table23aF2 = New LinearTabFunction()
+                Table23bF0 = New LinearTabFunction()
+                Table23bF1 = New LinearTabFunction()
+                Table23bF2 = New LinearTabFunction()
                 OHLTable22 = New LinearTabFunction()
                 
-                ' Inside of curve.
+                ' Table 2.3, inside of curve, not fixed.
+                Table23aF0.AddBasePoint(0.000, 0.030)
+                Table23aF0.AddBasePoint(0.400, 0.030)
+                Table23aF0.AddBasePoint(1.170, 0.037)
+                Table23aF0.AddBasePoint(3.535, 0.084)
+                Table23aF0.AddBasePoint(3.835, 0.091)
+                Table23aF0.AddBasePoint(4.680, 0.110)
+                Table23aF0.AddBasePoint(4.999, 0.110)
+                
+                ' Table 2.3, inside of curve, fixed (platform).
+                Table23aF1.AddBasePoint(0.000, 0.006)
+                Table23aF1.AddBasePoint(0.400, 0.006)
+                Table23aF1.AddBasePoint(1.170, 0.021)
+                Table23aF1.AddBasePoint(3.535, 0.078)
+                Table23aF1.AddBasePoint(3.835, 0.085)
+                Table23aF1.AddBasePoint(4.680, 0.106)
+                Table23aF1.AddBasePoint(4.999, 0.106)
+                
+                ' Table 2.3, inside of curve, strong fixed.
+                Table23aF2.AddBasePoint(0.000, 0.002)
+                Table23aF2.AddBasePoint(0.400, 0.002)
+                Table23aF2.AddBasePoint(1.170, 0.014)
+                Table23aF2.AddBasePoint(3.535, 0.057)
+                Table23aF2.AddBasePoint(3.835, 0.062)
+                Table23aF2.AddBasePoint(4.680, 0.078)
+                Table23aF2.AddBasePoint(4.999, 0.078)
+                
+                ' Table 2.3, outside of curve (or tangent), not fixed.
+                Table23bF0.AddBasePoint(0.000, 0.031)
+                Table23bF0.AddBasePoint(0.400, 0.031)
+                Table23bF0.AddBasePoint(1.170, 0.040)
+                Table23bF0.AddBasePoint(3.535, 0.104)
+                Table23bF0.AddBasePoint(3.835, 0.114)
+                Table23bF0.AddBasePoint(4.680, 0.140)
+                Table23bF0.AddBasePoint(4.999, 0.140)
+                
+                ' Table 2.3, outside of curve (or tangent), fixed (platform).
+                Table23bF1.AddBasePoint(0.000, 0.006)
+                Table23bF1.AddBasePoint(0.400, 0.006)
+                Table23bF1.AddBasePoint(1.170, 0.025)
+                Table23bF1.AddBasePoint(3.535, 0.100)
+                Table23bF1.AddBasePoint(3.835, 0.110)
+                Table23bF1.AddBasePoint(4.680, 0.137)
+                Table23bF1.AddBasePoint(4.999, 0.137)
+                
+                ' Table 2.3, outside of curve (or tangent), strong fixed.
+                Table23bF2.AddBasePoint(0.000, 0.003)
+                Table23bF2.AddBasePoint(0.400, 0.003)
+                Table23bF2.AddBasePoint(1.170, 0.019)
+                Table23bF2.AddBasePoint(3.535, 0.084)
+                Table23bF2.AddBasePoint(3.835, 0.093)
+                Table23bF2.AddBasePoint(4.680, 0.116)
+                Table23bF2.AddBasePoint(4.999, 0.116)
+                
+                ' Collect tables 2.3.
+                Table23a = New Dictionary(Of RailFixing , LinearTabFunction)
+                Table23b = New Dictionary(Of RailFixing , LinearTabFunction)
+                Table23a.Add(RailFixing.None,        Table23aF0)
+                Table23a.Add(RailFixing.Fixed,       Table23aF1)
+                Table23a.Add(RailFixing.StrongFixed, Table23aF2)
+                Table23b.Add(RailFixing.None,        Table23bF0)
+                Table23b.Add(RailFixing.Fixed,       Table23bF1)
+                Table23b.Add(RailFixing.StrongFixed, Table23bF2)
+                
+                ' Table 2.1.2, inside of curve.
                 Table212i.AddBasePoint(100.0, 0.560)
                 Table212i.AddBasePoint(120.0, 0.365)
                 Table212i.AddBasePoint(150.0, 0.165)
@@ -327,7 +405,7 @@ Namespace Domain.ClearanceGauge
                 Table212i.AddBasePoint(225.0, 0.055)
                 Table212i.AddBasePoint(250.0, 0.020)
                 
-                ' Outside of curve.
+                ' Table 2.1.2, outside of curve.
                 Table212a.AddBasePoint(100.0, 0.600)
                 Table212a.AddBasePoint(120.0, 0.395)
                 Table212a.AddBasePoint(150.0, 0.195)
@@ -358,10 +436,10 @@ Namespace Domain.ClearanceGauge
              ''' <exception cref="System.InvalidOperationException"> CantBase is <c>Double.NaN</c>. </exception>
             Private Function CalculateMainOutline() As Polygon
                 
-                If (Double.IsNaN(Me.RailsConfig.Radius))         Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
-                If (Double.IsNaN(Me.RailsConfig.Speed))          Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
-                If (Double.IsNaN(Me.RailsConfig.Cant))           Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
-                If (Double.IsNaN(Me.RailsConfig.CantBase))       Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
+                If (Double.IsNaN(Me.RailsConfig.Radius))   Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownRadius)
+                If (Double.IsNaN(Me.RailsConfig.Speed))    Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownSpeed)
+                If (Double.IsNaN(Me.RailsConfig.Cant))     Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
+                If (Double.IsNaN(Me.RailsConfig.CantBase)) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
                 
                 Dim MinimumOutline As Polygon = New Polygon()
                 MinimumOutline.IsClosed = True
@@ -373,11 +451,11 @@ Namespace Domain.ClearanceGauge
                         MinimumOutline.Vertices.Add(BasePoint)
                     Else
                         Dim IsPointAboveHc      As Boolean = (BasePoint.Y > hc)
-                        Dim PointHeightAboveHc  As Double  = BasePoint.Y - hc
+                        Dim PointHeightAboveHc  As Double  =  BasePoint.Y - hc
                         
                         Dim S  As Double = Calc_S(BasePoint)
                         Dim Q  As Double = Calc_Q(BasePoint, IsPointAboveHc, PointHeightAboveHc)
-                        Dim T  As Double = Calc_T(BasePoint, IsPointAboveHc, PointHeightAboveHc)
+                        Dim T  As Double = Calc_T(BasePoint)
                         Dim dX As Double = Sign(BasePoint.X) * (S + Q + T)
                         
                         MinimumOutline.Vertices.Add(New MathPoint With {.X=BasePoint.X + dX, .Y=BasePoint.Y})
@@ -490,7 +568,7 @@ Namespace Domain.ClearanceGauge
              ''' <remarks></remarks>
             Private Function Calc_S(Point As MathPoint) As Double
                 
-                Dim RetValue As Double = 0.0
+                Dim RetValue As Double
                 
                 If (Not IsSmallRadius250) Then
                     ' Radius >= 250 m.
@@ -525,7 +603,7 @@ Namespace Domain.ClearanceGauge
                 Dim RetValue As Double = 0.0
                 
                 If (IsPointAboveHc) Then
-                    Dim Q0 As Double = 0.0
+                    Dim Q0 As Double
                     If (Double.IsInfinity(Me.RailsConfig.Radius)) Then
                         Q0 = If(Me.RailsConfig.IsPointInsideCant(Point), Qi0, Qa0)
                     Else
@@ -538,12 +616,31 @@ Namespace Domain.ClearanceGauge
             End Function
             
             ''' <summary> Calculates the delta according to EBO, appendix 2, Pt. 1.4, named "T" (Zufallsbedingte Verschiebung). </summary>
+             ''' <param name="Point"> A point in canted rails system. </param>
+             ''' <returns> The horizontal delta for <paramref name="Point"/><c>.X</c> </returns>
+             ''' <remarks></remarks>
+            Private Function Calc_T(Point As MathPoint) As Double
+                
+                Dim RetValue As Double
+                
+                If (Me.RailsConfig.IsPointInsideCurve(Point)) Then
+                    ' Inside of curve.
+                    RetValue = Table23a(RailsConfig.Fixing).EvaluateFx(Point.Y)
+                Else
+                    ' Tangent or outside of curve.
+                    RetValue = Table23b(RailsConfig.Fixing).EvaluateFx(Point.Y)
+                End If
+                
+                Return RetValue
+            End Function
+            
+            ''' <summary> Calculates the delta according to EBO, appendix 2, Pt. 1.4, named "T" (Zufallsbedingte Verschiebung). </summary>
              ''' <param name="Point">              A point in canted rails system. </param>
              ''' <param name="IsPointAboveHc">     Determines whether or not the point is above hc (for performance). </param>
              ''' <param name="PointHeightAboveHc"> The height of the point above hc (negative means under hc) (for performance). </param>
              ''' <returns> The horizontal delta for <paramref name="Point"/><c>.X</c> </returns>
              ''' <remarks></remarks>
-            Private Function Calc_T(Point As MathPoint, IsPointAboveHc As Boolean, PointHeightAboveHc As Double) As Double
+            Private Function Calc_T_OLD(Point As MathPoint, IsPointAboveHc As Boolean, PointHeightAboveHc As Double) As Double
                 
                 Dim RetValue As Double = 0.006
                 
