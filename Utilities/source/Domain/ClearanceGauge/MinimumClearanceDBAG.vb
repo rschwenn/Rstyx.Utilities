@@ -19,7 +19,7 @@ Namespace Domain.ClearanceGauge
             Const hc    As Double  = 0.500   ' Wankpolhöhe.
             Const bw2   As Double  = 0.975   ' Half width of pantograph.
             
-            Private Shared MinBaseLine          As Polygon
+            Private Shared MinBaseLine(1)       As Polygon
             Private Shared Table212i            As LinearTabFunction
             Private Shared Table212a            As LinearTabFunction
             Private Shared Table23aF0           As LinearTabFunction
@@ -249,52 +249,99 @@ Namespace Domain.ClearanceGauge
              ''' <remarks> 
              ''' This polygon is based on G2, but:
              ''' - Heights are changed corresponding to EBO appendix 2 Pt 3 - so they match EBO appendix 1 Illustration 1.
-             ''' - Corresponding to EBO appendix 2 Pt 4 the lower part is replaced to match EBO appendix 1 Illustration 2.
+             ''' - Corresponding to EBO appendix 2 Pt 4 the lower part is replaced to match EBO appendix 1 Illustration 2 a)
+             '''   in two variants: with changing and not changing gradient.
              ''' See EBO, appendix 1 (http://www.gesetze-im-internet.de/ebo/anlage_1.html).
              ''' See EBO, appendix 2 (http://www.gesetze-im-internet.de/ebo/anlage_2.html).
              ''' </remarks>
-            Private Shared Function CreateMinBaseLine() As Polygon
+            Private Shared Function CreateMinBaseLine() As Polygon()
                 
-                Dim BasePolygon As New Polygon()
-                BasePolygon.IsClosed = True
+                Dim BasePolygons(1) As Polygon
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.6475, .Y= 0.055})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.6475, .Y=-0.038})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.7175, .Y=-0.038})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.7175, .Y= 0.000})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.000})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.055})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.1750, .Y= 0.055})
+                Dim BasePolygon_0   As New Polygon()
+                Dim BasePolygon_1   As New Polygon()
+                BasePolygon_0.IsClosed = True
+                BasePolygon_1.IsClosed = True
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.250 , .Y= 0.110})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.520 , .Y= 0.380})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 0.380})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 1.150})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.645 , .Y= 1.150})
+                ' Lower part is for non-changing gradient (Y= 0.080).
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-0.6475, .Y= 0.080})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-0.6475, .Y=-0.038})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-0.7175, .Y=-0.038})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-0.7175, .Y= 0.000})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.000})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.080})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.1750, .Y= 0.080})
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.645 , .Y= 3.590})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-1.470 , .Y= 3.895})
-                BasePolygon.Vertices.Add(New MathPoint With {.X=-0.785 , .Y= 4.740})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.250 , .Y= 0.110})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.520 , .Y= 0.380})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 0.380})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 1.150})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.645 , .Y= 1.150})
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.785 , .Y= 4.740})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.470 , .Y= 3.895})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.645 , .Y= 3.590})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.645 , .Y= 3.590})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-1.470 , .Y= 3.895})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X=-0.785 , .Y= 4.740})
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.645 , .Y= 1.150})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 1.150})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 0.380})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.520 , .Y= 0.380})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.250 , .Y= 0.110})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 0.785 , .Y= 4.740})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.470 , .Y= 3.895})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.645 , .Y= 3.590})
                 
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 1.1750, .Y= 0.055})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.055})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.000})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.7175, .Y= 0.000})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.7175, .Y=-0.038})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.6475, .Y=-0.038})
-                BasePolygon.Vertices.Add(New MathPoint With {.X= 0.6475, .Y= 0.055})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.645 , .Y= 1.150})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 1.150})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 0.380})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.520 , .Y= 0.380})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.250 , .Y= 0.110})
                 
-                Return BasePolygon
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 1.1750, .Y= 0.080})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.080})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.000})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 0.7175, .Y= 0.000})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 0.7175, .Y=-0.038})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 0.6475, .Y=-0.038})
+                BasePolygon_0.Vertices.Add(New MathPoint With {.X= 0.6475, .Y= 0.080})
+                
+                
+                ' Lower part is for changing gradient (Y= 0.055).
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-0.6475, .Y= 0.055})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-0.6475, .Y=-0.038})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-0.7175, .Y=-0.038})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-0.7175, .Y= 0.000})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.000})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-0.8735, .Y= 0.055})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.1750, .Y= 0.055})
+                
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.250 , .Y= 0.110})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.520 , .Y= 0.380})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 0.380})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.620 , .Y= 1.150})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.645 , .Y= 1.150})
+                
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.645 , .Y= 3.590})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-1.470 , .Y= 3.895})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X=-0.785 , .Y= 4.740})
+                
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 0.785 , .Y= 4.740})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.470 , .Y= 3.895})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.645 , .Y= 3.590})
+                
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.645 , .Y= 1.150})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 1.150})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.620 , .Y= 0.380})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.520 , .Y= 0.380})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.250 , .Y= 0.110})
+                
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 1.1750, .Y= 0.055})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.055})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 0.8735, .Y= 0.000})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 0.7175, .Y= 0.000})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 0.7175, .Y=-0.038})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 0.6475, .Y=-0.038})
+                BasePolygon_1.Vertices.Add(New MathPoint With {.X= 0.6475, .Y= 0.055})
+                
+                BasePolygons(0) = BasePolygon_0
+                BasePolygons(1) = BasePolygon_1
+                
+                Return BasePolygons
             End Function
             
             ''' <summary> Creates characteristics table of OHL minimum clearance. </summary>
@@ -441,10 +488,11 @@ Namespace Domain.ClearanceGauge
                 If (Double.IsNaN(Me.RailsConfig.Cant))     Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCant)
                 If (Double.IsNaN(Me.RailsConfig.CantBase)) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.MinimumClearanceDBAG_UnknownCantBase)
                 
-                Dim MinimumOutline As Polygon = New Polygon()
+                Dim GradientChanging As Boolean = (Double.IsNaN(Me.RailsConfig.VerticalRadius) OrElse (Not Double.IsInfinity(Me.RailsConfig.VerticalRadius)))
+                Dim MinimumOutline   As Polygon = New Polygon()
                 MinimumOutline.IsClosed = True
                 
-                For Each BasePoint As MathPoint In MinBaseLine.Vertices
+                For Each BasePoint As MathPoint In MinBaseLine(If(GradientChanging, 1, 0)).Vertices
                     
                     If ((BasePoint.Y < 0.1) AndAlso (Abs(BasePoint.X) < 1.0)) Then
                         ' Immutual lower part of minimum clearance.
