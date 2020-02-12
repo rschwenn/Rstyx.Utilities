@@ -41,6 +41,13 @@ Namespace Domain
             
         #End Region
         
+        #Region "Public Fields"
+            
+            ''' <summary> Default value for maximum cant deficiency (0.130). </summary>
+            Public Shared ReadOnly DefaultMaxCantDeficiency As Double = 0.130
+            
+        #End Region
+        
         #Region "Constuctors"
             
             ''' <summary> Static initializations. </summary>

@@ -222,7 +222,7 @@ Namespace UI.ViewModel
                                 Decoration.Description = "Hilfedatei anzeigen"
                                 Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Tango_Help1")
                                 
-                                _ShowHelpFileCommand = New DelegateUICommand(AddressOf Me.showHelpFile, Decoration)
+                                _ShowHelpFileCommand = New DelegateUICommand(AddressOf Me.ShowHelpFile, Decoration)
                             End If
                         Catch ex As System.Exception
                             Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
@@ -234,7 +234,7 @@ Namespace UI.ViewModel
                 
                 ''' <summary> Shows the help file if overridden in a derived class. </summary>
                 ''' <remarks> i.e.:  Rstyx.Microstation.Utilities.FileUtils.showHelpFile(HelpFileName) </remarks>
-                Protected Overridable Sub showHelpFile()
+                Protected Overridable Sub ShowHelpFile()
                     Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_NotImplemented, Me.GetType().FullName & "/showHelpFile"))
                 End Sub
                 
