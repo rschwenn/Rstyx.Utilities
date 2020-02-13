@@ -131,7 +131,7 @@ Namespace Domain.IO
                                 Dim TrackNo As String = FileEncoding.GetString(oBR.ReadBytes(4)).Left(vbNullChar).Trim()
                                 p.TrackPos.TrackNo.TryParse(TrackNo)
                                 
-                                p.TrackPos.RailsCode = FileEncoding.GetString(oBR.ReadBytes(1))
+                                p.TrackPos.RailsCode = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
                                     
                                 ' Smoothing.
                                 If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty
