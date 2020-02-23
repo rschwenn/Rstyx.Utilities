@@ -44,7 +44,15 @@ Namespace Domain
     Public Interface IGeoPointInfo
         
         ''' <summary> Actual rails cant in [m]. </summary>
-         ''' <remarks> Sign: Positive is treated as "normal", negative as "inverse". </remarks>
+         ''' <remarks>
+         ''' <para>
+         ''' <b> Sign depends on application: </b>
+         ''' <list type="number">
+         ''' <item><description> <b> Relative Sign: </b>  Positive is treated as "normal", negative as "inverse". </description></item>
+         ''' <item><description> <b> Absolute Sign: </b>  Positive is treated as "left running surface is higher", negative as "right running surface is higher". </description></item>
+         ''' </list>
+         ''' </para>
+         ''' </remarks>
         Property ActualCant()   As Double
             
         ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>

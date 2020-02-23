@@ -21,6 +21,20 @@ Namespace Domain
         
     End Enum
     
+    ''' <summary> Position status of rails. </summary>
+    Public Enum RailStatus As Integer
+        
+        ''' <summary> Rails position status is undefined. </summary>
+        None = 0
+        
+        ''' <summary> Rails corresponds to a designed alignment. </summary>
+        Design = 1
+        
+        ''' <summary> Rails corresponds to an actual rails. </summary>
+        Actual = 2
+        
+    End Enum
+    
     ''' <summary> A pair of rails at a discrete spot (cross section). </summary>
      ''' <remarks>
      ''' Any change to this RailPair is signaled by firing the <see cref="RailPair.RailsConfigChanged"/> event.
@@ -91,6 +105,7 @@ Namespace Domain
         #Region "Properties"
             
             Private _Fixing         As RailFixing = RailFixing.None
+            Private _Status         As RailStatus = RailStatus.None
             Private _Speed          As Double = Double.NaN
             Private _Radius         As Double = Double.NaN
             Private _VerticalRadius As Double = Double.NaN
@@ -109,6 +124,17 @@ Namespace Domain
                 End Get
                 Set(value As RailFixing)
                     _Fixing = value
+                    RaiseRailsConfigChanged()
+                End Set
+            End Property
+            
+            ''' <summary> Gets or sets the rails status. </summary>
+            Public Property Status() As RailStatus
+                Get
+                    Return _Status
+                End Get
+                Set(value As RailStatus)
+                    _Status = value
                     RaiseRailsConfigChanged()
                 End Set
             End Property
@@ -444,6 +470,8 @@ Namespace Domain
             
             ''' <summary> Resets the configuration of this RailPair to "unknown". </summary>
             Public Sub Reset()
+                Me.Fixing         = RailFixing.None
+                Me.Status         = RailStatus.None
                 Me.Speed          = Double.NaN
                 Me.VerticalRadius = Double.NaN
                 Me.Radius         = Double.NaN
