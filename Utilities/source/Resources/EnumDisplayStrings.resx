@@ -681,4 +681,22 @@
   <data name="Rstyx_Utilities_Domain_ClearanceGauge_ClearanceRulesScope_None" xml:space="preserve">
     <value>keiner</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_RailFixing_Fixed" xml:space="preserve">
+    <value>festgelegt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailFixing_None" xml:space="preserve">
+    <value>nicht festgelegt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailFixing_StrongFixed" xml:space="preserve">
+    <value>stark festgelegt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailStatus_Actual" xml:space="preserve">
+    <value>Ist</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailStatus_Design" xml:space="preserve">
+    <value>Soll</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailStatus_None" xml:space="preserve">
+    <value>nicht definiert</value>
+  </data>
 </root>

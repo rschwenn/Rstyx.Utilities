@@ -1348,6 +1348,60 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die festgelegt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixing_Fixed() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixing_Fixed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die nicht festgelegt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixing_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixing_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die stark festgelegt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixing_StrongFixed() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixing_StrongFixed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ist ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailStatus_Actual() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailStatus_Actual", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Soll ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailStatus_Design() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailStatus_Design", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die nicht definiert ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailStatus_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailStatus_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Ausgabe A0 ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_TcFileReader_TcBlockFormat_A0() As String
