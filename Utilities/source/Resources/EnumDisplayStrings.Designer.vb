@@ -1805,5 +1805,50 @@ Namespace Resources
                 Return ResourceManager.GetString("Rstyx_Utilities_UI_WarningColorMode_None", resourceCulture)
             End Get
         End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die fehlerhaft ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Validation_VerificationResult_Error() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Validation_VerificationResult_Error", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die nicht geprüft ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Validation_VerificationResult_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Validation_VerificationResult_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die nicht prüfbar ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Validation_VerificationResult_NotVerifiable() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Validation_VerificationResult_NotVerifiable", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die bestätigt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Validation_VerificationResult_Success() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Validation_VerificationResult_Success", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die evtl. fehlerhaft ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Validation_VerificationResult_Warning() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Validation_VerificationResult_Warning", resourceCulture)
+            End Get
+        End Property
     End Module
 End Namespace

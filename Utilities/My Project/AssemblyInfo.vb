@@ -44,4 +44,4 @@ Imports System.Windows.Markup
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
 <Assembly: AssemblyVersion("2.5.2.0")> 
-<Assembly: AssemblyFileVersion("2.5.1.0")> 
+<Assembly: AssemblyFileVersion("2.5.2.0")> 
