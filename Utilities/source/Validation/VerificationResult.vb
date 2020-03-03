@@ -17,7 +17,7 @@ Namespace Validation
         Warning         = 3
         
         ''' <summary> Verification has found an error. </summary>
-        [Error]         = 4
+        Failure         = 4
         
     End Enum
     

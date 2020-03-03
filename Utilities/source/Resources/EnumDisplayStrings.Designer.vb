@@ -1393,7 +1393,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die nicht definiert ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_RailStatus_None() As String
             Get
@@ -1809,9 +1809,9 @@ Namespace Resources
         '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die fehlerhaft ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Validation_VerificationResult_Error() As String
+        Friend ReadOnly Property Rstyx_Utilities_Validation_VerificationResult_Failure() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Validation_VerificationResult_Error", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_Validation_VerificationResult_Failure", resourceCulture)
             End Get
         End Property
         
