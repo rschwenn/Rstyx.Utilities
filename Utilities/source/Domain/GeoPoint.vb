@@ -84,6 +84,7 @@ Namespace Domain
         
         #Region "Public Fields"
             
+            ''' <summary>  Mapping:  property name => attribute name. </summary>
             Public  Shared ReadOnly AttributeNames   As Dictionary(Of String, String)
             
         #End Region
