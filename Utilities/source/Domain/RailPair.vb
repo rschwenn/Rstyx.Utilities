@@ -38,7 +38,8 @@ Namespace Domain
     ''' <summary> A pair of rails at a discrete spot (cross section). </summary>
      ''' <remarks>
      ''' Any change to this RailPair is signaled by firing the <see cref="RailPair.RailsConfigChanged"/> event.
-     ''' To be valid, the <see cref="RailPair.Reconfigure"/> method has to be applied successfuly.
+     ''' To be valid, the <see cref="RailPair.Reconfigure"/> method has to be applied successfuly, 
+     ''' and <see cref="RailPair.Speed"/> have to be greater or equal <see cref="RailPair.MinimumSpeed"/>.
      ''' </remarks>
     Public Class RailPair
         Inherits Cinch.ValidatingObject
@@ -48,7 +49,7 @@ Namespace Domain
             Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.RailPair")
             
             Private Shared UnknownConfigurationRule As Cinch.SimpleRule
-            Private Shared NonPositiveSpeed         As Cinch.SimpleRule
+            Private Shared SpeedToSmallRule         As Cinch.SimpleRule
             
             Private IsCantDeficiencyValid   As Boolean = False
             Private AbsRadius               As Double  = Double.NaN
@@ -58,7 +59,10 @@ Namespace Domain
         #Region "Public Fields"
             
             ''' <summary> Default value for maximum cant deficiency (0.130). </summary>
-            Public Shared ReadOnly DefaultMaxCantDeficiency As Double = 0.130
+            Public Shared DefaultMaxCantDeficiency As Double = 0.130
+            
+            ''' <summary> The minimum value for a valid speed. </summary>
+            Public Shared MinimumSpeed                    As Double = 5.0
             
         #End Region
         
@@ -70,11 +74,11 @@ Namespace Domain
                                                                 Rstyx.Utilities.Resources.Messages.RailPair_UnknownConfiguration,
                                                                 Function (oValidatingObject As Object) (Not DirectCast(oValidatingObject, RailPair).IsConfigured))
                 
-                NonPositiveSpeed         = New Cinch.SimpleRule("Speed",
+                SpeedToSmallRule         = New Cinch.SimpleRule("Speed",
                                                                 Rstyx.Utilities.Resources.Messages.RailPair_InvalidConfiguration_NonPositiveSpeed,
                                                                 Function (oValidatingObject As Object) 
                                                                     Dim Speed As Double = DirectCast(oValidatingObject, RailPair).Speed
-                                                                    Return ((Not Double.IsNaN(Speed)) AndAlso (Speed <= 0.0))     
+                                                                    Return ((Not Double.IsNaN(Speed)) AndAlso (Speed < MinimumSpeed))     
                                                                 End Function
                                                                )
             End Sub
@@ -83,7 +87,7 @@ Namespace Domain
             Public Sub New()
                 Me.Reset()
                 Me.AddRule(UnknownConfigurationRule)
-                Me.AddRule(NonPositiveSpeed)
+                Me.AddRule(SpeedToSmallRule)
             End Sub
             
         #End Region
@@ -208,7 +212,7 @@ Namespace Domain
                 End Get
             End Property
             
-            ''' <summary> Gets the Cant (negative, if right running surface is higher). </summary>
+            ''' <summary> Gets the absolute cant (negative, if right running surface is higher). </summary>
              ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
             Public ReadOnly Property Cant() As Double
                 Get
@@ -336,7 +340,7 @@ Namespace Domain
             End Sub
             
             ''' <summary> Re-configures this RailPair based on cant and cantbase. </summary>
-             ''' <param name="Cant"> Cant in [m] (negative, if right running surface is higher). </param>
+             ''' <param name="Cant"> Absolute cant in [m] (negative, if right running surface is higher). </param>
              ''' <param name="CantBase"> CantBase in [m]. </param>
              ''' <exception cref="System.ArgumentException"> Cant is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> CantBase is <c>Double.NaN</c> or less than 0.001. </exception>
@@ -442,11 +446,11 @@ Namespace Domain
                 Return RetValue
             End Function
             
-            ''' <summary> Ensures that cant deficiency doesn't exceeds <paramref name="MaxCantDeficiency"/> by reducing speed of this rail pair. </summary>
+            ''' <summary> Tries to ensure that cant deficiency doesn't exceeds <paramref name="MaxCantDeficiency"/> by reducing speed of this rail pair. </summary>
              ''' <param name="MaxCantDeficiency"> Maximum allowed cant deficiency in [m]. </param>
              ''' <remarks>
-             ''' The speed of this railpair will be reduced in steps of 5 km/h until cant deficiency doesn't exceeds <paramref name="MaxCantDeficiency"/>.
-             ''' This method has no effect if cant deficiency can't be calculated.
+             ''' The speed of this railpair will be reduced in steps of 5 km/h until cant deficiency doesn't exceeds <paramref name="MaxCantDeficiency"/> 
+             ''' or speed is almost 5 km/h. This method has no effect if cant deficiency can't be calculated.
              ''' </remarks>
             Public Sub LimitCantDeficiency(MaxCantDeficiency As Double)
                 
@@ -456,7 +460,7 @@ Namespace Domain
                     
                     Dim oldSpeed As Double = Me.Speed
                     
-                    Do While  (uf > MaxCantDeficiency)
+                    Do While  ((uf > MaxCantDeficiency) AndAlso (_Speed >= (MinimumSpeed + 5)))
                         _Speed -= 5
                         uf = CalculateCantDeficiency()
                     Loop
