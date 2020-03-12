@@ -688,7 +688,7 @@ Namespace Domain
              ''' </remarks>
             Public Sub SetKindFromKindText()
                 Me.Kind = GeoPointKind.None
-                If (KindText2Kind.ContainsKey(Me.KindText)) Then
+                If (Me.KindText.IsNotEmptyOrWhiteSpace() AndAlso KindText2Kind.ContainsKey(Me.KindText)) Then
                     Me.Kind = KindText2Kind(Me.KindText)
                 End If
             End Sub

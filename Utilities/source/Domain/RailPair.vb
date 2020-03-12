@@ -397,6 +397,7 @@ Namespace Domain
                 
                 Me.Radius         = PointGeometry.Ra
                 Me.VerticalRadius = PointGeometry.RaLGS
+                Me.Fixing         = If(PointGeometry.Kind = GeoPointKind.Platform, RailFixing.Fixed, RailFixing.None)
                 
                 If (Not PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
                     If (Double.IsNaN(Me.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
