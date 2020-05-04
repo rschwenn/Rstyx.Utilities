@@ -7,7 +7,7 @@
 Option explicit
 on error goto 0
 
-const Version     = "v2.7a"
+const Version     = "v2.7b"
 
 ' --- Klassen einbinden ----------------------------------------------
   dim oSkript, oXLTools, oTools_1
@@ -2553,7 +2553,7 @@ class XlTools
         oSkript.echo("Excel erfolgreich gestartet.")
         call LadeStartupAddins(xlApp)
         'Neue Mappe anlegen, damit Excel bei Funktionsende nicht beendet wird (?!).
-        xlApp.Workbooks.add
+        'xlApp.Workbooks.add
         ExcelNeuGestartet = true
       else
         oSkript.ErrEcho "FEHLER beim Start von Excel."
@@ -2598,8 +2598,14 @@ class XlTools
     Erfolg = true
     on error resume next
     if (not xlApp is nothing) then
+      
+      if (Sichtbarkeit) then
+        if (Not xlApp.Visible) then xlApp.Visible = true
+      else
+        if (xlApp.Visible) then xlApp.Visible = false
+      end If
+      
       xlApp.ScreenUpdating = Sichtbarkeit
-      xlApp.Visible = Sichtbarkeit
       xlApp.UserControl = Sichtbarkeit
     end if
     if (err.number <> 0) then
