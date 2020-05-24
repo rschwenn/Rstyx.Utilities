@@ -7,7 +7,7 @@
 Option explicit
 on error goto 0
 
-const Version     = "v2.7b"
+const Version     = "v2.7.3"
 
 ' --- Klassen einbinden ----------------------------------------------
   dim oSkript, oXLTools, oTools_1
@@ -83,7 +83,7 @@ const Version     = "v2.7b"
         'Excel gefunden oder gestartet.
         
         if (Makro = "-") then
-          'kein Makro ausführen, sonder Datei öffnen.
+          'kein Makro ausführen, sondern Datei öffnen.
           oSkript.echo "Datei '" & Datei & "' wird geöffnet."
           on error resume next
           xl.Workbooks.open Datei
@@ -197,6 +197,7 @@ const Version     = "v2.7b"
   const xlUp                   = -4162
   const xlNormal               = -4143   'FensterStatus Excel
   const xlMaximized            = -4137   'FensterStatus Excel
+  const xlMinimized            = -4140   'FensterStatus Excel
   const xlPasteValues          = -4163
   
  'wshCommonDialogs.ocx
@@ -2251,17 +2252,30 @@ class Tools_1
   
   Private Function GetExcelExe()
     'Funktionswert = Pfad\Dateiname der registrierten und existierenden EXE von Excel oder "".
-    dim Key_ExcelExe, ExcelExe, DatAlias_XLS, RegKeyDatAlias_XLS
+    dim Key_ExcelExe, ExcelExe, DatAlias_XLSX, RegKeyDatAlias_XLSX, DatAlias_XLS, RegKeyDatAlias_XLS
     on error goto 0
-    const RegKeyDatExt_XLS = "HKEY_CLASSES_ROOT\.xls\"
+    const RegKeyDatExt_XLSX = "HKEY_CLASSES_ROOT\.xlsx\"
+    const RegKeyDatExt_XLS  = "HKEY_CLASSES_ROOT\.xls\"
     oSkript.debugecho "Programmdatei von Excel ermitteln."
-    if RegValueExists(RegKeyDatExt_XLS) then
-      DatAlias_XLS       = WSHShell.RegRead(RegKeyDatExt_XLS)             'Datei-Alias für XLS's
-      RegKeyDatAlias_XLS = "HKEY_CLASSES_ROOT\" & DatAlias_XLS & "\"      'Registry-Schlüssel mit XLS-Kontextmenü
-      oSkript.debugecho "RegKeyDatAlias_XLS: '" & RegKeyDatAlias_XLS & "'"
-      Key_ExcelExe = RegKeyDatAlias_XLS & "shell\open\command\"
+    
+    if RegValueExists(RegKeyDatExt_XLSX) then
+      DatAlias_XLSX       = WSHShell.RegRead(RegKeyDatExt_XLSX)             'Datei-Alias für XLSX
+      RegKeyDatAlias_XLSX = "HKEY_CLASSES_ROOT\" & DatAlias_XLSX & "\"      'Registry-Schlüssel mit XLSX-Kontextmenü
+      oSkript.debugecho "RegKeyDatAlias_XLSX: '" & RegKeyDatAlias_XLSX & "'"
+      Key_ExcelExe = RegKeyDatAlias_XLSX & "shell\open\command\"
       ExcelExe = GetExeAusRegistry(Key_ExcelExe)
     end if
+    
+    if (ExcelExe = "") then
+      if RegValueExists(RegKeyDatExt_XLS) then
+        DatAlias_XLS       = WSHShell.RegRead(RegKeyDatExt_XLS)             'Datei-Alias für XLS
+        RegKeyDatAlias_XLS = "HKEY_CLASSES_ROOT\" & DatAlias_XLS & "\"      'Registry-Schlüssel mit XLS-Kontextmenü
+        oSkript.debugecho "RegKeyDatAlias_XLS: '" & RegKeyDatAlias_XLS & "'"
+        Key_ExcelExe = RegKeyDatAlias_XLS & "shell\open\command\"
+        ExcelExe = GetExeAusRegistry(Key_ExcelExe)
+      end if
+    end if
+    
     if (ExcelExe = "") then
       Key_ExcelExe = "HKEY_CLASSES_ROOT\Applications\Excel.exe\shell\open\command\"
       ExcelExe = GetExeAusRegistry(Key_ExcelExe)
@@ -2523,9 +2537,15 @@ class XlTools
   function GetExcelApp(Sichtbarkeit)
     'Öffnet Excel, wenn es noch nicht läuft.
     'Gibt das Excel.Application-Objekt zurück oder "nothing" bei Mißerfolg.
-    'Parameter: Sichtbarkeit ... (true | false) Soll das Excel-Anwendungsfenster sichtbar werden?
+    'Parameter: Sichtbarkeit ... *** wird ignoriert !
+    '                            (true | false) Soll das Excel-Anwendungsfenster sichtbar werden?
     
-    dim XlArbVerz
+    ' **************************************************************************
+    ' 24.05.2020: Wegen diverser Zielkonflikte und Unsicherheiten mit SDI:
+    Sichtbarkeit = true
+    ' **************************************************************************
+    
+    dim XlArbVerz, Kommando, xlWbk, i, Interval, Timeout, elapsed
     
     'Hinweise zum Verhalten:
     'Wird Excel via CreateObject oder GetObject als Automatisierungsserver in Anspruch
@@ -2543,29 +2563,64 @@ class XlTools
     
     'Versuch, eine vorhandene Instanz von Excel zu finden
     set xlApp = GetObject(,"Excel.Application")
-    if (err.number <> 0) then
-      oSkript.echo "Keine vorhandene Instanz von Excel gefunden => Excel starten."
-      on error resume next
-      Set xlApp = CreateObject("Excel.Application")
-      'Fehlstart abfangen.
-      if (err.number = 0) then 
-        on error goto 0
-        oSkript.echo("Excel erfolgreich gestartet.")
-        call LadeStartupAddins(xlApp)
-        'Neue Mappe anlegen, damit Excel bei Funktionsende nicht beendet wird (?!).
-        'xlApp.Workbooks.add
-        ExcelNeuGestartet = true
-      else
-        oSkript.ErrEcho "FEHLER beim Start von Excel."
-        ExcelNeuGestartet = false
-      end if
-    else
+    
+    if (err.number = 0) then
       'Vorhandene Instanz von Excel gefunden.
-      'Diese blinkt ab sofort dümmlich in der Taskleiste vor sich hin.
       oSkript.echo "Vorhandene Instanz von Excel gefunden."
-      'Excel in den VORDERGRUND bringen!
-      WSHShell.AppActivate "Excel"      'funktioniert nur bedingt ... bis gar nicht.
       ExcelNeuGestartet = false
+    else
+      err.clear
+      oSkript.echo "Keine vorhandene Instanz von Excel gefunden => Excel starten."
+      
+      ' 05/2020: Excel 365 verhält sich fürchterlich, wenn es per Automation
+      ' gestartet wird und dabei ein XLAM öffnet. Deshalb zunächst: 
+      ' 1. Versuch: Start Excel per Kommandozeile. 
+      if (oTools_1.ExcelExe <> "") then
+        
+        Kommando = """" & oTools_1.ExcelExe & """ /e"
+        oSkript.echo "Versuche, Excel zu starten mit Kommando: '" & Kommando & "'."
+        call WshShell.Run(Kommando, WindowStyle_normal, WaitOnReturn_no)
+        
+        if (err.number <> 0) then
+          oSkript.ErrEcho "Kommando fehlgeschlagen: '" & Kommando & "'."
+        else
+          i        =    0
+          Interval =  250  ' Millisekunden
+          Timeout  = 5000  ' Millisekunden
+          Do
+            i = i + 1
+            oSkript.Wait(Interval)
+            elapsed = i * Interval
+            set xlApp = GetObject(,"Excel.Application")
+          loop Until ((not xlApp is nothing) or (elapsed >= Timeout))
+          
+          if (xlApp is nothing) then
+            oSkript.echo oTools_1.vsprintf("Selbst erzeugte Instanz von Excel NICHT gefunden (nach %.2f Sekunden)", elapsed/1000)
+          else
+            oSkript.echo oTools_1.vsprintf("Selbst erzeugte Instanz von Excel gefunden (nach %.2f Sekunden)", elapsed/1000)
+          end if
+        end if
+      end if
+      
+      ' 2. Versuch: Start Excel via Automation. 
+      if (xlApp is nothing) then
+        oSkript.echo("Versuche, Excel via Automation zu starten...")
+        Set xlApp = CreateObject("Excel.Application")
+        'Fehlstart abfangen.
+        if (err.number = 0) then 
+          on error goto 0
+          oSkript.echo("Excel erfolgreich gestartet.")
+          'Neue Mappe anlegen, damit Excel nicht als fast leees Fenster stehen bleibt, wenn hier ein AddIn geladen wird !
+          set xlWbk = xlApp.Workbooks.add
+          call LadeStartupAddins(xlApp)
+          'xlWbk.Close false => Macht den durch das Anlegen der Arbeitsmappe eingetretenen Erfolg zunichte.
+          ExcelNeuGestartet = true
+        else
+          oSkript.ErrEcho "FEHLER beim Start von Excel."
+          ExcelNeuGestartet = false
+        end if
+      end if
+      
     end if
     on error goto 0
     
@@ -2579,14 +2634,40 @@ class XlTools
         oSkript.ErrEcho "FEHLER beim Setzen des Arbeitsverzeichnisses."
       end if
       on error goto 0
-      'Fensterstatus wird gesetzt, aber deshalb kommt das Fenster noch lange nicht in den Vordergrund.
-      'xlApp.WindowState = xlMaximized
       xlApp.DisplayStatusBar = True
       SetExcelAppSichtbarkeit(Sichtbarkeit)
     end if
     
     set GetExcelApp = xlApp
   End function
+  
+  sub SetExcelAppFokus()
+    ' Versucht, das Excel-Anwendungsfenster in den Vordergrund zu bringen,
+    ' indem die Fenstergröße geändert und (wieder zurückgesetzt) wird.
+    '-----------------------------------------------------------------------------------------
+    dim FensterStatus
+    oSkript.debugecho "XLTools\SetExcelAppFokus()"
+    on error resume next
+    
+    ' In Global.vbi deklariert (FensterStatus Excel).
+    ' const xlNormal    = -4143
+    ' const xlMaximized = -4137
+    ' const xlMinimized = -4140
+    
+    if (not xlApp is nothing) then
+      
+      FensterStatus = xlApp.WindowState
+      
+      if (FensterStatus = xlMinimized) then
+        xlApp.WindowState = xlNormal
+        xlApp.WindowState = xlMinimized
+      else
+        xlApp.WindowState = xlMinimized
+        xlApp.WindowState = FensterStatus
+      end If
+    end if
+    on error goto 0
+  end sub
   
   function SetExcelAppSichtbarkeit(Sichtbarkeit)
     'Steuert die Sichtbarkeit des Excel-Anwendungsfensters
@@ -2601,6 +2682,7 @@ class XlTools
       
       if (Sichtbarkeit) then
         if (Not xlApp.Visible) then xlApp.Visible = true
+        SetExcelAppFokus()
       else
         if (xlApp.Visible) then xlApp.Visible = false
       end If
@@ -2615,56 +2697,6 @@ class XlTools
     on error goto 0
     SetExcelAppSichtbarkeit = Erfolg
   end function
-  
-  sub EntferneCSVTextkenner(byVal oRange)
-    '-----------------------------------------------------------------------------------------
-    'Entfernt führende Hochkommata in allen Spalten des angegebenen Bereiches,
-    'die ausnahmslos als Text formatiert sind.
-    '
-    'Eingabe: oRange ... zu bearbeitender Bereich
-    '                    Wenn = nothing, dann gilt: die aktive Auswahl, oder
-    '                    falls diese nicht existiert, die gesamte Tabelle.
-    '-----------------------------------------------------------------------------------------
-    dim oZellen, Zelle, ZellInhalt
-    dim AnzZeilen, AnzSpalten, Sp, oSpalte
-    oSkript.debugecho "XLTools\EntferneCSVTextkenner()"
-    'on error resume next
-    if (not xlApp is nothing) then
-      If (Not (xlApp.ActiveCell Is Nothing)) Then
-        
-        'Bearbeitungsbereich bestimmen
-        if (not oRange is nothing) then
-          set oZellen = oRange
-        elseif (xlApp.Selection.Cells.Count > 1) then
-          set oZellen = xlApp.Selection
-        else
-          set oZellen = xlApp.ActiveWorkbook.ActiveSheet.UsedRange
-        end if
-        oSkript.debugecho "XLTools\EntferneFuehrendeHochkommata(): Bereich = " & oZellen.Address
-        
-        AnzZeilen  = oZellen.Rows.Count
-        AnzSpalten = oZellen.Columns.Count
-        
-        'Jede Spalte einzeln bearbeiten
-        for Sp = 1 to oZellen.Columns.Count
-          set oSpalte = oZellen.Range(xlApp.Cells(1, Sp), xlApp.Cells(AnzZeilen, Sp))
-          
-          if (not isNull(oSpalte.NumberFormat)) then
-            if (oSpalte.NumberFormat = "@") then
-              
-              'Hier passiert's :-)
-              for each Zelle in oSpalte
-                ZellInhalt = Zelle.Value
-                if (left(ZellInhalt, 1) = "'") then Zelle.Value = mid(ZellInhalt, 2)
-              next
-              
-            end if
-          end if
-        next
-      end if
-    end if
-    on error goto 0
-  end sub
  
  ' interne Funktionen  ----------------------------------------------------------------------------
   
@@ -2700,33 +2732,6 @@ class XlTools
     set oAddins      = nothing
     set oAddInFilter = nothing
   end sub
-  
-  Private function GetXLVorlagen(DateiMaske)
-    'Erzeugt eine Liste aller verfügbarer XL-Vorlagen, die in den üblichen 
-    'zwei Vorlagen-Verzeichnissen zu finden sind.
-    '  Parameter: DateiMaske ... DateiMaske ohne Pfadangabe (mit Wildcards)
-    '  Rückgabe = Dateiliste als Dictionary mit Dateinamen als Key.
-    on error goto 0
-    Dim Anz, oVorlagen, oVorlagenFilter
-    set oVorlagen       = CreateObject("Scripting.Dictionary")
-    set oVorlagenFilter = CreateObject("Scripting.Dictionary")
-    
-    oSkript.echo "Suche XL-Vorlagen:      '" & DateiMaske & "'."
-    oSkript.echo "Netzwerk-Vorlagenverz.: '" & xlApp.NetworkTemplatesPath & "'."
-    oSkript.echo "lokales Vorlagenverz.:  '" & xlApp.TemplatesPath & "'."
-    If (xlApp.NetworkTemplatesPath <> "") Then oVorlagenFilter.Add oVorlagenFilter.count, xlApp.NetworkTemplatesPath & "\" & DateiMaske
-    If (xlApp.TemplatesPath <> "")        Then oVorlagenFilter.Add oVorlagenFilter.count, xlApp.TemplatesPath        & "\" & DateiMaske
-
-    Anz = oTools_1.FindeDateien_xMasken(oVorlagenFilter, oVorlagen, "", true)
-
-    if (Anz = 0) then
-      oSkript.debugecho "Keine Excel-Vorlagen entsprechend Maske '" & DateiMaske & "' in den Vorlagen-Verzeichnissen gefunden."
-    else
-      oSkript.debugecho Anz & " Excel-Vorlagen in den Vorlagen-Verzeichnissen gefunden."
-    end if
-    set oVorlagenFilter = nothing
-    set GetXLVorlagen = oVorlagen
-  End function
  '
 end class 
 
