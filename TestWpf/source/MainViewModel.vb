@@ -554,27 +554,29 @@ Public Class MainViewModel
                 ''DBconn.Open()
                 ''DBconn.Close()
                 '
-                ''Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
-                ''Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
-                'Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                ''Using Table As System.Data.DataTable = DBconn.getTable(TableName)
-                '    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
-                '    'Dim Table As DataTable = XLconn.getTable(TableName)
-                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
-                '    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
-                '    
-                '    'Dim SQL = "SELECT * FROM " & TableName
-                '    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
-                '    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
-                '    
-                '    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                '    'Dim yes = Table.containsField(Field)
-                '    Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
-                '    
-                '    For Each row As System.Data.DataRow In Table.AsEnumerable()
-                '        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Point_Key"), row("Symbol_Scale_Width")))
-                '    Next 
-                'End Using
+                Dim TableName = "Standorte$"
+                Dim Workbook  = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx"
+                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx")
+                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
+                Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                'Using Table As System.Data.DataTable = DBconn.getTable(TableName)
+                    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
+                    'Dim Table As DataTable = XLconn.getTable(TableName)
+                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
+                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+                    
+                    'Dim SQL = "SELECT * FROM " & TableName
+                    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+                    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
+                    
+                    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                    'Dim yes = Table.containsField(Field)
+                    'Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
+                    '
+                    For Each row As System.Data.DataRow In Table.AsEnumerable()
+                        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+                    Next 
+                End Using
                 
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
