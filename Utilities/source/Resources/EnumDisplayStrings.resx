@@ -714,4 +714,16 @@
   <data name="Rstyx_Utilities_Validation_VerificationResult_Warning" xml:space="preserve">
     <value>evtl. fehlerhaft</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_TrackSide_Both" xml:space="preserve">
+    <value>beide</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TrackSide_Left" xml:space="preserve">
+    <value>links</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TrackSide_None" xml:space="preserve">
+    <value>unbestimmt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_TrackSide_Right" xml:space="preserve">
+    <value>rechts</value>
+  </data>
 </root>

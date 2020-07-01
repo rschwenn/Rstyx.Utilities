@@ -1564,6 +1564,42 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die beide ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TrackSide_Both() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TrackSide_Both", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die links ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TrackSide_Left() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TrackSide_Left", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbestimmt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TrackSide_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TrackSide_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die rechts ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_TrackSide_Right() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_TrackSide_Right", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Kilometerschreibweise akzeptieren ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldOptions_AllowKilometerNotation() As String
