@@ -1,5 +1,6 @@
 ﻿
 Imports System
+Imports System.Linq
 Imports System.Windows
 Imports System.Collections
 Imports System.Collections.Generic
@@ -18,7 +19,7 @@ Namespace UI.Resources
             Private Shared ReadOnly SyncHandle      As New Object()
             
             Private Shared _Icons                   As ResourceDictionary = Nothing
-            Private Shared _IconRectangles          As Dictionary(Of String, System.Windows.Shapes.Rectangle) = Nothing
+            Private Shared _IconRectangles          As IEnumerable(Of KeyValuePair(Of String, System.Windows.Shapes.Rectangle)) = Nothing
             Private Shared _Styles                  As ResourceDictionary = Nothing
             
             Private Shared ThemePatchesLoaded       As Boolean = False
@@ -59,12 +60,12 @@ Namespace UI.Resources
             End Property
             
             ''' <summary> Returns a Dictionary with all Icon rectangles from <see cref="Icons"/>. Every key is the ResourceKey without the "_IconBrush" suffix. </summary>
-            Public Shared ReadOnly Property IconRectangles() As Dictionary(Of String, System.Windows.Shapes.Rectangle)
+            Public Shared ReadOnly Property IconRectangles() As IEnumerable(Of KeyValuePair(Of String, System.Windows.Shapes.Rectangle))
                 Get
                     SyncLock (SyncHandle)
                         If (_IconRectangles Is Nothing) Then
                             Try
-                                _IconRectangles = New Dictionary(Of String, System.Windows.Shapes.Rectangle)
+                                Dim tmp_IconRectangles As New Dictionary(Of String, System.Windows.Shapes.Rectangle)
                                 
                                 For Each de As DictionaryEntry in Icons
                                     Dim Rect As System.Windows.Shapes.Rectangle = getIconRectangle(CType(de.Key, String))
@@ -73,9 +74,10 @@ Namespace UI.Resources
                                         If (IconName.EndsWith(IconBrushSuffix) AndAlso (IconName.Length > IconBrushSuffix.Length)) Then 
                                             IconName = IconName.Substring(0, IconName.Length - IconBrushSuffix.Length)
                                         End If
-                                        _IconRectangles.Add(IconName, Rect)
+                                        tmp_IconRectangles.Add(IconName, Rect)
                                     End If
                                 Next
+                                _IconRectangles = tmp_IconRectangles.OrderBy(Of String)(Function(ByVal de2) de2.Key)
                             Catch ex As Exception 
                                 Logger.logError(ex, sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                             End Try 

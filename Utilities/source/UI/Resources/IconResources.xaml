@@ -152,6 +152,38 @@ This resource dictionary is used by the UserControls.
           </DrawingBrush.Drawing>
         </DrawingBrush>
         
+        <DrawingBrush x:Key="CircleSection1_IconBrush" Stretch="Uniform" >
+            <DrawingBrush.Drawing>
+                <GeometryDrawing Brush="#FF5A5A5A" >
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup FillRule="EvenOdd" >
+                            <EllipseGeometry RadiusX="5" RadiusY="5" Center="5,5" />
+                            <PathGeometry Figures="M 5,0.75  A 4.25 4.25 0 1 1 0.75,5  H 5  Z" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry> 
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        
+        <DrawingBrush x:Key="CircleSection3_IconBrush" Stretch="Uniform" >
+            <DrawingBrush.Drawing>
+                <GeometryDrawing Brush="#FF5A5A5A" >
+                    <GeometryDrawing.Geometry>
+                        <GeometryGroup FillRule="EvenOdd" >
+                            <EllipseGeometry RadiusX="5" RadiusY="5" Center="5,5" />
+                            <PathGeometry Figures="M 5,0.75  A 4.25 4.25 0 0 1 9.25,5  H 5  V 9.25  A 4.25 4.25 0 0 1 0.75,5  H 5  Z" />
+                        </GeometryGroup>
+                    </GeometryDrawing.Geometry> 
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        
+        <DrawingBrush x:Key="CircleSection9_IconBrush" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <GeometryDrawing Brush="Black" Geometry="M12 2C17.5 2 22 6.5 22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2M12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12C20 7.58 16.42 4 12 4M12 5C15.87 5 19 8.13 19 12H12V5Z" />
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+        
         <DrawingBrush x:Key="Close1_IconBrush" Stretch="Uniform">
           <DrawingBrush.Drawing>
             <DrawingGroup>
@@ -6732,6 +6764,9 @@ This resource dictionary is used by the UserControls.
     <!-- Icon Rectangles -->
         
         <Rectangle x:Key="Addressbook1_IconRectangle" Stretch="UniformToFill" Fill="{StaticResource Addressbook1_IconBrush}" />
+        <Rectangle x:Key="CircleSection1_IconRectangle" Stretch="UniformToFill" Fill="{StaticResource CircleSection1_IconBrush}" />
+        <Rectangle x:Key="CircleSection3_IconRectangle" Stretch="UniformToFill" Fill="{StaticResource CircleSection3_IconBrush}" />
+        <Rectangle x:Key="CircleSection9_IconRectangle" Stretch="UniformToFill" Fill="{StaticResource CircleSection9_IconBrush}" />
         <Rectangle x:Key="Close1_IconRectangle" Stretch="UniformToFill" Fill="{StaticResource Close1_IconBrush}" />
         <Rectangle x:Key="Earth1_IconRectangle" Stretch="UniformToFill" Fill="{StaticResource Earth1_IconBrush}" />
         <Rectangle x:Key="Earth2_IconRectangle" Stretch="UniformToFill" Fill="{StaticResource Earth2_IconBrush}" />

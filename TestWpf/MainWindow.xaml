@@ -384,8 +384,17 @@
                         Height="40"
                         Width="40"
                         Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
+                        
                         >
-                        TB
+                        <ToggleButton.Content>
+                            <Rectangle Stretch="UniformToFill" Fill="{StaticResource CircleSection3_IconBrush}" RenderTransformOrigin="0.5,0.5" >
+                                <Rectangle.RenderTransform>
+                                    <RotateTransform Angle="315" />
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+                        </ToggleButton.Content>
+                        
+                        <!-- Content="{StaticResource CircleSection1_IconRectangle}" -->
                         <!--Template="{StaticResource SimpleExpanderButtonTemp}"
                         OverridesDefaultStyle="False"-->
                     </ToggleButton>
