@@ -270,19 +270,20 @@ Namespace IO
             End Function
             
             ''' <summary> Shows all errors and warnings in jEdit's error list (if possible). </summary>
-             ''' <exception cref="System.NotSupportedException"> jEdit is actually not available. </exception>
+             ''' <remarks> If this method fails, an error is logged but no exception is thrown. </remarks>
             Public Sub ShowInJEdit()
-                
-                If (Not Apps.AppUtils.AvailableEditors.ContainsKey(Apps.AppUtils.SupportedEditors.jEdit)) Then
-                    Throw New NotSupportedException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_EditorNotAvailable, Apps.AppUtils.SupportedEditors.jEdit.ToDisplayString()))
-                End If
                 
                 If (Me.HasItemsWithSource) Then
                     ' Create Beanshell script.
                     Dim BshPath As String = Me.ToJeditBeanshell()
                     
-                    ' Start jEdit and run Beanshell script.
-                    Apps.AppUtils.startEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
+                    Try
+                        ' Start jEdit and run Beanshell script.
+                        Apps.AppUtils.startEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
+                        
+                    Catch ex As Exception
+                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.ParseErrorCollection_ErrorShowInJEdit)
+                    End Try
                 End If
             End Sub
             
@@ -350,10 +351,10 @@ Namespace IO
                                     oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                                 Next
                             End If
+                            
+                            ' Commit newly created error to list.
+                            oBsh.WriteLine("    errsrc.addError(err);" & Environment.NewLine)
                         End If
-                        
-                        ' Commit newly created error to list.
-                        oBsh.WriteLine("    errsrc.addError(err);" & Environment.NewLine)
                     Next
                     
                     ' Footer.

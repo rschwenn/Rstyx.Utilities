@@ -2018,6 +2018,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die Fehler konnten nicht in jEdit&apos;s Fehlerliste angezeigt werden. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property ParseErrorCollection_ErrorShowInJEdit() As String
+            Get
+                Return ResourceManager.GetString("ParseErrorCollection_ErrorShowInJEdit", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Datei konnte nicht gelöscht werden: %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property PdfUtils_FailedDeletePDF() As String

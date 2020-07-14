@@ -309,7 +309,7 @@ Namespace Apps
             ''' <summary> The given editor will be started if possible. </summary>
              ''' <param name="TargetEditor"> Determines one of the supported editors. </param>
              ''' <param name="Arguments">    Command line arguments for the editor. May be <see langword="null"/>. </param>
-             ''' <exception cref="System.ArgumentException"> <paramref name="TargetEditor"/> is not supported or <see cref="SupportedEditors"/><c>.None</c> or currently not available.. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="TargetEditor"/> is not supported or <see cref="SupportedEditors"/><c>.None</c> or currently not available. </exception>
              ''' <remarks> 
              ''' <para>
              ''' Notes on jEdit's command line:
