@@ -37,18 +37,21 @@ Namespace UI.ViewModel
         
         #Region "Private Fields"
             
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
+            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
             
-            Private CancelTaskCommandInfo           As DelegateUICommandInfo = Nothing
-            Private CmdTask                         As Task = Nothing
-            Private CmdTaskCancelTokenSource        As CancellationTokenSource = Nothing
+            Protected ReadOnly DeferredDoEventsAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf Me.DoEvents, System.Windows.Threading.Dispatcher.CurrentDispatcher)
+            Protected ReadOnly DoEventsDelay            As System.TimeSpan = System.TimeSpan.FromMilliseconds(250)
             
-            Private _IsCancellationSupported        As Boolean = False
-            Private _IsBusy                         As Boolean = False
-            Private _Decoration                     As UICommandDecoration = Nothing
+            Private ReadOnly CancelTaskCommandInfo      As DelegateUICommandInfo = Nothing
+            Private CmdTask                             As Task = Nothing
+            Private CmdTaskCancelTokenSource            As CancellationTokenSource = Nothing
+            
+            Private _IsCancellationSupported            As Boolean = False
+            Private _IsBusy                             As Boolean = False
+            Private _Decoration                         As UICommandDecoration = Nothing
             
             ''' <summary> Returns the Dispatcher of the tread which has created this view model (and should be the WPF UI thread). </summary>
-            Protected ReadOnly WpfUiDispatcher      As Dispatcher
+            Protected ReadOnly WpfUiDispatcher          As Dispatcher
             
         #End Region
         
@@ -133,7 +136,7 @@ Namespace UI.ViewModel
                 _IsCancellationSupported = SupportsCancellation
                 
                 Me.Decoration = TargetCommandInfo.Decoration
-                CancelTaskCommandInfo = createCancelTaskCommandInfo()
+                CancelTaskCommandInfo = CreateCancelTaskCommandInfo()
             End Sub
             
         #End Region
@@ -176,7 +179,7 @@ Namespace UI.ViewModel
         
         #Region "ICommand Members"
             
-            Private CanExecuteChangedEvents As New System.Collections.ObjectModel.Collection(Of EventHandler)
+            Private ReadOnly CanExecuteChangedEvents As New System.Collections.ObjectModel.Collection(Of EventHandler)
             
             ''' <summary> Indicates that changes occur which affect whether or not the command could be executed. This isn't raised automatically. </summary>
              ''' <remarks> 
@@ -231,7 +234,8 @@ Namespace UI.ViewModel
                 
                 If (Not Me.IsAsync) Then
                     Try
-                        Cinch.ApplicationHelper.DoEvents()
+                        'Cinch.ApplicationHelper.DoEvents()
+                        DeferredDoEventsAction.Defer(DoEventsDelay)
                     Catch ex As System.Exception
                         Logger.logDebug(ex.ToString())
                         Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
@@ -298,10 +302,10 @@ Namespace UI.ViewModel
                                 
                                 ' Register the task's continuation callback, which will be invoked in current thread (which shuld be the UI thread since this command is an UI command).
                                 Try
-                                    CmdTask.ContinueWith(AddressOf finishTask, TaskScheduler.FromCurrentSynchronizationContext())
+                                    CmdTask.ContinueWith(AddressOf FinishTask, TaskScheduler.FromCurrentSynchronizationContext())
                                 Catch ex As System.ObjectDisposedException
                                     ' Task has been finished already (?)
-                                    finishTask(CmdTask)
+                                    FinishTask(CmdTask)
                                 End Try
                             Else
                                 ' Start ExecuteAction in current thread.
@@ -312,7 +316,7 @@ Namespace UI.ViewModel
                                 Catch ex As System.Exception
                                     Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_SyncExecuteFailed, Me.TargetCommandInfo.Decoration.Caption))
                                 Finally
-                                    finishTask(Nothing)
+                                    FinishTask(Nothing)
                                 End Try
                             End If
                         End If
@@ -390,7 +394,7 @@ Namespace UI.ViewModel
         #Region "CancelTask Command"
             
             ''' <summary> Requests Cancellation of running task. </summary>
-            Private Function createCancelTaskCommandInfo() As DelegateUICommandInfo
+            Private Function CreateCancelTaskCommandInfo() As DelegateUICommandInfo
                 Dim CmdInfo  As New DelegateUICommandInfo()
                 Try
                     Dim Decoration As New UICommandDecoration()
@@ -398,7 +402,7 @@ Namespace UI.ViewModel
                     Decoration.Description = "Abbruch der laufenden Aktion."
                     Decoration.IconBrush   = Rstyx.Utilities.UI.Resources.UIResources.IconBrush("Tango_Stop1")
                     
-                    CmdInfo.ExecuteAction       = AddressOf Me.cancelTask
+                    CmdInfo.ExecuteAction       = AddressOf Me.CancelTask
                     CmdInfo.CanExecutePredicate = AddressOf Me.CanCancelTask
                     CmdInfo.Decoration          = Decoration
                     
@@ -441,7 +445,7 @@ Namespace UI.ViewModel
             End Function
             
             ''' <summary> Requests cancellation of running task. </summary>
-            Private Sub cancelTask()
+            Private Sub CancelTask()
                 Try
                     If (CmdTaskCancelTokenSource IsNot Nothing) Then
                         CmdTaskCancelTokenSource.Cancel()
@@ -465,7 +469,7 @@ Namespace UI.ViewModel
             ' End Sub
             
             ''' <summary> Finish completed task (change decoration and busy status). </summary>
-            Private Sub finishTask(FinishedTask As Task)
+            Private Sub FinishTask(FinishedTask As Task)
                 Try
                     Me.Decoration = TargetCommandInfo.Decoration
                     
@@ -493,6 +497,16 @@ Namespace UI.ViewModel
                     
                 Catch ex As System.Exception
                     Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_TaskFinishingFailed, Me.TargetCommandInfo.Decoration.Caption))
+                End Try
+            End Sub
+            
+            ''' <summary> Local DoEvents routine for <see cref="DeferredDoEventsAction"/>. </summary>
+            Private Sub DoEvents()
+                Try
+                    Cinch.ApplicationHelper.DoEvents()
+                Catch ex As System.Exception
+                    Logger.logDebug(ex.ToString())
+                    Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
                 End Try
             End Sub
             

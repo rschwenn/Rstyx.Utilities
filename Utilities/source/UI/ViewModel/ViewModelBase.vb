@@ -37,7 +37,10 @@ Namespace UI.ViewModel
         
         #Region "Fields"
             
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.ViewModelBase")
+            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.ViewModelBase")
+            
+            Protected ReadOnly DeferredDoEventsAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf DoEventsIfWpfUiThread, System.Windows.Threading.Dispatcher.CurrentDispatcher)
+            Protected ReadOnly DoEventsDelay            As System.TimeSpan = System.TimeSpan.FromMilliseconds(250)
             
         #End Region
         
@@ -99,7 +102,7 @@ Namespace UI.ViewModel
             
         #End Region
         
-        #Region "WPF dispatcher related"
+        #Region "WPF Dispatcher related"
             
             ''' <summary> Provides quick access to the ID of the tread of <see cref="WpfUiDispatcher"/>. </summary>
             Protected WpfUiThreadID     As Integer
@@ -129,9 +132,14 @@ Namespace UI.ViewModel
             ''' Forces the WPF message pump to process all enqueued messages that are <c>DispatcherPriority.Background</c> or above
             ''' if the calling thread is the WPF UI thread (the thread created this view model).
             ''' </summary>
-            Public Sub DoEventsIfWpfUiThread()
+            Protected Overridable Sub DoEventsIfWpfUiThread()
                 If (Thread.CurrentThread.ManagedThreadId = WpfUiThreadID) Then
-                    Cinch.ApplicationHelper.DoEvents()
+                    Try
+                        Cinch.ApplicationHelper.DoEvents()
+                    Catch ex As System.Exception
+                        Logger.logDebug(ex.ToString())
+                        Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                    End Try
                 End If
             End Sub
             
@@ -186,7 +194,7 @@ Namespace UI.ViewModel
                                 Decoration.Description = "Fenster schließen"
                                 Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Handmade_Power4")
                                 
-                                _CloseViewCommand = New DelegateUICommand(AddressOf Me.closeView, Decoration)
+                                _CloseViewCommand = New DelegateUICommand(AddressOf Me.CloseView, Decoration)
                             End If
                         Catch ex As System.Exception
                             Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
@@ -197,7 +205,7 @@ Namespace UI.ViewModel
                 End Property
                 
                 ''' <summary> Raises the <c>Cinch.ViewModelBase.CloseRequest</c> event. </summary>
-                Private Sub closeView()
+                Private Sub CloseView()
                     Try
                         MyBase.RaiseCloseRequest(Nothing)
                     Catch ex As System.Exception
@@ -299,22 +307,22 @@ Namespace UI.ViewModel
         
         #Region "IStatusIndicator Members"
             
-            Private _Progress                   As Double  = 0
-            Private _IsInProgress               As Boolean = False
-            Private _StatusText                 As String  = String.Empty
-            Private _StatusTextDefault          As String  = String.Empty
-            Private _StatusTextToolTip          As String  = Nothing
-            Private _StatusTextToolTipDefault   As String  = Nothing
+            Private _Progress                           As Double  = 0
+            Private _IsInProgress                       As Boolean = False
+            Private _StatusText                         As String  = String.Empty
+            Private _StatusTextDefault                  As String  = String.Empty
+            Private _StatusTextToolTip                  As String  = Nothing
+            Private _StatusTextToolTipDefault           As String  = Nothing
             
-            Private VisibleProgressStepCount    As Double  = 90
-            Private NextProgressThreshold       As Double  = 0
+            Private NextProgressThreshold               As Double  = 0
+            Private ReadOnly VisibleProgressStepCount   As Double  = 90
             
-            Private DeferredSetProgressAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf setProgressTo100, System.Windows.Threading.Dispatcher.CurrentDispatcher)
-            Private ReadOnly SetProgressDelay   As System.TimeSpan = System.TimeSpan.FromMilliseconds(300)
+            Private ReadOnly DeferredSetProgressAction  As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf SetProgressTo100, System.Windows.Threading.Dispatcher.CurrentDispatcher)
+            Private ReadOnly SetProgressDelay           As System.TimeSpan = System.TimeSpan.FromMilliseconds(300)
             
-            Private DeferredResetStateAction    As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf resetStateIndication, System.Windows.Threading.Dispatcher.CurrentDispatcher)
+            Private ReadOnly DeferredResetStateAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf resetStateIndication, System.Windows.Threading.Dispatcher.CurrentDispatcher)
             
-            Private Sub setProgressTo100()
+            Private Sub SetProgressTo100()
                 _Progress = 100
                 NextProgressThreshold = 0
                 MyBase.NotifyPropertyChanged("Progress")
@@ -330,7 +338,8 @@ Namespace UI.ViewModel
                     If (Value Xor _IsInProgress) Then
                         _IsInProgress = Value
                         MyBase.NotifyPropertyChanged("IsInProgress")
-                        DoEventsIfWpfUiThread()
+                        'DoEventsIfWpfUiThread()
+                        DeferredDoEventsAction.Defer(DoEventsDelay)
                     End If
                 End Set
             End Property
@@ -362,14 +371,14 @@ Namespace UI.ViewModel
                             _Progress = value
                         Else
                             _Progress = 99.8
-                            ' TODO: Replace by Reactive Extensions (?)
                             DeferredSetProgressAction.Defer(SetProgressDelay)
                         End if
                         
                         ' Notify about change: only at discrete values.
                         If (_Progress >= NextProgressThreshold) Then
                             MyBase.NotifyPropertyChanged("Progress")
-                            DoEventsIfWpfUiThread()
+                            'DoEventsIfWpfUiThread()
+                            DeferredDoEventsAction.Defer(DoEventsDelay)
                             NextProgressThreshold += 100 / VisibleProgressStepCount
                         End if
                     End if
@@ -400,7 +409,8 @@ Namespace UI.ViewModel
                         _StatusTextToolTip = Nothing
                         MyBase.NotifyPropertyChanged("StatusText")
                         MyBase.NotifyPropertyChanged("StatusTextToolTip")
-                        DoEventsIfWpfUiThread()
+                        'DoEventsIfWpfUiThread()
+                        DeferredDoEventsAction.Defer(DoEventsDelay)
                     End if
                 End Set
             End Property
@@ -437,7 +447,8 @@ Namespace UI.ViewModel
                     If (Not (value = _StatusTextToolTip)) Then
                         _StatusTextToolTip = value
                         MyBase.NotifyPropertyChanged("StatusTextToolTip")
-                        DoEventsIfWpfUiThread()
+                        'DoEventsIfWpfUiThread()
+                        DeferredDoEventsAction.Defer(DoEventsDelay)
                     End if
                 End Set
             End Property
@@ -460,6 +471,7 @@ Namespace UI.ViewModel
             ''' <summary> Sets status text to <see cref="StatusTextDefault"/>, <see cref="Progress"/> to zero and <see cref="IsInProgress"/> to <see langword="false"/> (immediately). </summary>
              ''' <remarks> If there's already a delayed reset pending, it's aborted. </remarks>
             Public Sub resetStateIndication() Implements IStatusIndicator.resetStateIndication
+                Debug.Print("ViewModelBase \ resetStateIndication:  Start...")
                 DeferredResetStateAction.Abort()
                 Me.StatusTextToolTip = Nothing
                 Me.StatusText = Me.StatusTextDefault
@@ -467,6 +479,7 @@ Namespace UI.ViewModel
                 Me.ProgressTickRange = 100
                 Me.ProgressTickRangeCount = 100
                 Me.IsInProgress = False
+                Debug.Print("ViewModelBase \ resetStateIndication:  End.")
             End Sub
             
             ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay), but immediately <see cref="IsInProgress"/> to <see langword="false"/>. </summary>
@@ -652,8 +665,6 @@ Namespace UI.ViewModel
                                                              ByRef SupportedValues As IDictionary(Of TProperty, String), _
                                                              Optional NotifyOnPropertyChanged As Boolean = False _
                                                              ) As Boolean
-                Dim success As Boolean = False
-                
                 ' Check arguments.
                 If (String.IsNullOrWhiteSpace(PropertyName)) Then Throw New System.ArgumentNullException("PropertyName")
                 If (SupportedValues Is Nothing) Then Throw New System.ArgumentNullException("SupportedValues")
@@ -668,7 +679,7 @@ Namespace UI.ViewModel
                 
                 ' Look up for the display string and get the corresponding property value
                 Dim NewPropertyValue  As TProperty = Nothing
-                success = SupportedValues.findKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
+                Dim success           As Boolean   = SupportedValues.findKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
                 
                 If (success) Then
                     Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
@@ -703,8 +714,6 @@ Namespace UI.ViewModel
                                                       SupportedValues As ICollection(Of TProperty),
                                                       Optional NotifyOnPropertyChanged As Boolean = False
                                                       ) As Boolean
-                Dim success As Boolean = False
-                
                 ' Check arguments.
                 If (String.IsNullOrWhiteSpace(PropertyName)) Then Throw New System.ArgumentNullException("PropertyName")
                 If (SupportedValues Is Nothing) Then Throw New System.ArgumentNullException("SupportedValues")
@@ -719,7 +728,7 @@ Namespace UI.ViewModel
                 
                 ' Look up for the string and get the corresponding property value
                 Dim NewPropertyValue  As TProperty = Nothing
-                success = SupportedValues.findItemByString(NewDesiredToStringValue, NewPropertyValue)
+                Dim success           As Boolean   = SupportedValues.findItemByString(NewDesiredToStringValue, NewPropertyValue)
                 
                 If (success) Then
                     Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
@@ -742,7 +751,7 @@ Namespace UI.ViewModel
             
             ' See http://karlshifflett.wordpress.com/archive/mvvm/input-validation-ui-exceptions-model-validation-errors/
             
-            Private UIValidationErrors As New Dictionary(Of String, UIValidationError)
+            Private ReadOnly UIValidationErrors As New Dictionary(Of String, UIValidationError)
             
             ''' <summary> Gets the count of current UI validation errors. </summary>
              ''' <returns> Count of current UI validation errors. </returns>
