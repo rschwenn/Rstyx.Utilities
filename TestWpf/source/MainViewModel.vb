@@ -32,7 +32,7 @@ Imports Rstyx.Utilities.StringUtils
 Public Class MainViewModel
     Inherits Rstyx.Utilities.UI.ViewModel.ViewModelBase
     
-    Private Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.MainViewModel")
+    Private ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.MainViewModel")
     
     
     #Region "Initializing and Finalizing"
@@ -89,7 +89,7 @@ Public Class MainViewModel
                         Decoration.IconBrush   = UI.Resources.UIResources.IconBrush("Handmade_Start1")
                         
                         Dim CmdInfo As New DelegateUICommandInfo
-                        CmdInfo.ExecuteAction       = AddressOf Me.test_1
+                        CmdInfo.ExecuteAction       = AddressOf Me.Test_1
                         CmdInfo.CanExecutePredicate = AddressOf Me.CanStartTestTask
                         CmdInfo.Decoration          = Decoration
                         
@@ -282,7 +282,7 @@ Public Class MainViewModel
             Dim dummy As String = "d"
         End Sub
         
-        Public Sub test_1(CancelToken As System.Threading.CancellationToken)
+        Public Sub Test_1(CancelToken As System.Threading.CancellationToken)
             
             'Dim TcReader As TcFileReader
             
@@ -344,7 +344,7 @@ Public Class MainViewModel
                 
                 'Dim KF As New KfFile(Me.FilePath1)
                 'Dim iP As New iPktFile(Me.FilePath1)
-                ' Dim TC As New TcFileReader(Me.FilePath1)
+                Dim TC As New TcFileReader(Me.FilePath1)
                 'TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
                 'TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
                 'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Ulm_LiRa_4700_Endzu.A0")
@@ -359,7 +359,7 @@ Public Class MainViewModel
                 'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
                 'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
                 Try
-                    'TC.Load()
+                    TC.Load()
                 Catch ex As Exception
                     Logger.logError(ex, "Crash...")
                 Finally
@@ -554,29 +554,29 @@ Public Class MainViewModel
                 ''DBconn.Open()
                 ''DBconn.Close()
                 '
-                Dim TableName = "Standorte$"
-                Dim Workbook  = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx"
-                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx")
-                'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
-                Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                'Using Table As System.Data.DataTable = DBconn.getTable(TableName)
-                    ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
-                    'Dim Table As DataTable = XLconn.getTable(TableName)
-                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
-                    'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
-                    
-                    'Dim SQL = "SELECT * FROM " & TableName
-                    'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
-                    'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
-                    
-                    'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                    'Dim yes = Table.containsField(Field)
-                    'Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
-                    '
-                    For Each row As System.Data.DataRow In Table.AsEnumerable()
-                        Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
-                    Next 
-                End Using
+                ' Dim TableName = "Standorte$"
+                ' Dim Workbook  = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx"
+                ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx")
+                ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
+                ' Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                ' 'Using Table As System.Data.DataTable = DBconn.getTable(TableName)
+                '     ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
+                '     'Dim Table As DataTable = XLconn.getTable(TableName)
+                '     'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
+                '     'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+                '     
+                '     'Dim SQL = "SELECT * FROM " & TableName
+                '     'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+                '     'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
+                '     
+                '     'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
+                '     'Dim yes = Table.containsField(Field)
+                '     'Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
+                '     '
+                '     For Each row As System.Data.DataRow In Table.AsEnumerable()
+                '         Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+                '     Next 
+                ' End Using
                 
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
                 'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))

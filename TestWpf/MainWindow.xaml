@@ -309,7 +309,7 @@
                     FontSize="15" 
                     DockPanel.Dock="Bottom" 
                     TabIndex="11"
-                    InputFilePath="X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\Utilities\source\Domain\TestData\Fmt_iGeo\Test_Attr.ipkt"
+                    InputFilePath="X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\Utilities\source\Domain\TestData\Fmt_iGeo\Km5-7_V241_MIT_Mini.A0"
                     ChangesWorkingDir="true"
                     Watermark="Wasserzeichen"
                     >

@@ -10,7 +10,7 @@ Imports System.IO
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.DBUtils")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.DBUtils")
             
         #End Region
         
@@ -172,7 +172,7 @@ Imports System.IO
         
         #Region "Private Fields"
             
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.DBExtensions")
+            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.DBExtensions")
             
         #End Region
         
@@ -190,10 +190,9 @@ Imports System.IO
                 If (Table Is Nothing) Then Throw New System.ArgumentNullException("Table")
                 If (FieldName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FieldName")
                 
-                Dim success  As Boolean = false
                 Logger.logDebug(StringUtils.sprintf("containsField(): Checks presence of field '%s' in table '%s'.", FieldName, Table.TableName))
                 
-                success = Table.Columns.Contains(FieldName)
+                Dim success  As Boolean = Table.Columns.Contains(FieldName)
                 
                 Logger.logDebug(StringUtils.sprintf("containsField(): Found field '%s' in table '%s'.", FieldName, Table.TableName))
                 
