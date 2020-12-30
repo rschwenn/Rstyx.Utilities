@@ -749,6 +749,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Minitrasse Radius ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_MiniR() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_MiniR", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Minitrasse Überhöhung ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_MiniUeb() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_MiniUeb", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Mittlerer Fehler der Lage ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_mp() As String
@@ -1028,6 +1046,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Achspunkt X (Hochwert) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_XA() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_XA", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Y (Rechtswert) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Y() As String
@@ -1037,11 +1064,29 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Achspunkt Y (Rechtswert) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_YA() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_YA", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Punkthöhe ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Z() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_Z", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Achspunkt Z (Höhe) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_ZA() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_ZA", resourceCulture)
             End Get
         End Property
         

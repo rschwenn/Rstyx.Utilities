@@ -1146,4 +1146,19 @@
   <data name="ParseErrorCollection_ErrorShowInJEdit" xml:space="preserve">
     <value>Die Fehler konnten nicht in jEdit's Fehlerliste angezeigt werden.</value>
   </data>
+  <data name="Domain_Label_MiniR" xml:space="preserve">
+    <value>Minitrasse Radius</value>
+  </data>
+  <data name="Domain_Label_MiniUeb" xml:space="preserve">
+    <value>Minitrasse Überhöhung</value>
+  </data>
+  <data name="Domain_Label_XA" xml:space="preserve">
+    <value>Achspunkt X (Hochwert)</value>
+  </data>
+  <data name="Domain_Label_YA" xml:space="preserve">
+    <value>Achspunkt Y (Rechtswert)</value>
+  </data>
+  <data name="Domain_Label_ZA" xml:space="preserve">
+    <value>Achspunkt Z (Höhe)</value>
+  </data>
 </root>

@@ -250,6 +250,24 @@ Namespace Domain
         Property CantBase()     As Double
         
         
+        ''' <summary> Footpoint on alignment: The easting coordinate. </summary>
+        Property YA()           As Double
+        
+        ''' <summary> Footpoint on alignment: The northing coordinate. </summary>
+        Property XA()           As Double
+        
+        ''' <summary> Footpoint on alignment: The height coordinate. </summary>
+        Property ZA()           As Double
+        
+        
+        ''' <summary> Mini alignment (km +/- 40m): Lowest Radius. </summary>
+        Property MiniR()        As Double
+        
+        ''' <summary> Mini alignment (km +/- 40m): Highest Cant (Superelevation) in [m]. </summary>
+         ''' <remarks> <b> Absolute Sign: </b>  Positive is treated as "left running surface is higher", negative as "right running surface is higher". </remarks>
+        Property MiniUeb()      As Double
+        
+        
         ''' <summary> Determines the reference frame of the track geometry. </summary>
         Property TrackRef()     As TrackGeometryInfo
         

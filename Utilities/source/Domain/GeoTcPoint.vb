@@ -195,6 +195,23 @@ Namespace Domain
             
             
             ''' <inheritdoc/>
+            Public Property YA()            As Double = Double.NaN Implements IPointAtTrackGeometry.YA
+            
+            ''' <inheritdoc/>
+            Public Property XA()            As Double = Double.NaN Implements IPointAtTrackGeometry.XA
+            
+            ''' <inheritdoc/>
+            Public Property ZA()            As Double = Double.NaN Implements IPointAtTrackGeometry.ZA
+            
+            
+            ''' <inheritdoc/>
+            Public Property MiniR()         As Double = Double.NaN Implements IPointAtTrackGeometry.MiniR
+            
+            ''' <inheritdoc/>
+            Public Property MiniUeb()       As Double = Double.NaN Implements IPointAtTrackGeometry.MiniUeb
+            
+            
+            ''' <inheritdoc/>
             Public Property TrackRef()      As TrackGeometryInfo = Nothing Implements IPointAtTrackGeometry.TrackRef
             
         #End Region
