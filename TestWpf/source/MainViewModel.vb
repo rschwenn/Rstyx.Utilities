@@ -554,7 +554,8 @@ Public Class MainViewModel
                 ''DBconn.Open()
                 ''DBconn.Close()
                 '
-                ' Dim TableName = "Standorte$"
+                Dim TableName = "Standorte$"
+                Dim Workbook  = "C:\ProgramData\intermetric\sync_Ressourcen\MicroStation\Workspace\standards\I_Tabellen\Standortdaten.xlsx"
                 ' Dim Workbook  = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx"
                 ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx")
                 ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
@@ -702,6 +703,7 @@ Public Class MainViewModel
             'Dim Field = "UserDomain"
             'Dim TableName = "Standorte$"
             'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
+            'Dim Workbook  = "C:\ProgramData\intermetric\sync_Ressourcen\MicroStation\Workspace\standards\I_Tabellen\Standortdaten.xlsx"
             '
             'Dim XLconn As OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
             ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
