@@ -13,7 +13,7 @@ Imports System.Windows.Markup
 <Assembly: AssemblyDescription("General Development Utilities")> 
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("Rstyx.Utilities")> 
-<Assembly: AssemblyCopyright("Copyright © Robert Schwenn 2012-2020")> 
+<Assembly: AssemblyCopyright("Copyright © Robert Schwenn 2012-2021")> 
 <Assembly: AssemblyTrademark("")> 
 
 ' XAML namespace mappings.
@@ -43,5 +43,5 @@ Imports System.Windows.Markup
 ' übernehmen, indem Sie "*" eingeben:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("2.7.3.0")> 
-<Assembly: AssemblyFileVersion("2.7.3.0")> 
+<Assembly: AssemblyVersion("2.7.3.9")> 
+<Assembly: AssemblyFileVersion("2.7.3.9")> 

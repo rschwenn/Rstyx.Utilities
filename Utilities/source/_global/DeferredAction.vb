@@ -49,7 +49,7 @@ Public Class DeferredAction
             If (action Is Nothing) Then Throw New ArgumentNullException("action")
             If (dispatcher Is Nothing) Then Throw New ArgumentNullException("dispatcher")
             
-            Me.timer = New System.Threading.Timer(New System.Threading.TimerCallback(Function() dispatcher.Invoke(action) ))
+            Me.timer = New System.Threading.Timer(New System.Threading.TimerCallback(Sub() dispatcher.Invoke(action) ))
         End Sub
         
     #End Region
