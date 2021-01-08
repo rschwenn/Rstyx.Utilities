@@ -38,7 +38,7 @@ Imports Rstyx.Utilities.StringUtils
 Public Class MainViewModel
     Inherits Rstyx.Utilities.UI.ViewModel.ViewModelBase
     
-    Private ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.MainViewModel")
+    Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.MainViewModel")
     
     
     #Region "Initializing and Finalizing"
@@ -345,49 +345,75 @@ Public Class MainViewModel
          '  
         'End Sub
         
+        ''' <summary> Gets a whole Table from a given Excel worksheet (via ExcelDataReader). </summary>
+         ''' <param name="XlFilePath"> Full path of Excel worksheet. </param>
+         ''' <param name="TableName">  The name of the table to get. </param>
+         ''' <returns>                 The DataTable. </returns>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="TableName"/> is <see langword="null"/> or empty. </exception>
+         ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="XlFilePath"/> hasn't been found (may be empty or invalid). </exception>
+         ''' <exception cref="Rstyx.Utilities.RemarkException"> Wraps any exception with a clear message. </exception>
+        Public Shared Function GetExcelSheet(TableName As String, XlFilePath As String) As DataTable
+            
+            If (TableName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TableName")
+            If (Not File.Exists(XlFilePath)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.DBUtils_ExcelWorkbookNotFound, XlFilePath)
+            Try
+                Logger.logDebug(sprintf("getExcelSheet(): Try to get table '%s' from Excel workbook '%s'.", TableName, XlFilePath))
+                
+                Using oFS As FileStream = File.OpenRead(XlFilePath)
+                    
+                    Dim DataSetConfig As New ExcelDataSetConfiguration()
+                    DataSetConfig.UseColumnDataType  = False
+                    DataSetConfig.ConfigureDataTable = Function(Reader As IExcelDataReader) (New ExcelDataTableConfiguration() With {.UseHeaderRow = True})
+                    DataSetConfig.FilterSheet        = Function(Reader As IExcelDataReader, SheetIndex As Integer) (Reader.Name = TableName)
+                    
+                    Dim XlReader As IExcelDataReader = ExcelReaderFactory.CreateOpenXmlReader(oFS)
+                    Dim Sheets   As DataSet          = XlReader.AsDataSet(DataSetConfig)
+                    
+                    If (Not Sheets.Tables.Contains(TableName)) Then
+                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_TableNotFoundInExcelWorkbook, TableName, XlFilePath))
+                    End If
+                    
+                    Return Sheets.Tables(TableName)
+                End Using
+                
+            Catch ex As System.Exception
+                Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_OpenExcelWorksheetFailed, TableName, XlFilePath), ex)
+            End Try
+        End Function
+        
         Public Sub TestExcelDataReader()
             
             Dim TableName  = "Standorte"
             Dim Workbook   = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Standortdaten.xlsx"
-            Dim Exceptions = New List(Of Exception)()
             
             Logger.logInfo("TestExcelDataReader:")
+            Dim Sheet As DataTable = GetExcelSheet(TableName, Workbook)
             
-            Using oFS As FileStream = File.OpenRead(Workbook)
-
-                'Dim TableConfig As New ExcelDataTableConfiguration()
-                'TableConfig.UseHeaderRow = True
-                
-                Dim DataSetConfig As New ExcelDataSetConfiguration()
-                DataSetConfig.UseColumnDataType  = False
-                DataSetConfig.ConfigureDataTable = Function(Reader As IExcelDataReader) (New ExcelDataTableConfiguration() With {.UseHeaderRow = True})
-                DataSetConfig.FilterSheet        = Function(Reader As IExcelDataReader, SheetIndex As Integer) (Reader.Name = TableName)
-                
-                Dim XlReader As IExcelDataReader = ExcelReaderFactory.CreateOpenXmlReader(oFS)
-                Dim Sheets   As DataSet = XlReader.AsDataSet(DataSetConfig)
-                
-                If (Not Sheets.Tables.Contains(TableName)) Then
-                    Logger.logInfo("Tabelle xxx existiert nicht!")
-                Else
-                    Dim Sheet As DataTable = Sheets.Tables(TableName)
-                End If
-                
-                'Dim Sites As IEnumerable(Of SiteRecord) = oFS.ExcelToEnumerable(Of SiteRecord)(Options)
-                
-                'For Each Site As SiteRecord In oFS.ExcelToEnumerable(Of SiteRecord)(DataSetConfig)
-                '    Logger.logInfo(sprintf("Zeile=%2d, aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site.SourceExcelRow, Site.active, Site.Standort_ID, Site.PLZ, Site.Ort))
-                'Next
-                Logger.logInfo("TestExcelDataReader fertig")
-            End Using
-            
-            For Each ex As Exception In Exceptions
-                'If (TypeOf ex Is ExcelToEnumerableCellException) Then
-                '    Dim ex2 As ExcelToEnumerableCellException = DirectCast(ex, ExcelToEnumerableCellException)
-                '    Logger.logInfo(sprintf("Fehler:  Zeile %2d, Feld=%s:  %s", ex2.RowNumber, ex2.PropertyName, ex2.Message))
-                'Else 
-                    Logger.logInfo(sprintf("Fehler:  %s", ex.Message))
-                'End If
+            For Each Site As DataRow In Sheet.Rows
+                Logger.logInfo(sprintf("aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site("aktiv"), Site("Standort_ID"), Site("PLZ"), Site("Ort")))
             Next
+            
+            'Using oFS As FileStream = File.OpenRead(Workbook)
+            '
+            '    Dim Sheet As DataTable
+            '    
+            '    Dim DataSetConfig As New ExcelDataSetConfiguration()
+            '    DataSetConfig.UseColumnDataType  = False
+            '    DataSetConfig.ConfigureDataTable = Function(Reader As IExcelDataReader) (New ExcelDataTableConfiguration() With {.UseHeaderRow = True})
+            '    DataSetConfig.FilterSheet        = Function(Reader As IExcelDataReader, SheetIndex As Integer) (Reader.Name = TableName)
+            '    
+            '    Dim XlReader As IExcelDataReader = ExcelReaderFactory.CreateOpenXmlReader(oFS)
+            '    Dim Sheets   As DataSet = XlReader.AsDataSet(DataSetConfig)
+            '    
+            '    If (Not Sheets.Tables.Contains(TableName)) Then
+            '        Logger.logInfo("Tabelle xxx existiert nicht!")
+            '    Else
+            '        Sheet = Sheets.Tables(TableName)
+            '        For Each Site As DataRow In Sheet.Rows
+            '            Logger.logInfo(sprintf("aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site("aktiv"), Site("Standort_ID"), Site("PLZ"), Site("Ort")))
+            '        Next
+            '    End If
+            'End Using
             
         End Sub
         

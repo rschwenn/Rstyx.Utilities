@@ -1161,4 +1161,8 @@
   <data name="Domain_Label_ZA" xml:space="preserve">
     <value>Achspunkt Z (Höhe)</value>
   </data>
+  <data name="DBUtils_TableNotFoundInExcelWorkbook" xml:space="preserve">
+    <value>Die Tabelle '%s' existiert nicht in der Arbeitsmappe '%s'.</value>
+    <comment>ExcelTable Name: String; ExcelWorksheet Name: String</comment>
+  </data>
 </root>

@@ -335,6 +335,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die Tabelle &apos;%s&apos; existiert nicht in der Arbeitsmappe &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DBUtils_TableNotFoundInExcelWorkbook() As String
+            Get
+                Return ResourceManager.GetString("DBUtils_TableNotFoundInExcelWorkbook", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die SysL ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_AttName_CoordSys() As String
