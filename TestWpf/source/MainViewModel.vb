@@ -8,6 +8,7 @@ Imports System.Data.DataTableExtensions
 Imports System.Drawing
 Imports System.Drawing.Imaging
 Imports System.Linq
+Imports System.Linq.Expressions
 Imports System.Math
 Imports System.IO
 Imports System.Text
@@ -18,6 +19,11 @@ Imports System.Threading.Tasks
 
 'Imports org.pdfclown.documents
 'Imports org.pdfclown.files
+
+'Imports ExcelToEnumerable
+'Imports ExcelToEnumerable.Exceptions
+
+Imports ExcelDataReader
 
 Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Collections
@@ -282,6 +288,110 @@ Public Class MainViewModel
             Dim dummy As String = "d"
         End Sub
         
+        ' For TestExcelToEnumerator:
+        'Public Class SiteRecord
+         '  Public Property deactivated         As String
+         '  Public Property active              As String
+         '  Public Property Standort_ID         As String
+         '  Public Property UserDomain          As String
+         '  Public Property Name                As String
+         '  Public Property PLZ                 As String
+         '  Public Property Ort                 As String
+         '  Public Property Strasse             As String
+         '  Public Property Tel                 As String
+         '  Public Property Fax                 As String
+         '  Public Property Mail                As String
+         '  Public Property Hinweise            As String
+         '  Public Property Fusszeile_Excel_1   As String
+         '  Public Property SourceExcelRow      As Integer
+        'End Class
+        
+        'Public Sub TestExcelToEnumerator()
+         '  
+         '  Dim TableName  = "Standorte"
+         '  Dim Workbook   = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Standortdaten.xlsx"
+         '  Dim Exceptions = New List(Of Exception)()
+         '  
+         '  Logger.logInfo("TestExcelToEnumerator:")
+         '  
+         '  Using oFS As FileStream = File.OpenRead(Workbook)
+         '      
+         '      Dim Options As ExcelToEnumerableOptionsBuilder(Of SiteRecord) = (New ExcelToEnumerableOptionsBuilder(Of SiteRecord)) _
+         '          .UsingSheet(TableName) _
+         '          .UsingHeaderNames(True) _
+         '          .OutputExceptionsTo(Exceptions) _
+         '          .Property(Function(oSite As SiteRecord) oSite.Standort_ID).ShouldBeUnique() _
+         '          .Property(Function(oSite As SiteRecord) oSite.Standort_ID).IsRequired() _
+         '          .Property(Function(oSite As SiteRecord) oSite.active).UsesColumnNamed("aktiv") _
+         '          .Property(Function(oSite As SiteRecord) oSite.active).ShouldBeOneOf("1", "") _
+         '          .Property(Function(oSite As SiteRecord) oSite.SourceExcelRow).MapsToRowNumber()
+         '      
+         '      'Dim Sites As IEnumerable(Of SiteRecord) = oFS.ExcelToEnumerable(Of SiteRecord)(Options)
+         '      
+         '      For Each Site As SiteRecord In oFS.ExcelToEnumerable(Of SiteRecord)(Options)
+         '          Logger.logInfo(sprintf("Zeile=%2d, aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site.SourceExcelRow, Site.active, Site.Standort_ID, Site.PLZ, Site.Ort))
+         '      Next
+         '      
+         '  End Using
+         '  
+         '  For Each ex As Exception In Exceptions
+         '      If (TypeOf ex Is ExcelToEnumerableCellException) Then
+         '          Dim ex2 As ExcelToEnumerableCellException = DirectCast(ex, ExcelToEnumerableCellException)
+         '          Logger.logInfo(sprintf("Fehler:  Zeile %2d, Feld=%s:  %s", ex2.RowNumber, ex2.PropertyName, ex2.Message))
+         '      Else 
+         '          Logger.logInfo(sprintf("Fehler:  %s", ex.Message))
+         '      End If
+         '  Next
+         '  
+        'End Sub
+        
+        Public Sub TestExcelDataReader()
+            
+            Dim TableName  = "Standorte"
+            Dim Workbook   = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Standortdaten.xlsx"
+            Dim Exceptions = New List(Of Exception)()
+            
+            Logger.logInfo("TestExcelDataReader:")
+            
+            Using oFS As FileStream = File.OpenRead(Workbook)
+
+                'Dim TableConfig As New ExcelDataTableConfiguration()
+                'TableConfig.UseHeaderRow = True
+                
+                Dim DataSetConfig As New ExcelDataSetConfiguration()
+                DataSetConfig.UseColumnDataType  = False
+                DataSetConfig.ConfigureDataTable = Function(Reader As IExcelDataReader) (New ExcelDataTableConfiguration() With {.UseHeaderRow = True})
+                DataSetConfig.FilterSheet        = Function(Reader As IExcelDataReader, SheetIndex As Integer) (Reader.Name = TableName)
+                
+                Dim XlReader As IExcelDataReader = ExcelReaderFactory.CreateOpenXmlReader(oFS)
+                Dim Sheets   As DataSet = XlReader.AsDataSet(DataSetConfig)
+                
+                If (Not Sheets.Tables.Contains(TableName)) Then
+                    Logger.logInfo("Tabelle xxx existiert nicht!")
+                Else
+                    Dim Sheet As DataTable = Sheets.Tables(TableName)
+                End If
+                
+                'Dim Sites As IEnumerable(Of SiteRecord) = oFS.ExcelToEnumerable(Of SiteRecord)(Options)
+                
+                'For Each Site As SiteRecord In oFS.ExcelToEnumerable(Of SiteRecord)(DataSetConfig)
+                '    Logger.logInfo(sprintf("Zeile=%2d, aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site.SourceExcelRow, Site.active, Site.Standort_ID, Site.PLZ, Site.Ort))
+                'Next
+                Logger.logInfo("TestExcelDataReader fertig")
+            End Using
+            
+            For Each ex As Exception In Exceptions
+                'If (TypeOf ex Is ExcelToEnumerableCellException) Then
+                '    Dim ex2 As ExcelToEnumerableCellException = DirectCast(ex, ExcelToEnumerableCellException)
+                '    Logger.logInfo(sprintf("Fehler:  Zeile %2d, Feld=%s:  %s", ex2.RowNumber, ex2.PropertyName, ex2.Message))
+                'Else 
+                    Logger.logInfo(sprintf("Fehler:  %s", ex.Message))
+                'End If
+            Next
+            
+        End Sub
+        
+        
         Public Sub Test_1(CancelToken As System.Threading.CancellationToken)
             
             'Dim TcReader As TcFileReader
@@ -289,9 +399,12 @@ Public Class MainViewModel
             'Try
                 Logger.logInfo("")
                 
+                Call TestExcelDataReader()
+                
                 'Call TestOrder()
                 'Call TestPDF()
                 'Call TestJPEG()
+                
                 
                 'Dim p As New GeoIPoint ()
                 'p.ParseTextForKindCodes(Me.Textbox)
@@ -312,9 +425,9 @@ Public Class MainViewModel
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
                 
-                Dim d1 As Double = Double.NaN
-                d1.TryParse("+Unendlich")
-                Logger.logInfo(sprintf("%+5.3f", d1))
+                'Dim d1 As Double = Double.NaN
+                'd1.TryParse("+Unendlich")
+                'Logger.logInfo(sprintf("%+5.3f", d1))
                 
                 'Dim d2 As Double = Double.NegativeInfinity
                 'Dim d3 As Double = Double.PositiveInfinity
@@ -342,29 +455,29 @@ Public Class MainViewModel
                 'Dim KV As New KvFile(Me.FilePath1)
                 'Dim KV As New KvFile("D:\Daten\koo\Test-KV.kv")
                 
-                'Dim KF As New KfFile(Me.FilePath1)
-                'Dim iP As New iPktFile(Me.FilePath1)
-                Dim TC As New TcFileReader(Me.FilePath1)
-                'TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
-                'TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
-                'Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Ulm_LiRa_4700_Endzu.A0")
-                'TC.EditOptions = GeoPointEditOptions.GuessAllKindsFromInfo
-                'KV.CollectParseErrors = True
-                'TC.ShowParseErrorsInJedit = False
-                'iP.Constraints = GeoPointConstraints.UniqueID
-                'TC.CollectParseErrors = True
-                'KV.Constraints = GeoPointConstraints.UniqueID 
-                'Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
-                'Dim pts As GeoPointOpenList = KV.Load()
-                'TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
-                'Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
-                Try
-                    TC.Load()
-                Catch ex As Exception
-                    Logger.logError(ex, "Crash...")
-                Finally
-                    'Logger.logInfo(TC.ToReport(OnlySummary:=False))
-                End Try
+                ''Dim KF As New KfFile(Me.FilePath1)
+                ''Dim iP As New iPktFile(Me.FilePath1)
+                'Dim TC As New TcFileReader(Me.FilePath1)
+                ''TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
+                ''TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
+                ''Dim TC As New TcFileReader("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Ulm_LiRa_4700_Endzu.A0")
+                ''TC.EditOptions = GeoPointEditOptions.GuessAllKindsFromInfo
+                ''KV.CollectParseErrors = True
+                ''TC.ShowParseErrorsInJedit = False
+                ''iP.Constraints = GeoPointConstraints.UniqueID
+                ''TC.CollectParseErrors = True
+                ''KV.Constraints = GeoPointConstraints.UniqueID 
+                ''Dim pts As GeoPointOpenList = iP.Load(Me.FilePath1)
+                ''Dim pts As GeoPointOpenList = KV.Load()
+                ''TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\Test1_AKG----D.A0")
+                ''Dim pts As GeoPointOpenList = TC.Load("X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\source\IstGleis_2008_GIC.a0")
+                'Try
+                '    TC.Load()
+                'Catch ex As Exception
+                '    Logger.logError(ex, "Crash...")
+                'Finally
+                '    'Logger.logInfo(TC.ToReport(OnlySummary:=False))
+                'End Try
                 ' 'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
                 'Dim pts As New GeoPointOpenList(KV.PointStream, KV)
                 ' 
@@ -554,8 +667,8 @@ Public Class MainViewModel
                 ''DBconn.Open()
                 ''DBconn.Close()
                 '
-                Dim TableName = "Standorte$"
-                Dim Workbook  = "C:\ProgramData\intermetric\sync_Ressourcen\MicroStation\Workspace\standards\I_Tabellen\Standortdaten.xlsx"
+                'Dim TableName = "Standorte$"
+                'Dim Workbook  = "C:\ProgramData\intermetric\sync_Ressourcen\MicroStation\Workspace\standards\I_Tabellen\Standortdaten.xlsx"
                 ' Dim Workbook  = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx"
                 ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx")
                 ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)

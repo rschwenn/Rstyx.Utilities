@@ -57,7 +57,7 @@ Imports System.IO
              ''' The connection uses Microsoft Jet which comes with Windows but is <b>not available in a 64 bit process</b>!
              ''' </para>
              ''' </remarks>
-            Public Shared Function connectToExcelWorkbook(byVal XlFilePath As String) As OleDbConnection
+            Public Shared Function ConnectToExcelWorkbook(byVal XlFilePath As String) As OleDbConnection
                 
                 Logger.logDebug(StringUtils.sprintf("connectToExcelWorkbook(): Try to establish DB conection to Excel workbook '%s'.", XlFilePath))
                 
@@ -112,7 +112,7 @@ Imports System.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="TableName"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="XlFilePath"/> hasn't been found (may be empty or invalid). </exception>
              ''' <exception cref="Rstyx.Utilities.RemarkException"> Wraps any exception with a clear message. </exception>
-            Public Shared Function getExcelSheet(byVal TableName As String, byVal XlFilePath As String) As DataTable
+            Public Shared Function GetExcelSheet(byVal TableName As String, byVal XlFilePath As String) As DataTable
                 
                 If (TableName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TableName")
                 If (Not File.Exists(XlFilePath)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.DBUtils_ExcelWorkbookNotFound, XlFilePath)
@@ -121,8 +121,8 @@ Imports System.IO
                     TableName &= "$"
                     Logger.logDebug(StringUtils.sprintf("getExcelSheet(): Try to get table '%s' from Excel workbook '%s'.", TableName, XlFilePath))
                     
-                    Using XLconn As OleDbConnection = connectToExcelWorkbook(XlFilePath)
-                        Return XLconn.getTable(TableName)
+                    Using XLconn As OleDbConnection = ConnectToExcelWorkbook(XlFilePath)
+                        Return XLconn.GetTable(TableName)
                     End Using
                     
                 Catch ex As System.Exception
@@ -146,7 +146,7 @@ Imports System.IO
              ''' any occuring exception willbe thrown.
              ''' </para>
              ''' </remarks>
-            Private Shared Sub configureJetForExcel()
+            Private Shared Sub ConfigureJetForExcel()
                 
                 Const TypeGuessRows     As Integer = 0
                 Const ValuePathName     As String  = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Jet\4.0\Engines\Excel\TypeGuessRows"
@@ -185,7 +185,7 @@ Imports System.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FieldName"/> is <see langword="null"/> or empty. </exception>
              ''' <returns>                 <see langword="true"/>, if the field has been found in the table, otherwise <see langword="false"/>. </returns>
              <System.Runtime.CompilerServices.Extension()> 
-            Public Function containsField(Table As DataTable, byVal FieldName As String) As Boolean
+            Public Function ContainsField(Table As DataTable, byVal FieldName As String) As Boolean
                 
                 If (Table Is Nothing) Then Throw New System.ArgumentNullException("Table")
                 If (FieldName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FieldName")
@@ -211,7 +211,7 @@ Imports System.IO
                 If (Table Is Nothing) Then Throw New System.ArgumentNullException("Table")
                 If (FieldName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FieldName")
                 
-                If (Not Table.containsField(FieldName)) Then
+                If (Not Table.ContainsField(FieldName)) Then
                     Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_FieldNotFoundInTable, FieldName, Table.TableName))
                 End If
             End Sub
@@ -228,7 +228,7 @@ Imports System.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="TableName"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="System.Data.OleDb.OleDbException"> Database error opening table. </exception>
              <System.Runtime.CompilerServices.Extension()> 
-            Public Function getTable(DBconn As OleDbConnection, byVal TableName As String) As DataTable
+            Public Function GetTable(DBconn As OleDbConnection, byVal TableName As String) As DataTable
                 
                 If (DBConn Is Nothing) Then Throw New System.ArgumentNullException("DBConn")
                 If (TableName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TableName")
@@ -255,7 +255,7 @@ Imports System.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SQL"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="System.Data.OleDb.OleDbException"> Database error. </exception>
              <System.Runtime.CompilerServices.Extension()> 
-            Public Function query(DBconn As OleDbConnection, byVal SQL As String) As DataTable
+            Public Function Query(DBconn As OleDbConnection, byVal SQL As String) As DataTable
                 
                 If (DBConn Is Nothing) Then Throw New System.ArgumentNullException("DBConn")
                 If (SQL.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("SQL")
