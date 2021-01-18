@@ -47,7 +47,8 @@ Namespace Math
              ''' <param name="Value">  String to parse. </param>
              ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
              ''' <remarks>
-             ''' If <c>Double.TryParse</c> fails, then special parsing will be done for "unendlich", "+unendlich", "-unendlich".
+             ''' If <c>Double.TryParse</c> fails, then special parsing will be done for "unendlich", "+unendlich", "-unendlich", 
+             ''' "infinity", "+infinity", "-infinity" and the infinity sign (U+221E) with or without a sign.
              ''' </remarks>
             <System.Runtime.CompilerServices.Extension()> 
             Public Function TryParse(<out> ByRef Result As Double, Value As String) As Boolean
@@ -57,9 +58,13 @@ Namespace Math
                     success = Double.TryParse(Value, Result)
                     
                     If (Not success) Then
+                        Dim Inf    As String = ChrW(&H221E)   ' Infinity sign
+                        Dim PosInf As String = "+" & Inf      ' Positive Infinity sign
+                        Dim NegInf As String = "-" & Inf      ' Negative Infinity sign
+                        
                         Select Case Value.ToLowerInvariant()
-                            Case "unendlich", "+unendlich" :  Result = Double.PositiveInfinity : success = True
-                            Case "-unendlich"              :  Result = Double.NegativeInfinity : success = True
+                            Case "unendlich", "+unendlich", "infinity", "+infinity", Inf, PosInf :  Result = Double.PositiveInfinity : success = True
+                            Case              "-unendlich",             "-infinity",      NegInf :  Result = Double.NegativeInfinity : success = True
                         End Select
                     End If
                 End If

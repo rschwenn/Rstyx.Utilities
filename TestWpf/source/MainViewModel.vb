@@ -417,6 +417,30 @@ Public Class MainViewModel
             
         End Sub
         
+        Public Shared Sub StartProcessTest()
+            
+            Logger.logInfo("StartProcessTest startet ..")
+            'Dim Batch As String = "G:\Bat\Querprf.bat"
+            Dim Batch As String = "X:\Quellen\Wscripts\Querprf\Querprf.bat"
+            Dim ipkt  As String = "X:\Quellen\Wscripts\Querprf\Bf_Memmingen_QP_5400.ipkt"
+            
+            ' Start process.
+            Dim StartInfo  As New System.Diagnostics.ProcessStartInfo()
+            StartInfo.FileName  = Batch
+            StartInfo.Arguments = ipkt
+            StartInfo.UseShellExecute = False
+            StartInfo.WorkingDirectory = "X:\Quellen\Wscripts\Querprf"
+            
+            'Logger.logDebug(StringUtils.sprintf("startEditor(): Auszuführende Datei: '%s'.", StartInfo.FileName))
+            'Logger.logDebug(StringUtils.sprintf("startEditor(): Argumente: '%s'.", StartInfo.Arguments))
+            'Logger.logDebug(StringUtils.sprintf("startEditor(): %s wird gestartet.", TargetEditor.ToDisplayString()))
+
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture
+            
+            Using Proc As System.Diagnostics.Process = System.Diagnostics.Process.Start(StartInfo)
+            End Using
+            Logger.logInfo("StartProcessTest Ende.")
+        End Sub
         
         Public Sub Test_1(CancelToken As System.Threading.CancellationToken)
             
@@ -425,7 +449,8 @@ Public Class MainViewModel
             'Try
                 Logger.logInfo("")
                 
-                Call TestExcelDataReader()
+                'Call StartProcessTest()
+                'Call TestExcelDataReader()
                 
                 'Call TestOrder()
                 'Call TestPDF()
@@ -451,17 +476,42 @@ Public Class MainViewModel
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
                 
-                'Dim d1 As Double = Double.NaN
-                'd1.TryParse("+Unendlich")
-                'Logger.logInfo(sprintf("%+5.3f", d1))
+                Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
+                Dim d1 As Double = Double.NaN
+                d1.TryParse("+Unendlich")
+                Logger.logInfo(sprintf("%+5.3f", d1))
                 
-                'Dim d2 As Double = Double.NegativeInfinity
-                'Dim d3 As Double = Double.PositiveInfinity
-                'Logger.logInfo(d2.ToString())
-                'Logger.logInfo(d3.ToString())
-                'Logger.logInfo(sprintf("%+5.3f", d2))
-                ''Logger.logInfo(sprintf("%+5.3f", d3))
-                '
+                Dim d2 As Double = Double.NegativeInfinity
+                Dim d3 As Double = Double.PositiveInfinity
+                Logger.logInfo(d2.ToString())
+                Logger.logInfo(d3.ToString())
+                Logger.logInfo(sprintf("%+5.3f", d2))
+                'Logger.logInfo(sprintf("%+5.3f", d3))
+
+                Dim NegInf As String = "" & ChrW(&H221E)
+
+                Logger.logInfo("")
+                
+                System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture.Clone()
+                System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.PositiveInfinitySymbol = ChrW(&H221E)
+                System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NegativeInfinitySymbol = "-" & ChrW(&H221E)
+                
+                'System.Threading.Thread.CurrentThread.CurrentCulture = New System.Globalization.CultureInfo("de")
+                Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
+                
+                d1 = Double.NaN
+                d1.TryParse("+Unendlich")
+                Logger.logInfo(sprintf("%+5.3f", d1))
+                
+                d2 = Double.NegativeInfinity
+                d3 = Double.PositiveInfinity
+                Logger.logInfo(d2.ToString())
+                Logger.logInfo(d3.ToString())
+                Logger.logInfo(sprintf("%+5.3f", d2))
+                
+                d1.TryParse(NegInf)
+                Logger.logInfo(sprintf(" %s => %+5.3f", NegInf, d1))
+                
                 'Dim int1 As Integer = 1
                 'Dim int2 As Nullable(Of Integer) = 2
                 'Dim int3 As Nullable(Of Integer) = Nothing
