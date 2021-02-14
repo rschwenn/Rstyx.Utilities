@@ -7,19 +7,19 @@
 Option explicit
 on error goto 0
 
-const Version     = "v2.7.3"
+const Version     = "v2.8.R"
 
 ' --- Klassen einbinden ----------------------------------------------
   dim oSkript, oXLTools, oTools_1
   
-  set oSkript = new Skript
+  set oSkript  = new Skript
   set oTools_1 = new Tools_1
   set oXLTools = new XLTools
 ' --- Ende Include -----------------------------------------------------------
 
 'Deklarationen:
 'Objekte
-  Dim WSHShell, fs, xl
+  Dim fs, xl
   
 'Strings
   Dim Aufruf, Makro, MParam, Datei
@@ -31,11 +31,7 @@ const Version     = "v2.7.3"
            "                                       [/silent:true|false]" & vbNewline &_
            "                                       [/debug:true|false]"
  
-  set fs       = CreateObject("Scripting.FileSystemObject")
-  set WSHShell = CreateObject("WScript.Shell")
-  
-'Globaler Parameter ==> Änderung des Standards.
-  if not oSkript.oArgsNamed.exists("silent")  then oSkript.SilentMode = true
+  set fs = CreateObject("Scripting.FileSystemObject")
   
 'Kommandozeile auswerten.
   if oSkript.oArgsNamed.exists("m") then
@@ -74,76 +70,23 @@ const Version     = "v2.7.3"
     'if (not fs.FileExists(Datei)) then
       oSkript.EchoStop "FEHLER: angegebene Datei '" & Datei & "' existiert nicht!" & vbnewline & vbnewline & Aufruf
     else
-      'Datei-Parameter i.O. => Excel finden bzw. starten
-      set xl = oXLTools.GetExcelApp(false)
-      if (xl is nothing) then
-        oSkript.EchoStop "Excel konnte nicht gefunden oder gestartet werden!"
-        oSkript.AbbruchSkript
-      else
-        'Excel gefunden oder gestartet.
+      'Datei-Parameter i.O. => Excel ausführen
+      
+      if (Makro = "-") then Makro = ""
+      
+      Call oXLTools.StartExcelMakro(Makro, MParam)
         
-        if (Makro = "-") then
-          'kein Makro ausführen, sondern Datei öffnen.
-          oSkript.echo "Datei '" & Datei & "' wird geöffnet."
-          on error resume next
-          xl.Workbooks.open Datei
-          if (err.number = 0) then 
-            oSkript.Echo "Datei '" & Datei & "' in Excel geöffnet."
-            oXLTools.SetExcelAppSichtbarkeit(true)
-          else
-            oSkript.ErrEcho ""
-            oSkript.EchoStop "FEHLER bei Öffnen der Datei '" & Datei & "' in Excel."
-            on error goto 0
-            if (oXLTools.ExcelNeuGestartet) then
-              xl.Quit
-            else
-              oXLTools.SetExcelAppSichtbarkeit(true)
-            end if
-          end if
-          
-        else
-          'Makro ausführen
-          oSkript.echo "Makro '" & Makro & "' wird gestartet."
-          on error resume next
-          if (Datei <> "") then
-            xl.run Makro, Datei
-          else
-            oXLTools.SetExcelAppSichtbarkeit(true)
-            xl.run Makro
-          end if
-          if (err.number = 0) then 
-            oSkript.Echo "Excel-Makro '" & Makro & "' fehlerfrei beendet."
-            oSkript.EchoPause "Excel-Makro '" & Makro & "' fehlerfrei beendet."
-            oXLTools.SetExcelAppSichtbarkeit(true)
-          else
-            if (err.number = 1004) then
-              oSkript.ErrEcho ""
-              oSkript.EchoStop "FEHLER: Excel-Makro '" & Makro & "' kann nicht gefunden werden!"
-            else 
-              oSkript.ErrEcho ""
-              oSkript.EchoStop "FEHLER bei Ausführung des Excel-Makro '" & Makro & "'."
-            end if
-            on error goto 0
-            if (oXLTools.ExcelNeuGestartet) then
-              xl.Quit
-            else
-              oXLTools.SetExcelAppSichtbarkeit(true)
-            end if
-          end if
-          
-        end if
-        set xl = nothing
-        
-      end if
     end if
   end if
   
   'oSkript.AnzeigeMeldungen
   
 'Aufräumen
-  set fs         = nothing
-  set WSHShell   = nothing
+  set fs = nothing
+  set oXLTools = nothing
+  set oTools_1 = nothing
   
+'
 ' --- Global.vbi --------------------------------------------------------
 'Konstanten (Diese lassen sich nicht in Klassen festlegen.)
  'Zentrales Include-Verzeichnis
@@ -2085,6 +2028,349 @@ class Tools_1
   End Function
   
   
+  Function VSPrintF(ByVal FormatString, byVal Parms)
+    'Variable-argument String PRINT Formatted
+    'equiv to vsprintf() in C
+    'Input: Parms = 1d-Array of Parameters OR 
+    '             = a single Variant (if there is only one parameter)
+    
+    '***************************************************************************************************
+     ' PrintF family commands in VB
+     ' written by Phlip Bradbury <phlipping@yahoo.com>
+     ' You may use this in your program as long as credit is
+     ' given to me.
+       
+     ' *** Port to VBSCRIPT ***  by Robert Schwenn <Robert@Schwenn-R.de>
+     ' Because vbscript routines are not able to handle ParamArrays,
+     ' and the FPrintF and PrintF functions seem not to be suitable in vbscript,
+     ' only the VSPrintF function of the VB-module make real sense and is ported.
+     ' SPrintF is realized as a special version, wich accepts only one parameter.
+     ' 01/2006 - added Support for blank-flag
+       
+     ' All functions interpret the format as in C, and then
+     ' PrintF calls .Print of forms and picture boxes          ==> not ported to vbscript
+     ' SPrintF returns the string.                             ==> in vbscript:  only one (!) Parameter to be printed.
+     ' FPrintF writes the value to file                        ==> not ported to vbscript
+     ' VPrintF, VSPrintF and VFPrintF simulate the similar     ==> only VSPrintF ported to vbscript
+     ' functions in C which take va_list as a parameter, these
+     ' omit the ParamArray keyword, allowing you to pass an array
+     ' of parameters, rather than listing the parameters.
+     ' SPrintF shows a common use of this
+       
+     ' Although there are six functions offerring similar functionality,
+     ' Only VSPrintF contains the actual code. The other 5 simply
+     ' call VSPrintF and handle the returned string.
+       
+     ' It handles all the escape sequences in C
+     ' except \" and \' as they would not help in VB
+     ' It also handles all the parameters except things like
+     ' %ld, %lf, etc, as VB handles that sort of thing internally
+     ' Format handles escape sequences
+     '   \a   Alert (Bel)
+     '   \b   Backspace
+     '   \f   Form Feed
+     '   \n   Newline (Line Feed)
+     '   \r   Carriage Return
+     '   \t   Horizontal Tab
+     '   \v   Verical Tab
+     '   \ddd Octal character
+     '   \xdd Hexadecimal character
+     ' and parameters
+     ' %[flags][width][.precision]formattype
+     ' flags:
+     '   -      left justify
+     '   +      prefix with sign
+     '   #      prefixes o,x,X with 0 or 0x
+     '   blank  Prefixes a space character to the result if the first character of 
+     '          a signed conversion is not a sign. Ignored if the "+"-option appear.
+     ' format types handled:
+     '   %d, %i signed number
+     '   %u     unsigned number
+     '   %o     unsigned octal number
+     '   %x, %X unsigned hexadecimal number
+     '   %f     floating point number without exponent
+     '   %e, %E scientific floating point number (with exponent)  ==> not yet ported to vbscript
+     '   %g, %G %f or %e, whichever is shorter                    ==> not yet ported to vbscript
+     '   %c     single character (from ASCII value)
+     '   %s     String
+     ' so eg %-6.3d is a number with a minimum of 3 digits
+     ' left justified in a field a minimum of 6 characters wide
+     ' use \\ to type a backslash and either \% or %% to type a
+     ' percent sign
+     ' note: %u treats as short (VB As Integer) when converting
+     ' negative numbers. values below -32768 will look odd.
+     ' %o, %x and %X, however, treat as long.
+     ' finally %c is sent the ascii value of the character to
+     ' print, if you want to send a single-character string
+     ' use Asc() or %s, so
+     ' SPrintF("%s", Char) = SPrintF("%c", Asc(Char)) and
+     ' SPrintF("%s", Chr(Num)) = SPrintF("%c", Num)
+     '***************************************************************************************************
+     
+    On Error GoTo 0
+    'general
+    Dim Ret 
+    Dim Char 
+    'escape
+    Dim NumberBuffer 
+    'parameters
+    Dim ParamUpTo 
+    Dim Flags 
+    Dim Width 
+    Dim Prec
+    Dim Precision 
+    Dim Value 
+    Dim AddStr
+    Dim ParmX
+    'for calculating %e and %g
+    Dim Mantissa , Exponent 
+    'for calculating %g
+    Dim AddStrPercentF , AddStrPercentE
+    
+    'If Parms is not yet an array => make it an array
+    if (not isArray(Parms)) then Parms = array(Parms)
+    
+    ParamUpTo = LBound(Parms)
+    Ret = ""
+    While ((not isNull(FormatString)) and (FormatString <> ""))
+      Char = NextChar(FormatString)
+      Select Case Char
+        
+        Case "\"
+          Char = NextChar(FormatString)
+          Select Case Char
+            Case "a" 'alert (bell)
+              Ret = Ret & Chr(7)
+            Case "b" 'backspace
+              Ret = Ret & vbBack
+            Case "f" 'formfeed
+              Ret = Ret & vbFormFeed
+            Case "n" 'newline (linefeed)
+              Ret = Ret & vbLf
+            Case "r" 'carriage return
+              Ret = Ret & vbCr
+            Case "t" 'horizontal tab
+              Ret = Ret & vbTab
+            Case "v" 'vertical tab
+              Ret = Ret & vbVerticalTab
+            Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"   'octal character
+              NumberBuffer = Char
+              While InStr("01234567", Left(FormatString, 1)) And Len(FormatString) > 0
+                NumberBuffer = NumberBuffer & NextChar(FormatString)
+              Wend
+              Ret = Ret & Chr(Oct2Dec(NumberBuffer))
+            Case "x" 'hexadecimal character
+              NumberBuffer = ""
+              While InStr("0123456789ABCDEFabcdef", Left(FormatString, 1)) And Len(FormatString) > 0
+                NumberBuffer = NumberBuffer & NextChar(FormatString)
+              Wend
+              Ret = Ret & Chr(Hex2Dec(NumberBuffer))
+            Case "\" 'backslash
+              Ret = Ret & "\"
+            Case "%" 'percent
+              Ret = Ret & "%"
+            Case Else 'unrecognised
+              Ret = Ret & Char
+              oSkript.ErrEcho "VSPrintF(): WARNUNG: Nicht erkannte Escape Sequenz: \" & Char
+          End Select
+        
+        Case "%"
+          Char = NextChar(FormatString)
+          If Char = "%" Then
+            Ret = Ret & "%"
+          Else
+            Flags = ""
+            Width = ""
+            Precision = ""
+            While (Char = "-" Or Char = "+" Or Char = "#" Or Char = " ")
+              Flags = Flags & Char
+              Char = NextChar(FormatString)
+            Wend
+            While IsNumeric(Char)
+              Width = Width & Char
+              Char = NextChar(FormatString)
+            Wend
+            If Char = "." Then
+              Char = NextChar(FormatString)
+              While IsNumeric(Char)
+                Precision = Precision & Char
+                Char = NextChar(FormatString)
+              Wend
+            End If
+            
+            ParmX = Parms(ParamUpTo)
+            if (isNull(ParmX) or isEmpty(ParmX) or ParmX = "") then
+              AddStr = ""
+            else
+              Select Case Char
+                
+                Case "d", "i" 'signed decimal
+                  Value = CLng(ParmX)
+                  AddStr = CStr(Abs(Value))
+                  If Precision <> "" Then
+                    If CDbl(Precision) > Len(AddStr) Then
+                      AddStr = String(CDbl(Precision) - Len(AddStr), "0") & AddStr
+                    End If
+                  End If
+                  If Value < 0 Then
+                    AddStr = "-" & AddStr
+                  ElseIf InStr(Flags, "+") Then
+                    AddStr = "+" & AddStr
+                  ElseIf InStr(Flags, " ") Then
+                    AddStr = " " & AddStr
+                  End If
+                
+                Case "u" 'unsigned decimal
+                  Value = CLng(ParmX)
+                  If Value < 0 Then Value = Value + 65536
+                  AddStr = CStr(Value)
+                  If Precision <> "" Then
+                    If CDbl(Precision) > Len(AddStr) Then
+                      AddStr = String(CDbl(Precision) - Len(AddStr), "0") & AddStr
+                    End If
+                  End If
+                
+                Case "o" 'unsigned octal value
+                  Value = CLng(ParmX)
+                  AddStr = Oct(Value)
+                  If Precision <> "" Then
+                    If CDbl(Precision) > Len(AddStr) Then
+                      AddStr = String(CDbl(Precision) - Len(AddStr), "0") & AddStr
+                    End If
+                  End If
+                  If InStr(Flags, "#") Then AddStr = "0" & AddStr
+                
+                Case "x", "X" 'unsigned hexadecimal value
+                  Value = CLng(ParmX)
+                  AddStr = Hex(Value)
+                  If Char = "x" Then AddStr = LCase(AddStr)
+                  If Precision <> "" Then
+                    If CDbl(Precision) > Len(AddStr) Then
+                      AddStr = String(CDbl(Precision) - Len(AddStr), "0") & AddStr
+                    End If
+                  End If
+                  If InStr(Flags, "#") Then AddStr = "0x" & AddStr
+                
+                Case "f" 'float w/o exponent
+                  Value = CDbl(ParmX)
+                  If Precision = "" Then Precision = "6"
+                  'AddStr = Format(Abs(Value), "0." & String(Precision, "0"))
+                  AddStr = FormatNumber(Abs(Value), Precision, true, false, false)
+                          'FormatNumber(Ausdruck[, AnzDezimalstellen[, FührendeNull[, KlammernFürNegativeWerte[, ZiffernGruppieren]]]])
+                          'Die letzten 3 Parameter akzeptieren folgende Werte:
+                          '-1 = true
+                          ' 0 = false
+                          '-2 = Ländereinstellungen des Computers verwenden
+                  If Value < 0 Then
+                    AddStr = "-" & AddStr
+                  ElseIf InStr(Flags, "+") Then
+                    AddStr = "+" & AddStr
+                  ElseIf InStr(Flags, " ") Then
+                    AddStr = " " & AddStr
+                  End If
+                
+                'Case "e", "E" 'float w/ exponent
+                  'Value = CDbl(ParmX)
+                  'Mantissa = Abs(Value)
+                  'Exponent = 0
+                  'If Mantissa > 10 Then
+                  '  While Mantissa >= 10
+                  '    Mantissa = Mantissa / 10
+                  '    Exponent = Exponent + 1
+                  '  Wend
+                  'Else
+                  '  While Mantissa < 1
+                  '    Mantissa = Mantissa * 10
+                  '    Exponent = Exponent - 1
+                  '  Wend
+                  'End If
+                  'If Precision = "" Then Precision = "6"
+                  ''AddStr = Format(Mantissa, "0." & String(Precision, "0"))
+                  'AddStr = FormatNumber(Mantissa, Precision, -1)
+                  'If Right(AddStr, 1) = "." Then AddStr = Left(AddStr, Len(AddStr) - 1)
+                  'AddStr = AddStr & Char & IIf(Exponent < 0, "-", "+") & Format(Exponent, "000")
+                  'If Value < 0 Then
+                  '  AddStr = "-" & AddStr
+                  'ElseIf InStr(Flags, "+") Then
+                  '  AddStr = "+" & AddStr
+                  'ElseIf InStr(Flags, "-") = 0 Then
+                  '  AddStr = " " & AddStr
+                  'End If
+                'Case "g", "G" 'float w/ or w/o exponent, shorter
+                  ''first calculate without
+                  'Value = CDbl(ParmX)
+                  'If Precision = "" Then Precision = "6"
+                  'AddStrPercentF = Format(Abs(Value), "0." & String(Precision, "#"))
+                  'If Value < 0 Then
+                  '  AddStrPercentF = "-" & AddStrPercentF
+                  'ElseIf InStr(Flags, "+") Then
+                  '  AddStrPercentF = "+" & AddStrPercentF
+                  'ElseIf InStr(Flags, "-") = 0 Then
+                  '  AddStrPercentF = " " & AddStrPercentF
+                  'End If
+                  ''then calculate with
+                  'Value = CDbl(ParmX)
+                  'Mantissa = Abs(Value)
+                  'Exponent = 0
+                  'If Mantissa > 10 Then
+                  '  While Mantissa >= 10
+                  '    Mantissa = Mantissa / 10
+                  '    Exponent = Exponent + 1
+                  '  Wend
+                  'Else
+                  '  While Mantissa < 1
+                  '    Mantissa = Mantissa * 10
+                  '    Exponent = Exponent - 1
+                  '  Wend
+                  'End If
+                  'If Precision = "" Then Precision = "6"
+                  'AddStrPercentE = Format(Mantissa, "0." & String(Precision, "#"))
+                  'If Right(AddStrPercentE, 1) = "." Then AddStrPercentE = Left(AddStrPercentE, Len(AddStrPercentE) - 1)
+                  'AddStrPercentE = AddStrPercentE & IIf(Char = "G", "E", "e") & IIf(Exponent < 0, "-", "+") & Format(Exponent, "000")
+                  'If Value < 0 Then
+                  '  AddStrPercentE = "-" & AddStrPercentE
+                  'ElseIf InStr(Flags, "+") Then
+                  '  AddStrPercentE = "+" & AddStrPercentE
+                  'ElseIf InStr(Flags, "-") = 0 Then
+                  '  AddStrPercentE = " " & AddStrPercentE
+                  'End If
+                  ''find shortest
+                  'AddStr = IIf(Len(AddStrPercentF) > Len(AddStrPercentE), AddStrPercentE, AddStrPercentF)
+                  
+                Case "c" 'single character, passed ASCII value
+                  AddStr = Chr(CByte(ParmX))
+                
+                Case "s" 'string
+                  AddStr = CStr(ParmX)
+                
+                Case Else
+                  If(Precision <> "") then prec = "." & Precision else prec = ""
+                  oSkript.ErrEcho "VSPrintF(): WARNUNG: Nicht erkannte Parameter Sequenz: %" & Flags & Width & prec & Char
+                  AddStr = "%" & Flags & Width & prec & Char
+              End Select
+              
+            end if
+            
+            If Width <> "" Then
+              If cint(Width) > Len(AddStr) Then
+                If InStr(Flags, "-") Then
+                  AddStr = AddStr & Space(Width - Len(AddStr))
+                Else
+                  AddStr = Space(Width - Len(AddStr)) & AddStr
+                End If
+              End If
+            End If
+            ParamUpTo = ParamUpTo + 1
+            Ret = Ret & AddStr
+          End If
+        Case Else
+          Ret = Ret & Char
+      End Select
+    Wend
+    VSPrintF = Ret
+  End Function
+  
+  
   ' ***  Abteilung Arrays, Sortieren  *************************************************************
   
   Function AnzDim(Feld)
@@ -2511,23 +2797,20 @@ class XlTools
   
   '...  Deklarationen  ****************************************************************************.
   
-  public  xlApp, ExcelNeuGestartet
+  public  ExcelNeuGestartet
   private WshShell
   
   
   '===  Variablen-Belegung  ========================================================================
   
   Private Sub Class_Initialize()
-    set WshShell = CreateObject("WScript.Shell")
+    set WshShell      = CreateObject("WScript.Shell")
     ExcelNeuGestartet = false
-    Set xlApp = nothing
-    
     oSkript.debugecho "Klasse 'XlTools' instanziert."
   end sub
   
   Private Sub Class_Terminate()
-    set WshShell = nothing
-    set xlApp    = nothing
+    set WshShell    = nothing
     oSkript.debugecho "Klasse 'XlTools' beendet."
   end sub
   
@@ -2546,6 +2829,8 @@ class XlTools
     ' **************************************************************************
     
     dim XlArbVerz, Kommando, xlWbk, i, Interval, Timeout, elapsed
+    dim oGeoToolsAddin, IsGeoToolsListed, IsGeoToolsLoaded, IsGeoToolsInitFinished
+    dim xlApp
     
     'Hinweise zum Verhalten:
     'Wird Excel via CreateObject oder GetObject als Automatisierungsserver in Anspruch
@@ -2558,12 +2843,13 @@ class XlTools
     '=> Deshalb erst die Verbindung kappen und
     'neu aufbauen, auch wenn dabei Excel beendet und neu gestartet wird...
     
-    Set xlApp = nothing
+    set xlApp = nothing
     on error resume next
     
-    'Versuch, eine vorhandene Instanz von Excel zu finden
+    ' Versuch, eine vorhandene Instanz von Excel zu finden
     set xlApp = GetObject(,"Excel.Application")
     
+    ' Gegebenenfalls Excel neu starten.
     if (err.number = 0) then
       'Vorhandene Instanz von Excel gefunden.
       oSkript.echo "Vorhandene Instanz von Excel gefunden."
@@ -2574,10 +2860,17 @@ class XlTools
       
       ' 05/2020: Excel 365 verhält sich fürchterlich, wenn es per Automation
       ' gestartet wird und dabei ein XLAM öffnet. Deshalb zunächst: 
-      ' 1. Versuch: Start Excel per Kommandozeile. 
+      ' 1. Versuch: Start Excel per Kommandozeile.
       if (oTools_1.ExcelExe <> "") then
         
-        Kommando = """" & oTools_1.ExcelExe & """ /e"
+        'Kommando = """" & oTools_1.ExcelExe & """ /e"
+        ' Die Option "/e" bewirkt folgendes:
+        ' 1. Es wird keine leere Arbeitsmappe geöffnet (wie von Microsoft beschrieben)  -  erstrebenswert.
+        ' 2. Es wird eine neue Excel-Instanz gestartet (undokumentiert)                 -  i.d.R. unerwünscht (Startdauer u.a)
+        ' 3. Eine so erzeugte Excel-Instanz wird nicht geteilt mit einem
+        '    folgenden Aufruf von excel.exe ohne "/e".                                  => /e vermeiden !
+        
+        Kommando = """" & oTools_1.ExcelExe & """"
         oSkript.echo "Versuche, Excel zu starten mit Kommando: '" & Kommando & "'."
         call WshShell.Run(Kommando, WindowStyle_normal, WaitOnReturn_no)
         
@@ -2587,17 +2880,23 @@ class XlTools
           i        =    0
           Interval =  250  ' Millisekunden
           Timeout  = 5000  ' Millisekunden
-          Do
+          do
             i = i + 1
             oSkript.Wait(Interval)
             elapsed = i * Interval
             set xlApp = GetObject(,"Excel.Application")
-          loop Until ((not xlApp is nothing) or (elapsed >= Timeout))
+          loop until ((not xlApp is nothing) or (elapsed >= Timeout))
           
           if (xlApp is nothing) then
             oSkript.echo oTools_1.vsprintf("Selbst erzeugte Instanz von Excel NICHT gefunden (nach %.2f Sekunden)", elapsed/1000)
           else
             oSkript.echo oTools_1.vsprintf("Selbst erzeugte Instanz von Excel gefunden (nach %.2f Sekunden)", elapsed/1000)
+            ExcelNeuGestartet = true
+            
+            ' Ein folgender Aufruf eines GeoTools-Makros via ExcelApp.Run() startet sofort das Makro, 
+            ' obwohl die Konfiguration noch nicht gelesen ist. Deshalb:
+            'oSkript.debugecho oTools_1.vsprintf("Warte %.2f Sekunden, um GeoTools Zeit zum Lesen der Konfiguration zu geben.", Interval * 8 / 1000)
+            'oSkript.Wait(Interval * 8)
           end if
         end if
       end if
@@ -2606,15 +2905,15 @@ class XlTools
       if (xlApp is nothing) then
         oSkript.echo("Versuche, Excel via Automation zu starten...")
         Set xlApp = CreateObject("Excel.Application")
-        'Fehlstart abfangen.
         if (err.number = 0) then 
           on error goto 0
           oSkript.echo("Excel erfolgreich gestartet.")
-          'Neue Mappe anlegen, damit Excel nicht als fast leees Fenster stehen bleibt, wenn hier ein AddIn geladen wird !
+          'Neue Mappe anlegen, damit Excel nicht als fast leeres Fenster stehen bleibt, wenn hier ein AddIn geladen wird !
           set xlWbk = xlApp.Workbooks.add
           call LadeStartupAddins(xlApp)
           'xlWbk.Close false => Macht den durch das Anlegen der Arbeitsmappe eingetretenen Erfolg zunichte.
           ExcelNeuGestartet = true
+          Call SetExcelAppSichtbarkeit(xlApp, Sichtbarkeit)
         else
           oSkript.ErrEcho "FEHLER beim Start von Excel."
           ExcelNeuGestartet = false
@@ -2624,30 +2923,190 @@ class XlTools
     end if
     on error goto 0
     
+    ' GeoTools: Initialisierung abwarten und Arbeitsverzeichnis setzen.
     if (not xlApp is nothing) then
-      on error resume next
-      oSkript.debugecho "Arbeitsverzeichnis in Excel setzen auf: '" & oSkript.ArbeitsVerz & "'."
-      XlArbVerz = xlApp.run("SetArbeitsverzeichnis", oSkript.ArbeitsVerz)
-      if (err.number = 0) then 
-        oSkript.debugecho "Arbeitsverzeichnis in Excel gesetzt auf: '" & XlArbVerz & "'."
-      else
-        oSkript.ErrEcho "FEHLER beim Setzen des Arbeitsverzeichnisses."
+      
+      set oGeoToolsAddin = GetGeoToolsAddin(xlApp)
+      IsGeoToolsListed   = (not oGeoToolsAddin is nothing)
+      oSkript.echo "GeoTools in AddIn-Liste gefunden = " & IsGeoToolsListed
+      
+      if (IsGeoToolsListed) then
+        IsGeoToolsLoaded = oGeoToolsAddin.IsOpen
+        set oGeoToolsAddin = nothing
+        oSkript.echo "GeoTools sind geladen = " & IsGeoToolsLoaded
+        
+        if (IsGeoToolsLoaded) then
+          if (ExcelNeuGestartet) then
+            oSkript.echo "GeoTools-Initialisierung abwarten ..."
+            i        =    0
+            Interval =  250  ' Millisekunden
+            Timeout  = 5000  ' Millisekunden
+            IsGeoToolsInitFinished = false
+            on error resume next
+            do
+              i = i + 1
+              oSkript.Wait(Interval)
+              elapsed = i * Interval
+              IsGeoToolsInitFinished = xlApp.Run("IsGeoToolsInitFinished")
+              if (err.number <> 0) then 
+                oSkript.debugecho "Fehler beim Aufruf des Excel-Makro 'IsGeoToolsInitFinished'."
+              end if
+            loop until (IsGeoToolsInitFinished or (elapsed >= Timeout))
+            on error goto 0
+            if (not IsGeoToolsInitFinished) then
+              oSkript.echo oTools_1.vsprintf("GeoTools-Initialisierung NICHT beendet (nach %.2f Sekunden)", elapsed/1000)
+            else
+              oSkript.echo oTools_1.vsprintf("GeoTools-Initialisierung beendet (nach %.2f Sekunden)", elapsed/1000)
+            end if
+          end if
+          
+          ' Arbeitsverzeichnis setzen.
+          oSkript.debugecho "Arbeitsverzeichnis in Excel setzen auf: '" & oSkript.ArbeitsVerz & "'."
+          on error resume next
+          XlArbVerz = xlApp.Run("SetArbeitsverzeichnis", oSkript.ArbeitsVerz)
+          if (err.number = 0) then 
+            oSkript.debugecho "Arbeitsverzeichnis in Excel gesetzt auf: '" & XlArbVerz & "'."
+          else
+            oSkript.ErrEcho "FEHLER beim Setzen des Arbeitsverzeichnisses."
+          end if
+          on error goto 0
+        end if
       end if
       on error goto 0
       xlApp.DisplayStatusBar = True
-      SetExcelAppSichtbarkeit(Sichtbarkeit)
+      
+      'SetExcelAppSichtbarkeit(xlApp, Sichtbarkeit)
     end if
+    
+    'set xlWbk = nothing
     
     set GetExcelApp = xlApp
   End function
   
-  sub SetExcelAppFokus()
+  Private Function GetGeoToolsAddin(xlApp)
+    ' Returns the GeoTools Add-In, even if the file doesn't exists, or Nothing.
+    Dim oCurrentAddin
+    Dim oAddin
+    Set oAddin = nothing
+    
+    Const AddinFileName = "GeoTools.xlam"
+    
+    oSkript.debugecho "Suche nach GeoTools AddIn ..."
+    For Each oCurrentAddin In xlApp.AddIns2
+      
+      oSkript.debugecho "Name"      & "=" & oCurrentAddin.Name      & vbTab & _
+                        "Installed" & "=" & oCurrentAddin.Installed & vbTab & _
+                        "IsOpen"    & "=" & oCurrentAddin.IsOpen    & vbTab & _
+                        "FullName"  & "=" & oCurrentAddin.FullName
+      '
+      If (Lcase(Right(oCurrentAddin.FullName, Len(AddinFileName))) = Lcase(AddinFileName)) Then
+        oSkript.debugecho "=> Das ist das GeoTools AddIn."
+        Set oAddin = oCurrentAddin
+        Exit For
+      End If
+    Next
+    Set oCurrentAddin = nothing
+    Set GetGeoToolsAddin = oAddin
+  End Function
+  
+  sub StartExcelMakro(Makro, Datei)
+    ' a) Start eines Excel-Makros mit Übergabe eines Dateins, ODER
+    ' b) Öffnen einer Datei.
+    '
+    ' Parameter: Makro  ... Name des zu startenden Excel-Makros.
+    '                       Soll kein Makro ausgeführt werden, dann "" verwenden.
+    '            Datei  ... (Pfad und) Name der Datei, die das Excel-Makro verarbeiten soll
+    '                       - notwendig, wenn Makro="", sonst optional (Standard: "")
+    '                       - An das Excel-Makro wird immer ein vollständiger Datei 
+    '                         übergeben, der ggf. gebildet wird.
+    '                       - Wird kein Pfad angegeben, so gilt das aktuelle Verzeichnis.
+    '-----------------------------------------------------------------------------------------
+    Dim fs, xlApp, ArgsOK
+    
+    ' Argumente prüfen.
+    set fs = CreateObject("Scripting.FileSystemObject")
+    ArgsOK = true
+    if ((Makro = "") and (Datei = "")) then
+      oSkript.ErrEcho "FEHLER in StartExcelMakro(): Weder Excel-Makro noch Datei angegeben!"
+      ArgsOK = false
+      
+    elseif (Datei <> "") then
+      'Datei immer mit absolutem Pfad an Excel übergeben.
+      Datei = fs.GetAbsolutePathName(Datei)
+      
+      if (not fs.FileExists(Datei)) then
+        oSkript.ErrEcho "FEHLER in StartExcelMakro(): Zu öffnende Datei '" & Datei & "' existiert nicht!"
+        ArgsOK = false
+      end if
+    end if
+    set fs = nothing
+    
+    if (ArgsOK) then
+        
+      set xlApp = GetExcelApp(true)
+      
+      if (not xlApp is nothing) then
+        
+        ' Excel in den Vordergrund bringen.
+        if (not ExcelNeuGestartet) then
+          Call SetExcelAppFokus(xlApp)
+        end if
+        
+        if (Makro = "") then
+          ' Kein Makro ausführen, sondern Datei öffnen.
+          oSkript.echo "Datei '" & Datei & "' wird geöffnet."
+          on error resume next
+          xlApp.Workbooks.open Datei
+          if (err.number = 0) then 
+            oSkript.Echo "Datei '" & Datei & "' in Excel geöffnet."
+            'Call SetExcelAppSichtbarkeit(xlApp, true)
+          else
+            oSkript.ErrEcho  "FEHLER bei Öffnen der Datei '" & Datei & "' in Excel."
+            on error goto 0
+          end if
+          
+        else
+          'Makro ausführen
+          oSkript.echo "Excel-Makro '" & Makro & "' wird gestartet."
+          on error resume next
+          if (Datei <> "") then
+            oSkript.echo "... mit Datei" & Datei & "'."
+            xlApp.run Makro, Datei
+          else
+            'Call SetExcelAppSichtbarkeit(xlApp, true)
+            xlApp.run Makro
+          end if
+          if (err.number = 0) then 
+            oSkript.Echo "Excel-Makro '" & Makro & "' fehlerfrei beendet."
+            oSkript.EchoPause "Excel-Makro '" & Makro & "' fehlerfrei beendet."
+            'Call SetExcelAppSichtbarkeit(xlApp, true)
+          else
+            if (err.number = 1004) then
+              oSkript.ErrEcho ""
+              oSkript.ErrEcho "FEHLER: Excel-Makro '" & Makro & "' kann nicht gefunden werden!"
+              'oSkript.EchoStop "FEHLER: Excel-Makro '" & Makro & "' kann nicht gefunden werden!"
+            else 
+              oSkript.ErrEcho ""
+              oSkript.ErrEcho "FEHLER bei Ausführung des Excel-Makro '" & Makro & "'."
+              'oSkript.EchoStop "FEHLER bei Ausführung des Excel-Makro '" & Makro & "'."
+            end if
+            on error goto 0
+          end if
+          
+        end if
+        set xlApp = nothing
+        
+      end if
+    end if
+  end sub
+  
+  sub SetExcelAppFokus(xlApp)
     ' Versucht, das Excel-Anwendungsfenster in den Vordergrund zu bringen,
     ' indem die Fenstergröße geändert und (wieder zurückgesetzt) wird.
     '-----------------------------------------------------------------------------------------
     dim FensterStatus
     oSkript.debugecho "XLTools\SetExcelAppFokus()"
-    on error resume next
+    'on error resume next
     
     ' In Global.vbi deklariert (FensterStatus Excel).
     ' const xlNormal    = -4143
@@ -2660,7 +3119,7 @@ class XlTools
       
       if (FensterStatus = xlMinimized) then
         xlApp.WindowState = xlNormal
-        xlApp.WindowState = xlMinimized
+        'xlApp.WindowState = xlMinimized
       else
         xlApp.WindowState = xlMinimized
         xlApp.WindowState = FensterStatus
@@ -2669,7 +3128,7 @@ class XlTools
     on error goto 0
   end sub
   
-  function SetExcelAppSichtbarkeit(Sichtbarkeit)
+  function SetExcelAppSichtbarkeit(xlApp, Sichtbarkeit)
     'Steuert die Sichtbarkeit des Excel-Anwendungsfensters
     'Parameter: Sichtbarkeit ... (true | false) Soll das Excel-Anwendungsfenster sichtbar werden?
     'Rückgabe:  True bei Erfolg, sonst false
@@ -2682,7 +3141,7 @@ class XlTools
       
       if (Sichtbarkeit) then
         if (Not xlApp.Visible) then xlApp.Visible = true
-        SetExcelAppFokus()
+        'Call SetExcelAppFokus(xlApp)
       else
         if (xlApp.Visible) then xlApp.Visible = false
       end If
@@ -2697,6 +3156,7 @@ class XlTools
     on error goto 0
     SetExcelAppSichtbarkeit = Erfolg
   end function
+  
  
  ' interne Funktionen  ----------------------------------------------------------------------------
   
@@ -2732,6 +3192,44 @@ class XlTools
     set oAddins      = nothing
     set oAddInFilter = nothing
   end sub
+  
+  Private function GetXLVorlagen(xlApp, DateiMaske)
+    'Erzeugt eine Liste aller verfügbarer XL-Vorlagen, die in den üblichen 
+    'zwei Vorlagen-Verzeichnissen zu finden sind.
+    '  Parameter: DateiMaske ... DateiMaske ohne Pfadangabe (mit Wildcards)
+    '  Rückgabe = Dateiliste als Dictionary mit Dateinamen als Key.
+    on error goto 0
+  
+    'Const PersonalTemplates_RegValue = "HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Excel\Options\PersonalTemplates"
+    
+    Dim Anz, PersonalTemplates, oVorlagen, oVorlagenFilter
+    set oVorlagen       = CreateObject("Scripting.Dictionary")
+    set oVorlagenFilter = CreateObject("Scripting.Dictionary")
+  
+    '' Ab Office 2016 (zumindest Office 365 am 01.05.2020 ;-):
+    '' - Application.NetworkTemplatesPath ist scheinbar immer leer
+    '' - Application.TemplatesPath zeigt auf "C:\Users\<USER>\AppData\Roaming\Microsoft\Templates\",
+    ''   dort liegende Vorlagen sind für den Anwender aber nicht sichtbar!
+    'If (ThisWorkbook.SysTools.RegValueExists(PersonalTemplates_RegValue)) Then
+    '  PersonalTemplates = ThisWorkbook.SysTools.RegRead(PersonalTemplates_RegValue)
+    'End If
+    
+    oSkript.echo "Suche XL-Vorlagen:      '" & DateiMaske & "'."
+    oSkript.echo "Netzwerk-Vorlagenverz.: '" & xlApp.NetworkTemplatesPath & "'."
+    oSkript.echo "lokales Vorlagenverz.:  '" & xlApp.TemplatesPath & "'."
+    If (xlApp.NetworkTemplatesPath <> "") Then oVorlagenFilter.Add oVorlagenFilter.count, xlApp.NetworkTemplatesPath & "\" & DateiMaske
+    If (xlApp.TemplatesPath <> "")        Then oVorlagenFilter.Add oVorlagenFilter.count, xlApp.TemplatesPath        & "\" & DateiMaske
+
+    Anz = oTools_1.FindeDateien_xMasken(oVorlagenFilter, oVorlagen, "", true)
+
+    if (Anz = 0) then
+      oSkript.debugecho "Keine Excel-Vorlagen entsprechend Maske '" & DateiMaske & "' in den Vorlagen-Verzeichnissen gefunden."
+    else
+      oSkript.debugecho Anz & " Excel-Vorlagen in den Vorlagen-Verzeichnissen gefunden."
+    end if
+    set oVorlagenFilter = nothing
+    set GetXLVorlagen = oVorlagen
+  End function
  '
 end class 
 
