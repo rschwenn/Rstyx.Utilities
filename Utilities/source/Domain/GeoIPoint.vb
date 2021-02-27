@@ -332,13 +332,10 @@ Namespace Domain
                     ' Code part: Find point kind.
                     If (CodePart.IsNotEmptyOrWhiteSpace()) Then
                                     
-                        Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iu) *=? *([+-]? *[0-9]+)|(-i))"
+                        Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iu) *=? *([+-]? *[0-9]+)|(-i))?"
                         Dim oMatch  As Match  = Regex.Match(CodePart, Pattern)
                         
                         If (oMatch.Success) Then
-                            If (oMatch.Groups(1).Success) Then
-                                Me.MarkTypeAB = oMatch.Groups(1).Value
-                            End If
                             For i As Integer = 3 To 10
                                 If (oMatch.Groups(i).Success) Then
                                     Dim Key As String = oMatch.Groups(i).Value
@@ -352,6 +349,11 @@ Namespace Domain
                                     Exit For
                                 End If
                             Next
+                            If (oMatch.Groups(1).Success) Then
+                                If ((DelimIndex > 0) OrElse (Me.Kind <> GeoPointKind.None)) Then
+                                    Me.MarkTypeAB = oMatch.Groups(1).Value
+                                End If
+                            End If
                         Else
                             ' There's a code part but w/o supported code or with invalid syntax.
                             If (DelimIndex > 0) Then
