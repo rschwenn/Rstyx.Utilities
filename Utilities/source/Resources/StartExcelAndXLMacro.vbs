@@ -7,7 +7,7 @@
 Option explicit
 on error goto 0
 
-const Version     = "v2.8.R"
+const Version     = "v2.8.R.1"
 
 ' --- Klassen einbinden ----------------------------------------------
   dim oSkript, oXLTools, oTools_1
@@ -450,8 +450,8 @@ class Skript
     oMeldungen.Add oMeldungen.count, Message
     oMeldungen.Add oMeldungen.count, ""
     oMeldungen.Add oMeldungen.count, AbbruchMeldung
+    SilentMode = false
     call AnzeigeMeldungen
-
   End sub
 
 
@@ -3083,12 +3083,12 @@ class XlTools
           else
             if (err.number = 1004) then
               oSkript.ErrEcho ""
-              oSkript.ErrEcho "FEHLER: Excel-Makro '" & Makro & "' kann nicht gefunden werden!"
-              'oSkript.EchoStop "FEHLER: Excel-Makro '" & Makro & "' kann nicht gefunden werden!"
+              'oSkript.ErrEcho "FEHLER: Excel-Makro '" & Makro & "' kann nicht gefunden werden!"
+              oSkript.EchoStop "FEHLER: Excel-Makro '" & Makro & "' kann nicht gefunden werden!"
             else 
               oSkript.ErrEcho ""
-              oSkript.ErrEcho "FEHLER bei Ausführung des Excel-Makro '" & Makro & "'."
-              'oSkript.EchoStop "FEHLER bei Ausführung des Excel-Makro '" & Makro & "'."
+              'oSkript.ErrEcho "FEHLER bei Ausführung des Excel-Makro '" & Makro & "'."
+              oSkript.EchoStop "FEHLER bei Ausführung des Excel-Makro '" & Makro & "'."
             end if
             on error goto 0
           end if
