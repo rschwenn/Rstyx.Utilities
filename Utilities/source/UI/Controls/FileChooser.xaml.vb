@@ -585,7 +585,7 @@ Namespace UI.Controls
             ''' <summary> Loads Me.FilePath into the current editor. </summary>
             Private Sub EditFile(sender As System.Object, e As System.Windows.RoutedEventArgs) Handles EditFileButton.Click
                 Try
-                    Apps.AppUtils.startEditor(Apps.AppUtils.CurrentEditor, """" & Me.FilePath & """")
+                    Apps.AppUtils.StartEditor(Apps.AppUtils.CurrentEditor, """" & Me.FilePath & """")
                 Catch ex As System.Exception
                     Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try

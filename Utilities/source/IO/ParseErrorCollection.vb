@@ -279,7 +279,7 @@ Namespace IO
                     
                     Try
                         ' Start jEdit and run Beanshell script.
-                        Apps.AppUtils.startEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
+                        Apps.AppUtils.StartEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
                         
                     Catch ex As Exception
                         Logger.logError(ex, Rstyx.Utilities.Resources.Messages.ParseErrorCollection_ErrorShowInJEdit)

@@ -14,7 +14,7 @@ Namespace UI.Resources
         
         #Region "Private Fields"
             
-            Private Shared Logger                   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(My.Settings.UIResources_LoggerName)
+            Private Shared ReadOnly Logger          As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(My.Settings.UIResources_LoggerName)
             
             Private Shared ReadOnly SyncHandle      As New Object()
             
@@ -68,7 +68,7 @@ Namespace UI.Resources
                                 Dim tmp_IconRectangles As New Dictionary(Of String, System.Windows.Shapes.Rectangle)
                                 
                                 For Each de As DictionaryEntry in Icons
-                                    Dim Rect As System.Windows.Shapes.Rectangle = getIconRectangle(CType(de.Key, String))
+                                    Dim Rect As System.Windows.Shapes.Rectangle = GetIconRectangle(CType(de.Key, String))
                                     If (Rect IsNot Nothing) Then
                                         Dim IconName As String = CType(de.Key, String)
                                         If (IconName.EndsWith(IconBrushSuffix) AndAlso (IconName.Length > IconBrushSuffix.Length)) Then 
@@ -92,7 +92,7 @@ Namespace UI.Resources
              ''' <returns>                   A DrawingBrush for an icon of the given name, or Null. </returns>
             Public Shared ReadOnly Property IconBrush(byVal ResourceName As String) As System.Windows.Media.DrawingBrush
                 Get
-                    Return getIconBrush(ResourceName)
+                    Return GetIconBrush(ResourceName)
                 End Get
             End Property
             
@@ -101,7 +101,7 @@ Namespace UI.Resources
              ''' <returns>                   A rectangle with an icon of the given name, or Null. </returns>
             Public Shared ReadOnly Property IconRectangle(byVal ResourceName As String) As System.Windows.Shapes.Rectangle
                 Get
-                    Return getIconRectangle(ResourceName)
+                    Return GetIconRectangle(ResourceName)
                 End Get
             End Property
             
@@ -214,7 +214,7 @@ Namespace UI.Resources
             ''' <summary> Creates a rectangle filled with an icon of the given resource name from <see cref="Icons"/>. </summary>
              ''' <param name="ResourceName"> Resource name of the DrawingBrush resource in <see cref="Icons"/> (The "_IconBrush" suffix can be omitted). </param>
              ''' <returns>                   A rectangle with an icon of the given name, or Null. </returns>
-            Private Shared Function getIconBrush(byVal ResourceName As String) As System.Windows.Media.DrawingBrush
+            Private Shared Function GetIconBrush(byVal ResourceName As String) As System.Windows.Media.DrawingBrush
                 SyncLock (SyncHandle)
                     Dim RetBrush As System.Windows.Media.DrawingBrush = Nothing
                     Try
@@ -238,7 +238,7 @@ Namespace UI.Resources
             ''' <summary> Creates a rectangle filled with an icon of the given resource name from <see cref="Icons"/>. </summary>
              ''' <param name="ResourceName"> Resource name of the DrawingBrush resource in <see cref="Icons"/> (The "_IconBrush" suffix can be omitted). </param>
              ''' <returns>                   A rectangle with an icon of the given name, or Null. </returns>
-            Private Shared Function getIconRectangle(byVal ResourceName As String) As System.Windows.Shapes.Rectangle
+            Private Shared Function GetIconRectangle(byVal ResourceName As String) As System.Windows.Shapes.Rectangle
                 SyncLock (SyncHandle)
                     Dim RetRectangle As System.Windows.Shapes.Rectangle = Nothing
                     Try

@@ -3,7 +3,8 @@ Imports System
 Imports System.IO
 Imports System.Linq
 Imports System.Collections.Generic
-Imports System.Collections.ObjectModel
+Imports System.Globalization
+Imports System.Threading
 
 Namespace Apps
     
@@ -12,23 +13,23 @@ Namespace Apps
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Apps.AppUtils")
+            Private Shared ReadOnly Logger              As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Apps.AppUtils")
             
-            Private Shared ReadOnly SyncHandle      As New Object()
-            Private Shared _Instance                As AppUtils = Nothing
+            Private Shared ReadOnly SyncHandle          As New Object()
+            Private Shared _Instance                    As AppUtils = Nothing
             
-            Private Shared _AppPathUltraEdit        As String = Nothing
-            Private Shared _AppPathCrimsonEditor    As String = Nothing
-            Private Shared _AppPathJava             As String = Nothing
-            Private Shared _AppPathJEdit            As String = Nothing
-            Private Shared _JAVA_HOME               As String = Nothing
-            Private Shared _JEDIT_HOME              As String = Nothing
-            Private Shared _JEDIT_SETTINGS          As String = Nothing
+            Private Shared _AppPathUltraEdit            As String = Nothing
+            Private Shared _AppPathCrimsonEditor        As String = Nothing
+            Private Shared _AppPathJava                 As String = Nothing
+            Private Shared _AppPathJEdit                As String = Nothing
+            Private Shared _JAVA_HOME                   As String = Nothing
+            Private Shared _JEDIT_HOME                  As String = Nothing
+            Private Shared _JEDIT_SETTINGS              As String = Nothing
             
-            Private Shared _AvailableEditors        As Dictionary(Of SupportedEditors, EditorInfo) = Nothing
-            Private Shared _CurrentEditor           As SupportedEditors
+            Private Shared _AvailableEditors            As Dictionary(Of SupportedEditors, EditorInfo) = Nothing
+            Private Shared _CurrentEditor               As SupportedEditors
             
-            Private Shared ClassInitialized         As Boolean = initializeStaticVariables()
+            Private Shared ReadOnly ClassInitialized    As Boolean = InitializeStaticVariables()
             
         #End Region
         
@@ -38,10 +39,10 @@ Namespace Apps
                 Logger.logDebug("New(): Instantiation starts.")
             End Sub
             
-            Private Shared Function initializeStaticVariables() As Boolean
+            Private Shared Function InitializeStaticVariables() As Boolean
                 Logger.logDebug("initializeStaticVariables(): Initialization of static variables starts ...")
                 
-                _CurrentEditor = initCurrentEditor()
+                _CurrentEditor = InitCurrentEditor()
                 
                 Return True
             End Function
@@ -113,7 +114,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_AppPathCrimsonEditor Is Nothing) Then
-                            _AppPathCrimsonEditor = getAppPathCrimsonEditor()
+                            _AppPathCrimsonEditor = GetAppPathCrimsonEditor()
                         End If
                         Return _AppPathCrimsonEditor
                     End SyncLock
@@ -147,7 +148,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_AppPathUltraEdit Is Nothing) Then
-                            _AppPathUltraEdit = getAppPathUltraEdit()
+                            _AppPathUltraEdit = GetAppPathUltraEdit()
                         End If
                         Return _AppPathUltraEdit
                     End SyncLock
@@ -178,7 +179,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_AppPathJava Is Nothing) Then
-                            getJavaEnvironment()
+                            GetJavaEnvironment()
                         End If
                         Return _AppPathJava
                     End SyncLock
@@ -218,7 +219,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_AppPathJEdit Is Nothing) Then
-                            getJeditEnvironment()
+                            GetJEditEnvironment()
                         End If
                         Return _AppPathJEdit
                     End SyncLock
@@ -230,7 +231,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_AvailableEditors Is Nothing) Then
-                            _AvailableEditors = getAvailableEditors()
+                            _AvailableEditors = GetAvailableEditors()
                         End If
                         Return _AvailableEditors
                     End SyncLock
@@ -243,7 +244,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_JAVA_HOME Is Nothing) Then
-                            getJavaEnvironment()
+                            GetJavaEnvironment()
                         End If
                         Return _JAVA_HOME
                     End SyncLock
@@ -255,7 +256,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_JEDIT_HOME Is Nothing) Then
-                            getJEditEnvironment()
+                            GetJEditEnvironment()
                         End If
                         Return _JEDIT_HOME
                     End SyncLock
@@ -267,7 +268,7 @@ Namespace Apps
                 Get
                     SyncLock (SyncHandle)
                         If (_JEDIT_SETTINGS Is Nothing) Then
-                            getJEditEnvironment()
+                            GetJEditEnvironment()
                         End If
                         Return _JEDIT_SETTINGS
                     End SyncLock
@@ -306,6 +307,18 @@ Namespace Apps
         
         #Region "Public Static Methods"
             
+            ''' <summary> The current culture will be patched to use'.' as decimal separator, ' ' as number grouping character and ',' as list separator. </summary>
+            Public Shared Sub PatchCurrentCultureSeparators()
+                
+                Logger.logDebug("PatchCurrentCultureSeparators():  Set '.' as decimal separator, ' ' as number grouping character and ',' as list separator.")
+            
+                Dim ci As CultureInfo                  = Thread.CurrentThread.CurrentCulture.Clone()
+                ci.NumberFormat.NumberDecimalSeparator = CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator
+                ci.NumberFormat.NumberGroupSeparator   = " "
+                ci.TextInfo.ListSeparator              = CultureInfo.InvariantCulture.TextInfo.ListSeparator
+                Thread.CurrentThread.CurrentCulture    = ci
+            End Sub
+            
             ''' <summary> The given editor will be started if possible. </summary>
              ''' <param name="TargetEditor"> Determines one of the supported editors. </param>
              ''' <param name="Arguments">    Command line arguments for the editor. May be <see langword="null"/>. </param>
@@ -324,7 +337,7 @@ Namespace Apps
              ''' If %JEDIT_SETTINGS% is defined, the argument "-settings=%JEDIT_SETTINGS%" is automatically specified.
              ''' </para>
              ''' </remarks>
-            Public Shared Sub startEditor(ByVal TargetEditor As SupportedEditors, ByVal Arguments As String)
+            Public Shared Sub StartEditor(ByVal TargetEditor As SupportedEditors, ByVal Arguments As String)
                 
                 Logger.logDebug(StringUtils.sprintf("startEditor(): Anforderungen: Editor = '%s', Argumente = '%s'.", TargetEditor.ToDisplayString(), Arguments))
                 
@@ -362,7 +375,7 @@ Namespace Apps
             ''' <summary> The given File will be opened in it's associated application if possible. </summary>
              ''' <param name="AbsoluteFilePath"> The absolute path of the file to start. </param>
              ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="AbsoluteFilePath"/> hasn't been found. </exception>
-            Public Shared Sub startFile(ByVal AbsoluteFilePath As String)
+            Public Shared Sub StartFile(ByVal AbsoluteFilePath As String)
                 
                 Logger.logDebug(StringUtils.sprintf("startFile(): zu startende Datei = '%s'.", AbsoluteFilePath))
                 
@@ -387,7 +400,7 @@ Namespace Apps
              ''' The VBscript does the work.
              ''' </para>
              ''' </remarks>
-            Public Shared Sub startExcelGeoToolsCSVImport(byVal FilePath As String)
+            Public Shared Sub StartExcelGeoToolsCSVImport(byVal FilePath As String)
                 SyncLock (SyncHandle)
                     Logger.logInfo(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AppUtils_InvokeGeoToolsCsvImport, FilePath))
                     If (Not File.Exists(FilePath)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.AppUtils_GeoToolsCsvNotFound, FilePath)
@@ -446,7 +459,7 @@ Namespace Apps
             
             ''' <summary> Searches for the Crimson Editor application file in some places. </summary>
              ''' <returns> The found application file path or String.Empty. </returns>
-            Private Shared  Function getAppPathCrimsonEditor() As String
+            Private Shared  Function GetAppPathCrimsonEditor() As String
                 Dim Key_CEditExe  As String
                 Dim CEditExe      As String
                 Dim CEditDir      As String
@@ -515,7 +528,7 @@ Namespace Apps
             
             ''' <summary> Searches for the UltraEdit application file in some places. </summary>
              ''' <returns> The found application file path or String.Empty. </returns>
-            Private Shared Function getAppPathUltraEdit() As String
+            Private Shared Function GetAppPathUltraEdit() As String
                 Dim Key_UEditExe  As String
                 Dim UEditExe      As String
                 Dim fi            As FileInfo
@@ -556,11 +569,11 @@ Namespace Apps
             
             ''' <summary> Searches for the Java application file in some places and gets it's environment. </summary>
              ''' <remarks> Determines the Java application file path and %JAVA_HOME%. </remarks>
-            Private Shared Sub getJavaEnvironment()
-                Dim Key_JavaExe   As String = String.Empty
+            Private Shared Sub GetJavaEnvironment()
                 Dim JavaExe       As String = String.Empty
                 Dim fi            As FileInfo
                 Const AppNames    As String = "Javaw.exe"
+                Const Key_JavaExe As String = "HKEY_CLASSES_ROOT\jarfile\shell\open\command\"
                 Logger.logDebug("getJavaEnvironment(): Programmdatei von Java ermitteln.")
                 
                 ' Search in %JAVA_HOME%
@@ -582,7 +595,6 @@ Namespace Apps
                 
                 ' Default app for .jar files
                 If (JavaExe.IsEmptyOrWhiteSpace()) Then
-                    Key_JavaExe = "HKEY_CLASSES_ROOT\jarfile\shell\open\command\"
                     JavaExe = RegUtils.getApplicationPath(Key_JavaExe)
                 End if
                 
@@ -607,7 +619,7 @@ Namespace Apps
             
             ''' <summary> Searches for the jEdit application file in some places and gets it's environment. </summary>
              ''' <remarks> Determines jedit.jar path, %JEDIT_HOME% and %JEDIT_SETTINGS%. </remarks>
-            Private Shared Sub getJEditEnvironment()
+            Private Shared Sub GetJEditEnvironment()
                 Dim jEditJar      As String = String.Empty
                 Dim jEditHome     As String = String.Empty
                 Dim fi            As FileInfo
@@ -706,7 +718,7 @@ Namespace Apps
             
             ''' <summary> Looks for availability of supported editors. </summary>
              ''' <returns> A dictionary of all available editors. If no editor has been found, the dictionary has no entry. </returns>
-            Private Shared Function getAvailableEditors() As Dictionary(Of SupportedEditors, EditorInfo)
+            Private Shared Function GetAvailableEditors() As Dictionary(Of SupportedEditors, EditorInfo)
                 Dim Arguments  As String
                 Dim Editors    As New Dictionary(Of SupportedEditors, EditorInfo)
                 Logger.logDebug("getAvailableEditors(): Suche alle unterstützten Editoren...")
@@ -764,7 +776,7 @@ Namespace Apps
              ''' and the application setting is updated.
              ''' </para>
              ''' </remarks>
-            Private Shared Function initCurrentEditor() As SupportedEditors
+            Private Shared Function InitCurrentEditor() As SupportedEditors
                 Logger.logDebug("initCurrentEditor(): Aktuellen Editor ermitteln.")
                 
                 Dim initialEditor As SupportedEditors = SupportedEditors.None
