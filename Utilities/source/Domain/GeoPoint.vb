@@ -119,7 +119,8 @@ Namespace Domain
                 
                 ' Patterns for recognizing point kind from info text.
                 InfoKindPatterns = New Dictionary(Of String, GeoPointKind)
-                InfoCantPattern  = "u *=? *([+-]? *[0-9]+)\s*"
+                'InfoCantPattern  = "u *=? *([+-]? *[0-9]+)\s*"
+                InfoCantPattern  = "u *= *([+-]? *[0-9]+)\s*"                  ' 26.03.2021: "=" mandatory 
                 InfoKindPatterns.Add(InfoCantPattern  , GeoPointKind.Rails)
                 InfoKindPatterns.Add("Gls|Gleis"      , GeoPointKind.Rails)
                 InfoKindPatterns.Add("Bst|Bstg|Bahnst", GeoPointKind.Platform)
@@ -527,7 +528,7 @@ Namespace Domain
              ''' The following patterns somewhere in <see cref="GeoPoint.Info"/> lead to guessing the point kind: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Pattern</b>  </term>  <description> Point Kind </description></listheader>
-             ''' <item> <term> u[=]?[+-]?[0-9]+      </term>  <description> Actual rails with actual cant      </description></item>
+             ''' <item> <term> u=[+-]?[0-9]+         </term>  <description> Actual rails with actual cant      </description></item>
              ''' <item> <term> Gls, Gleis            </term>  <description> Actual rails (without actual cant) </description></item>
              ''' <item> <term> Bstg, Bst, Bahnst     </term>  <description> Platform                           </description></item>
              ''' <item> <term> PS4, GVP              </term>  <description> Rails fix point                    </description></item>
@@ -603,7 +604,7 @@ Namespace Domain
              ''' <param name="TryComment"> If <see langword="true"/> and no cant has been found in <see cref="GeoPoint.Info"/>, the <see cref="GeoPoint.Comment"/> will be parsed, too. </param>
              ''' <remarks>
              ''' <para>
-             ''' The cant is recognizes by this pattern in <see cref="GeoPoint.Info"/>:  u *[=]? *([+-]? *[0-9])+
+             ''' The cant is recognizes by this pattern in <see cref="GeoPoint.Info"/>:  u *= *([+-]? *[0-9]+)
              ''' </para>
              ''' <para>
              ''' When cant has been found, 
