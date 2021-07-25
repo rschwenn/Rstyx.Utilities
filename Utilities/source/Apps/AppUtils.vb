@@ -165,7 +165,7 @@ Namespace Apps
              ''' </para>
              ''' <list type="number">
              '''     <item>
-             '''         <description> in %JAVA_HOME% </description>
+             '''         <description> in %JAVA_HOME%\bin </description>
              '''     </item>
              '''     <item>
              '''         <description> in %PATH% </description>
@@ -582,7 +582,7 @@ Namespace Apps
                 If (_JAVA_HOME Is Nothing) Then
                     _JAVA_HOME = String.Empty
                 Else
-                    fi = IO.FileUtils.findFile(AppNames, _JAVA_HOME, ";", SearchOption.TopDirectoryOnly)
+                    fi = IO.FileUtils.findFile(AppNames, _JAVA_HOME & "\bin", ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End If
                 
@@ -611,7 +611,13 @@ Namespace Apps
                     Logger.logDebug("getJavaEnvironment(): Programmdatei von Java nicht gefunden.")
                 Else
                     _JAVA_HOME = IO.FileUtils.getFilePart(JavaExe, IO.FileUtils.FilePart.Dir)
+                    If (_JAVA_HOME.EndsWith("\bin", ignoreCase:=True, culture:= CultureInfo.InvariantCulture)) Then
+                        _JAVA_HOME = _JAVA_HOME.Left(_JAVA_HOME.Length - 4)
+                    ElseIf (_JAVA_HOME.EndsWith("\bin\", ignoreCase:=True, culture:= CultureInfo.InvariantCulture)) Then
+                        _JAVA_HOME = _JAVA_HOME.Left(_JAVA_HOME.Length - 5)
+                    End If
                     Logger.logDebug(StringUtils.sprintf("getJavaEnvironment(): Programmdatei von Java gefunden: '%s'.", JavaExe))
+                    Logger.logDebug(StringUtils.sprintf("getJavaEnvironment(): _JAVA_HOME davon abgeleitet: '%s'.", _JAVA_HOME))
                 End if
                 
                 _AppPathJava = JavaExe
