@@ -273,21 +273,23 @@ Namespace Domain
              ''' Point kind codes in <paramref name="PointInfoText"/> are required to have the expected format: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Format / Pattern</b> </term>  <description> Point Kind </description></listheader>
-             ''' <item> <term> -b                   </term>  <description> Platform                                 </description></item>
-             ''' <item> <term> -i[u[=]?[+-]?[0-9]+] </term>  <description> Actual rails [with actual cant]          </description></item>
-             ''' <item> <term> -v[0-9]+             </term>  <description> Rails fix point [with numeric mark type] </description></item>
-             ''' <item> <term> -f[0-9]+             </term>  <description> Other fix point [with numeric mark type] </description></item>
-             ''' <item> <term> ?-                   </term>  <description> If one of the above codes is there, it may be preceeded by one word character which will recognized as <see cref="GeoIPoint.MarkTypeAB"/>. </description></item>
+             ''' <item> <term> -b                     </term>  <description> Platform                                                </description></item>
+             ''' <item> <term> -i[ueb[=]?[+-]?[0-9]+] </term>  <description> Actual rails [with actual absolute cant (sign as iGeo)] </description></item>
+             ''' <item> <term> -i[u[=]?[+-]?[0-9]+]   </term>  <description> Actual rails [with actual relative cant]                </description></item>
+             ''' <item> <term> -v[0-9]+               </term>  <description> Rails fix point [with numeric mark type]                </description></item>
+             ''' <item> <term> -f[0-9]+               </term>  <description> Other fix point [with numeric mark type]                </description></item>
+             ''' <item> <term> ?-                     </term>  <description> If one of the above codes is there, it may be preceeded by one word character which will recognized as <see cref="GeoIPoint.MarkTypeAB"/>. </description></item>
              ''' </list>
              ''' </para>
              ''' <para>
              ''' This method clears and sets the following properties:
              ''' <list type="bullet">
-             ''' <item><description> <see cref="GeoPoint.Kind"/>        </description></item>
-             ''' <item><description> <see cref="GeoIPoint.ActualCant"/> </description></item>
-             ''' <item><description> <see cref="GeoPoint.MarkType"/>    </description></item>
-             ''' <item><description> <see cref="GeoIPoint.MarkTypeAB"/> </description></item>
-             ''' <item><description> <see cref="GeoPoint.Info"/>        </description></item>
+             ''' <item><description> <see cref="GeoPoint.Kind"/>           </description></item>
+             ''' <item><description> <see cref="GeoIPoint.ActualCantAbs"/> </description></item>
+             ''' <item><description> <see cref="GeoIPoint.ActualCant"/>    </description></item>
+             ''' <item><description> <see cref="GeoPoint.MarkType"/>       </description></item>
+             ''' <item><description> <see cref="GeoIPoint.MarkTypeAB"/>    </description></item>
+             ''' <item><description> <see cref="GeoPoint.Info"/>           </description></item>
              ''' </list>
              ''' </para>
              ''' </remarks>
@@ -306,6 +308,8 @@ Namespace Domain
                     Dim CodePart   As String
                     Dim InfoPart   As String  = Nothing
                     Dim FirstHash  As Integer = PointInfoText.IndexOf("#"c)
+                    
+                    ' TODO: DEPRECATED -  Remove support for "x" at te end of 2021!
                     Dim FirstX     As Integer = PointInfoText.IndexOf("x", System.StringComparison.OrdinalIgnoreCase)
                     
                     If ((FirstHash > 0) AndAlso (FirstX > 0)) Then
@@ -332,19 +336,21 @@ Namespace Domain
                     ' Code part: Find point kind.
                     If (CodePart.IsNotEmptyOrWhiteSpace()) Then
                                     
-                        Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iu) *=? *([+-]? *[0-9]+)|(-i))?"
+                        'Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iu) *=? *([+-]? *[0-9]+)|(-i))?"
+                        Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?"
                         Dim oMatch  As Match  = Regex.Match(CodePart, Pattern)
                         
                         If (oMatch.Success) Then
-                            For i As Integer = 3 To 10
+                            For i As Integer = 3 To 12
                                 If (oMatch.Groups(i).Success) Then
                                     Dim Key As String = oMatch.Groups(i).Value
                                     Select Case Key
-                                        Case "-b":   Me.Kind = GeoPointKind.Platform
-                                        Case "-v":   Me.Kind = GeoPointKind.RailsFixPoint  : Me.MarkType = oMatch.Groups(i + 1).Value
-                                        Case "-f":   Me.Kind = GeoPointKind.FixPoint       : Me.MarkType = oMatch.Groups(i + 1).Value
-                                        Case "-iu":  Me.Kind = GeoPointKind.Rails          : Me.ActualCant = CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
-                                        Case "-i":   Me.Kind = GeoPointKind.Rails
+                                        Case "-b":     Me.Kind = GeoPointKind.Platform
+                                        Case "-v":     Me.Kind = GeoPointKind.RailsFixPoint  : Me.MarkType = oMatch.Groups(i + 1).Value
+                                        Case "-f":     Me.Kind = GeoPointKind.FixPoint       : Me.MarkType = oMatch.Groups(i + 1).Value
+                                        Case "-iueb":  Me.Kind = GeoPointKind.Rails          : Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-iu":    Me.Kind = GeoPointKind.Rails          : Me.ActualCant = CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-i":     Me.Kind = GeoPointKind.Rails
                                     End Select
                                     Exit For
                                 End If
@@ -390,14 +396,22 @@ Namespace Domain
                         Case GeoPointKind.Platform      : IpktText &= "-b"
                         Case GeoPointKind.RailsFixPoint : IpktText &= "-v" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
                         Case GeoPointKind.FixPoint      : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.Rails         : IpktText &= "-i" : If (Not Double.IsNaN(Me.ActualCant))      Then IpktText &= sprintf("u=%3.0f", Me.ActualCant * 1000)
+                        Case GeoPointKind.Rails         : 
+                            Dim IsNanActualCantAbs = Double.IsNaN(Me.ActualCantAbs)
+                            Dim IsNanActualCant    = Double.IsNaN(Me.ActualCant)
+                            If (IsNanActualCant AndAlso IsNanActualCantAbs) Then
+                                IpktText &= "-i"
+                            Else
+                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%3.0f", Me.ActualCantAbs * 1000 * -1)
+                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%3.0f", Me.ActualCant * 1000)
+                            End If
                     End Select
                 End If
                 
                 ' Info.
                 If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
                     If (IpktText.IsNotEmpty()) Then
-                        IpktText &= " x "
+                        IpktText &= " # "
                     End If
                     IpktText &= Me.Info
                 End If

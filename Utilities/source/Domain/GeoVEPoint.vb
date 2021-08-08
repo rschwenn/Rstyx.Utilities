@@ -442,7 +442,7 @@ Namespace Domain
                 Else
                     Dim MinDoubleID As Double  = MinIntegerID
                     Dim MaxDoubleID As Double  = MaxIntegerID
-                    If (RetValue.Contains(".") OrElse ((DoubleID > 0.0) AndAlso (DoubleID < 1.0))) Then DoubleID = DoubleID * PointNoFactor
+                    If (RetValue.Contains(".") OrElse ((DoubleID > 0.0) AndAlso (DoubleID < 1.0))) Then DoubleID *= PointNoFactor
                     DoubleID = Round(DoubleID, 0)
                     
                     If ((DoubleID < MinDoubleID) OrElse (DoubleID > MaxDoubleID)) Then

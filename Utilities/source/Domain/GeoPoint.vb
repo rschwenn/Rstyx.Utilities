@@ -225,6 +225,7 @@ Namespace Domain
                     
                     Me.Attributes      = SourcePoint.Attributes
                     Me.ActualCant      = SourcePoint.ActualCant
+                    Me.ActualCantAbs   = SourcePoint.ActualCantAbs
                     Me.Info            = SourcePoint.Info
                     Me.HeightInfo      = SourcePoint.HeightInfo
                     Me.Comment         = SourcePoint.Comment
@@ -293,6 +294,9 @@ Namespace Domain
             
             ''' <inheritdoc/>
             Public Property ActualCant()    As Double = Double.NaN Implements IGeoPointInfo.ActualCant
+            
+            ''' <inheritdoc/>
+            Public Property ActualCantAbs() As Double = Double.NaN Implements IGeoPointInfo.ActualCantAbs
             
             ''' <inheritdoc/>
             Public Property Info()          As String = String.Empty Implements IGeoPointInfo.Info

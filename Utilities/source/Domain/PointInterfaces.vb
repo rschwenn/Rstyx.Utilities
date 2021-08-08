@@ -54,6 +54,17 @@ Namespace Domain
          ''' </para>
          ''' </remarks>
         Property ActualCant()   As Double
+        
+        ''' <summary> Actual rails cant. <b>Absolute</b> (geometry independent) specification in [m]. </summary>
+         ''' <remarks>
+         ''' <para>
+         ''' <b> Sign is independent from geometry: </b>
+         ''' <list type="bullet">
+         ''' <item><description> <b> Absolute Sign: </b>  Positive is treated as "left running surface is higher", negative as "right running surface is higher". </description></item>
+         ''' </list>
+         ''' </para>
+         ''' </remarks>
+        Property ActualCantAbs() As Double
             
         ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>
         Property Attributes()   As Dictionary(Of String, String)
