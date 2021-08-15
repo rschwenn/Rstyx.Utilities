@@ -340,7 +340,7 @@ Namespace Domain.IO
                 oBW.Write(getVEDoubleFromDouble(p.TrackPos.Kilometer.Value))
                 
                 oBW.Write(CByte(Asc(p.PositionPreInfo)))
-                oBW.Write(GetByteArray(FileEncoding, p.GetKVInfo(), 13, " "c))
+                oBW.Write(GetByteArray(FileEncoding, p.CreateKVInfo(), 13, " "c))
                 oBW.Write(CByte(Asc(p.PositionPostInfo)))
                 
                 oBW.Write(CByte(Asc(p.HeightPreInfo)))

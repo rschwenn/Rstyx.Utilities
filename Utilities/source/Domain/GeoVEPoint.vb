@@ -350,7 +350,7 @@ Namespace Domain
             
             ''' <summary> Gets a point info text of max. 13 chars for kv file, containing cant (if any) and info. </summary>
              ''' <returns> The point info text for kv file, i.e. 'u= 23  info'. </returns>
-            Public Function GetKVInfo() As String
+            Public Function CreateKVInfo() As String
                 
                 Dim KVText As String
                 

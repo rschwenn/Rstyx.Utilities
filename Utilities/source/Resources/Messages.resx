@@ -756,6 +756,18 @@
     <value>%d Punkte gelesen aus ASCII-Punktdatei (KV) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
+  <data name="KorFile_LoadFailed" xml:space="preserve">
+    <value>Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KOR) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="KorFile_LoadStart" xml:space="preserve">
+    <value>Lese ASCII-Punktdatei (KOR) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="KorFile_LoadSuccess" xml:space="preserve">
+    <value>%d Punkte gelesen aus ASCII-Punktdatei (KOR) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
   <data name="KfFile_StoreFailed" xml:space="preserve">
     <value>Fehler beim Schreiben der Verm.esn-Punktdatei (KF) '%s'.</value>
     <comment>File Name: String</comment>
@@ -778,6 +790,18 @@
   </data>
   <data name="KvFile_StoreSuccess" xml:space="preserve">
     <value>%d Punkte geschrieben in ASCII-Punktdatei (KV) '%s'.\n</value>
+    <comment>Point Count: Integer; File Name: String</comment>
+  </data>
+  <data name="KorFile_StoreFailed" xml:space="preserve">
+    <value>Fehler beim Schreiben der ASCII-Punktdatei (KOR) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="KorFile_StoreStart" xml:space="preserve">
+    <value>Schreibe ASCII-Punktdatei (KOR) '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="KorFile_StoreSuccess" xml:space="preserve">
+    <value>%d Punkte geschrieben in ASCII-Punktdatei (KOR) '%s'.\n</value>
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
   <data name="Domain_Label_HeightInfo" xml:space="preserve">
@@ -833,6 +857,10 @@
   </data>
   <data name="KvFile_LoadParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="KorFile_LoadParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KOR) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
   <data name="GeoPointList_NoPoints" xml:space="preserve">
@@ -984,6 +1012,10 @@
   </data>
   <data name="KvFile_StoreParsingFailed" xml:space="preserve">
     <value>Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (KV) '%s'.</value>
+    <comment>Error Count: Integer; File Name: String</comment>
+  </data>
+  <data name="KorFile_StoreParsingFailed" xml:space="preserve">
+    <value>Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (KOR) '%s'.</value>
     <comment>Error Count: Integer; File Name: String</comment>
   </data>
   <data name="iPktFile_StoreParsingFailed" xml:space="preserve">

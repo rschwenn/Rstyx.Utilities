@@ -306,12 +306,12 @@ Namespace Domain.IO
                                                       p.CoordSys.TrimToMaxLength(6),
                                                       p.Flags.TrimToMaxLength(4),
                                                       p.wp, p.wh,
-                                                      p.GetIpktText().TrimToMaxLength(25),
+                                                      p.CreateIpktText().TrimToMaxLength(25),
                                                       p.AttKey1.TrimToMaxLength(2),
                                                       p.AttValue1.TrimToMaxLength(25),
                                                       p.AttKey2.TrimToMaxLength(2),
                                                       p.AttValue2.TrimToMaxLength(25),
-                                                      p.GetFreeDataText()
+                                                      p.CreateFreeDataText()
                                                      ))
                                 
                             Catch ex As InvalidIDException

@@ -242,9 +242,9 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Gets a FreeData text for ipkt file, containing attributes and comment. </summary>
+            ''' <summary> Creates a FreeData text for ipkt file, containing attributes and comment. </summary>
              ''' <returns> The FreeData text for ipkt file. </returns>
-            Public Function GetFreeDataText() As String
+            Public Function CreateFreeDataText() As String
                 
                 Dim FreeDataText As String = String.Empty
                                 
@@ -379,9 +379,9 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Gets a point text for ipkt file, containing iGeo point kind codes and info. </summary>
+            ''' <summary> Creates a point text for ipkt file, containing iGeo point kind codes and info. </summary>
              ''' <returns> The point text for ipkt file. </returns>
-            Public Function GetIpktText() As String
+            Public Function CreateIpktText() As String
                 
                 Dim IpktText As String = String.Empty
                 

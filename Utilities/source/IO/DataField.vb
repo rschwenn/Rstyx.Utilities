@@ -189,7 +189,7 @@ Namespace IO
             ''' <summary> Creates a new instance of <see cref="DataField"/> using default options (hence no option flag is used). </summary>
              ''' <param name="Caption">      The Caption for the the data field. </param>
              ''' <param name="PositionType"> Kind of determining a data field in a string. </param>
-             ''' <param name="ColumnOrWord"> The <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </param>
+             ''' <param name="ColumnOrWord"> The <b>start colulmn number (zero-based)</b> or <b>word number</b> pointing to the data field in the base string. </param>
              ''' <param name="Length">       The length of the data field, if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Caption"/> is <see langword="null"/>. </exception>
@@ -207,7 +207,7 @@ Namespace IO
             ''' <summary> Creates a new instance of <see cref="DataField"/>. </summary>
              ''' <param name="Caption">      The Caption for the the data field. </param>
              ''' <param name="PositionType"> Kind of determining a data field in a string. </param>
-             ''' <param name="ColumnOrWord"> The <b>start colulmn number</b> or <b>word number</b> pointing to the data field in the base string. </param>
+             ''' <param name="ColumnOrWord"> The <b>start colulmn number (zero-based)</b> or <b>word number</b> pointing to the data field in the base string. </param>
              ''' <param name="Length">       The length of the data field, if <see cref="DataFieldDefinition(Of TFieldValue).PositionType"/> is <see cref="DataFieldPositionType.ColumnAndLength"/>. </param>
              ''' <param name="Options">      Option flags to control parsing. </param>
              ''' <remarks></remarks>

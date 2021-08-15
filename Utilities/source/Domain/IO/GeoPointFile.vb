@@ -55,7 +55,7 @@ Namespace Domain.IO
            ''' <summary> Determines logical constraints for the intended usage of points. Defaults to <c>None</c>. </summary>
             ''' <remarks>
             ''' <para>
-            ''' If any of these contraints is violated while readding (and only while readding) the file, a <see cref="ParseError"/> will be created.
+            ''' If any of these contraints is violated while reading (and only while reading) the file, a <see cref="ParseError"/> will be created.
             ''' </para>
             ''' <para>
             ''' If the <see cref="IEnumerable(Of IGeoPoint)"/> returned by <see cref="GeoPointFile.PointStream"/> is intended to be converted to a <see cref="GeoPointList"/>

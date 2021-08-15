@@ -1910,6 +1910,78 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KOR) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_LoadFailed() As String
+            Get
+                Return ResourceManager.GetString("KorFile_LoadFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Analysieren der ASCII-Punktdatei (KOR) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_LoadParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("KorFile_LoadParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese ASCII-Punktdatei (KOR) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_LoadStart() As String
+            Get
+                Return ResourceManager.GetString("KorFile_LoadStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte gelesen aus ASCII-Punktdatei (KOR) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_LoadSuccess() As String
+            Get
+                Return ResourceManager.GetString("KorFile_LoadSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Schreiben der ASCII-Punktdatei (KOR) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_StoreFailed() As String
+            Get
+                Return ResourceManager.GetString("KorFile_StoreFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es sind %d Fehler aufgetreten beim Schreiben der ASCII-Punktdatei (KOR) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_StoreParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("KorFile_StoreParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schreibe ASCII-Punktdatei (KOR) &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_StoreStart() As String
+            Get
+                Return ResourceManager.GetString("KorFile_StoreStart", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die %d Punkte geschrieben in ASCII-Punktdatei (KOR) &apos;%s&apos;.\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_StoreSuccess() As String
+            Get
+                Return ResourceManager.GetString("KorFile_StoreSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die                                                                                                                      Vermarkungsart ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KvFile_Label_DefaultHeader1() As String

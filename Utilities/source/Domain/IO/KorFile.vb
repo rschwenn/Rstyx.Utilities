@@ -9,13 +9,13 @@ Imports Rstyx.Utilities.StringUtils
 
 Namespace Domain.IO
     
-    ''' <summary> A reader and writer for KV GeoPoint files (VE Ascii) - see <see cref="GeoPointFile"/>. </summary>
-    Public Class KvFile
+    ''' <summary> A reader and writer for KOR GeoPoint files (general Ascii) - see <see cref="GeoPointFile"/>. </summary>
+    Public Class KorFile
         Inherits GeoPointFile
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KvFile")
+            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KorFile")
             
         #End Region
         
@@ -25,15 +25,15 @@ Namespace Domain.IO
             Public Sub New()
                 Me.LineStartCommentToken = "#"
                 
-                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader1)
-                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader2)
-                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KvFile_Label_DefaultHeader3)
-                Me.DefaultHeader.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-            
-                Me.HeaderDiscardLines.Add(" PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr")
-                Me.HeaderDiscardLines.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------")
+                'Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KorFile_Label_DefaultHeader1)
+                'Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KorFile_Label_DefaultHeader2)
+                'Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KorFile_Label_DefaultHeader3)
+                'Me.DefaultHeader.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+                '
+                'Me.HeaderDiscardLines.Add(" PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr")
+                'Me.HeaderDiscardLines.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------")
                 
-                Logger.logDebug("New(): KvFile instantiated")
+                Logger.logDebug("New(): KorFile instantiated")
             End Sub
             
             ''' <summary> Creates a new instance with a given file path. </summary>
@@ -62,7 +62,7 @@ Namespace Domain.IO
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
                     Try 
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadStart, Me.FilePath))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadStart, Me.FilePath))
                         Logger.logInfo(Me.GetPointEditOptionsLogText())
                         
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
@@ -76,7 +76,7 @@ Namespace Domain.IO
                             
                             If (DataLine.HasData) Then
                                 Try
-    		                        Dim p As New GeoVEPoint()
+    		                        Dim p As New GeoPoint()
                                     
                                     ' Keep some data fields for later issue tracking.
                                     FieldID                            = DataLine.ParseField(RecDef.PointID)
@@ -113,7 +113,7 @@ Namespace Domain.IO
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
                     
-                                    ' Convert selected attributes to properties, which don't belong to .kv file.
+                                    ' Convert selected attributes to properties, which don't belong to .kor file.
                                     Dim PropertyName   As String
                                     Dim AttStringValue As String
                                     PropertyName   = "CoordSys"
@@ -151,13 +151,13 @@ Namespace Domain.IO
                                 Catch ex As InvalidIDException
                                     Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, FilePath))
                                     If (Not Me.CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                     End If
                                     
                                 Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                     Me.ParseErrors.Add(ex.ParseError)
                                     If (Not Me.CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                     End If
                                 End Try
                             End If
@@ -165,18 +165,18 @@ Namespace Domain.IO
                         
                         ' Throw exception if parsing errors has been collected.
                         If (Me.ParseErrors.HasErrors) Then
-                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                         ElseIf (PointCount = 0) Then
                             Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                         End If
                         
                         'Logger.logDebug(PointList.ToString())
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadSuccess, PointCount, FilePath))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadSuccess, PointCount, FilePath))
                         
                     Catch ex As ParseException
                         Throw
                     Catch ex as System.Exception
-                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_LoadFailed, FilePath), ex)
+                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadFailed, FilePath), ex)
                     Finally
                         Me.ParseErrors.ToLoggingConsole()
                         If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
@@ -199,7 +199,7 @@ Namespace Domain.IO
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreStart, Me.FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreStart, Me.FilePath))
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Me.Reset(Nothing)
@@ -230,7 +230,7 @@ Namespace Domain.IO
                                 ip.Attributes = p.Attributes
                                 ip.Comment    = p.Comment
                                 
-                                ' Convert properties to attributes in order to take place in .kv.
+                                ' Convert properties to attributes in order to take place in .kor.
                                 '   (More candidates: mp, mh)
                                 Dim PropertyName   As String
                                 Dim AttributeName  As String
@@ -249,7 +249,7 @@ Namespace Domain.IO
                                                       If(Double.IsNaN(P.X), 0, P.X),
                                                       If(Double.IsNaN(P.Z), 0, P.Z),
                                                       p.TrackPos.Kilometer.Value,
-                                                      P.CreateKVInfo(),
+                                                      CreateKorInfo(),
                                                       P.HeightInfo.TrimToMaxLength(13),
                                                       P.KindText.TrimToMaxLength(4),
                                                       p.TrackPos.TrackNo,
@@ -270,13 +270,13 @@ Namespace Domain.IO
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                                 End If
                                 
                             'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                             '    Me.ParseErrors.Add(ex.ParseError)
                             '    If (Not Me.CollectParseErrors) Then
-                            '        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            '        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                             '    End If
                             End Try
                         Next
@@ -284,15 +284,15 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreSuccess, PointCount, Me.FilePath))
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreSuccess, PointCount, Me.FilePath))
                     
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KvFile_StoreFailed, Me.FilePath), ex)
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreFailed, Me.FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
@@ -310,26 +310,12 @@ Namespace Domain.IO
                 Public Sub New()
                     MyBase.New()
                     ' Column definitions are zero-ased!
-                    Me.PointID      = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_PointID   , DataFieldPositionType.ColumnAndLength,   0,  7)
-                    Me.Y            = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Y         , DataFieldPositionType.ColumnAndLength,   9, 14, DataFieldOptions.ZeroAsNaN)
-                    Me.X            = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_X         , DataFieldPositionType.ColumnAndLength,  24, 14, DataFieldOptions.ZeroAsNaN)
-                    Me.Z            = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Z         , DataFieldPositionType.ColumnAndLength,  39,  9, DataFieldOptions.ZeroAsNaN)
-                    Me.Km           = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km        , DataFieldPositionType.ColumnAndLength,  49, 12, DataFieldOptions.NotRequired)
-                    Me.PositionInfo = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Info      , DataFieldPositionType.ColumnAndLength,  63, 13, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
-                    Me.HeightInfo   = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_HeightInfo, DataFieldPositionType.ColumnAndLength,  77, 13, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
-                    Me.PointKind    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_PointKind , DataFieldPositionType.ColumnAndLength,  91,  4, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.TrackNo      = New DataFieldDefinition(Of Nullable(Of Integer))(Rstyx.Utilities.Resources.Messages.Domain_Label_TrackNo, DataFieldPositionType.ColumnAndLength,  96,  4, DataFieldOptions.NotRequired)
-                    Me.RailsCode    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_RailsCode , DataFieldPositionType.ColumnAndLength, 101,  1, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.HeightSys    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_HeightSys , DataFieldPositionType.ColumnAndLength, 104,  3, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.mp           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_mp        , DataFieldPositionType.ColumnAndLength, 108,  5, DataFieldOptions.NotRequired)
-                    Me.mh           = New DataFieldDefinition(Of Double)   (Rstyx.Utilities.Resources.Messages.Domain_Label_mh        , DataFieldPositionType.ColumnAndLength, 114,  5, DataFieldOptions.NotRequired)
-                    Me.MarkHints    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Stability , DataFieldPositionType.ColumnAndLength, 121,  1, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.MarkType     = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_MarkType  , DataFieldPositionType.ColumnAndLength, 123,  3, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.sp           = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_sp        , DataFieldPositionType.ColumnAndLength, 128,  1, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.sh           = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_sh        , DataFieldPositionType.ColumnAndLength, 129,  1, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.Job          = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Job       , DataFieldPositionType.ColumnAndLength, 132,  8, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
-                    Me.ObjectKey    = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_ObjectKey , DataFieldPositionType.ColumnAndLength, 141,  7, DataFieldOptions.NotRequired + DataFieldOptions.Trim + DataFieldOptions.ZeroAsNaN)
-                    Me.FreeData     = New DataFieldDefinition(Of String)   (Rstyx.Utilities.Resources.Messages.Domain_Label_Comment   , DataFieldPositionType.ColumnAndLength, 149,  Integer.MaxValue, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                    Me.PointID      = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID, DataFieldPositionType.WordNumber, 1, 0)
+                    Me.Y            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y      , DataFieldPositionType.WordNumber, 2, 0, DataFieldOptions.ZeroAsNaN)
+                    Me.X            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X      , DataFieldPositionType.WordNumber, 3, 0, DataFieldOptions.ZeroAsNaN)
+                    Me.Z            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z      , DataFieldPositionType.WordNumber, 4, 0, DataFieldOptions.ZeroAsNaN)
+                    Me.PositionInfo = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Info   , DataFieldPositionType.WordNumber, 5, 0, DataFieldOptions.NotRequired)
+                                      ' Info: post process to get rest of line
                 End Sub
                 
                 #Region "Public Fields"
