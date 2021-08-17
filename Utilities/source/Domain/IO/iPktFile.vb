@@ -27,6 +27,9 @@ Namespace Domain.IO
             Public Sub New()
                 Me.LineStartCommentToken = "#"
                 
+                ' By default the ipkt text field should be parsed as iGeo "iTrassen-Codierung".
+                Me.EditOptions = GeoPointEditOptions.Parse_iTC
+                
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader1)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader2)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader3)
@@ -156,14 +159,14 @@ Namespace Domain.IO
                                         p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
                                     End If
                                     
-                                    ' iTrassen-Codierung -> Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    p.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
-                                    
                                     ' Editing.
+                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
+                                        p.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
+                                    End If
                                     If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
-                                            p.ParseInfoForKindHints()
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
+                                            p.ParseInfoForPointKind()
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                                             p.ParseInfoForActualCant()
                                         End If
                                     End If

@@ -54,8 +54,8 @@ Namespace Domain.IO
             Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.TCFileReader")
             
             Private ReadOnly SourceBlocks               As New Collection(Of TcSourceBlockInfo)
-            Private ReadOnly VermEsnRecordDefinitions   As New Dictionary(Of String, TcRecordDefinitionVermEsn)  ' Key = getKeyForRecordDefinition(TcBlockType)
-            Private ReadOnly iGeoRecordDefinitions      As New Dictionary(Of String, TcRecordDefinitionIGeo)     ' Key = getKeyForRecordDefinition(TcBlockType)
+            Private ReadOnly VermEsnRecordDefinitions   As New Dictionary(Of String, TcRecordDefinitionVermEsn)  ' Key = GetKeyForRecordDefinition(TcBlockType)
+            Private ReadOnly iGeoRecordDefinitions      As New Dictionary(Of String, TcRecordDefinitionIGeo)     ' Key = GetKeyForRecordDefinition(TcBlockType)
             
             Private ReadOnly RHO                        As Double = 200 / System.Math.PI
             'Private ReadOnly DoublePipeMask            As String = "D1o2u3b4l5e6P7i8p9e0"
@@ -72,11 +72,12 @@ Namespace Domain.IO
                 ' Commentlines are o.k. but line end comments are not.
                 Me.LineStartCommentToken = "#"
                 
+                ' By default the A0 text field should be parsed as iGeo "iTrassen-Codierung".
                 ' By default recognize rails points and parse actual cant.
-                Me.EditOptions = GeoPointEditOptions.ParseCantFromInfo
+                Me.EditOptions = GeoPointEditOptions.ParseInfoForActualCant + GeoPointEditOptions.Parse_iTC
                 
-                setRecordDefinitionsVermEsn()
-                setRecordDefinitionsIGeo()
+                SetRecordDefinitionsVermEsn()
+                SetRecordDefinitionsIGeo()
             End Sub
             
             ''' <summary> Creates a new instance of TCFileReader with a given file path. </summary>
@@ -173,14 +174,14 @@ Namespace Domain.IO
                         If (DataLine.IsCommentLine) Then
                             ' Comment line: Look for output header of iGeo and iTrassePC.
                             If (DataLine.HasComment) Then
-                                kvp = splitHeaderLineIGeo(DataLine.Comment)
+                                kvp = SplitHeaderLineIGeo(DataLine.Comment)
                                 If (kvp.Key IsNot Nothing) Then
                                     If ((kvp.Key = "Programm") AndAlso ((kvp.Value = "iTrassePC") Or (kvp.Value = "iGeo"))) Then
                                         ' Create and store source block info.
                                         SourceBlock = New TcSourceBlockInfo()
                                         SourceBlock.BlockType.Version = TcBlockVersion.Current
                                         SourceBlock.BlockType.Program = If((kvp.Value = "iGeo"), TcBlockProgram.iGeo, TcBlockProgram.iTrassePC)
-                                        SourceBlock.StartIndex = findStartOfBlock(Me.DataLineBuffer, i)
+                                        SourceBlock.StartIndex = FindStartOfBlock(Me.DataLineBuffer, i)
                                         SourceBlocks.Add(SourceBlock)
                                         BlockCount += 1
                                         Logger.logDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
@@ -192,7 +193,7 @@ Namespace Domain.IO
                             If (DataLine.Data.IsMatchingTo("^Trassenumformung\s+|^Umformung\s+")) Then
                                 SourceBlock = New TcSourceBlockInfo()
                                 SourceBlock.BlockType.Program = TcBlockProgram.VermEsn
-                                SourceBlock.StartIndex = findStartOfBlock(Me.DataLineBuffer, i)
+                                SourceBlock.StartIndex = FindStartOfBlock(Me.DataLineBuffer, i)
                                 SourceBlocks.Add(SourceBlock)
                                 BlockCount += 1
                                 Logger.logDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
@@ -227,11 +228,11 @@ Namespace Domain.IO
                         Select Case SourceBlocks(i).BlockType.Program
                             
                             Case TcBlockProgram.VermEsn
-                                TcBlock = readBlockVermEsn(Me.DataLineBuffer, SourceBlocks(i))
+                                TcBlock = ReadBlockVermEsn(Me.DataLineBuffer, SourceBlocks(i))
                                 If (TcBlock.IsValid) Then Me.Blocks.Add(TcBlock)
                                 
                             Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
-                                TcBlock = readBlockIGeo(Me.DataLineBuffer, SourceBlocks(i))
+                                TcBlock = ReadBlockIGeo(Me.DataLineBuffer, SourceBlocks(i))
                                 If (TcBlock.IsValid) Then Me.Blocks.Add(TcBlock)
                         End Select
                     Next
@@ -542,6 +543,7 @@ Namespace Domain.IO
                     Public Sub New()
                         Me.AddRule(MissingProgramRule)
                         Me.AddRule(MissingVersionRule)
+                        Me.AddRule(MissingFieldNamesRule)   ' 17.08.21: rule hasn't been added yet - why?
                         Me.AddRule(MissingFormatRule)
                         Me.AddRule(MissingSubFormatRule)
                         Me.AddRule(FormatMismatchRule)
@@ -969,7 +971,7 @@ Namespace Domain.IO
              ''' BUT: Avoid including a preceeding empty block of iGeo and iTrassePC by looking for matching tokens.
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
-            Private Function findStartOfBlock(DataLines As Collection(Of DataTextLine), CurrentStartIndex As Integer) As Integer
+            Private Function FindStartOfBlock(DataLines As Collection(Of DataTextLine), CurrentStartIndex As Integer) As Integer
                 
                 If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 
@@ -996,7 +998,7 @@ Namespace Domain.IO
                         End If
                         
                         If (Not FoundStart) Then
-                            kvp = splitHeaderLineIGeo(PrevDataLine.Comment)
+                            kvp = SplitHeaderLineIGeo(PrevDataLine.Comment)
                             If (kvp.Key IsNot Nothing) Then
                                 If (kvp.Key.ContainsAny(SearchTerminators)) Then
                                     FoundStart = True
@@ -1016,7 +1018,7 @@ Namespace Domain.IO
              ''' <param name="Comment"> The string without leading comment token. </param>
              ''' <returns> The found key/value pair, both strings trimmed. If not found, key and value are <see langword="null"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Comment"/> is <see langword="null"/>. </exception>
-            Private Function splitHeaderLineIGeo(Comment As String) As KeyValuePair(Of String, String)
+            Private Function SplitHeaderLineIGeo(Comment As String) As KeyValuePair(Of String, String)
                 
                 If (Comment Is Nothing) Then Throw New System.ArgumentNullException("Comment")
                 
@@ -1035,7 +1037,7 @@ Namespace Domain.IO
             ''' <summary> Returns a key into the record definition dictionary. </summary>
              ''' <param name="BlockType"> The block type to get the key for. </param>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="BlockType"/> is <see langword="null"/>. </exception>
-            Private Function getKeyForRecordDefinition(BlockType As TcBlockType) As String
+            Private Function GetKeyForRecordDefinition(BlockType As TcBlockType) As String
                 
                 If (BlockType Is Nothing) Then Throw New System.ArgumentNullException("BlockType")
                 
@@ -1045,7 +1047,7 @@ Namespace Domain.IO
             ''' <summary> Returns the record definition for the given block type. </summary>
              ''' <param name="BlockType"> The block type to get the record definition for. </param>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="BlockType"/> is <see langword="null"/>. </exception>
-            Private Function getIGeoRecordDefinition(BlockType As TcBlockType) As TcRecordDefinition
+            Private Function GetIGeoRecordDefinition(BlockType As TcBlockType) As TcRecordDefinition
                 
                 If (BlockType Is Nothing) Then Throw New System.ArgumentNullException("BlockType")
                 
@@ -1054,7 +1056,7 @@ Namespace Domain.IO
                 If (BlockType.IsValid) Then
                     If (Not (BlockType.SubFormat = TcBlockSubFormat.CSV)) Then
                         ' Predefined (fixed) format.
-                        RetValue = IGeoRecordDefinitions.Item(getKeyForRecordDefinition(BlockType))
+                        RetValue = IGeoRecordDefinitions.Item(GetKeyForRecordDefinition(BlockType))
                     Else
                         ' CSV format depending on actual block.
                         Dim RecordDef As New TcRecordDefinitionIGeo(InitIgnore:=True)
@@ -1127,10 +1129,10 @@ Namespace Domain.IO
             ''' <summary> Returns the plain (file) name from a matched name. If <paramref name="LineNameMatch"/> isn't a valid path name, it will be returned without changes. </summary>
              ''' <param name="LineNameMatch"> The match from a RegEx that may contain full path or not. </param>
              ''' <param name="WithExtension"> If <see langword="true"/>, the extension isn't removed. </param>
-            Private Function getNameFromMatch(LineNameMatch As String, WithExtension As Boolean) As String
+            Private Function GetNameFromMatch(LineNameMatch As String, WithExtension As Boolean) As String
                 Dim RetValue As String = LineNameMatch
                 
-                If ((FileUtils.IsValidFilePath(LineNameMatch)) AndAlso Path.IsPathRooted(LineNameMatch)) Then
+                If (FileUtils.IsValidFilePath(LineNameMatch) AndAlso Path.IsPathRooted(LineNameMatch)) Then
                     If (WithExtension) Then
                         RetValue = Path.GetFileName(LineNameMatch)
                     Else
@@ -1155,7 +1157,7 @@ Namespace Domain.IO
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
-            Private Function readBlockVermEsn(DataLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
+            Private Function ReadBlockVermEsn(DataLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
                 
                 If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
@@ -1169,7 +1171,7 @@ Namespace Domain.IO
                 If (UniqueIDPerBlock) Then Me.IDCheckList.Clear()
                 
                 ' Parse header.
-                findBlockMetaDataVermEsn(DataLines, SourceBlock, Block)
+                FindBlockMetaDataVermEsn(DataLines, SourceBlock, Block)
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
@@ -1258,9 +1260,9 @@ Namespace Domain.IO
                                     
                                     ' Editing.
                                     If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
-                                            p.ParseInfoForKindHints()
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
+                                            p.ParseInfoForPointKind()
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                                             p.ParseInfoForActualCant()
                                         End If
                                     End If
@@ -1317,7 +1319,7 @@ Namespace Domain.IO
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
-            Private Function readBlockIGeo(DataLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
+            Private Function ReadBlockIGeo(DataLines As Collection(Of DataTextLine), SourceBlock As TcSourceBlockInfo) As TcBlock
                 
                 If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
@@ -1331,7 +1333,7 @@ Namespace Domain.IO
                 If (UniqueIDPerBlock) Then Me.IDCheckList.Clear()
                 
                 ' Parse header.
-                findBlockMetaDataIGeo(DataLines, SourceBlock, Block)
+                FindBlockMetaDataIGeo(DataLines, SourceBlock, Block)
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
@@ -1457,11 +1459,13 @@ Namespace Domain.IO
                                     p.Comment    = IpktAux.Comment
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    IpktAux.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
-                                    p.ActualCant = IpktAux.ActualCant
-                                    p.Info       = IpktAux.Info
-                                    p.Kind       = IpktAux.Kind
-                                    p.MarkType   = IpktAux.MarkType
+                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
+                                        IpktAux.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
+                                        p.ActualCant = IpktAux.ActualCant
+                                        p.Info       = IpktAux.Info
+                                        p.Kind       = IpktAux.Kind
+                                        p.MarkType   = IpktAux.MarkType
+                                    End If
                     
                                     ' Convert selected attributes to properties, which don't belong to .A0 file.
                                     Dim PropertyName   As String
@@ -1481,9 +1485,9 @@ Namespace Domain.IO
                                     
                                     ' Editing.
                                     If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
-                                            p.ParseInfoForKindHints(TryComment:=True)
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
+                                            p.ParseInfoForPointKind(TryComment:=True)
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                                             p.ParseInfoForActualCant(TryComment:=True)
                                         End If
                                     End If
@@ -1599,7 +1603,7 @@ Namespace Domain.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
-            Private Sub findBlockMetaDataVermEsn(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+            Private Sub FindBlockMetaDataVermEsn(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
                 If (DataLines Is Nothing)   Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
@@ -1648,8 +1652,8 @@ Namespace Domain.IO
                                         Block.BlockType.Version = TcBlockVersion.Current
                                         Block.BlockType.Format  = TcBlockFormat.THW
                                         PathName = oMatch.Groups(1).Value
-                                        Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, False)
-                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                                        Block.TrackRef.NameOfAlignment = GetNameFromMatch(PathName, False)
+                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(GetKeyForRecordDefinition(Block.BlockType))
                                     End If
                                 End If
                                 If (Block.BlockType.Format = TcBlockFormat.None) Then
@@ -1662,7 +1666,7 @@ Namespace Domain.IO
                                         Block.BlockType.Version = TcBlockVersion.Outdated
                                         Block.BlockType.Format  = TcBlockFormat.THW
                                         Block.TrackRef.NameOfAlignment = oMatch.Groups(1).Value
-                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(GetKeyForRecordDefinition(Block.BlockType))
                                     End If
                                 End If
                                 If (Block.BlockType.Format = TcBlockFormat.None) Then
@@ -1685,10 +1689,10 @@ Namespace Domain.IO
                                         End If
                                         
                                         ' Alignment name.
-                                        Block.TrackRef.NameOfAlignment = getNameFromMatch(PathName, True)
+                                        Block.TrackRef.NameOfAlignment = GetNameFromMatch(PathName, True)
                                         
                                         ' Record definition.
-                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(getKeyForRecordDefinition(Block.BlockType))
+                                        SourceBlock.RecordDefinition = VermEsnRecordDefinitions.Item(GetKeyForRecordDefinition(Block.BlockType))
                                     End If
                                 End If
                                 
@@ -1699,8 +1703,8 @@ Namespace Domain.IO
                                     Dim Key   As String  = oMatch.Groups(1).Value
                                     Dim Value As String  = oMatch.Groups(2).Value
                                     Select Case Key
-                                        Case "Gradiente":            Block.TrackRef.NameOfGradientLine = getNameFromMatch(Value, False)
-                                        Case "Reduktion auf Trasse": Block.TrackRef.NameOfKmAlignment  = getNameFromMatch(Value, False)
+                                        Case "Gradiente":            Block.TrackRef.NameOfGradientLine = GetNameFromMatch(Value, False)
+                                        Case "Reduktion auf Trasse": Block.TrackRef.NameOfKmAlignment  = GetNameFromMatch(Value, False)
                                         Case "Lagesystem":           Block.TrackRef.CoordSys           = Value.Trim()
                                         Case "Höhensystem":          Block.TrackRef.HeightSys          = Value.Trim()
                                     End Select
@@ -1715,7 +1719,7 @@ Namespace Domain.IO
                             ' Determine sub format.
                             If (FormatFound) Then
                                 Block.BlockType.SubFormat = TcBlockSubFormat.OneLine
-                                If ((i < SourceBlock.EndIndex) AndAlso (DataLines(i + 1).HasData)) Then
+                                If ((i < SourceBlock.EndIndex) AndAlso DataLines(i + 1).HasData) Then
                                     Dim IDLength As Integer = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionVermEsn).ID.Length
                                     Dim ID1      As String  = DataLine.Data.Left(IDLength)
                                     Dim ID2      As String  = DataLines(i + 1).Data.Left(IDLength)
@@ -1747,7 +1751,7 @@ Namespace Domain.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
-            Private Sub findBlockMetaDataIGeo(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
+            Private Sub FindBlockMetaDataIGeo(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
                 If (DataLines Is Nothing)   Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
@@ -1778,7 +1782,7 @@ Namespace Domain.IO
                     If (DataLine.IsCommentLine) Then
                         ' Comment line: Look for Comment and output header of iGeo and iTrassePC.
                         If (DataLine.HasComment) Then
-                            kvp = splitHeaderLineIGeo(DataLine.Comment)
+                            kvp = SplitHeaderLineIGeo(DataLine.Comment)
                             If (kvp.Key IsNot Nothing) Then
                                 Select Case kvp.Key
                                     
@@ -1795,17 +1799,17 @@ Namespace Domain.IO
                                     
                                     Case "Datei":               CommentEnd = True
                                     
-                                    Case "Achse":               Block.TrackRef.NameOfAlignment      = getNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Stationierungsachse": Block.TrackRef.NameOfKmAlignment    = getNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iTrassePC
-                                    Case "Km-Linie":            Block.TrackRef.NameOfKmAlignment    = getNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iGeo
-                                    Case "Ueberhöhungsband":    Block.TrackRef.NameOfCantLine       = getNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iTrassePC
-                                    Case "Überhöhungsband":     Block.TrackRef.NameOfCantLine       = getNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iGeo
-                                    Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = getNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Profilpunktbereich":  Block.TrackRef.NameOfSectionPoints  = getNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Gleisprofilbereich":  Block.TrackRef.NameOfRailSections   = getNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "DGM":                 Block.TrackRef.NameOfDTM            = getNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Achse":               Block.TrackRef.NameOfAlignment      = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Stationierungsachse": Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iTrassePC
+                                    Case "Km-Linie":            Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iGeo
+                                    Case "Ueberhöhungsband":    Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iTrassePC
+                                    Case "Überhöhungsband":     Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iGeo
+                                    Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Profilpunktbereich":  Block.TrackRef.NameOfSectionPoints  = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Gleisprofilbereich":  Block.TrackRef.NameOfRailSections   = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "DGM":                 Block.TrackRef.NameOfDTM            = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
                                     
                                     Case "Feldnamen":           Block.BlockType.FieldNames          = kvp.Value                          : CommentEnd = True  ' Format "A0"
                                     
@@ -1831,7 +1835,7 @@ Namespace Domain.IO
                 Block.ParseCommentForAttributes()
                 
                 ' Set record definition. Only now, because for A0 the format and field names are required.
-                SourceBlock.RecordDefinition = getIGeoRecordDefinition(Block.BlockType)
+                SourceBlock.RecordDefinition = GetIGeoRecordDefinition(Block.BlockType)
                 
                 Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
@@ -1840,7 +1844,7 @@ Namespace Domain.IO
             End Sub
             
             ''' <summary> Sets the definitions for Verm.esn source records. </summary>
-            Private Sub setRecordDefinitionsVermEsn()
+            Private Sub SetRecordDefinitionsVermEsn()
                 Dim BlockType As New TcBlockType()
                 BlockType.Program = TcBlockProgram.VermEsn
                 
@@ -1849,7 +1853,7 @@ Namespace Domain.IO
                 ' THW, outdated
                 BlockType.Format  = TcBlockFormat.THW
                 BlockType.Version = TcBlockVersion.Outdated
-                VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
+                VermEsnRecordDefinitions.Add(GetKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
                     .ID_Length = 6,
                     .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 7),
@@ -1909,7 +1913,7 @@ Namespace Domain.IO
                 ' THW, current
                 BlockType.Format  = TcBlockFormat.THW
                 BlockType.Version = TcBlockVersion.Current
-                VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
+                VermEsnRecordDefinitions.Add(GetKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
                     .ID_Length  = 7,
                     .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 8),
@@ -1968,7 +1972,7 @@ Namespace Domain.IO
                 ' D3, outdated
                 BlockType.Format  = TcBlockFormat.D3
                 BlockType.Version = TcBlockVersion.Outdated
-                VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
+                VermEsnRecordDefinitions.Add(GetKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
                     .ID_Length  = 6,
                     .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 7),
@@ -2028,7 +2032,7 @@ Namespace Domain.IO
                 ' D3, current
                 BlockType.Format  = TcBlockFormat.D3
                 BlockType.Version = TcBlockVersion.Current
-                VermEsnRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
+                VermEsnRecordDefinitions.Add(GetKeyForRecordDefinition(BlockType), New TcRecordDefinitionVermEsn With {
                     .ID_Length  = 7,
                     .ID   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,
                                                                DataFieldPositionType.ColumnAndLength, 0, 8),
@@ -2087,12 +2091,12 @@ Namespace Domain.IO
             End Sub
             
             ''' <summary> Sets the definitions for iGeo/iTrassePC source records. </summary>
-            Private Sub setRecordDefinitionsIGeo()
+            Private Sub SetRecordDefinitionsIGeo()
                 Dim BlockType As New TcBlockType()
                 
                 ' Column definitions are zero-ased!
                 
-                ' iGeo A0: will be created uniqely for every A0 block (see getIGeoRecordDefinition() )
+                ' iGeo A0: will be created uniqely for every A0 block (see GetIGeoRecordDefinition() )
                 
                 ' iGeo + iTrassePC, A1
                 BlockType.Format  = TcBlockFormat.A1
@@ -2128,9 +2132,9 @@ Namespace Domain.IO
                                                                DataFieldOptions.NotRequired)
                     }
                 BlockType.Program = TcBlockProgram.iGeo
-                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), A1RecordDef)
+                iGeoRecordDefinitions.Add(GetKeyForRecordDefinition(BlockType), A1RecordDef)
                 BlockType.Program = TcBlockProgram.iTrassePC
-                iGeoRecordDefinitions.Add(getKeyForRecordDefinition(BlockType), A1RecordDef)
+                iGeoRecordDefinitions.Add(GetKeyForRecordDefinition(BlockType), A1RecordDef)
             End Sub
             
         #End Region

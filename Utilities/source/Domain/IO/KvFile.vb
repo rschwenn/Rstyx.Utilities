@@ -15,7 +15,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KvFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KvFile")
             
         #End Region
         
@@ -133,9 +133,9 @@ Namespace Domain.IO
                                         p.ParseInfoForActualCant()
                                     End If
                                     If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
-                                            p.ParseInfoForKindHints()
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
+                                            p.ParseInfoForPointKind()
+                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                                             p.ParseInfoForActualCant()
                                         End If
                                     End If

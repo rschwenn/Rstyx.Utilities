@@ -40,19 +40,26 @@ Namespace Domain
         ''' <summary> No editing is applied. </summary>
         None = 0
         
-        ''' <summary> Tries to parse <see cref="GeoPoint.ActualCant"/> from the point's <see cref="GeoPoint.Info"/>. </summary>
+        ''' <summary> The point's <see cref="GeoPoint.Info"/> should be parsed for <see cref="GeoPoint.ActualCant"/>. </summary>
          ''' <remarks>
          ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> or <c>Rails</c>, then <see cref="GeoPoint.ParseInfoForActualCant"/> 
-         ''' should be invoked to guess point kind. 
+         ''' should be invoked to extract a cant value. 
          ''' </remarks>
-        ParseCantFromInfo = 1
+        ParseInfoForActualCant = 1
         
-        ''' <summary> Tries to guess the point's <see cref="GeoPoint.Kind"/> from it's <see cref="GeoPoint.Info"/>. </summary>
+        ''' <summary> The point's <see cref="GeoPoint.Info"/> should be parsed for <see cref="GeoPoint.Kind"/>. </summary>
          ''' <remarks>
-         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c>, then <see cref="GeoPoint.ParseInfoForKindHints"/> 
+         ''' If <see cref="GeoPoint.Kind"/> is <c>None</c>, then <see cref="GeoPoint.ParseInfoForPointKind"/> 
          ''' should be invoked to guess point kind. 
          ''' </remarks>
-        GuessAllKindsFromInfo = 2
+        ParseInfoForPointKind = 2
+        
+        ''' <summary> The ipkt "Text" field should be parsed as iGeo "iTrassen-Codierung". </summary>
+         ''' <remarks>
+         ''' When reading a <see cref="GeoIPoint"/> from <see cref="IO.iPktFile"/>, then <see cref="GeoIPoint.Parse_iTC"/> 
+         ''' should be invoked to extract some values. 
+         ''' </remarks>
+        Parse_iTC = 4
         
     End Enum
     
@@ -487,7 +494,7 @@ Namespace Domain
                     Dim Missing As Boolean = False
                     Dim Hints   As String  = Nothing
                     
-                    If (Not TypeOf Me Is IPointAtTrackGeometry) Then
+                    If (TypeOf Me IsNot IPointAtTrackGeometry) Then
                         Missing = True
                         Hints   = Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingTrackValues
                     Else
@@ -561,7 +568,7 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub ParseInfoForKindHints(Optional TryComment As Boolean = False)
+            Public Sub ParseInfoForPointKind(Optional TryComment As Boolean = False)
                 
                 Me.Kind          = GeoPointKind.None
                 Me.ActualCant    = Double.NaN

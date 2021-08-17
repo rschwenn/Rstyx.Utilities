@@ -1240,15 +1240,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Alle Punktarten aus Info ableiten ähnelt.
-        '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_GuessAllKindsFromInfo() As String
-            Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_GuessAllKindsFromInfo", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_None() As String
@@ -1258,11 +1249,29 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Text als iGeo &quot;iTrassen-Codierung&quot; auswerten ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_Parse_iTC() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_Parse_iTC", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Gleis-Überhöhung aus Info ableiten ähnelt.
         '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_ParseCantFromInfo() As String
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForActualCant() As String
             Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_ParseCantFromInfo", resourceCulture)
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForActualCant", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Alle Punktarten aus Info ableiten ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForPointKind() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForPointKind", resourceCulture)
             End Get
         End Property
         

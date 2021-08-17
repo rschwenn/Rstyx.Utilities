@@ -30,7 +30,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.GeoPointFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.GeoPointFile")
             
         #End Region
         
@@ -65,7 +65,7 @@ Namespace Domain.IO
             ''' </remarks>
            Public Property Constraints() As GeoPointConstraints = GeoPointConstraints.None
             
-           ''' <summary> Determines editing optiond for read points. Defaults to <c>None</c>. </summary>
+           ''' <summary> Determines editing options for read points. Defaults to <c>None</c>. </summary>
            Public Property EditOptions() As GeoPointEditOptions = GeoPointEditOptions.None
            
         #End Region
@@ -150,9 +150,9 @@ Namespace Domain.IO
             ''' <summary> Gets a log entry, that documents <see cref="GeoPointFile.EditOptions"/>. </summary>
             Protected Function GetPointEditOptionsLogText() As String
                 Dim LogText As String
-                If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
                     LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_3
-                ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                     LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2
                 Else
                     LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_1

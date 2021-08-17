@@ -15,7 +15,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KorFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KorFile")
             
         #End Region
         
@@ -95,9 +95,9 @@ Namespace Domain.IO
                                     p.SourceLineNo = DataLine.SourceLineNo
                                     
                                     ' Editing.
-                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
-                                        p.ParseInfoForKindHints()
-                                    ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
+                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
+                                        p.ParseInfoForPointKind()
+                                    ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                                         p.ParseInfoForActualCant()
                                     End If
                                     p.SetKindTextFromKind(Override:=False)

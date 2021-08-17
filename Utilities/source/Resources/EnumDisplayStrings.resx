@@ -624,10 +624,10 @@
   <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_None" xml:space="preserve">
     <value>keine</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_ParseCantFromInfo" xml:space="preserve">
+  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForActualCant" xml:space="preserve">
     <value>Gleis-Überhöhung aus Info ableiten</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_GuessAllKindsFromInfo" xml:space="preserve">
+  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForPointKind" xml:space="preserve">
     <value>Alle Punktarten aus Info ableiten</value>
   </data>
   <data name="Rstyx_Utilities_IO_DataFieldOptions_MissingAsZero" xml:space="preserve">
@@ -728,5 +728,8 @@
   </data>
   <data name="Rstyx_Utilities_IO_DataFieldPositionType_WordNumberAndRemains" xml:space="preserve">
     <value>Wortnummer und Rest der Zeile</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_Parse_iTC" xml:space="preserve">
+    <value>Text als iGeo "iTrassen-Codierung" auswerten</value>
   </data>
 </root>
