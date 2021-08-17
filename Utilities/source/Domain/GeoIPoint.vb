@@ -266,51 +266,141 @@ Namespace Domain
                 Return FreeDataText
             End Function
             
-            ''' <summary> A given string will be parsed for iGeo point kind codes and remaining info text. </summary>
-             ''' <param name="PointInfoText"> The string to parse. May be <see langword="null"/>. </param>
+            ''' <summary> A given string will be parsed as iGeo "iTrassen-Codierung". </summary>
+             ''' <param name="PointText"> The string to parse. May be <see langword="null"/>. </param>
              ''' <remarks>
              ''' <para>
-             ''' Point kind codes in <paramref name="PointInfoText"/> are required to have the expected format: 
+             ''' Point kind codes in <paramref name="PointText"/> are required to have the expected format: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Format / Pattern</b> </term>  <description> Point Kind </description></listheader>
-             ''' <item> <term> -b                     </term>  <description> Platform                                                </description></item>
-             ''' <item> <term> -i[ueb[=]?[+-]?[0-9]+] </term>  <description> Actual rails [with actual absolute cant (sign as iGeo)] </description></item>
-             ''' <item> <term> -i[u[=]?[+-]?[0-9]+]   </term>  <description> Actual rails [with actual relative cant]                </description></item>
-             ''' <item> <term> -v[0-9]+               </term>  <description> Rails fix point [with numeric mark type]                </description></item>
-             ''' <item> <term> -f[0-9]+               </term>  <description> Other fix point [with numeric mark type]                </description></item>
-             ''' <item> <term> ?-                     </term>  <description> If one of the above codes is there, it may be preceeded by one word character which will recognized as <see cref="GeoIPoint.MarkTypeAB"/>. </description></item>
+             ''' <item> <term> -b                   </term>  <description> Platform                                              </description></item>
+             ''' <item> <term> -iueb[=]?[+-]?[0-9]+ </term>  <description> Actual rails with actual absolute cant (sign as iGeo) </description></item>
+             ''' <item> <term> -iu[=]?[+-]?[0-9]+   </term>  <description> Actual rails with actual relative cant                </description></item>
+             ''' <item> <term> -i                   </term>  <description> Actual rails without actual cant                      </description></item>
+             ''' <item> <term> -v[0-9]+             </term>  <description> Rails fix point [with numeric mark type]              </description></item>
+             ''' <item> <term> -f[0-9]+             </term>  <description> Other fix point [with numeric mark type]              </description></item>
+             ''' <item> <term> ?-                   </term>  <description> If one of the above codes is there, it may be preceeded by a single word character which will be treated as <see cref="GeoIPoint.MarkTypeAB"/>. </description></item>
              ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If "iTrassen-Codierung" hasn't been recognized, then whole <paramref name="PointText"/> will be stored in <see cref="GeoPoint.Info"/>.
              ''' </para>
              ''' <para>
              ''' This method clears and sets the following properties:
              ''' <list type="bullet">
+             ''' <item><description> <see cref="GeoPoint.Info"/>           </description></item>
              ''' <item><description> <see cref="GeoPoint.Kind"/>           </description></item>
+             ''' <item><description> <see cref="GeoPoint.MarkType"/>       </description></item>
              ''' <item><description> <see cref="GeoIPoint.ActualCantAbs"/> </description></item>
              ''' <item><description> <see cref="GeoIPoint.ActualCant"/>    </description></item>
-             ''' <item><description> <see cref="GeoPoint.MarkType"/>       </description></item>
              ''' <item><description> <see cref="GeoIPoint.MarkTypeAB"/>    </description></item>
-             ''' <item><description> <see cref="GeoPoint.Info"/>           </description></item>
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub ParseTextForKindCodes(PointInfoText As String)
+            Public Sub Parse_iTC(PointText As String)
                 
-                Me.Kind       = GeoPointKind.None
-                Me.ActualCant = Double.NaN
-                Me.MarkType   = String.Empty
-                Me.MarkTypeAB = vbNullChar
-                Me.Info       = String.Empty
+                Me.Kind          = GeoPointKind.None
+                Me.ActualCantAbs = Double.NaN
+                Me.ActualCant    = Double.NaN
+                Me.MarkType      = String.Empty
+                Me.MarkTypeAB    = vbNullChar
+                Me.Info          = String.Empty
                 
-                If (PointInfoText.IsNotEmptyOrWhiteSpace()) Then
+                If (PointText.IsNotEmptyOrWhiteSpace()) Then
+                    
+                    ' Both "-iueb" and "-iu" may be there (in any order).
+                    ' TODO: DEPRECATED -  Remove support for "x" at the end of 2021!
+                    'Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?\s*((#|x)\s?(.+))?$"
+                    Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#|x) ?(.*))?$"
+                                
+                    Dim oMatch  As Match  = Regex.Match(PointText, Pattern)
+                    
+                    If (oMatch.Success) Then
+                        
+                        ' Point kindes.
+                        For i As Integer = 3 To 20
+                            If (oMatch.Groups(i).Success) Then
+                                Dim Key As String = oMatch.Groups(i).Value
+                                Select Case Key
+                                    Case "-b":     Me.Kind = GeoPointKind.Platform
+                                    Case "-v":     Me.Kind = GeoPointKind.RailsFixPoint  : Me.MarkType = oMatch.Groups(i + 1).Value
+                                    Case "-f":     Me.Kind = GeoPointKind.FixPoint       : Me.MarkType = oMatch.Groups(i + 1).Value
+                                    Case "-iueb":  Me.Kind = GeoPointKind.Rails          : Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                    Case "-iu":    Me.Kind = GeoPointKind.Rails          : Me.ActualCant = CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                    Case "-i":     Me.Kind = GeoPointKind.Rails
+                                End Select
+                                'Exit For -> not exit because both "-iueb" and "-iu" may be there.
+                            End If
+                        Next
+                        
+                        ' Special mark type.
+                        If (oMatch.Groups(1).Success) Then
+                            If (Me.Kind <> GeoPointKind.None) Then
+                                Me.MarkTypeAB = oMatch.Groups(1).Value
+                            End If
+                        End If
+                        
+                        ' Point info text.
+                        If (oMatch.Groups(23).Success) Then
+                            Me.Info = oMatch.Groups(23).Value
+                        End If
+                        
+                    Else
+                        Me.Info = PointText
+                    End If
+                End If
+            End Sub
+            
+            ''' <summary> A given string will be parsed as iGeo "iTrassen-Codierung". </summary>
+             ''' <param name="PointText"> The string to parse. May be <see langword="null"/>. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' Point kind codes in <paramref name="PointText"/> are required to have the expected format: 
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Format / Pattern</b> </term>  <description> Point Kind </description></listheader>
+             ''' <item> <term> -b                   </term>  <description> Platform                                              </description></item>
+             ''' <item> <term> -iueb[=]?[+-]?[0-9]+ </term>  <description> Actual rails with actual absolute cant (sign as iGeo) </description></item>
+             ''' <item> <term> -iu[=]?[+-]?[0-9]+   </term>  <description> Actual rails with actual relative cant                </description></item>
+             ''' <item> <term> -i                   </term>  <description> Actual rails without actual cant                      </description></item>
+             ''' <item> <term> -v[0-9]+             </term>  <description> Rails fix point [with numeric mark type]              </description></item>
+             ''' <item> <term> -f[0-9]+             </term>  <description> Other fix point [with numeric mark type]              </description></item>
+             ''' <item> <term> ?-                   </term>  <description> If one of the above codes is there, it may be preceeded by a single word character which will be treated as <see cref="GeoIPoint.MarkTypeAB"/>. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If "iTrassen-Codierung" hasn't been recognized, then whole <paramref name="PointText"/> will be stored in <see cref="GeoPoint.Info"/>.
+             ''' </para>
+             ''' <para>
+             ''' This method clears and sets the following properties:
+             ''' <list type="bullet">
+             ''' <item><description> <see cref="GeoPoint.Info"/>           </description></item>
+             ''' <item><description> <see cref="GeoPoint.Kind"/>           </description></item>
+             ''' <item><description> <see cref="GeoPoint.MarkType"/>       </description></item>
+             ''' <item><description> <see cref="GeoIPoint.ActualCantAbs"/> </description></item>
+             ''' <item><description> <see cref="GeoIPoint.ActualCant"/>    </description></item>
+             ''' <item><description> <see cref="GeoIPoint.MarkTypeAB"/>    </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub Parse_iTC_OLD(PointText As String)
+                
+                Me.Kind          = GeoPointKind.None
+                Me.ActualCantAbs = Double.NaN
+                Me.ActualCant    = Double.NaN
+                Me.MarkType      = String.Empty
+                Me.MarkTypeAB    = vbNullChar
+                Me.Info          = String.Empty
+                
+                If (PointText.IsNotEmptyOrWhiteSpace()) Then
                     
                     ' Find delimiter between code and info text.
                     Dim DelimIndex As Integer
                     Dim CodePart   As String
                     Dim InfoPart   As String  = Nothing
-                    Dim FirstHash  As Integer = PointInfoText.IndexOf("#"c)
+                    Dim FirstHash  As Integer = PointText.IndexOf("#"c)
                     
-                    ' TODO: DEPRECATED -  Remove support for "x" at te end of 2021!
-                    Dim FirstX     As Integer = PointInfoText.IndexOf("x", System.StringComparison.OrdinalIgnoreCase)
+                    ' TODO: DEPRECATED -  Remove support for "x" at the end of 2021!
+                    Dim FirstX     As Integer = PointText.IndexOf("x", System.StringComparison.OrdinalIgnoreCase)
                     
                     If ((FirstHash > 0) AndAlso (FirstX > 0)) Then
                         DelimIndex = Min(FirstHash, FirstX)
@@ -320,24 +410,24 @@ Namespace Domain
                     
                     ' Determine code and info parts of input text.
                     If (DelimIndex > 0) Then
-                        CodePart = PointInfoText.Substring(0, DelimIndex).Trim()
-                        If (PointInfoText.Length > (DelimIndex + 1)) Then
-                            InfoPart = PointInfoText.Substring(DelimIndex + 1)
+                        CodePart = PointText.Substring(0, DelimIndex).Trim()
+                        If (PointText.Length > (DelimIndex + 1)) Then
+                            InfoPart = PointText.Substring(DelimIndex + 1)
                             If (InfoPart.IsNotEmptyOrWhiteSpace() AndAlso InfoPart.StartsWith(" ")) Then
                                 InfoPart = InfoPart.Substring(1)
                             End If
                         End If
                     Else
                         ' Decide later ...
-                        CodePart = PointInfoText
-                        InfoPart = PointInfoText
+                        CodePart = PointText
+                        InfoPart = PointText
                     End If
                     
                     ' Code part: Find point kind.
                     If (CodePart.IsNotEmptyOrWhiteSpace()) Then
                                     
                         'Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iu) *=? *([+-]? *[0-9]+)|(-i))?"
-                        Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?"
+                        Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?$"
                         Dim oMatch  As Match  = Regex.Match(CodePart, Pattern)
                         
                         If (oMatch.Success) Then
@@ -361,10 +451,10 @@ Namespace Domain
                                 End If
                             End If
                         Else
-                            ' There's a code part but w/o supported code or with invalid syntax.
+                            ' There seemed to be a code part but w/o supported code or with invalid syntax.
                             If (DelimIndex > 0) Then
-                                ' Re-join splitted text (see below).
-                                InfoPart = PointInfoText
+                                ' Reset info part to full text.
+                                InfoPart = PointText
                             End If
                         End If
                     End If

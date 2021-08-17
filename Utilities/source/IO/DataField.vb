@@ -15,6 +15,9 @@ Namespace IO
         ''' <summary> The field is determined by a start column and a field length. </summary>
         ColumnAndLength = 2
         
+        ''' <summary> The field contains the given word and the remains of <see cref="DataTextLine.Data"/>. </summary>
+        WordNumberAndRemains = 3
+        
     End Enum
     
     ''' <summary> Options for a data field definition. </summary>
@@ -225,7 +228,7 @@ Namespace IO
                 
                 If (Not [Enum].IsDefined(GetType(DataFieldPositionType), PositionType)) Then Throw New System.ArgumentException("PositionType")
                 
-                If (PositionType = DataFieldPositionType.WordNumber) Then
+                If ((PositionType = DataFieldPositionType.WordNumber) OrElse (PositionType = DataFieldPositionType.WordNumberAndRemains)) Then
                     If (ColumnOrWord < 1) Then Throw New System.ArgumentException("ColumnOrWord")
                 Else
                     If (ColumnOrWord < 0) Then Throw New System.ArgumentException("ColumnOrWord")

@@ -1457,7 +1457,7 @@ Namespace Domain.IO
                                     p.Comment    = IpktAux.Comment
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    IpktAux.ParseTextForKindCodes(DataLine.ParseField(RecDef.Text).Value)
+                                    IpktAux.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
                                     p.ActualCant = IpktAux.ActualCant
                                     p.Info       = IpktAux.Info
                                     p.Kind       = IpktAux.Kind

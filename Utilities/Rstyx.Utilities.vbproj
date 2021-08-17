@@ -134,6 +134,7 @@
     <Compile Include="source\Collections\IDCollection.vb" />
     <Compile Include="source\Domain\IO\iPktFile.vb" />
     <Compile Include="source\Domain\IO\KfFile.vb" />
+    <Compile Include="source\Domain\IO\KorFile.vb" />
     <Compile Include="source\Domain\IO\KvFile.vb" />
     <Compile Include="source\Domain\Kilometer.vb" />
     <Compile Include="source\Domain\PointInterfaces.vb" />

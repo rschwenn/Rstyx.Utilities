@@ -726,4 +726,7 @@
   <data name="Rstyx_Utilities_Domain_TrackSide_Right" xml:space="preserve">
     <value>rechts</value>
   </data>
+  <data name="Rstyx_Utilities_IO_DataFieldPositionType_WordNumberAndRemains" xml:space="preserve">
+    <value>Wortnummer und Rest der Zeile</value>
+  </data>
 </root>

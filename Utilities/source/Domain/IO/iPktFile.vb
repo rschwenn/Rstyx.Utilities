@@ -31,6 +31,8 @@ Namespace Domain.IO
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader2)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader3)
                 
+                Me.HeaderDiscardLines.Add(" @Kommentar=")
+                
                 Logger.logDebug("New(): iPktFile instantiated")
             End Sub
             
@@ -154,8 +156,8 @@ Namespace Domain.IO
                                         p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
                                     End If
                                     
-                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    p.ParseTextForKindCodes(DataLine.ParseField(RecDef.Text).Value)
+                                    ' iTrassen-Codierung -> Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                                    p.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
                                     
                                     ' Editing.
                                     If (p.Kind = GeoPointKind.None) Then

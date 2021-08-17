@@ -339,6 +339,18 @@ Namespace IO
                         End If
                 End Select
                 
+                ' Translate special field definition.
+                If (FieldDef.PositionType = DataFieldPositionType.WordNumberAndRemains) Then
+                    If (FieldDef.ColumnOrWord < Me.Words.Count) Then
+                        ' Change field type to fixed-width.
+                        FieldDef = New DataFieldDefinition(Of TFieldValue)(FieldDef.Caption, DataFieldPositionType.ColumnAndLength, Me.Words(FieldDef.ColumnOrWord - 1).Column, Integer.MaxValue, FieldDef.Options)
+                    Else
+                        ' Change field type to Word.
+                        FieldDef = New DataFieldDefinition(Of TFieldValue)(FieldDef.Caption, DataFieldPositionType.WordNumber, FieldDef.ColumnOrWord, 0, FieldDef.Options)
+                    End If
+                End If
+                
+                
                 ' Get the field string and create a DataFieldSource.
                 If (FieldDef.PositionType = DataFieldPositionType.Ignore) Then
                     FieldSource = New DataFieldSource(0, 1, "0")  ' Dummy.

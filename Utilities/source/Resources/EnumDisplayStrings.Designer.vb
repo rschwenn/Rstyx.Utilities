@@ -1708,6 +1708,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Wortnummer und Rest der Zeile ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_IO_DataFieldPositionType_WordNumberAndRemains() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_IO_DataFieldPositionType_WordNumberAndRemains", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Basisname ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_IO_FileUtils_FilePart_Base() As String

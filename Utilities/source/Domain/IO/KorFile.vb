@@ -29,9 +29,8 @@ Namespace Domain.IO
                 'Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KorFile_Label_DefaultHeader2)
                 'Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KorFile_Label_DefaultHeader3)
                 'Me.DefaultHeader.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-                '
-                'Me.HeaderDiscardLines.Add(" PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr")
-                'Me.HeaderDiscardLines.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------")
+                
+                'Me.HeaderDiscardLines.Add("@Kommentar=")
                 
                 Logger.logDebug("New(): KorFile instantiated")
             End Sub
@@ -68,7 +67,7 @@ Namespace Domain.IO
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                         Dim RecDef      As New RecordDefinition()
                         Dim PointCount  As Integer = 0
-                        Dim IpktAux     As New GeoIPoint()
+                        'Dim IpktAux     As New GeoIPoint()
                         
                         For Each DataLine As DataTextLine In Me.DataLineStream
                             
@@ -89,55 +88,17 @@ Namespace Domain.IO
                                     p.X  = FieldX.Value
                                     p.Z  = FieldZ.Value
                                     
-                                    p.TrackPos.Kilometer = DataLine.ParseField(RecDef.Km).Value
-                                    p.Info               = DataLine.ParseField(RecDef.PositionInfo).Value
-                                    p.HeightInfo         = DataLine.ParseField(RecDef.HeightInfo).Value
-                                    p.KindText           = DataLine.ParseField(RecDef.PointKind).Value
-                                    p.TrackPos.TrackNo   = DataLine.ParseField(RecDef.TrackNo).Value
-                                    p.TrackPos.RailsCode = DataLine.ParseField(RecDef.RailsCode).Value
-                                    p.HeightSys          = DataLine.ParseField(RecDef.HeightSys).Value
-                                    p.mp                 = DataLine.ParseField(RecDef.mp).Value
-                                    p.mh                 = DataLine.ParseField(RecDef.mh).Value
-                                    p.MarkHints          = DataLine.ParseField(RecDef.MarkHints).Value  ' Stability Code
-                                    p.MarkType           = DataLine.ParseField(RecDef.MarkType).Value
-                                    p.sp                 = DataLine.ParseField(RecDef.sp).Value
-                                    p.sh                 = DataLine.ParseField(RecDef.sh).Value
-                                    p.Job                = DataLine.ParseField(RecDef.Job).Value
-                                    p.ObjectKey          = DataLine.ParseField(RecDef.ObjectKey).Value
+                                    p.Info         = DataLine.ParseField(RecDef.PositionInfo).Value
+                                    p.Comment      = DataLine.Comment
                                     
-                                    p.SourcePath         = FilePath
-                                    p.SourceLineNo       = DataLine.SourceLineNo
-                                    
-                                    ' Attributes and comment from free data.
-                                    IpktAux.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
-                                    p.Attributes = IpktAux.Attributes
-                                    p.Comment    = IpktAux.Comment
-                    
-                                    ' Convert selected attributes to properties, which don't belong to .kor file.
-                                    Dim PropertyName   As String
-                                    Dim AttStringValue As String
-                                    PropertyName   = "CoordSys"
-                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
-                                    If (AttStringValue IsNot Nothing) Then
-                                        P.CoordSys = AttStringValue.Trim()
-                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
-                                    End If
-                                    
-                                    ' Smoothing.
-                                    If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty
-                                    p.SetKindFromKindText()
-                                    p.SetKindFromMarkType()
+                                    p.SourcePath   = FilePath
+                                    p.SourceLineNo = DataLine.SourceLineNo
                                     
                                     ' Editing.
-                                    If (p.Kind = GeoPointKind.Rails) Then
+                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
+                                        p.ParseInfoForKindHints()
+                                    ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
                                         p.ParseInfoForActualCant()
-                                    End If
-                                    If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.GuessAllKindsFromInfo)) Then
-                                            p.ParseInfoForKindHints()
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCantFromInfo)) Then
-                                            p.ParseInfoForActualCant()
-                                        End If
                                     End If
                                     p.SetKindTextFromKind(Override:=False)
                                     
@@ -193,6 +154,9 @@ Namespace Domain.IO
              ''' it's ensured that the point ID's written to the file are unique.
              ''' Otherwise point ID's may be not unique.
              ''' </para>
+             ''' <para>
+             ''' Spaces in point ID's will be replaced to underscores!
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
@@ -204,7 +168,7 @@ Namespace Domain.IO
                     
                     Me.Reset(Nothing)
                     
-                    Dim PointFmt   As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s %-s"
+                    Dim PointFmt   As String = "%+20s %14.4f %14.4f %14.4f     %-s"
                     Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = (TypeOf PointList Is GeoPointList)
                     
@@ -219,51 +183,16 @@ Namespace Domain.IO
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
                                 
-                                ' Convert point: This verifies the ID and provides all fields for writing.
-                                Dim p As GeoVEPoint = SourcePoint.AsGeoVEPoint()
-                                
                                 ' Check for unique ID, if PointList is unique (since Point ID may have changed while converting to VE point).
-                                If (UniqueID) Then Me.VerifyUniqueID(p.ID)
-                                
-                                ' Helper.
-                                Dim ip As GeoIPoint = New GeoIPoint()
-                                ip.Attributes = p.Attributes
-                                ip.Comment    = p.Comment
-                                
-                                ' Convert properties to attributes in order to take place in .kor.
-                                '   (More candidates: mp, mh)
-                                Dim PropertyName   As String
-                                Dim AttributeName  As String
-                                PropertyName = "CoordSys"
-                                If (p.CoordSys.IsNotEmptyOrWhiteSpace()) Then
-                                    AttributeName = GeoPoint.AttributeNames(PropertyName) 
-                                    If (Not p.Attributes.ContainsKey(AttributeName)) Then
-                                        p.Attributes.Add(AttributeName, p.CoordSys)
-                                    End If
-                                End If
+                                If (UniqueID) Then Me.VerifyUniqueID(SourcePoint.ID)
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
-                                                      P.ID,
-                                                      If(Double.IsNaN(P.Y), 0, P.Y),
-                                                      If(Double.IsNaN(P.X), 0, P.X),
-                                                      If(Double.IsNaN(P.Z), 0, P.Z),
-                                                      p.TrackPos.Kilometer.Value,
-                                                      CreateKorInfo(),
-                                                      P.HeightInfo.TrimToMaxLength(13),
-                                                      P.KindText.TrimToMaxLength(4),
-                                                      p.TrackPos.TrackNo,
-                                                      p.TrackPos.RailsCode.TrimToMaxLength(1),
-                                                      P.HeightSys.TrimToMaxLength(3),
-                                                      P.mp,
-                                                      P.mh, 
-                                                      P.MarkHints.TrimToMaxLength(1),
-                                                      P.MarkType.TrimToMaxLength(3),
-                                                      P.sp.TrimToMaxLength(1),
-                                                      P.sh.TrimToMaxLength(1),
-                                                      P.Job.TrimToMaxLength(8),
-                                                      P.ObjectKey.TrimToMaxLength(7),
-                                                      ip.CreateFreeDataText()
+                                                      SourcePoint.ID.Replace(" "c, "_"c),
+                                                      If(Double.IsNaN(SourcePoint.Y), 0, SourcePoint.Y),
+                                                      If(Double.IsNaN(SourcePoint.X), 0, SourcePoint.X),
+                                                      If(Double.IsNaN(SourcePoint.Z), 0, SourcePoint.Z),
+                                                      CreateKorInfo(SourcePoint)
                                                      ))
                                 PointCount += 1
                                 
@@ -300,6 +229,27 @@ Namespace Domain.IO
             End Sub
             
         #End Region
+
+            
+        #Region "Methods"
+            
+            ''' <summary> Creates a point info text for kor file, containing cant (if any) and info. </summary>
+             ''' <returns> The point info text, i.e. 'u= 23  info'. </returns>
+            Public Function CreateKorInfo(p As IGeoPoint) As String
+                
+                Dim KorText As String
+                
+                If (Not Double.IsNaN(p.ActualCant)) Then
+                    KorText = sprintf("u=%3.0f  %-s", p.ActualCant * 1000, p.Info)
+                Else
+                    KorText = p.Info
+                End If
+                
+                Return KorText
+            End Function
+            
+        #End Region
+
         
         #Region "Record Definitions"
             
@@ -310,12 +260,11 @@ Namespace Domain.IO
                 Public Sub New()
                     MyBase.New()
                     ' Column definitions are zero-ased!
-                    Me.PointID      = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID, DataFieldPositionType.WordNumber, 1, 0)
-                    Me.Y            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y      , DataFieldPositionType.WordNumber, 2, 0, DataFieldOptions.ZeroAsNaN)
-                    Me.X            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X      , DataFieldPositionType.WordNumber, 3, 0, DataFieldOptions.ZeroAsNaN)
-                    Me.Z            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z      , DataFieldPositionType.WordNumber, 4, 0, DataFieldOptions.ZeroAsNaN)
-                    Me.PositionInfo = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Info   , DataFieldPositionType.WordNumber, 5, 0, DataFieldOptions.NotRequired)
-                                      ' Info: post process to get rest of line
+                    Me.PointID      = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID, DataFieldPositionType.WordNumber,            1, 0)
+                    Me.Y            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y      , DataFieldPositionType.WordNumber,            2, 0, DataFieldOptions.ZeroAsNaN)
+                    Me.X            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X      , DataFieldPositionType.WordNumber,            3, 0, DataFieldOptions.ZeroAsNaN)
+                    Me.Z            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z      , DataFieldPositionType.WordNumber,            4, 0, DataFieldOptions.ZeroAsNaN)
+                    Me.PositionInfo = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Info   , DataFieldPositionType.WordNumberAndRemains , 5, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                 End Sub
                 
                 #Region "Public Fields"
@@ -323,22 +272,7 @@ Namespace Domain.IO
                     Public Y            As DataFieldDefinition(Of Double)
                     Public X            As DataFieldDefinition(Of Double)
                     Public Z            As DataFieldDefinition(Of Double)
-                    Public Km           As DataFieldDefinition(Of Kilometer)
                     Public PositionInfo As DataFieldDefinition(Of String)
-                    Public HeightInfo   As DataFieldDefinition(Of String)
-                    Public PointKind    As DataFieldDefinition(Of String)
-                    Public TrackNo      As DataFieldDefinition(Of Nullable(Of Integer))
-                    Public RailsCode    As DataFieldDefinition(Of String)
-                    Public HeightSys    As DataFieldDefinition(Of String)
-                    Public mp           As DataFieldDefinition(Of Double)
-                    Public mh           As DataFieldDefinition(Of Double)
-                    Public MarkHints    As DataFieldDefinition(Of String)
-                    Public MarkType     As DataFieldDefinition(Of String)
-                    Public sp           As DataFieldDefinition(Of String)
-                    Public sh           As DataFieldDefinition(Of String)
-                    Public Job          As DataFieldDefinition(Of String)
-                    Public ObjectKey    As DataFieldDefinition(Of String)
-                    Public FreeData     As DataFieldDefinition(Of String)
                 #End Region
             End Class
         
