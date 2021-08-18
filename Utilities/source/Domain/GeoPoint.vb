@@ -63,6 +63,28 @@ Namespace Domain
         
     End Enum
     
+    ''' <summary> Point output options (i.e. for applying while writing to file). </summary>
+    <Flags>
+    Public Enum GeoPointOutputOptions As Integer
+        
+        ''' <summary> No special output is applied. </summary>
+        None = 0
+        
+        ''' <summary> The point's <see cref="GeoPoint.ActualCant"/> should be added to <see cref="GeoPoint.Info"/> for output. </summary>
+        CreateInfoWithActualCant = 1
+        
+        ''' <summary> The point's <see cref="GeoPoint.Kind"/> should be added to <see cref="GeoPoint.Info"/> for output. </summary>
+         ''' <remarks>
+         ''' If <see cref="GeoPoint.Kind"/> isn't <c>None</c>, a kind text should be added to <see cref="GeoPoint.Info"/>
+         ''' unless there is already a point kind descriptor in there. 
+         ''' </remarks>
+        CreateInfoWithPointKind = 2
+        
+        ''' <summary> Create iGeo "iTrassen-Codierung" for output of ipkt Text field. </summary>
+        Craete_iTC = 4
+        
+    End Enum
+    
     ''' <summary> Supported point kinds. </summary>
     Public Enum GeoPointKind As Integer
         
@@ -602,7 +624,7 @@ Namespace Domain
                                         Case "u":    Me.ActualCant    =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
                                     End Select
                                     
-                                    SearchText    = SearchText.Remove(oMatch.Index, oMatch.Length).TrimEnd()
+                                    SearchText = SearchText.Remove(oMatch.Index, oMatch.Length).TrimEnd()
                                     If (i = 1) Then
                                         Me.Info = SearchText
                                     Else
@@ -670,6 +692,48 @@ Namespace Domain
                     End If
                 End If
             End Sub
+            
+            ''' <summary> Creates a point info text for file output, containing cant (if any) and info. </summary>
+             ''' <param name="Options"> Controls content of created text. </param>
+             ''' <returns> The point info text for file output, i.e. 'u= 23  info'. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' Depending on <paramref name="Options"/> special info will be added to pure info (<see cref="GeoPoint.Info"/>):
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Option</b> </term>  <description> Result example </description></listheader>
+             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithActualCant"/> </term>  <description> u= 23  info </description></item>
+             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithPointKind "/> </term>  <description> LFP  info    </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
+                
+                Dim RetText As String  '= String.Empty
+                ##
+                If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
+                    If (Not Double.IsNaN(Me.ActualCant)) Then
+                        RetText = sprintf("u=%3.0f  %-s", Me.ActualCant * 1000, Me.Info)
+                    ElseIf (Not Double.IsNaN(Me.ActualCantAbs)) Then
+                        RetText = sprintf("ueb=%3.0f  %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
+                    End If
+                End If
+                
+                If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant)) Then
+                    If (Not Double.IsNaN(Me.ActualCant)) Then
+                        RetText = sprintf("u=%3.0f  %-s", Me.ActualCant * 1000, Me.Info)
+                    ElseIf (Not Double.IsNaN(Me.ActualCantAbs)) Then
+                        RetText = sprintf("ueb=%3.0f  %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
+                    End If
+                End If
+                
+                If (Not Double.IsNaN(p.ActualCant)) Then
+                    RetText = sprintf("u=%3.0f  %-s", Me.ActualCant * 1000, Me.Info)
+                Else
+                    RetText = p.Info
+                End If
+                
+                Return RetText
+            End Function
             
             ''' <summary>
              ''' Gets the value of an attribute which name is determined by the given property name

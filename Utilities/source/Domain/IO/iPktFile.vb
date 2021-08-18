@@ -27,8 +27,9 @@ Namespace Domain.IO
             Public Sub New()
                 Me.LineStartCommentToken = "#"
                 
-                ' By default the ipkt text field should be parsed as iGeo "iTrassen-Codierung".
-                Me.EditOptions = GeoPointEditOptions.Parse_iTC
+                ' By default the ipkt text field should be parsed and written as iGeo "iTrassen-Codierung".
+                Me.EditOptions   = GeoPointEditOptions.Parse_iTC
+                Me.OutputOptions = GeoPointOutputOptions.Craete_iTC
                 
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader1)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader2)
@@ -311,7 +312,7 @@ Namespace Domain.IO
                                                       p.CoordSys.TrimToMaxLength(6),
                                                       p.Flags.TrimToMaxLength(4),
                                                       p.wp, p.wh,
-                                                      p.CreateIpktText().TrimToMaxLength(25),
+                                                      p.Create_iTC().TrimToMaxLength(25),
                                                       p.AttKey1.TrimToMaxLength(2),
                                                       p.AttValue1.TrimToMaxLength(25),
                                                       p.AttKey2.TrimToMaxLength(2),

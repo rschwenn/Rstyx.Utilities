@@ -732,4 +732,13 @@
   <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_Parse_iTC" xml:space="preserve">
     <value>Text als iGeo "iTrassen-Codierung" auswerten</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithActualCant" xml:space="preserve">
+    <value>Ist-Überhöhung zur Info hinzufügen</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithPointKind" xml:space="preserve">
+    <value>Punktart zur Info hinzufügen</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointOutputOptions_Create_iTC" xml:space="preserve">
+    <value>iGeo "iTrassen-Codierung" erzeugen</value>
+  </data>
 </root>

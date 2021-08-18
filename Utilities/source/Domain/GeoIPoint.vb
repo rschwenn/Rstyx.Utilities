@@ -469,9 +469,9 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Creates a point text for ipkt file, containing iGeo point kind codes and info. </summary>
-             ''' <returns> The point text for ipkt file. </returns>
-            Public Function CreateIpktText() As String
+            ''' <summary> Creates iGeo "iTrassen-Codierung" for ipkt text field, containing iGeo point kind codes and text info. </summary>
+             ''' <returns> The iGeo "iTrassen-Codierung" for ipkt text field. </returns>
+            Public Function Create_iTC() As String
                 
                 Dim IpktText As String = String.Empty
                 

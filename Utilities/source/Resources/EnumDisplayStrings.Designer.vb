@@ -1321,6 +1321,33 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die iGeo &quot;iTrassen-Codierung&quot; erzeugen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointOutputOptions_Create_iTC() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointOutputOptions_Create_iTC", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ist-Überhöhung zur Info hinzufügen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithActualCant() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithActualCant", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punktart zur Info hinzufügen ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithPointKind() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithPointKind", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die eindeutig ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Normal() As String

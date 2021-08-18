@@ -63,10 +63,13 @@ Namespace Domain.IO
             ''' by <see cref="GeoPointFile.PointStream"/> automatically and error tracking is more verbose (incl. error display in jEdit).
             ''' </para>
             ''' </remarks>
-           Public Property Constraints() As GeoPointConstraints = GeoPointConstraints.None
+           Public Property Constraints()    As GeoPointConstraints = GeoPointConstraints.None
             
            ''' <summary> Determines editing options for read points. Defaults to <c>None</c>. </summary>
-           Public Property EditOptions() As GeoPointEditOptions = GeoPointEditOptions.None
+           Public Property EditOptions()    As GeoPointEditOptions = GeoPointEditOptions.None
+            
+           ''' <summary> Determines output options for written points. Defaults to <c>None</c>. </summary>
+           Public Property OutputOptions()  As GeoPointEditOptions = GeoPointOutputOptions.None
            
         #End Region
         
