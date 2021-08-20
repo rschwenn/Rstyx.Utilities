@@ -139,17 +139,7 @@ Namespace Domain.IO
                                 p.SetKindFromMarkType()
                                 
                                 ' Editing.
-                                If (p.Kind = GeoPointKind.Rails) Then
-                                    p.ParseInfoForActualCant()
-                                End If
-                                If (p.Kind = GeoPointKind.None) Then
-                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                                        p.ParseInfoForPointKind()
-                                    ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                                        p.ParseInfoForActualCant()
-                                    End If
-                                End If
-                                p.SetKindTextFromKind(Override:=False)
+                                p.ParseInfoTextInput(Me.EditOptions)
                                 
                                 ' Point ID and constraints.
                                 If (i = 0) Then
@@ -340,7 +330,7 @@ Namespace Domain.IO
                 oBW.Write(getVEDoubleFromDouble(p.TrackPos.Kilometer.Value))
                 
                 oBW.Write(CByte(Asc(p.PositionPreInfo)))
-                oBW.Write(GetByteArray(FileEncoding, p.CreateKVInfo(), 13, " "c))
+                oBW.Write(GetByteArray(FileEncoding, P.CreateInfoTextOutput(Me.OutputOptions), 13, " "c))
                 oBW.Write(CByte(Asc(p.PositionPostInfo)))
                 
                 oBW.Write(CByte(Asc(p.HeightPreInfo)))

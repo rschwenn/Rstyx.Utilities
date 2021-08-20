@@ -1485,11 +1485,7 @@ Namespace Domain.IO
                                     
                                     ' Editing.
                                     If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                                            p.ParseInfoForPointKind(TryComment:=True)
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                                            p.ParseInfoForActualCant(TryComment:=True)
-                                        End If
+                                        p.ParseInfoTextInput(Options:= Me.EditOptions, TryComment:=True)
                                     End If
                                     p.SetKindTextFromKind(Override:=False)
                                     

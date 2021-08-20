@@ -18,6 +18,7 @@ Namespace Domain
     Public Interface IGeoPointConversions
         
         ''' <summary> Returns a <see cref="GeoVEPoint"/> initialized with values of the implementing point. </summary>
+         ''' <returns> A <see cref="GeoVEPoint"/> initialized with values of the implementing point. </returns>
          ''' <remarks>
          ''' If the implementing point is already a <see cref="GeoVEPoint"/>, then the same instance will be returned.
          ''' Otherwise a new instance of <see cref="GeoVEPoint"/> will be created.
@@ -25,6 +26,7 @@ Namespace Domain
         Function AsGeoVEPoint() As GeoVEPoint
         
         ''' <summary> Returns a <see cref="GeoIPoint"/> initialized with values of the implementing point. </summary>
+         ''' <returns> A <see cref="GeoIPoint"/> initialized with values of the implementing point. </returns>
          ''' <remarks>
          ''' If the implementing point is already a <see cref="GeoIPoint"/>, then the same instance will be returned.
          ''' Otherwise a new instance of <see cref="GeoIPoint"/> will be created.
@@ -32,6 +34,7 @@ Namespace Domain
         Function AsGeoIPoint() As GeoIPoint
         
         ''' <summary> Returns a <see cref="GeoTcPoint"/> initialized with values of the implementing point. </summary>
+         ''' <returns> A <see cref="GeoTcPoint"/> initialized with values of the implementing point. </returns>
          ''' <remarks>
          ''' If the implementing point is already a <see cref="GeoTcPoint"/>, then the same instance will be returned.
          ''' Otherwise a new instance of <see cref="GeoTcPoint"/> will be created.

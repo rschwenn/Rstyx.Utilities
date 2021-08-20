@@ -129,17 +129,7 @@ Namespace Domain.IO
                                     p.SetKindFromMarkType()
                                     
                                     ' Editing.
-                                    If (p.Kind = GeoPointKind.Rails) Then
-                                        p.ParseInfoForActualCant()
-                                    End If
-                                    If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                                            p.ParseInfoForPointKind()
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                                            p.ParseInfoForActualCant()
-                                        End If
-                                    End If
-                                    p.SetKindTextFromKind(Override:=False)
+                                    p.ParseInfoTextInput(Me.EditOptions)
                                     
                                     ' Verifying.
                                     If (UniqueID) Then Me.VerifyUniqueID(p.ID)
@@ -249,7 +239,7 @@ Namespace Domain.IO
                                                       If(Double.IsNaN(P.X), 0, P.X),
                                                       If(Double.IsNaN(P.Z), 0, P.Z),
                                                       p.TrackPos.Kilometer.Value,
-                                                      P.CreateKVInfo(),
+                                                      P.CreateInfoTextOutput(Me.OutputOptions),
                                                       P.HeightInfo.TrimToMaxLength(13),
                                                       P.KindText.TrimToMaxLength(4),
                                                       p.TrackPos.TrackNo,

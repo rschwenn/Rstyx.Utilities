@@ -95,12 +95,7 @@ Namespace Domain.IO
                                     p.SourceLineNo = DataLine.SourceLineNo
                                     
                                     ' Editing.
-                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                                        p.ParseInfoForPointKind()
-                                    ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                                        p.ParseInfoForActualCant()
-                                    End If
-                                    p.SetKindTextFromKind(Override:=False)
+                                    p.ParseInfoTextInput(Me.EditOptions)
                                     
                                     ' Verifying.
                                     If (UniqueID) Then Me.VerifyUniqueID(p.ID)
@@ -183,16 +178,19 @@ Namespace Domain.IO
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
                                 
+                                ' Get access to point methods (which are not interface members).
+                                Dim p As New GeoPoint(SourcePoint)
+                                
                                 ' Check for unique ID, if PointList is unique (since Point ID may have changed while converting to VE point).
                                 If (UniqueID) Then Me.VerifyUniqueID(SourcePoint.ID)
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
-                                                      SourcePoint.ID.Replace(" "c, "_"c),
-                                                      If(Double.IsNaN(SourcePoint.Y), 0, SourcePoint.Y),
-                                                      If(Double.IsNaN(SourcePoint.X), 0, SourcePoint.X),
-                                                      If(Double.IsNaN(SourcePoint.Z), 0, SourcePoint.Z),
-                                                      CreateKorInfo(SourcePoint)
+                                                      p.ID.Replace(" "c, "_"c),
+                                                      If(Double.IsNaN(p.Y), 0, p.Y),
+                                                      If(Double.IsNaN(p.X), 0, p.X),
+                                                      If(Double.IsNaN(p.Z), 0, p.Z),
+                                                      p.CreateInfoTextOutput(Me.OutputOptions)
                                                      ))
                                 PointCount += 1
                                 
@@ -229,27 +227,6 @@ Namespace Domain.IO
             End Sub
             
         #End Region
-
-            
-        #Region "Methods"
-            
-            ''' <summary> Creates a point info text for kor file, containing cant (if any) and info. </summary>
-             ''' <returns> The point info text, i.e. 'u= 23  info'. </returns>
-            Public Function CreateKorInfo(p As IGeoPoint) As String
-                
-                Dim KorText As String
-                
-                If (Not Double.IsNaN(p.ActualCant)) Then
-                    KorText = sprintf("u=%3.0f  %-s", p.ActualCant * 1000, p.Info)
-                Else
-                    KorText = p.Info
-                End If
-                
-                Return KorText
-            End Function
-            
-        #End Region
-
         
         #Region "Record Definitions"
             

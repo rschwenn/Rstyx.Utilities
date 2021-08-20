@@ -29,7 +29,7 @@ Namespace Domain.IO
                 
                 ' By default the ipkt text field should be parsed and written as iGeo "iTrassen-Codierung".
                 Me.EditOptions   = GeoPointEditOptions.Parse_iTC
-                Me.OutputOptions = GeoPointOutputOptions.Craete_iTC
+                Me.OutputOptions = GeoPointOutputOptions.Create_iTC
                 
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader1)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader2)
@@ -117,6 +117,7 @@ Namespace Domain.IO
                                     p.Flags        = DataLine.ParseField(RecDef.Flags      ).Value
                                     p.wp           = DataLine.ParseField(RecDef.wp         ).Value
                                     p.wh           = DataLine.ParseField(RecDef.wh         ).Value
+                                    p.Info         = DataLine.ParseField(RecDef.Text       ).Value
                                     p.AttKey1      = DataLine.ParseField(RecDef.AttKey1    ).Value
                                     p.AttValue1    = DataLine.ParseField(RecDef.AttValue1  ).Value
                                     p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
@@ -162,7 +163,7 @@ Namespace Domain.IO
                                     
                                     ' Editing.
                                     If (Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
-                                        p.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
+                                        p.Parse_iTC(p.Info)
                                     End If
                                     If (p.Kind = GeoPointKind.None) Then
                                         If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
@@ -312,7 +313,7 @@ Namespace Domain.IO
                                                       p.CoordSys.TrimToMaxLength(6),
                                                       p.Flags.TrimToMaxLength(4),
                                                       p.wp, p.wh,
-                                                      p.Create_iTC().TrimToMaxLength(25),
+                                                      p.CreateInfoTextOutput(Me.OutputOptions),
                                                       p.AttKey1.TrimToMaxLength(2),
                                                       p.AttValue1.TrimToMaxLength(25),
                                                       p.AttKey2.TrimToMaxLength(2),
