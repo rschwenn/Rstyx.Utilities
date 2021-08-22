@@ -68,8 +68,8 @@ Namespace Domain.IO
            ''' <summary> Determines editing options for read points. Defaults to <c>None</c>. </summary>
            Public Property EditOptions()    As GeoPointEditOptions = GeoPointEditOptions.None
             
-           ''' <summary> Determines output options for written points. Defaults to <c>None</c>. </summary>
-           Public Property OutputOptions()  As GeoPointEditOptions = GeoPointOutputOptions.None
+           ''' <summary> Determines output options for points to write. Defaults to <c>None</c>. </summary>
+           Public Property OutputOptions()  As GeoPointOutputOptions = GeoPointOutputOptions.None
            
         #End Region
         

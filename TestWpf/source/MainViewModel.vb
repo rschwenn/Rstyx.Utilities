@@ -457,6 +457,14 @@ Public Class MainViewModel
                 'Call TestJPEG()
                 
                 
+                Logger.logInfo(sprintf("  GeoPointEditOptions.ParseInfoForActualCant => '%s'", GeoPointEditOptions.ParseInfoForActualCant.ToDisplayString()))
+                Logger.logInfo(sprintf("  GeoPointEditOptions.ParseInfoForPointKind => '%s'" , GeoPointEditOptions.ParseInfoForPointKind.ToDisplayString()))
+                Logger.logInfo(sprintf("  GeoPointEditOptions.Parse_iTC => '%s'"              , GeoPointEditOptions.Parse_iTC.ToDisplayString()))
+                
+                Logger.logInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithActualCant => '%s'", GeoPointOutputOptions.CreateInfoWithActualCant.ToDisplayString()))
+                Logger.logInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithPointKind => '%s'", GeoPointOutputOptions.CreateInfoWithPointKind.ToDisplayString()))
+                Logger.logInfo(sprintf("  GeoPointOutputOptions.Create_iTC => '%s'", GeoPointOutputOptions.Create_iTC.ToDisplayString()))
+
                 'Dim p As New GeoIPoint ()
                 'p.ParseTextForKindCodes(Me.Textbox)
                 'Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkTypeAB, p.MarkType, p.ActualCant * 1000, p.Info))

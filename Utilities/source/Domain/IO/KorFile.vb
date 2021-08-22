@@ -166,7 +166,7 @@ Namespace Domain.IO
                     
                     Me.Reset(Nothing)
                     
-                    Dim PointFmt   As String = "%+20s %14.4f %14.4f %14.4f     %-s"
+                    Dim PointFmt   As String = "%+20s %14.4f %14.4f %14.4f     %-30s %-s"
                     Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = (TypeOf PointList Is GeoPointList)
                     
@@ -193,7 +193,8 @@ Namespace Domain.IO
                                                       If(Double.IsNaN(p.Y), 0, p.Y),
                                                       If(Double.IsNaN(p.X), 0, p.X),
                                                       If(Double.IsNaN(p.Z), 0, p.Z),
-                                                      p.CreateInfoTextOutput(Me.OutputOptions)
+                                                      p.CreateInfoTextOutput(Me.OutputOptions),
+                                                      If(p.Comment.IsEmptyOrWhiteSpace(), String.Empty, " # " & p.Comment)
                                                      ))
                                 PointCount += 1
                                 
