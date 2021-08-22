@@ -1186,6 +1186,7 @@ Namespace Domain.IO
                         Dim LastRecEmpty  As Boolean = False
                         Dim DataLine      As DataTextLine = Nothing
                         Dim VEPoint       As New GeoVEPoint(RecDef.ID_Length)
+                        Dim ParseResult   As GeoPoint.ParseInfoTextResult
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - RecLen)
                             Try
@@ -1259,7 +1260,10 @@ Namespace Domain.IO
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Editing.
-                                    p.ParseInfoTextInput(Me.EditOptions)
+                                    ParseResult = p.ParseInfoTextInput(Options:=Me.EditOptions, TryComment:=False)
+                                    If (ParseResult.HasConflict) Then
+                                        Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
+                                    End If
                                     
                                     ' Calculate values not have been read.
                                     p.TransformHorizontalToCanted()
@@ -1333,10 +1337,11 @@ Namespace Domain.IO
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
-                        Dim RecDef    As TcRecordDefinitionIGeo = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionIGeo)
-                        Dim RecIdx    As Integer = SourceBlock.DataStartIndex - 1
-                        Dim DataLine  As DataTextLine = Nothing
-                        Dim FieldID   As DataField(Of String) = Nothing
+                        Dim RecDef      As TcRecordDefinitionIGeo = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionIGeo)
+                        Dim RecIdx      As Integer = SourceBlock.DataStartIndex - 1
+                        Dim DataLine    As DataTextLine = Nothing
+                        Dim FieldID     As DataField(Of String) = Nothing
+                        Dim ParseResult As GeoPoint.ParseInfoTextResult
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - 1)
                             Try
@@ -1472,7 +1477,10 @@ Namespace Domain.IO
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
                                     p.Info          = DataLine.ParseField(RecDef.Text).Value
                                     IpktAux         = p.AsGeoIPoint()
-                                    IpktAux.ParseInfoTextInput(Options:= Me.EditOptions, TryComment:=True)
+                                    ParseResult     = IpktAux.ParseInfoTextInput(Options:= Me.EditOptions, TryComment:=True)
+                                    If (ParseResult.HasConflict) Then
+                                        Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
+                                    End If
                                     p.ActualCantAbs = IpktAux.ActualCantAbs
                                     p.ActualCant    = IpktAux.ActualCant
                                     p.Info          = IpktAux.Info
