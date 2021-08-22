@@ -181,37 +181,31 @@ Namespace Domain
             
         #End Region
         
-        #Region "Overrides"
+        #Region "Free Data Text - Parsing and Creating"
             
-            ''' <summary> Parses the given string as new <see cref="GeoPoint.ID"/> for this GeoPoint. </summary>
-             ''' <param name="TargetID"> The string which is intended to become the new point ID. It will be trimmed here. </param>
-             ''' <returns> The parsed ID. </returns>
-             ''' <remarks>
-             ''' <para>
-             ''' This method will be called when setting the <see cref="GeoPoint.ID"/> property.
-             ''' It allows for special format conversions and for validation of <paramref name="TargetID"/>.
-             ''' </para>
-             ''' </remarks>
-             ''' <exception cref="InvalidIDException"> <paramref name="TargetID"/> is longer than 20 characters. </exception>
-            Protected Overrides Function ParseID(TargetID As String) As String
+            ''' <summary> Creates a FreeData text for ipkt file, containing attributes and comment. </summary>
+             ''' <returns> The FreeData text for ipkt file. </returns>
+            Public Function CreateFreeDataText() As String
                 
-                Dim RetValue As String = MyBase.ParseID(TargetID)
-                
-                If (RetValue.Length > MaxIDLength) Then
-                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDToLong, RetValue, MaxIDLength))
+                Dim FreeDataText As String = String.Empty
+                                
+                ' Attributes.
+                If (Me.Attributes?.Count > 0) Then
+                    Dim AttString   As String = String.Empty
+                    
+                    For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
+                        AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
+                    Next
+                    FreeDataText &= AttString
                 End If
                 
-                Return RetValue
+                ' Comment.
+                If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
+                    FreeDataText &= Me.Comment
+                End If
+                
+                Return FreeDataText
             End Function
-            
-            ''' <summary> Returns a very basic output of the point. </summary>
-            Public Overrides Function ToString() As String
-                Return sprintf(" %+20s %15.5f%15.5f%15.4f  %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
-            End Function
-            
-        #End Region
-        
-        #Region "Public Methods"
             
             ''' <summary> A given String will be parsed for attributes and a comment. May be <see langword="null"/>. </summary>
              ''' <param name="FreeDataText"> The string to parse. </param>
@@ -244,28 +238,107 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Creates a FreeData text for ipkt file, containing attributes and comment. </summary>
-             ''' <returns> The FreeData text for ipkt file. </returns>
-            Public Function CreateFreeDataText() As String
+        #End Region
+            
+        #Region "Info Text - Parsing and Creating"
+            
+            ''' <summary> Creates a point info text for file output, containing iGeo "iTrassen-Codierung" or else cant, kind text and info. </summary>
+             ''' <param name="Options"> Controls content of created text. </param>
+             ''' <returns> The point info text for file output, i.e. 'u= 23  info'. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' Depending on <paramref name="Options"/> "iTrassen-Codierung" will be created 
+             ''' or else special info will be added to pure info (<see cref="GeoPoint.Info"/>):
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Option</b> </term>  <description> Result example </description></listheader>
+             ''' <item> <term> <see cref="GeoPointOutputOptions.Create_iTC"/>               </term>  <description> 2-v1 # 12/28 </description></item>
+             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithActualCant"/> </term>  <description> u= 23  info  </description></item>
+             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithPointKind "/> </term>  <description> GVP  info    </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Overrides Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
                 
-                Dim FreeDataText As String = String.Empty
-                                
-                ' Attributes.
-                If (Me.Attributes?.Count > 0) Then
-                    Dim AttString   As String = String.Empty
-                    
-                    For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
-                        AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
-                    Next
-                    FreeDataText &= AttString
+                Dim RetText As String
+                
+                If (Options.HasFlag(GeoPointOutputOptions.Create_iTC)) Then
+                    RetText = Me.Create_iTC()
+                Else
+                    RetText = MyBase.CreateInfoTextOutput(Options)
                 End If
                 
-                ' Comment.
-                If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
-                    FreeDataText &= Me.Comment
+                Return RetText.TrimToMaxLength(25)
+            End Function
+            
+            ''' <summary>
+            ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
+            ''' The found values will be stored into point properties. 
+            ''' </summary>
+             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
+             ''' <param name="Options">  Controls what target info should be parsed for. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' See <see cref="GeoPoint.ParseInfoTextInput"/> for details.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="GeoIPoint"/> special: Depending on <paramref name="Options"/> iGeo "iTrassen-Codierung" will be parsed.
+             ''' </para>
+             ''' </remarks>
+            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+                
+                Dim RetValue As New ParseInfoTextResult()
+                
+                ' Parse iGeo "iTrassen-Codierung".
+                If (Options.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
+                    RetValue = Me.Parse_iTC(TryComment:=TryComment)
                 End If
                 
-                Return FreeDataText
+                ' Standard kind guessing.
+                If (Me.Kind = GeoPointKind.None) Then
+                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
+                End If
+                
+                Return RetValue
+            End Function
+            
+            ''' <summary> Creates iGeo "iTrassen-Codierung" for ipkt text field, containing iGeo point kind codes and text info. </summary>
+             ''' <returns> The iGeo "iTrassen-Codierung" for ipkt text field. </returns>
+            Protected Function Create_iTC() As String
+                
+                Dim IpktText As String = String.Empty
+                
+                ' Special mark type (iGeo Trassen-Absteckbuch).
+                If (Me.MarkTypeAB.IsNotEmpty()) Then
+                    IpktText = Me.MarkTypeAB
+                End If
+                
+                ' Point kind.
+                If (Not (Me.Kind = GeoPointKind.None)) Then
+                    Select Case Me.Kind
+                        Case GeoPointKind.Platform      : IpktText &= "-b"
+                        Case GeoPointKind.RailsFixPoint : IpktText &= "-v" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
+                        Case GeoPointKind.FixPoint      : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
+                        Case GeoPointKind.Rails         : 
+                            Dim IsNanActualCantAbs = Double.IsNaN(Me.ActualCantAbs)
+                            Dim IsNanActualCant    = Double.IsNaN(Me.ActualCant)
+                            If (IsNanActualCant AndAlso IsNanActualCantAbs) Then
+                                IpktText &= "-i"
+                            Else
+                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%3.0f", Me.ActualCantAbs * 1000 * -1)
+                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%3.0f", Me.ActualCant * 1000)
+                            End If
+                    End Select
+                End If
+                
+                ' Info.
+                If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
+                    If (IpktText.IsNotEmpty()) Then
+                        IpktText &= " # "
+                    End If
+                    IpktText &= Me.Info
+                End If
+                
+                Return IpktText
             End Function
             
             ''' <summary> <see cref="GeoPoint.Info"/> will be parsed as iGeo "iTrassen-Codierung". </summary>
@@ -455,7 +528,7 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub Parse_iTC_OLD(PointText As String)
+            Public Sub OLD_Parse_iTC(PointText As String)
                 
                 Me.Kind          = GeoPointKind.None
                 Me.ActualCantAbs = Double.NaN
@@ -542,103 +615,34 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Creates iGeo "iTrassen-Codierung" for ipkt text field, containing iGeo point kind codes and text info. </summary>
-             ''' <returns> The iGeo "iTrassen-Codierung" for ipkt text field. </returns>
-            Private Function Create_iTC() As String
-                
-                Dim IpktText As String = String.Empty
-                
-                ' Special mark type (iGeo Trassen-Absteckbuch).
-                If (Me.MarkTypeAB.IsNotEmpty()) Then
-                    IpktText = Me.MarkTypeAB
-                End If
-                
-                ' Point kind.
-                If (Not (Me.Kind = GeoPointKind.None)) Then
-                    Select Case Me.Kind
-                        Case GeoPointKind.Platform      : IpktText &= "-b"
-                        Case GeoPointKind.RailsFixPoint : IpktText &= "-v" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.FixPoint      : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.Rails         : 
-                            Dim IsNanActualCantAbs = Double.IsNaN(Me.ActualCantAbs)
-                            Dim IsNanActualCant    = Double.IsNaN(Me.ActualCant)
-                            If (IsNanActualCant AndAlso IsNanActualCantAbs) Then
-                                IpktText &= "-i"
-                            Else
-                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%3.0f", Me.ActualCantAbs * 1000 * -1)
-                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%3.0f", Me.ActualCant * 1000)
-                            End If
-                    End Select
-                End If
-                
-                ' Info.
-                If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
-                    If (IpktText.IsNotEmpty()) Then
-                        IpktText &= " # "
-                    End If
-                    IpktText &= Me.Info
-                End If
-                
-                Return IpktText
-            End Function
+        #End Region
+        
+        #Region "Overrides"
             
-            ''' <summary> Creates a point info text for file output, containing iGeo "iTrassen-Codierung" or else cant, kind text and info. </summary>
-             ''' <param name="Options"> Controls content of created text. </param>
-             ''' <returns> The point info text for file output, i.e. 'u= 23  info'. </returns>
+            ''' <summary> Parses the given string as new <see cref="GeoPoint.ID"/> for this GeoPoint. </summary>
+             ''' <param name="TargetID"> The string which is intended to become the new point ID. It will be trimmed here. </param>
+             ''' <returns> The parsed ID. </returns>
              ''' <remarks>
              ''' <para>
-             ''' Depending on <paramref name="Options"/> "iTrassen-Codierung" will be created 
-             ''' or else special info will be added to pure info (<see cref="GeoPoint.Info"/>):
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Option</b> </term>  <description> Result example </description></listheader>
-             ''' <item> <term> <see cref="GeoPointOutputOptions.Create_iTC"/>               </term>  <description> 2-v1 # 12/28 </description></item>
-             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithActualCant"/> </term>  <description> u= 23  info  </description></item>
-             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithPointKind "/> </term>  <description> GVP  info    </description></item>
-             ''' </list>
+             ''' This method will be called when setting the <see cref="GeoPoint.ID"/> property.
+             ''' It allows for special format conversions and for validation of <paramref name="TargetID"/>.
              ''' </para>
              ''' </remarks>
-            Public Overrides Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
+             ''' <exception cref="InvalidIDException"> <paramref name="TargetID"/> is longer than 20 characters. </exception>
+            Protected Overrides Function ParseID(TargetID As String) As String
                 
-                Dim RetText As String
+                Dim RetValue As String = MyBase.ParseID(TargetID)
                 
-                If (Options.HasFlag(GeoPointOutputOptions.Create_iTC)) Then
-                    RetText = Me.Create_iTC()
-                Else
-                    RetText = MyBase.CreateInfoTextOutput(Options)
-                End If
-                
-                Return RetText.TrimToMaxLength(25)
-            End Function
-            
-            ''' <summary>
-            ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
-            ''' The found values will be stored into point properties. 
-            ''' </summary>
-             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
-             ''' <param name="Options">  Controls what target info should be parsed for. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' See <see cref="GeoPoint.ParseInfoTextInput"/> for details.
-             ''' </para>
-             ''' <para>
-             ''' <see cref="GeoIPoint"/> special: Depending on <paramref name="Options"/> iGeo "iTrassen-Codierung" will be parsed.
-             ''' </para>
-             ''' </remarks>
-            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
-                
-                Dim RetValue As New ParseInfoTextResult()
-                
-                ' Parse iGeo "iTrassen-Codierung".
-                If (Options.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
-                    RetValue = Me.Parse_iTC(TryComment:=TryComment)
-                End If
-                
-                ' Standard kind guessing.
-                If (Me.Kind = GeoPointKind.None) Then
-                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
+                If (RetValue.Length > MaxIDLength) Then
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDToLong, RetValue, MaxIDLength))
                 End If
                 
                 Return RetValue
+            End Function
+            
+            ''' <summary> Returns a very basic output of the point. </summary>
+            Public Overrides Function ToString() As String
+                Return sprintf(" %+20s %15.5f%15.5f%15.4f  %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
             End Function
             
         #End Region

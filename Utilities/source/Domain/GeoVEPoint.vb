@@ -351,54 +351,6 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Creates a point info text of max. 13 chars for file output, containing cant (if any) and info. </summary>
-             ''' <param name="Options"> Controls content of created text. </param>
-             ''' <returns> The point info text for file output, i.e. 'u= 23  info'. </returns>
-             ''' <remarks>
-             ''' <para>
-             ''' Depending on <paramref name="Options"/> special info will be added to pure info (<see cref="GeoPoint.Info"/>):
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Option</b> </term>  <description> Result example </description></listheader>
-             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithActualCant"/> </term>  <description> u= 23  info </description></item>
-             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithPointKind "/> </term>  <description> LFP  info    </description></item>
-             ''' </list>
-             ''' </para>
-             ''' </remarks>
-            Public Overrides Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
-                Return MyBase.CreateInfoTextOutput(Options).TrimToMaxLength(13)
-            End Function
-            
-            ''' <summary>
-            ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
-            ''' The found values will be stored into point properties. 
-            ''' </summary>
-             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
-             ''' <param name="Options">  Controls what target info should be parsed for. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' See <see cref="GeoPoint.ParseInfoTextInput"/> for details.
-             ''' </para>
-             ''' <para>
-             ''' <see cref="GeoVEPoint"/> special: If point kind field is "Gls" => only try to get actual cant.
-             ''' </para>
-             ''' </remarks>
-            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
-                
-                Dim RetValue As New ParseInfoTextResult()
-                
-                ' VermEsn point kind field is "Gls" => try to get actual cant.
-                If (Me.Kind = GeoPointKind.Rails) Then
-                    RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
-                End If
-                
-                ' Standard kind guessing.
-                If (Me.Kind = GeoPointKind.None) Then
-                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
-                End If
-                
-                Return RetValue
-            End Function
-            
             ''' <summary> Creates a point info text of max. 13 chars for kv file, containing cant (if any) and info. </summary>
              ''' <returns> The point info text for kv file, i.e. 'u= 23  info'. </returns>
              ''' <remarks>
@@ -457,6 +409,58 @@ Namespace Domain
                     RetID = VEPoint.FormatID()
                 End If
                 Return RetID
+            End Function
+            
+        #End Region
+            
+        #Region "Info Text - Parsing and Creating"
+            
+            ''' <summary> Creates a point info text of max. 13 chars for file output, containing cant (if any) and info. </summary>
+             ''' <param name="Options"> Controls content of created text. </param>
+             ''' <returns> The point info text for file output, i.e. 'u= 23  info'. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' Depending on <paramref name="Options"/> special info will be added to pure info (<see cref="GeoPoint.Info"/>):
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Option</b> </term>  <description> Result example </description></listheader>
+             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithActualCant"/> </term>  <description> u= 23  info </description></item>
+             ''' <item> <term> <see cref="GeoPointOutputOptions.CreateInfoWithPointKind "/> </term>  <description> LFP  info    </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Overrides Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
+                Return MyBase.CreateInfoTextOutput(Options).TrimToMaxLength(13)
+            End Function
+            
+            ''' <summary>
+            ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
+            ''' The found values will be stored into point properties. 
+            ''' </summary>
+             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
+             ''' <param name="Options">  Controls what target info should be parsed for. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' See <see cref="GeoPoint.ParseInfoTextInput"/> for details.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="GeoVEPoint"/> special: If point kind field is "Gls" => only try to get actual cant.
+             ''' </para>
+             ''' </remarks>
+            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+                
+                Dim RetValue As New ParseInfoTextResult()
+                
+                ' VermEsn point kind field is "Gls" => try to get actual cant.
+                If (Me.Kind = GeoPointKind.Rails) Then
+                    RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
+                End If
+                
+                ' Standard kind guessing.
+                If (Me.Kind = GeoPointKind.None) Then
+                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
+                End If
+                
+                Return RetValue
             End Function
             
         #End Region
