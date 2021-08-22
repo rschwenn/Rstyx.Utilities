@@ -594,7 +594,7 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub ParseInfoForPointKind(Optional TryComment As Boolean = False)
+            Protected Function ParseInfoForPointKind(Optional TryComment As Boolean = False) As ParseInfoTextResult
                 
                 Me.Kind          = GeoPointKind.None
                 Me.ActualCant    = Double.NaN
@@ -628,12 +628,10 @@ Namespace Domain
                                         Case "u":    Me.ActualCant    =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
                                     End Select
                                     
-                                    'SearchText = SearchText.Remove(oMatch.Index, oMatch.Length).TrimEnd()
                                     If (i = 1) Then
-                                        'Me.Info = SearchText
                                         Me.Info = SearchText.Remove(oMatch.Index, oMatch.Length).TrimEnd()
                                     Else
-                                        Me.Comment = SearchText
+                                        ' Leave Me.Comment unchanged.
                                     End If
                                 End If
                                 
@@ -645,7 +643,9 @@ Namespace Domain
                     SearchText = Me.Comment
                     
                 Loop Until (Success OrElse (i = SearchCount))
-            End Sub
+                
+                Return (New ParseInfoTextResult())
+            End Function
             
             ''' <summary> Parses actual cant from <see cref="GeoPoint.Info"/> property. </summary>
              ''' <param name="TryComment"> If <see langword="true"/> and no cant has been found in <see cref="GeoPoint.Info"/>, the <see cref="GeoPoint.Comment"/> will be parsed, too. </param>
@@ -663,7 +663,7 @@ Namespace Domain
              ''' when the point is written to a file. All other tokens are kept in info text.
              ''' </para>
              ''' <para>
-             ''' This method changes the following properties:
+             ''' This method may change the following properties:
              ''' <list type="table">
              ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
              ''' <item> <term> <see cref="GeoPoint.ActualCantAbs"/> </term>  <description> Cleared and maybe set. </description></item>
@@ -673,7 +673,7 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub ParseInfoForActualCant(Optional TryComment As Boolean = False)
+            Protected Function ParseInfoForActualCant(Optional TryComment As Boolean = False) As ParseInfoTextResult
                 
                 Me.ActualCant    = Double.NaN
                 Me.ActualCantAbs = Double.NaN
@@ -696,7 +696,9 @@ Namespace Domain
                         Me.Kind = GeoPointKind.Rails
                     End If
                 End If
-            End Sub
+                
+                Return (New ParseInfoTextResult())
+            End Function
             
             ''' <summary> Creates a point info text for file output, containing cant (if any) and info. </summary>
              ''' <param name="Options"> Controls content of created text. </param>
@@ -791,16 +793,21 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Overridable Sub ParseInfoTextInput(Options As GeoPointOutputOptions, Optional TryComment As Boolean = False)
+            Public Overridable Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+                
+                Dim RetValue As New ParseInfoTextResult()
                 
                 If (Options.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                    Me.ParseInfoForPointKind(TryComment:=TryComment)
+                    RetValue = Me.ParseInfoForPointKind(TryComment:=TryComment)
+                    
                 ElseIf (Options.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                    Me.ParseInfoForActualCant(TryComment:=TryComment)
+                    RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
                 End If
+                
                 Me.SetKindTextFromKind(Override:=False)
-
-            End Sub
+                
+                Return RetValue
+            End Function
             
             ''' <summary>
              ''' Gets the value of an attribute which name is determined by the given property name
@@ -845,9 +852,10 @@ Namespace Domain
              ''' </para>
              ''' </remarks>
             Public Sub SetKindFromKindText()
-                Me.Kind = GeoPointKind.None
                 If (Me.KindText.IsNotEmptyOrWhiteSpace() AndAlso KindText2Kind.ContainsKey(Me.KindText)) Then
                     Me.Kind = KindText2Kind(Me.KindText)
+                Else
+                    Me.Kind = GeoPointKind.None
                 End If
             End Sub
             
@@ -872,6 +880,24 @@ Namespace Domain
             Public Overrides Function ToString() As String
                 Return Me.ID & "  (" & Me.Info & ")"
             End Function
+            
+        #End Region
+
+        #Region "Nested Classes"
+            
+            ''' <summary> Result state of <see cref="ParseInfoTextInput(GeoPointEditOptions, Boolean)"/> </summary>
+            Public Class ParseInfoTextResult
+                
+                ''' <summary> Tells if there has been a conflict applying a parsed value. </summary>
+                Public HasConflict  As Boolean = False
+                
+                ''' <summary> A message for a <see cref="ParseError"/> if <see cref="HasConflict"/> is <see langword="true"/>. </summary>
+                Public Message      As String = Nothing
+                
+                ''' <summary> Hints for a <see cref="ParseError"/> if <see cref="HasConflict"/> is <see langword="true"/>. </summary>
+                Public Hints        As String = Nothing
+                
+            End Class
             
         #End Region
         

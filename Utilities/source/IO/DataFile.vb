@@ -26,7 +26,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataFile")
             
             ''' <summary> Indicates whether or not <see cref="DataFile.FilePath"/> has changed since last reading. </summary>
             Protected IsFilePathChanged As Boolean = False

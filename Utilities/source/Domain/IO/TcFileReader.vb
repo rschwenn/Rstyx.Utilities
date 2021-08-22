@@ -1259,17 +1259,10 @@ Namespace Domain.IO
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Editing.
-                                    If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                                            p.ParseInfoForPointKind()
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                                            p.ParseInfoForActualCant()
-                                        End If
-                                    End If
-                                    p.SetKindTextFromKind(Override:=False)
+                                    p.ParseInfoTextInput(Me.EditOptions)
                                     
                                     ' Calculate values not have been read.
-                                    p.transformHorizontalToCanted()
+                                    p.TransformHorizontalToCanted()
                                     If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z)) Then p.Z = p.ZSOK + p.HSOK
                                     If (Not Double.IsNaN(p.Z)) Then p.HeightSys = Block.TrackRef.HeightSys
@@ -1344,7 +1337,6 @@ Namespace Domain.IO
                         Dim RecIdx    As Integer = SourceBlock.DataStartIndex - 1
                         Dim DataLine  As DataTextLine = Nothing
                         Dim FieldID   As DataField(Of String) = Nothing
-                        Dim IpktAux   As New GeoIPoint()
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - 1)
                             Try
@@ -1357,10 +1349,11 @@ Namespace Domain.IO
                                     DataLine.SourceLineNo = DataLines(RecIdx).SourceLineNo
                                     DataLine.FieldDelimiter = RecDef.Delimiter
                                     
-                                    Dim UebL As Double = Double.NaN
-                                    Dim UebR As Double = Double.NaN
+                                    Dim UebL    As Double = Double.NaN
+                                    Dim UebR    As Double = Double.NaN
                                     
-                                    Dim p    As New GeoTcPoint()
+                                    Dim p       As New GeoTcPoint()
+                                    Dim IpktAux As GeoIPoint
                                     
                                     ' ID
                                     FieldID = DataLine.ParseField(RecDef.ID) 
@@ -1454,18 +1447,10 @@ Namespace Domain.IO
                                         ' A1:
                                         FreeDataText = DataLine.Comment
                                     End If
+                                    IpktAux      = p.AsGeoIPoint()
                                     IpktAux.ParseFreeData(FreeDataText)
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
-                                    
-                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
-                                        IpktAux.Parse_iTC(DataLine.ParseField(RecDef.Text).Value)
-                                        p.ActualCant = IpktAux.ActualCant
-                                        p.Info       = IpktAux.Info
-                                        p.Kind       = IpktAux.Kind
-                                        p.MarkType   = IpktAux.MarkType
-                                    End If
                     
                                     ' Convert selected attributes to properties, which don't belong to .A0 file.
                                     Dim PropertyName   As String
@@ -1481,13 +1466,20 @@ Namespace Domain.IO
                                     If (AttStringValue IsNot Nothing) Then
                                         P.KindText = AttStringValue.Trim()
                                         p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                        p.SetKindFromKindText()
                                     End If
                                     
-                                    ' Editing.
-                                    If (p.Kind = GeoPointKind.None) Then
-                                        p.ParseInfoTextInput(Options:= Me.EditOptions, TryComment:=True)
-                                    End If
-                                    p.SetKindTextFromKind(Override:=False)
+                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                                    p.Info          = DataLine.ParseField(RecDef.Text).Value
+                                    IpktAux         = p.AsGeoIPoint()
+                                    IpktAux.ParseInfoTextInput(Options:= Me.EditOptions, TryComment:=True)
+                                    p.ActualCantAbs = IpktAux.ActualCantAbs
+                                    p.ActualCant    = IpktAux.ActualCant
+                                    p.Info          = IpktAux.Info
+                                    p.Comment       = IpktAux.Comment
+                                    p.Kind          = IpktAux.Kind
+                                    p.KindText      = IpktAux.KindText
+                                    p.MarkType      = IpktAux.MarkType
                                     
                                     ' Other info.
                                     p.CantBase     = Me.CantBase
@@ -1556,7 +1548,7 @@ Namespace Domain.IO
                                     End If
                                     
                                     ' Calculate values not have been read.
-                                    p.transformHorizontalToCanted()
+                                    p.TransformHorizontalToCanted()
                                     If ((Not p.Km.HasValue) AndAlso Me.StationAsKilometer) Then p.Km = p.St
                                     If (Double.IsNaN(p.Z))    Then p.Z    = p.ZSOK + p.HSOK
                                     If (Double.IsNaN(p.ZSOK)) Then p.ZSOK = p.Z - p.HSOK

@@ -68,7 +68,7 @@ Namespace Domain.IO
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                         Dim RecDef      As New RecordDefinition()
                         Dim PointCount  As Integer = 0
-                        Dim IpktAux     As New GeoIPoint()
+                        Dim ParseResult As GeoPoint.ParseInfoTextResult
                         
                         For Each DataLine As DataTextLine In Me.DataLineStream
                             
@@ -76,7 +76,8 @@ Namespace Domain.IO
                             
                             If (DataLine.HasData) Then
                                 Try
-    		                        Dim p As New GeoVEPoint()
+    		                        Dim p       As New GeoVEPoint()
+                                    Dim IpktAux As New GeoIPoint()
                                     
                                     ' Keep some data fields for later issue tracking.
                                     FieldID                            = DataLine.ParseField(RecDef.PointID)
@@ -129,7 +130,10 @@ Namespace Domain.IO
                                     p.SetKindFromMarkType()
                                     
                                     ' Editing.
-                                    p.ParseInfoTextInput(Me.EditOptions)
+                                    ParseResult = p.ParseInfoTextInput(Options:=Me.EditOptions, TryComment:=False)
+                                    If (ParseResult.HasConflict) Then
+                                        Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
+                                    End If
                                     
                                     ' Verifying.
                                     If (UniqueID) Then Me.VerifyUniqueID(p.ID)

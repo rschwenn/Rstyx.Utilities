@@ -177,6 +177,8 @@ Namespace IO
         #Region "Static Factory Methods"
             
             ''' <summary> Ceates a new ParseError. Source information may come from a DataField. </summary>
+             ''' <returns> A new ParseError </returns>
+             ''' <typeparam name="TSourceField"> The type of <paramref name="SourceField"/>. </typeparam>
              ''' <param name="Level">       The degree of severity of the error. </param>
              ''' <param name="LineNo">      The line number in the source file, starting at 1. Values less than 1 will be treated as Zero. </param>
              ''' <param name="SourceField"> The parsed data field of point ID for precise error source hints. May be <see langword="null"/>. </param>

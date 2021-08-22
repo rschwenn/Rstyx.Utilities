@@ -1289,6 +1289,60 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Ist-Überhöhung (u=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.0f) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_Cant() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_Cant", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Ist-Überhöhung (ueb=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (ueb=%.0f) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_CantAbs() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_CantAbs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Punktart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_Kind() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_Kind", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Vermarkungsart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_MarkType() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_MarkType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Vermarkungsart iGeo-AB (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_MarkTypeAB() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_MarkTypeAB", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Die Angabe der iTrassen-Codierung wird verworfen ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_RejectITC() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_RejectITC", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die #123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890.... ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPointList_Label_iPktDefaultHeader1() As String

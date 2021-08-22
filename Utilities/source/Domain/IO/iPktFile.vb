@@ -80,6 +80,7 @@ Namespace Domain.IO
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                         Dim RecDef      As New RecordDefinition()
                         Dim PointCount  As Integer = 0
+                        Dim ParseResult As GeoPoint.ParseInfoTextResult
                         
                         For Each DataLine As DataTextLine In Me.DataLineStream
                             
@@ -159,20 +160,14 @@ Namespace Domain.IO
                                     If (AttStringValue IsNot Nothing) Then
                                         P.KindText = AttStringValue.Trim()
                                         p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                        p.SetKindFromKindText()
                                     End If
                                     
-                                    ' Editing.
-                                    If (Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
-                                        p.Parse_iTC(p.Info)
+                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                                    ParseResult = p.ParseInfoTextInput(Options:=Me.EditOptions, TryComment:=False)
+                                    If (ParseResult.HasConflict) Then
+                                        Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
                                     End If
-                                    If (p.Kind = GeoPointKind.None) Then
-                                        If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                                            p.ParseInfoForPointKind()
-                                        ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                                            p.ParseInfoForActualCant()
-                                        End If
-                                    End If
-                                    p.SetKindTextFromKind(Override:=False)
                                     
                                     ' Verifying.
                                     If (UniqueID) Then Me.VerifyUniqueID(p.ID)

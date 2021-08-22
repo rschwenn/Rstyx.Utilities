@@ -316,10 +316,11 @@ Namespace Domain
              ''' then <see cref="GeoPoint.Kind"/> will be set to <c>FixPoint</c>
              ''' </para>
              ''' <para>
-             ''' This method changes the following properties:
+             ''' This method may change the following properties:
              ''' <list type="table">
              ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
              ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Maybe changed. </description></item>
+             ''' <item> <term> <see cref="GeoPoint.KindText"/> </term>  <description> Maybe changed. </description></item>
              ''' </list>
              ''' </para>
              ''' <para>
@@ -344,6 +345,8 @@ Namespace Domain
                                 Me.Kind = GeoPointKind.RailsFixPoint
                             End If
                         End If
+                        
+                        Me.SetKindTextFromKind(Override:=True)
                     End If
                 End If
             End Sub
@@ -379,19 +382,22 @@ Namespace Domain
              ''' <see cref="GeoVEPoint"/> special: If point kind field is "Gls" => only try to get actual cant.
              ''' </para>
              ''' </remarks>
-            Public Overrides Sub ParseInfoTextInput(Options As GeoPointOutputOptions, Optional TryComment As Boolean = False)
+            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+                
+                Dim RetValue As New ParseInfoTextResult()
                 
                 ' VermEsn point kind field is "Gls" => try to get actual cant.
                 If (Me.Kind = GeoPointKind.Rails) Then
-                    Me.ParseInfoForActualCant(TryComment:=TryComment)
+                    RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
                 End If
                 
                 ' Standard kind guessing.
                 If (Me.Kind = GeoPointKind.None) Then
-                   MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
+                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
                 End If
                 
-            End Sub
+                Return RetValue
+            End Function
             
             ''' <summary> Creates a point info text of max. 13 chars for kv file, containing cant (if any) and info. </summary>
              ''' <returns> The point info text for kv file, i.e. 'u= 23  info'. </returns>

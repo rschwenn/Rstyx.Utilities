@@ -1197,4 +1197,27 @@
     <value>Die Tabelle '%s' existiert nicht in der Arbeitsmappe '%s'.</value>
     <comment>ExcelTable Name: String; ExcelWorksheet Name: String</comment>
   </data>
+  <data name="GeoIPoint_ParseITC_Conflict_Cant" xml:space="preserve">
+    <value>Punkt %+20s: Die vorhandene Ist-Überhöhung (u=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.0f)</value>
+    <comment>Point ID: String; Actual Cant: Double; Actual Cant: Double</comment>
+  </data>
+  <data name="GeoIPoint_ParseITC_Conflict_CantAbs" xml:space="preserve">
+    <value>Punkt %+20s: Die vorhandene Ist-Überhöhung (ueb=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (ueb=%.0f)</value>
+    <comment>Point ID: String; Actual Cant: Double; Actual Cant: Double</comment>
+  </data>
+  <data name="GeoIPoint_ParseITC_Conflict_Kind" xml:space="preserve">
+    <value>Punkt %+20s: Die vorhandene Punktart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
+    <comment>Point ID: String; Point Kind: String; Point Kind: String</comment>
+  </data>
+  <data name="GeoIPoint_ParseITC_Conflict_MarkType" xml:space="preserve">
+    <value>Punkt %+20s: Die vorhandene Vermarkungsart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
+    <comment>Point ID: String; MarkType: String; MarkType: String</comment>
+  </data>
+  <data name="GeoIPoint_ParseITC_Conflict_MarkTypeAB" xml:space="preserve">
+    <value>Punkt %+20s: Die vorhandene Vermarkungsart iGeo-AB (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
+    <comment>Point ID: String; Point Kind: String; Point Kind: String</comment>
+  </data>
+  <data name="GeoIPoint_ParseITC_Conflict_RejectITC" xml:space="preserve">
+    <value>Die Angabe der iTrassen-Codierung wird verworfen</value>
+  </data>
 </root>

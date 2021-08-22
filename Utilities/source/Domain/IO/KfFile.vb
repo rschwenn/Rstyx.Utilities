@@ -16,10 +16,10 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KfFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KfFile")
             
-            Private Const RecordLength  As Integer = 102
-            Private Const GhostPointID  As Double  = 1E+40
+            Private Const RecordLength      As Integer = 102
+            Private Const GhostPointID      As Double  = 1E+40
             
         #End Region
         
@@ -47,7 +47,7 @@ Namespace Domain.IO
             Public Property HeaderKF() As GeoVEPoint
                 Get
                     If _HeaderKF Is Nothing Then
-                        _HeaderKF = getDefaultKFHeader()
+                        _HeaderKF = GetDefaultKFHeader()
                     End If
                     Return _HeaderKF
                 End Get
@@ -84,6 +84,7 @@ Namespace Domain.IO
  		                Dim PointCount          As Integer = 0
  		                Dim GhostPointIDCount   As Integer = 0
  		                Dim InvalidPointIDCount As Integer = 0
+                        Dim ParseResult         As GeoPoint.ParseInfoTextResult
                         
                         Using oBR As New BinaryReader(File.Open(FilePath, FileMode.Open, FileAccess.Read), FileEncoding)
                             
@@ -104,10 +105,10 @@ Namespace Domain.IO
                                 
                                 Dim PointNo As Double = oBR.ReadDouble()
                                 
-                                p.Y                  = getDoubleFromVEDouble(oBR.ReadDouble())
-                                p.X                  = getDoubleFromVEDouble(oBR.ReadDouble())
-                                p.Z                  = getDoubleFromVEDouble(oBR.ReadDouble())
-                                p.TrackPos.Kilometer = New Kilometer(getDoubleFromVEDouble(oBR.ReadDouble()))
+                                p.Y                  = GetDoubleFromVEDouble(oBR.ReadDouble())
+                                p.X                  = GetDoubleFromVEDouble(oBR.ReadDouble())
+                                p.Z                  = GetDoubleFromVEDouble(oBR.ReadDouble())
+                                p.TrackPos.Kilometer = New Kilometer(GetDoubleFromVEDouble(oBR.ReadDouble()))
                                 
                                 p.PositionPreInfo    = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
                                 p.Info               = FileEncoding.GetString(oBR.ReadBytes(13)).Left(vbNullChar).Trim()
@@ -139,7 +140,10 @@ Namespace Domain.IO
                                 p.SetKindFromMarkType()
                                 
                                 ' Editing.
-                                p.ParseInfoTextInput(Me.EditOptions)
+                                ParseResult = p.ParseInfoTextInput(Options:=Me.EditOptions, TryComment:=False)
+                                If (ParseResult.HasConflict) Then
+                                    Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, ParseResult.Message, ParseResult.Hints, FilePath))
+                                End If
                                 
                                 ' Point ID and constraints.
                                 If (i = 0) Then
@@ -160,13 +164,13 @@ Namespace Domain.IO
                                     Catch ex As InvalidIDException
                                         Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Error, ex.Message))
                                         If (Not CollectParseErrors) Then
-                                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                            Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                         End If
                                         
                                     Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                         Me.ParseErrors.Add(ex.ParseError)
                                         If (Not CollectParseErrors) Then
-                                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                            Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                         End If
                                     End Try
                                 End If
@@ -175,11 +179,11 @@ Namespace Domain.IO
                         
                         ' Throw exception if parsing errors (constraints) has been collected.
                         If (Me.ParseErrors.HasErrors) Then
-                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                         Else
-                            If (GhostPointIDCount > 0)   Then Logger.logInfo(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_GhostPoints, GhostPointIDCount))
-                            If (InvalidPointIDCount > 0) Then Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_InvalidPointIDs, InvalidPointIDCount))
-                            If (PointCount = 0)          Then Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
+                            If (GhostPointIDCount > 0)   Then Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_GhostPoints, GhostPointIDCount))
+                            If (InvalidPointIDCount > 0) Then Logger.logDebug(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_InvalidPointIDs, InvalidPointIDCount))
+                            If (PointCount = 0)          Then Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                         End If
                         
                         
@@ -248,7 +252,7 @@ Namespace Domain.IO
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                                    Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                                 End If
                             End Try
                         Next
@@ -256,7 +260,7 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                        Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, Me.FilePath))
@@ -278,19 +282,19 @@ Namespace Domain.IO
             ''' <summary> Gets a normalized Double from a VE flavoured storage. </summary>
              ''' <param name="VEDouble"> Double from VE file. </param>
              ''' <returns> Unchanged input value or <c>Double.NaN</c> if <paramref name="VEDouble"/> = 1.0E+40. </returns>
-            Private Function getDoubleFromVEDouble(VEDouble As Double) As Double
+            Private Function GetDoubleFromVEDouble(VEDouble As Double) As Double
                 Return If(VEDouble = 1.0E+40, Double.NaN, VEDouble)
             End Function
             
             ''' <summary> Gets a Double for VE flavoured storage from a normalized Double. </summary>
              ''' <param name="NormDouble"> Double from VE file. </param>
              ''' <returns> Unchanged input value or 1.0E+40 if <paramref name="NormDouble"/> = <c>Double.NaN</c>. </returns>
-            Private Function getVEDoubleFromDouble(NormDouble As Double) As Double
+            Private Function GetVEDoubleFromDouble(NormDouble As Double) As Double
                 Return If(Double.IsNaN(NormDouble), 1.0E+40, NormDouble)
             End Function
             
             ''' <summary> Gets the default header record for KF. </summary>
-            Private Function getDefaultKFHeader() As GeoVEPoint
+            Private Function GetDefaultKFHeader() As GeoVEPoint
                 Dim p As New GeoVEPoint()
                 
                 'p.ID  (defaults to Null, which is o.k. for the header)
@@ -324,10 +328,10 @@ Namespace Domain.IO
                 If (p.TrackPos.TrackNo IsNot Nothing) Then TrackNo = CStr(p.TrackPos.TrackNo)
                 
                 oBW.Write(p.IDToVEDouble())
-                oBW.Write(getVEDoubleFromDouble(p.Y))
-                oBW.Write(getVEDoubleFromDouble(p.X))
-                oBW.Write(getVEDoubleFromDouble(p.Z))
-                oBW.Write(getVEDoubleFromDouble(p.TrackPos.Kilometer.Value))
+                oBW.Write(GetVEDoubleFromDouble(p.Y))
+                oBW.Write(GetVEDoubleFromDouble(p.X))
+                oBW.Write(GetVEDoubleFromDouble(p.Z))
+                oBW.Write(GetVEDoubleFromDouble(p.TrackPos.Kilometer.Value))
                 
                 oBW.Write(CByte(Asc(p.PositionPreInfo)))
                 oBW.Write(GetByteArray(FileEncoding, P.CreateInfoTextOutput(Me.OutputOptions), 13, " "c))

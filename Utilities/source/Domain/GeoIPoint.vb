@@ -3,7 +3,9 @@ Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Math
 Imports System.Text.RegularExpressions
+
 Imports Rstyx.Utilities.StringUtils
+Imports Rstyx.Utilities.Math
 
 Namespace Domain
     
@@ -266,11 +268,11 @@ Namespace Domain
                 Return FreeDataText
             End Function
             
-            ''' <summary> A given string will be parsed as iGeo "iTrassen-Codierung". </summary>
-             ''' <param name="PointText"> The string to parse. May be <see langword="null"/>. </param>
+            ''' <summary> <see cref="GeoPoint.Info"/> will be parsed as iGeo "iTrassen-Codierung". </summary>
+             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
              ''' <remarks>
              ''' <para>
-             ''' Point kind codes in <paramref name="PointText"/> are required to have the expected format: 
+             ''' Point kind codes are required to have the expected format: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Format / Pattern</b> </term>  <description> Point Kind </description></listheader>
              ''' <item> <term> -b                   </term>  <description> Platform                                              </description></item>
@@ -283,73 +285,144 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' <para>
-             ''' If "iTrassen-Codierung" hasn't been recognized, then whole <paramref name="PointText"/> will be stored in <see cref="GeoPoint.Info"/>.
+             ''' 
              ''' </para>
              ''' <para>
-             ''' This method clears and sets the following properties:
-             ''' <list type="bullet">
-             ''' <item><description> <see cref="GeoPoint.Info"/>           </description></item>
-             ''' <item><description> <see cref="GeoPoint.Kind"/>           </description></item>
-             ''' <item><description> <see cref="GeoPoint.MarkType"/>       </description></item>
-             ''' <item><description> <see cref="GeoIPoint.ActualCantAbs"/> </description></item>
-             ''' <item><description> <see cref="GeoIPoint.ActualCant"/>    </description></item>
-             ''' <item><description> <see cref="GeoIPoint.MarkTypeAB"/>    </description></item>
+             ''' This method may set the following properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property</b> </term>  <description> Constraints </description></listheader>
+             ''' <item><term> <see cref="GeoPoint.Info"/>           </term>  <description> Set to text part of iTC </description></item>
+             ''' <item><term> <see cref="GeoPoint.Kind"/>           </term>  <description> Only, if it isn't set yet </description></item>
+             ''' <item><term> <see cref="GeoPoint.KindText"/>       </term>  <description> Only, if it isn't set yet </description></item>
+             ''' <item><term> <see cref="GeoPoint.MarkType"/>       </term>  <description> Only, if it isn't set yet </description></item>
+             ''' <item><term> <see cref="GeoIPoint.ActualCantAbs"/> </term>  <description> Only, if it isn't set yet </description></item>
+             ''' <item><term> <see cref="GeoIPoint.ActualCant"/>    </term>  <description> Only, if it isn't set yet </description></item>
+             ''' <item><term> <see cref="GeoIPoint.MarkTypeAB"/>    </term>  <description> Only, if it isn't set yet </description></item>
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Sub Parse_iTC(ByVal PointText As String)
+            Protected Function Parse_iTC(Optional TryComment As Boolean = False) As ParseInfoTextResult
                 
-                Me.Kind          = GeoPointKind.None
-                Me.ActualCantAbs = Double.NaN
-                Me.ActualCant    = Double.NaN
-                Me.MarkType      = String.Empty
-                Me.MarkTypeAB    = vbNullChar
-                Me.Info          = String.Empty
+                Dim RetValue    As New ParseInfoTextResult()
+                Dim j           As Integer = 0
+                Dim SearchCount As Integer = If(TryComment, 2, 1)
+                Dim SearchText  As String  = Me.Info
+                Dim Success     As Boolean = False
                 
-                If (PointText.IsNotEmptyOrWhiteSpace()) Then
+                Do
+                    j += 1
                     
-                    ' Both "-iueb" and "-iu" may be there (in any order).
-                    ' TODO: DEPRECATED -  Remove support for "x" at the end of 2021!
-                    'Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?\s*((#|x)\s?(.+))?$"
-                    Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#|x) ?(.*))?$"
+                    If (SearchText.IsNotEmptyOrWhiteSpace()) Then
+                
+                        ' Both "-iueb" and "-iu" may be there (in any order).
+                        ' TODO: DEPRECATED -  Remove support for "x" at the end of 2021!
+                        'Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?\s*((#|x)\s?(.+))?$"
+                        Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#|x) ?(.*))?$"
+                                    
+                        Dim oMatch  As Match  = Regex.Match(SearchText, Pattern)
+                        
+                        If (oMatch.Success) Then
+                            
+                            Dim iTC_Kind          As GeoPointKind = GeoPointKind.None
+                            Dim iTC_MarkType      As String = Nothing
+                            Dim iTC_ActualCantAbs As Double = Double.NaN
+                            Dim iTC_ActualCant    As Double = Double.NaN
+                            
+                            ' Recognize point kindes with related info.
+                            For i As Integer = 3 To 20
+                                If (oMatch.Groups(i).Success) Then
+                                    Dim Key As String = oMatch.Groups(i).Value
+                                    Select Case Key
+                                        Case "-b":     iTC_Kind = GeoPointKind.Platform
+                                        Case "-v":     iTC_Kind = GeoPointKind.RailsFixPoint : iTC_MarkType      = oMatch.Groups(i + 1).Value
+                                        Case "-f":     iTC_Kind = GeoPointKind.FixPoint      : iTC_MarkType      = oMatch.Groups(i + 1).Value
+                                        Case "-iueb":  iTC_Kind = GeoPointKind.Rails         : iTC_ActualCantAbs = -1 * CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-iu":    iTC_Kind = GeoPointKind.Rails         : iTC_ActualCant    =      CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-i":     iTC_Kind = GeoPointKind.Rails
+                                    End Select
+                                    'Exit For -> not exit, because both "-iueb" and "-iu" may be there.
+                                End If
+                            Next
+                            
+                            ' Try to apply recognized point kindes with related info.
+                            If (iTC_Kind <> GeoPointKind.None) Then
+                                If ( (Me.Kind <> GeoPointKind.None) AndAlso (Me.Kind <> iTC_Kind)) Then
+                                    RetValue.HasConflict = True
+                                    RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Kind, Me.ID, Me.Kind.ToDisplayString(), iTC_Kind.ToDisplayString())
+                                    RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                Else
+                                    Me.Kind = iTC_Kind
+                                    Me.SetKindTextFromKind(Override:=True)
+                                    
+                                    If (iTC_MarkType.IsNotEmptyOrWhiteSpace()) Then
+                                        If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Me.MarkType <> iTC_MarkType)) Then
+                                            RetValue.HasConflict = True
+                                            RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkType, Me.ID, Me.MarkType, iTC_MarkType)
+                                            RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                        Else
+                                            Me.MarkType = iTC_MarkType
+                                        End If
+                                    End If
+                                    
+                                    If (Not Double.IsNaN(iTC_ActualCantAbs)) Then
+                                        If ((Not Double.IsNaN(Me.ActualCantAbs)) AndAlso (Not Me.ActualCantAbs.EqualsTolerance(iTC_ActualCantAbs, 0.0006))) Then
+                                            RetValue.HasConflict = True
+                                            RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_CantAbs, Me.ID, -1 * Me.ActualCantAbs, -1 * iTC_ActualCantAbs)
+                                            RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                        Else
+                                            Me.ActualCantAbs = iTC_ActualCantAbs
+                                        End If
+                                    End If
+                                    
+                                    If (Not Double.IsNaN(iTC_ActualCant)) Then
+                                        If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Me.ActualCant.EqualsTolerance(iTC_ActualCant, 0.0006))) Then
+                                            RetValue.HasConflict = True
+                                            RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Cant, Me.ID, Me.ActualCant, iTC_ActualCant)
+                                            RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                        Else
+                                            Me.ActualCant = iTC_ActualCant
+                                        End If
+                                    End If
+                                End If
+                            End If
+                            
+                            ' Special mark type.
+                            If (oMatch.Groups(1).Success) Then
+                                Dim iTC_MarkTypeAB As Char = oMatch.Groups(1).Value
                                 
-                    Dim oMatch  As Match  = Regex.Match(PointText, Pattern)
-                    
-                    If (oMatch.Success) Then
-                        
-                        ' Point kindes.
-                        For i As Integer = 3 To 20
-                            If (oMatch.Groups(i).Success) Then
-                                Dim Key As String = oMatch.Groups(i).Value
-                                Select Case Key
-                                    Case "-b":     Me.Kind = GeoPointKind.Platform
-                                    Case "-v":     Me.Kind = GeoPointKind.RailsFixPoint  : Me.MarkType = oMatch.Groups(i + 1).Value
-                                    Case "-f":     Me.Kind = GeoPointKind.FixPoint       : Me.MarkType = oMatch.Groups(i + 1).Value
-                                    Case "-iueb":  Me.Kind = GeoPointKind.Rails          : Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
-                                    Case "-iu":    Me.Kind = GeoPointKind.Rails          : Me.ActualCant = CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
-                                    Case "-i":     Me.Kind = GeoPointKind.Rails
-                                End Select
-                                'Exit For -> not exit because both "-iueb" and "-iu" may be there.
+                                If ((Me.MarkTypeAB <> vbNullChar) AndAlso (Me.MarkTypeAB <> iTC_MarkTypeAB)) Then
+                                    RetValue.HasConflict = True
+                                    RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkTypeAB, Me.ID, Me.MarkTypeAB, iTC_MarkTypeAB)
+                                    RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                Else 
+                                    Me.MarkTypeAB = iTC_MarkTypeAB
+                                End If
                             End If
-                        Next
-                        
-                        ' Special mark type.
-                        If (oMatch.Groups(1).Success) Then
-                            If (Me.Kind <> GeoPointKind.None) Then
-                                Me.MarkTypeAB = oMatch.Groups(1).Value
+                            
+                            ' Point info text.
+                            If (oMatch.Groups(23).Success) Then
+                                Dim iTC_InfoText As String = oMatch.Groups(23).Value.Trim()
+                                
+                                If ((j = 1) OrElse Me.Info.IsEmptyOrWhiteSpace()) Then
+                                    Me.Info = iTC_InfoText
+                                Else
+                                    Me.Info &= "; " & iTC_InfoText
+                                End If
+                            Else
+                                If (j = 1) Then
+                                    Me.Info = String.Empty
+                                End If
                             End If
+                            
                         End If
-                        
-                        ' Point info text.
-                        If (oMatch.Groups(23).Success) Then
-                            Me.Info = oMatch.Groups(23).Value
-                        End If
-                        
-                    Else
-                        Me.Info = PointText
                     End If
-                End If
-            End Sub
+                    
+                    SearchText = Me.Comment
+                    
+                Loop Until (Success OrElse (j = SearchCount))
+                
+                Return RetValue
+            End Function
             
             ''' <summary> A given string will be parsed as iGeo "iTrassen-Codierung". </summary>
              ''' <param name="PointText"> The string to parse. May be <see langword="null"/>. </param>
@@ -471,7 +544,7 @@ Namespace Domain
             
             ''' <summary> Creates iGeo "iTrassen-Codierung" for ipkt text field, containing iGeo point kind codes and text info. </summary>
              ''' <returns> The iGeo "iTrassen-Codierung" for ipkt text field. </returns>
-            Public Function Create_iTC() As String
+            Private Function Create_iTC() As String
                 
                 Dim IpktText As String = String.Empty
                 
@@ -551,19 +624,22 @@ Namespace Domain
              ''' <see cref="GeoIPoint"/> special: Depending on <paramref name="Options"/> iGeo "iTrassen-Codierung" will be parsed.
              ''' </para>
              ''' </remarks>
-            Public Overrides Sub ParseInfoTextInput(Options As GeoPointOutputOptions, Optional TryComment As Boolean = False)
+            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+                
+                Dim RetValue As New ParseInfoTextResult()
                 
                 ' Parse iGeo "iTrassen-Codierung".
                 If (Options.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
-                    Me.Parse_iTC(Me.Info)
+                    RetValue = Me.Parse_iTC(TryComment:=TryComment)
                 End If
                 
                 ' Standard kind guessing.
                 If (Me.Kind = GeoPointKind.None) Then
-                   MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
+                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
                 End If
                 
-            End Sub
+                Return RetValue
+            End Function
             
         #End Region
 

@@ -225,7 +225,7 @@ Namespace Domain
              ''' <para>
              ''' If this transformation isn't possible, the target values will be set to <c>Double.NaN</c>.
              ''' </para>
-            Public Sub transformHorizontalToCanted()
+            Public Sub TransformHorizontalToCanted()
                 
                 If (Me.Ueb.EqualsTolerance(0, 0.0005)) Then
                     
@@ -251,9 +251,9 @@ Namespace Domain
                     Dim X0      As Double  = Abs(Me.Ueb) / 2
                     Dim Y0      As Double  = 0.0
                     
-                    Me.QG = (Me.Q - Y0) * CosPhi + (Me.HSOK - X0) * SinPhi
-                    Me.HG = (Me.HSOK - X0) * CosPhi - (Me.Q - Y0) * SinPhi
-                Else
+                    Me.QG = ((Me.Q - Y0) * CosPhi) + ((Me.HSOK - X0) * SinPhi)
+                    Me.HG = ((Me.HSOK - X0) * CosPhi) - ((Me.Q - Y0) * SinPhi)
+            Else
                     Me.QG = Double.NaN
                     Me.HG = Double.NaN
                 End If
@@ -268,7 +268,7 @@ Namespace Domain
              ''' If this transformation isn't possible, the target values will be set to <c>Double.NaN</c>.
              ''' </para>
              ''' </remarks>
-            Public Sub transformCantedToHorizontal()
+            Public Sub TransformCantedToHorizontal()
                 
                 If (Me.Ueb.EqualsTolerance(0, 0.0005)) Then
                     
@@ -296,9 +296,9 @@ Namespace Domain
                     Dim X0      As Double  = Abs(Me.Ueb) / 2
                     Dim Y0      As Double  = 0.0
                     
-                    Me.HSOK = X0 + (Me.QG / CosPhi + Me.HG / SinPhi) / (CosPhi / SinPhi + SinPhi / CosPhi)
-                    Me.Q    = Y0 + (Me.QG - (Me.HSOK - X0) * SinPhi) / CosPhi
-                Else
+                    Me.HSOK = X0 + (((Me.QG / CosPhi) + (Me.HG / SinPhi)) / ((CosPhi / SinPhi) + (SinPhi / CosPhi)))
+                    Me.Q    = Y0 + ((Me.QG - ((Me.HSOK - X0) * SinPhi)) / CosPhi)
+            Else
                     Me.Q    = Double.NaN
                     Me.HSOK = Double.NaN
                 End If

@@ -208,7 +208,7 @@ Namespace IO
             ''' <remarks> This will be treated as the error's source file, if the <b>FilePath</b> field of a particular error is <see langword="null"/>. </remarks>
             Public Property FilePath() As String
             
-            ''' <summary> Gets the info whether or not there is at least one error. </summary>
+            ''' <summary> Gets the info whether or not there is at least one error level item. </summary>
             Public ReadOnly Property HasErrors() As Boolean
                 Get
                     Return _HasErrors
