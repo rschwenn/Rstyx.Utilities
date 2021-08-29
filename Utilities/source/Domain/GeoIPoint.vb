@@ -274,7 +274,6 @@ Namespace Domain
             ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
             ''' The found values will be stored into point properties. 
             ''' </summary>
-             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
              ''' <param name="Options">  Controls what target info should be parsed for. </param>
              ''' <remarks>
              ''' <para>
@@ -284,18 +283,18 @@ Namespace Domain
              ''' <see cref="GeoIPoint"/> special: Depending on <paramref name="Options"/> iGeo "iTrassen-Codierung" will be parsed.
              ''' </para>
              ''' </remarks>
-            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions) As ParseInfoTextResult
                 
                 Dim RetValue As New ParseInfoTextResult()
                 
                 ' Parse iGeo "iTrassen-Codierung".
                 If (Options.HasFlag(GeoPointEditOptions.Parse_iTC)) Then
-                    RetValue = Me.Parse_iTC(TryComment:=TryComment)
+                    RetValue = Me.Parse_iTC(TryComment:=Options.HasFlag(GeoPointEditOptions.ParseCommentToo))
                 End If
                 
                 ' Standard kind guessing.
                 If (Me.Kind = GeoPointKind.None) Then
-                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
+                   RetValue = MyBase.ParseInfoTextInput(Options)
                 End If
                 
                 Return RetValue
@@ -324,8 +323,8 @@ Namespace Domain
                             If (IsNanActualCant AndAlso IsNanActualCantAbs) Then
                                 IpktText &= "-i"
                             Else
-                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%3.0f", Me.ActualCantAbs * 1000 * -1)
-                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%3.0f", Me.ActualCant * 1000)
+                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%-3.0f", Me.ActualCantAbs * 1000 * -1)
+                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%-3.0f", Me.ActualCant * 1000)
                             End If
                     End Select
                 End If
@@ -388,9 +387,9 @@ Namespace Domain
                     If (SearchText.IsNotEmptyOrWhiteSpace()) Then
                 
                         ' Both "-iueb" and "-iu" may be there (in any order).
-                        ' TODO: DEPRECATED -  Remove support for "x" at the end of 2021!
                         'Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?\s*((#|x)\s?(.+))?$"
-                        Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#|x) ?(.*))?$"
+                        'Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#|x) ?(.*))?$"
+                        Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#) ?(.*))?$"
                                     
                         Dim oMatch  As Match  = Regex.Match(SearchText, Pattern)
                         

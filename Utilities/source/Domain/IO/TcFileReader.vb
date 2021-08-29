@@ -1260,7 +1260,7 @@ Namespace Domain.IO
                                     p.TrackRef     = Block.TrackRef
                                     
                                     ' Editing.
-                                    ParseResult = p.ParseInfoTextInput(Options:=Me.EditOptions, TryComment:=False)
+                                    ParseResult = p.ParseInfoTextInput(Me.EditOptions)
                                     If (ParseResult.HasConflict) Then
                                         Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
                                     End If
@@ -1337,11 +1337,13 @@ Namespace Domain.IO
                     Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
-                        Dim RecDef      As TcRecordDefinitionIGeo = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionIGeo)
-                        Dim RecIdx      As Integer = SourceBlock.DataStartIndex - 1
-                        Dim DataLine    As DataTextLine = Nothing
-                        Dim FieldID     As DataField(Of String) = Nothing
-                        Dim ParseResult As GeoPoint.ParseInfoTextResult
+                        Dim RecDef       As TcRecordDefinitionIGeo = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionIGeo)
+                        Dim RecIdx       As Integer = SourceBlock.DataStartIndex - 1
+                        Dim DataLine     As DataTextLine = Nothing
+                        Dim FieldID      As DataField(Of String) = Nothing
+                        Dim ParseResult  As GeoPoint.ParseInfoTextResult
+                        Dim ParseOptions As GeoPointEditOptions = Me.EditOptions
+                        If (Not ParseOptions.HasFlag(GeoPointEditOptions.ParseCommentToo)) Then ParseOptions += GeoPointEditOptions.ParseCommentToo
                         
                         Do While (RecIdx <= SourceBlock.EndIndex - 1)
                             Try
@@ -1477,7 +1479,7 @@ Namespace Domain.IO
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
                                     p.Info          = DataLine.ParseField(RecDef.Text).Value
                                     IpktAux         = p.AsGeoIPoint()
-                                    ParseResult     = IpktAux.ParseInfoTextInput(Options:= Me.EditOptions, TryComment:=True)
+                                    ParseResult     = IpktAux.ParseInfoTextInput(ParseOptions)
                                     If (ParseResult.HasConflict) Then
                                         Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
                                     End If

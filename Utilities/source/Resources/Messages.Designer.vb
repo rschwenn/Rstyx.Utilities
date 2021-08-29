@@ -1460,7 +1460,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen:  - Punktart aus Info:  Nein ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen: - InfoText als iTrassen-Codierung auswerten:  %s\n ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointFile_EditOptions_1() As String
             Get
@@ -1469,20 +1469,74 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen:  - Punktart aus Info:  Ja  (nur Gleispunkte) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Punktart aus Info:                          Ja  (alle unterstützten Punktarten) ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property GeoPointFile_EditOptions_2() As String
+        Public Shared ReadOnly Property GeoPointFile_EditOptions_2a() As String
             Get
-                Return ResourceManager.GetString("GeoPointFile_EditOptions_2", resourceCulture)
+                Return ResourceManager.GetString("GeoPointFile_EditOptions_2a", resourceCulture)
             End Get
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen:  - Punktart aus Info:  Ja  (alle unterstützten Punktarten) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Punktart aus Info:                          Ja  (nur Gleispunkte) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_EditOptions_2b() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_EditOptions_2b", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Punktart aus Info:                          Nein ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_EditOptions_2c() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_EditOptions_2c", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die \n            - Auch Komentar durchsuchen:                  %s\n ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointFile_EditOptions_3() As String
             Get
                 Return ResourceManager.GetString("GeoPointFile_EditOptions_3", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen: - InfoText als iTrassen-Codierung erzeugen:  %s\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_OutputOptions_1() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_OutputOptions_1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Punktart in InfoText ergänzen:             Ja  (alle unterstützten Punktarten) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_OutputOptions_2a() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_OutputOptions_2a", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Punktart in InfoText ergänzen:             Ja  (nur Gleispunkte) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_OutputOptions_2b() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_OutputOptions_2b", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Punktart in InfoText ergänzen:             Nein ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_OutputOptions_2c() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_OutputOptions_2c", resourceCulture)
             End Get
         End Property
         

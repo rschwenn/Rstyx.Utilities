@@ -140,7 +140,7 @@ Namespace Domain.IO
                                 p.SetKindFromMarkType()
                                 
                                 ' Editing.
-                                ParseResult = p.ParseInfoTextInput(Options:=Me.EditOptions, TryComment:=False)
+                                ParseResult = p.ParseInfoTextInput(Me.EditOptions)
                                 If (ParseResult.HasConflict) Then
                                     Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, ParseResult.Message, ParseResult.Hints, FilePath))
                                 End If
@@ -222,6 +222,7 @@ Namespace Domain.IO
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, Me.FilePath))
+                    Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Me.Reset(Nothing)

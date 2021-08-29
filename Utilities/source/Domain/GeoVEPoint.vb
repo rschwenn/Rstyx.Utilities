@@ -199,7 +199,7 @@ Namespace Domain
             Public Property HeightPostInfo      As Char = " "c
             
         #End Region
-                
+        
         #Region "Instance Methods"
             
             ''' <summary> Returns the KEY part of <see cref="ID"/>. </summary>
@@ -412,13 +412,17 @@ Namespace Domain
             End Function
             
         #End Region
-            
+        
         #Region "Info Text - Parsing and Creating"
             
             ''' <summary> Creates a point info text of max. 13 chars for file output, containing cant (if any) and info. </summary>
              ''' <param name="Options"> Controls content of created text. </param>
              ''' <returns> The point info text for file output, i.e. 'u= 23  info'. </returns>
              ''' <remarks>
+             ''' <para>
+             ''' If the returned string would be longer than 13 characters and the 14th character isn't a space, 
+             ''' then the first occurence of a doubled space will be shortened to one space.
+             ''' </para>
              ''' <para>
              ''' Depending on <paramref name="Options"/> special info will be added to pure info (<see cref="GeoPoint.Info"/>):
              ''' <list type="table">
@@ -429,14 +433,23 @@ Namespace Domain
              ''' </para>
              ''' </remarks>
             Public Overrides Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
-                Return MyBase.CreateInfoTextOutput(Options).TrimToMaxLength(13)
+                
+                Dim RetText As String = MyBase.CreateInfoTextOutput(Options)
+                
+                If ((RetText.Length > 13) AndAlso RetText.Substring(13).IsNotEmptyOrWhiteSpace()) Then
+                    Dim Matches As System.Text.RegularExpressions.MatchCollection = RetText.GetMatches("  ")
+                    If (Matches.Count > 0) Then
+                        RetText = RetText.Left(Matches(0).Index) & RetText.Substring(Matches(0).Index + 1)
+                    End If
+                End If
+                
+                Return RetText.TrimToMaxLength(13)
             End Function
             
             ''' <summary>
             ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
             ''' The found values will be stored into point properties. 
             ''' </summary>
-             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
              ''' <param name="Options">  Controls what target info should be parsed for. </param>
              ''' <remarks>
              ''' <para>
@@ -446,18 +459,18 @@ Namespace Domain
              ''' <see cref="GeoVEPoint"/> special: If point kind field is "Gls" => only try to get actual cant.
              ''' </para>
              ''' </remarks>
-            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions) As ParseInfoTextResult
                 
                 Dim RetValue As New ParseInfoTextResult()
                 
                 ' VermEsn point kind field is "Gls" => try to get actual cant.
                 If (Me.Kind = GeoPointKind.Rails) Then
-                    RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
+                    RetValue = Me.ParseInfoForActualCant(TryComment:=Options.HasFlag(GeoPointEditOptions.ParseCommentToo))
                 End If
                 
                 ' Standard kind guessing.
                 If (Me.Kind = GeoPointKind.None) Then
-                   RetValue = MyBase.ParseInfoTextInput(Options:=Options, TryComment:=TryComment)
+                   RetValue = MyBase.ParseInfoTextInput(Options)
                 End If
                 
                 Return RetValue

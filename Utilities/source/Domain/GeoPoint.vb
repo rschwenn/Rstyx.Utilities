@@ -61,6 +61,9 @@ Namespace Domain
          ''' </remarks>
         Parse_iTC = 4
         
+        ''' <summary> The <see cref="GeoPoint.Comment"/> should be parsed too, if <see cref="GeoPoint.Kind"/> is <c>None</c> after parsing <see cref="GeoPoint.Info"/>.</summary>
+        ParseCommentToo = 8
+        
     End Enum
     
     ''' <summary> Point output options (i.e. for applying while writing to file). </summary>
@@ -579,11 +582,11 @@ Namespace Domain
                 ' Add rails kind info (actual cant).
                 If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant) OrElse Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
                     If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Double.IsNaN(Me.ActualCantAbs)) ) Then
-                        RetText = sprintf("u=%3.0f  ueb=%3.0f  %-s", Me.ActualCant * 1000, Me.ActualCantAbs * 1000 * -1, Me.Info)
+                        RetText = sprintf("u=%-3.0f ueb=%-3.0f %-s", Me.ActualCant * 1000, Me.ActualCantAbs * 1000 * -1, Me.Info)
                     ElseIf (Not Double.IsNaN(Me.ActualCant)) Then
-                        RetText = sprintf("u=%3.0f  %-s", Me.ActualCant * 1000, Me.Info)
+                        RetText = sprintf("u=%-3.0f %-s", Me.ActualCant * 1000, Me.Info)
                     ElseIf (Not Double.IsNaN(Me.ActualCantAbs)) Then
-                        RetText = sprintf("ueb=%3.0f  %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
+                        RetText = sprintf("ueb=%-3.0f %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
                     End If
                 End If
                 
@@ -617,7 +620,6 @@ Namespace Domain
             ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
             ''' The found values will be stored into point properties. 
             ''' </summary>
-             ''' <param name="TryComment"> If <see langword="true"/> then <see cref="GeoPoint.Info"/> and <see cref="GeoPoint.Comment"/> will be parsed. </param>
              ''' <param name="Options">  Controls what target info should be parsed for. </param>
              ''' <remarks>
              ''' <para>
@@ -652,9 +654,10 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Public Overridable Function ParseInfoTextInput(Options As GeoPointEditOptions, Optional TryComment As Boolean = False) As ParseInfoTextResult
+            Public Overridable Function ParseInfoTextInput(Options As GeoPointEditOptions) As ParseInfoTextResult
                 
-                Dim RetValue As New ParseInfoTextResult()
+                Dim RetValue   As New ParseInfoTextResult()
+                Dim TryComment As Boolean = Options.HasFlag(GeoPointEditOptions.ParseCommentToo)
                 
                 If (Options.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
                     RetValue = Me.ParseInfoForPointKind(TryComment:=TryComment)
@@ -889,7 +892,7 @@ Namespace Domain
 
         #Region "Nested Classes"
             
-            ''' <summary> Result state of <see cref="ParseInfoTextInput(GeoPointEditOptions, Boolean)"/> </summary>
+            ''' <summary> Result state of <see cref="ParseInfoTextInput(GeoPointEditOptions)"/> </summary>
             Public Class ParseInfoTextResult
                 
                 ''' <summary> Tells if there has been a conflict applying a parsed value. </summary>

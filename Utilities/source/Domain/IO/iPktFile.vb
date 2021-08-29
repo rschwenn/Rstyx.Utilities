@@ -164,7 +164,7 @@ Namespace Domain.IO
                                     End If
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    ParseResult = p.ParseInfoTextInput(Options:=Me.EditOptions, TryComment:=False)
+                                    ParseResult = p.ParseInfoTextInput(Me.EditOptions)
                                     If (ParseResult.HasConflict) Then
                                         Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
                                     End If
@@ -231,6 +231,7 @@ Namespace Domain.IO
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, Me.FilePath))
+                    Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Me.Reset(Nothing)

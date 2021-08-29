@@ -464,7 +464,15 @@ Public Class MainViewModel
                 Logger.logInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithActualCant => '%s'", GeoPointOutputOptions.CreateInfoWithActualCant.ToDisplayString()))
                 Logger.logInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithPointKind => '%s'", GeoPointOutputOptions.CreateInfoWithPointKind.ToDisplayString()))
                 Logger.logInfo(sprintf("  GeoPointOutputOptions.Create_iTC => '%s'", GeoPointOutputOptions.Create_iTC.ToDisplayString()))
-
+                
+                Dim TestString  As String = "u=5  WA   28"
+                Dim TestString2 As String
+                Dim Matches As System.Text.RegularExpressions.MatchCollection = TestString.GetMatches("  ")
+                If (Matches.Count > 0) Then
+                    TestString2 = TestString.Left(Matches(0).Index) & TestString.Substring(Matches(0).Index + 1)
+                End If
+                Logger.logInfo(sprintf("  '%s' => '%s'", TestString, TestString2))
+                
                 'Dim p As New GeoIPoint ()
                 'p.ParseTextForKindCodes(Me.Textbox)
                 'Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkTypeAB, p.MarkType, p.ActualCant * 1000, p.Info))

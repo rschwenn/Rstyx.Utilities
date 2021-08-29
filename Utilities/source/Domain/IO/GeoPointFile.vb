@@ -153,12 +153,28 @@ Namespace Domain.IO
             ''' <summary> Gets a log entry, that documents <see cref="GeoPointFile.EditOptions"/>. </summary>
             Protected Function GetPointEditOptionsLogText() As String
                 Dim LogText As String
+                LogText = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_1, Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC).ToDisplayString())
                 If (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                    LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_3
+                    LogText &= Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2a
                 ElseIf (Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                    LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2
+                    LogText &= Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2b
                 Else
-                    LogText = Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_1
+                    LogText &= Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2c
+                End If
+                LogText &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_3, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCommentToo).ToDisplayString())
+                Return LogText
+            End Function
+            
+            ''' <summary> Gets a log entry, that documents <see cref="GeoPointFile.OutputOptions"/>. </summary>
+            Protected Function GetPointOutputOptionsLogText() As String
+                Dim LogText As String
+                LogText = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_1, Me.OutputOptions.HasFlag(GeoPointOutputOptions.Create_iTC).ToDisplayString())
+                If (Me.OutputOptions.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
+                    LogText &= Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_2a
+                ElseIf (Me.OutputOptions.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant)) Then
+                    LogText &= Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_2b
+                Else
+                    LogText &= Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_2c
                 End If
                 Return LogText
             End Function

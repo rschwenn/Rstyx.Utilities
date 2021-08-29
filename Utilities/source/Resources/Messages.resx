@@ -1158,14 +1158,14 @@
   <data name="GeoPointList_TableHeader" xml:space="preserve">
     <value>            Punkt-ID      RechtsWert       HochWert      Höhe   Ueb  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe    </value>
   </data>
-  <data name="GeoPointFile_EditOptions_1" xml:space="preserve">
-    <value>  Optionen:  - Punktart aus Info:  Nein</value>
+  <data name="GeoPointFile_EditOptions_2c" xml:space="preserve">
+    <value>            - Punktart aus Info:                          Nein</value>
   </data>
-  <data name="GeoPointFile_EditOptions_2" xml:space="preserve">
-    <value>  Optionen:  - Punktart aus Info:  Ja  (nur Gleispunkte)</value>
+  <data name="GeoPointFile_EditOptions_2b" xml:space="preserve">
+    <value>            - Punktart aus Info:                          Ja  (nur Gleispunkte)</value>
   </data>
-  <data name="GeoPointFile_EditOptions_3" xml:space="preserve">
-    <value>  Optionen:  - Punktart aus Info:  Ja  (alle unterstützten Punktarten)</value>
+  <data name="GeoPointFile_EditOptions_2a" xml:space="preserve">
+    <value>            - Punktart aus Info:                          Ja  (alle unterstützten Punktarten)</value>
   </data>
   <data name="TcFileReader_LoadStart" xml:space="preserve">
     <value>Lese Datei mit Trassenkoordinaten '%s'.</value>
@@ -1219,5 +1219,26 @@
   </data>
   <data name="GeoIPoint_ParseITC_Conflict_RejectITC" xml:space="preserve">
     <value>Die Angabe der iTrassen-Codierung wird verworfen</value>
+  </data>
+  <data name="GeoPointFile_EditOptions_1" xml:space="preserve">
+    <value>  Optionen: - InfoText als iTrassen-Codierung auswerten:  %s\n</value>
+    <comment>Flag GeoPointEditOptions.Parse_iTC set?: Boolean</comment>
+  </data>
+  <data name="GeoPointFile_EditOptions_3" xml:space="preserve">
+    <value>\n            - Auch Komentar durchsuchen:                  %s\n</value>
+    <comment>Flag GeoPointEditOptions.ParseCommentToo set?: Boolean</comment>
+  </data>
+  <data name="GeoPointFile_OutputOptions_1" xml:space="preserve">
+    <value>  Optionen: - InfoText als iTrassen-Codierung erzeugen:  %s\n</value>
+    <comment>Flag GeoPointOutputOptions.Create_iTC set?: Boolean</comment>
+  </data>
+  <data name="GeoPointFile_OutputOptions_2c" xml:space="preserve">
+    <value>            - Punktart in InfoText ergänzen:             Nein</value>
+  </data>
+  <data name="GeoPointFile_OutputOptions_2b" xml:space="preserve">
+    <value>            - Punktart in InfoText ergänzen:             Ja  (nur Gleispunkte)</value>
+  </data>
+  <data name="GeoPointFile_OutputOptions_2a" xml:space="preserve">
+    <value>            - Punktart in InfoText ergänzen:             Ja  (alle unterstützten Punktarten)</value>
   </data>
 </root>
