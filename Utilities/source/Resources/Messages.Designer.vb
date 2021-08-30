@@ -2018,6 +2018,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) enthält Leerzeichen. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property KorFile_InvalidID() As String
+            Get
+                Return ResourceManager.GetString("KorFile_InvalidID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der ASCII-Punktdatei (KOR) &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KorFile_LoadFailed() As String

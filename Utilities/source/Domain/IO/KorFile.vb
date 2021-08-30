@@ -185,6 +185,9 @@ Namespace Domain.IO
                                 ' Get access to point methods (which are not interface members).
                                 Dim p As New GeoPoint(SourcePoint)
                                 
+                                ' Verify, that ID doesn't contain whitespace.
+                                Me.VerifyID(p.ID)
+                                
                                 ' Check for unique ID, if PointList is unique (since Point ID may have changed while converting to VE point).
                                 If (UniqueID) Then Me.VerifyUniqueID(SourcePoint.ID)
                                 
@@ -229,6 +232,19 @@ Namespace Domain.IO
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
                 End Try
+            End Sub
+            
+        #End Region
+        
+        #Region "Protected Members"
+            
+            ''' <summary> Verifies that the given <paramref name="ID"/> doesn't contain whitespace. </summary>
+             ''' <param name="ID"> The ID to check. </param>
+             ''' <exception cref="InvalidIDException"> The given <paramref name="ID"/> contains whitespace. </exception>
+            Protected Sub VerifyID(ID As String)
+                If (ID.IsMatchingTo("\s+")) Then
+                    Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_InvalidID, ID))
+                End If
             End Sub
             
         #End Region

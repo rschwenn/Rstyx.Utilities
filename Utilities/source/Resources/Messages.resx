@@ -1241,4 +1241,8 @@
   <data name="GeoPointFile_OutputOptions_2a" xml:space="preserve">
     <value>            - Punktart in InfoText ergänzen:             Ja  (alle unterstützten Punktarten)</value>
   </data>
+  <data name="KorFile_InvalidID" xml:space="preserve">
+    <value>Punkt-ID (%s) enthält Leerzeichen.</value>
+    <comment>Point ID: String</comment>
+  </data>
 </root>
