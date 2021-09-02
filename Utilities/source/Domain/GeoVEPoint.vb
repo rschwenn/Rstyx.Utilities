@@ -49,6 +49,13 @@ Namespace Domain
                 Me.PointNoFactor = Pow(10, MaxIDLength - 2)
                 Me.MinIntegerID  = 1
                 Me.MaxIntegerID  = Pow(10, MaxIDLength) - 1
+                
+                ' Override base Mappings.
+                DefaultKindText(GeoPointKind.FixPoint     ) = "PSx"
+                DefaultKindText(GeoPointKind.FixPoint1D   ) = "PS3"
+                DefaultKindText(GeoPointKind.FixPoint2D   ) = "PS2"
+                DefaultKindText(GeoPointKind.FixPoint3D   ) = "PS1"
+                DefaultKindText(GeoPointKind.RailsFixPoint) = "GVPV"
             End Sub
             
             ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a given Value for <see cref="GeoVEPoint.MaxIDLength"/>. </summary>
@@ -56,6 +63,8 @@ Namespace Domain
              ''' <remarks>  </remarks>
              ''' <exception cref="System.ArgumentOutOfRangeException"> <paramref name="MaxIDLength"/> doesn't equals 6 or 7. </exception>
             Public Sub New(MaxIDLength As Integer)
+                
+                Me.New()
                 
                 If ((MaxIDLength < 6) OrElse (MaxIDLength > 7)) Then Throw New ArgumentOutOfRangeException("MaxIDLength")
                 
@@ -320,7 +329,6 @@ Namespace Domain
              ''' <list type="table">
              ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
              ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Maybe changed. </description></item>
-             ''' <item> <term> <see cref="GeoPoint.KindText"/> </term>  <description> Maybe changed. </description></item>
              ''' </list>
              ''' </para>
              ''' <para>
@@ -345,8 +353,6 @@ Namespace Domain
                                 Me.Kind = GeoPointKind.RailsFixPoint
                             End If
                         End If
-                        
-                        Me.SetKindTextFromKind(Override:=True)
                     End If
                 End If
             End Sub
@@ -535,7 +541,7 @@ Namespace Domain
                 Dim KvFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
                 
                 Return sprintf(KvFmt, Me.ID, Me.Y, Me.X, Me.Z, Me.TrackPos.Kilometer.Value, Me.Info.TrimToMaxLength(13), Me.HeightInfo.TrimToMaxLength(13),
-                               Me.KindText.TrimToMaxLength(4), Me.TrackPos.TrackNo, Me.TrackPos.RailsCode.TrimToMaxLength(1), Me.HeightSys.TrimToMaxLength(3), Me.mp, Me.mh, 
+                               Me.GetKindTextSmart().TrimToMaxLength(4), Me.TrackPos.TrackNo, Me.TrackPos.RailsCode.TrimToMaxLength(1), Me.HeightSys.TrimToMaxLength(3), Me.mp, Me.mh, 
                                Me.MarkHints.TrimToMaxLength(1), Me.MarkType.TrimToMaxLength(3), Me.sp.TrimToMaxLength(1), Me.sh.TrimToMaxLength(1),
                                Me.Job.TrimToMaxLength(8), Me.ObjectKey.TrimToMaxLength(7))
             End Function

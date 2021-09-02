@@ -103,9 +103,18 @@ Namespace Domain
                 
         ''' <summary> General fix point. </summary>
         FixPoint = 3
+                
+        ''' <summary> Height fix point. </summary>
+        FixPoint1D = 4
+                
+        ''' <summary> Position fix point. </summary>
+        FixPoint2D = 5
+                
+        ''' <summary> Position and Height fix point. </summary>
+        FixPoint3D = 6
         
         ''' <summary> Rails fix point. </summary>
-        RailsFixPoint = 4
+        RailsFixPoint = 7
         
     End Enum
     
@@ -126,11 +135,11 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
             
-            Private Shared ReadOnly InfoCantPattern  As String
-            Private Shared ReadOnly InfoKindPatterns As Dictionary(Of String, GeoPointKind)
+            Private Shared ReadOnly InfoCantPattern     As String
+            Private Shared ReadOnly InfoKindPatterns    As Dictionary(Of String, GeoPointKind)
             
-            Private Shared ReadOnly Kind2KindText    As Dictionary(Of GeoPointKind, String)
-            Private Shared ReadOnly KindText2Kind    As Dictionary(Of String, GeoPointKind)
+            Protected Shared ReadOnly KindText2Kind     As Dictionary(Of String, GeoPointKind)
+            Protected ReadOnly DefaultKindText          As Dictionary(Of GeoPointKind, String)
             
         #End Region
         
@@ -159,42 +168,47 @@ Namespace Domain
                 InfoKindPatterns.Add("Gls|Gleis"      , GeoPointKind.Rails)
                 InfoKindPatterns.Add("Bst|Bstg|Bahnst", GeoPointKind.Platform)
                 InfoKindPatterns.Add("PS4|GVP"        , GeoPointKind.RailsFixPoint)
-                InfoKindPatterns.Add("PS3|HFP|HB|HP"  , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS2|LFP|PPB"    , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS1|GPSC"       , GeoPointKind.FixPoint)
-                InfoKindPatterns.Add("PS0|NXO|DBRF"   , GeoPointKind.FixPoint)
-                
-                ' Mapping:  Kind => KindText.
-                Kind2KindText = New Dictionary(Of GeoPointKind, String)
-                Kind2KindText.Add(GeoPointKind.None         , ""    )
-                Kind2KindText.Add(GeoPointKind.FixPoint     , "PSx" )
-                Kind2KindText.Add(GeoPointKind.Platform     , "Bstg")
-                Kind2KindText.Add(GeoPointKind.Rails        , "Gls" )
-                Kind2KindText.Add(GeoPointKind.RailsFixPoint, "GVPV")
+                InfoKindPatterns.Add("PS3|HFP|HB|HP"  , GeoPointKind.FixPoint1D)
+                InfoKindPatterns.Add("PS2|LFP|PPB"    , GeoPointKind.FixPoint2D)
+                InfoKindPatterns.Add("PS1|GPSC|LHFP"  , GeoPointKind.FixPoint3D)
+                InfoKindPatterns.Add("PS0|NXO|DBRF"   , GeoPointKind.FixPoint3D)
+                InfoKindPatterns.Add("PP|AP"          , GeoPointKind.FixPoint)
                 
                 ' Mapping:  KindText => Kind.
                 KindText2Kind = New Dictionary(Of String, GeoPointKind)
                 KindText2Kind.Add("Gls" , GeoPointKind.Rails)
                 KindText2Kind.Add("Bstg", GeoPointKind.Platform)
-                KindText2Kind.Add("DBRF", GeoPointKind.FixPoint)
-                KindText2Kind.Add("GPSC", GeoPointKind.FixPoint)
+                KindText2Kind.Add("DBRF", GeoPointKind.FixPoint3D)
+                KindText2Kind.Add("GPSC", GeoPointKind.FixPoint3D)
                 KindText2Kind.Add("GVPV", GeoPointKind.RailsFixPoint)
                 KindText2Kind.Add("GVP" , GeoPointKind.RailsFixPoint)
-                KindText2Kind.Add("HBH" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("HFP" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("LFP" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("NXO" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PPB" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS0" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS1" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS2" , GeoPointKind.FixPoint)
-                KindText2Kind.Add("PS3" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("HBH" , GeoPointKind.FixPoint1D)
+                KindText2Kind.Add("HFP" , GeoPointKind.FixPoint1D)
+                KindText2Kind.Add("LFP" , GeoPointKind.FixPoint2D)
+                KindText2Kind.Add("NXO" , GeoPointKind.FixPoint3D)
+                KindText2Kind.Add("PPB" , GeoPointKind.FixPoint2D)
+                KindText2Kind.Add("PS0" , GeoPointKind.FixPoint3D)
+                KindText2Kind.Add("PS1" , GeoPointKind.FixPoint3D)
+                KindText2Kind.Add("PS2" , GeoPointKind.FixPoint2D)
+                KindText2Kind.Add("PS3" , GeoPointKind.FixPoint1D)
                 KindText2Kind.Add("PS4" , GeoPointKind.RailsFixPoint)
                 KindText2Kind.Add("PSx" , GeoPointKind.FixPoint)
+                KindText2Kind.Add("PP"  , GeoPointKind.FixPoint)
+                KindText2Kind.Add("AP"  , GeoPointKind.FixPoint)
             End Sub
             
             ''' <summary> Creates a new GeoPoint. </summary>
             Public Sub New()
+                ' Mapping:  Kind => Default KindText.
+                DefaultKindText = New Dictionary(Of GeoPointKind, String)
+                DefaultKindText.Add(GeoPointKind.None         , ""    )
+                DefaultKindText.Add(GeoPointKind.FixPoint     , "FP"  )
+                DefaultKindText.Add(GeoPointKind.FixPoint1D   , "HFP" )
+                DefaultKindText.Add(GeoPointKind.FixPoint2D   , "LFP" )
+                DefaultKindText.Add(GeoPointKind.FixPoint3D   , "LHFP")
+                DefaultKindText.Add(GeoPointKind.Platform     , "Bstg")
+                DefaultKindText.Add(GeoPointKind.Rails        , "Gls" )
+                DefaultKindText.Add(GeoPointKind.RailsFixPoint, "GVP" )
             End Sub
             
             ''' <summary> Creates a new GeoPoint and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
@@ -202,7 +216,8 @@ Namespace Domain
              ''' <remarks></remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
-               Me.GetPropsFromIGeoPoint(SourcePoint)
+                Me.New()
+                Me.GetPropsFromIGeoPoint(SourcePoint)
             End Sub
             
         #End Region
@@ -604,7 +619,7 @@ Namespace Domain
                         Next
                     End If
                     If (AddKindText) Then
-                        RetText = Kind2KindText(Me.Kind) & " " & Me.Info
+                        RetText = Me.GetKindTextSmart() & " " & Me.Info
                     End If
                 End If
                 
@@ -665,8 +680,6 @@ Namespace Domain
                 ElseIf (Options.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                     RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
                 End If
-                
-                Me.SetKindTextFromKind(Override:=False)
                 
                 Return RetValue
             End Function
@@ -866,18 +879,19 @@ Namespace Domain
                 End If
             End Sub
             
-            ''' <summary> Sets <see cref="GeoPoint.KindText"/> according to <see cref="GeoPoint.Kind"/>. </summary>
-             ''' <param name="Override"> If <see langword="False"/>, <see cref="GeoPoint.KindText"/> will be changed only if it's empty. </param>
+            ''' <summary> Gets stored <see cref="GeoPoint.KindText"/> if not empty, otherwise a default kind text for <see cref="GeoPoint.Kind"/>. </summary>
              ''' <remarks>
              ''' <para>
              ''' There are internal mappings for this.
              ''' </para>
              ''' </remarks>
-            Public Sub SetKindTextFromKind(Override As Boolean)
-                If (Override OrElse Me.KindText.IsEmptyOrWhiteSpace()) Then
-                    Me.KindText = Kind2KindText(Me.Kind)
+            Public Function GetKindTextSmart() As String
+                Dim RetValue As String = Me.KindText
+                If (RetValue.IsEmptyOrWhiteSpace() AndAlso (Me.Kind <> GeoPointKind.None)) Then
+                    RetValue = DefaultKindText(Me.Kind)
                 End If
-            End Sub
+                Return RetValue
+            End Function
             
         #End Region
             

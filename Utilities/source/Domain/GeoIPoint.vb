@@ -317,6 +317,9 @@ Namespace Domain
                         Case GeoPointKind.Platform      : IpktText &= "-b"
                         Case GeoPointKind.RailsFixPoint : IpktText &= "-v" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
                         Case GeoPointKind.FixPoint      : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
+                        Case GeoPointKind.FixPoint1D    : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
+                        Case GeoPointKind.FixPoint2D    : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
+                        Case GeoPointKind.FixPoint3D    : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
                         Case GeoPointKind.Rails         : 
                             Dim IsNanActualCantAbs = Double.IsNaN(Me.ActualCantAbs)
                             Dim IsNanActualCant    = Double.IsNaN(Me.ActualCant)
@@ -365,7 +368,6 @@ Namespace Domain
              ''' <listheader> <term> <b>Property</b> </term>  <description> Constraints </description></listheader>
              ''' <item><term> <see cref="GeoPoint.Info"/>           </term>  <description> Set to text part of iTC </description></item>
              ''' <item><term> <see cref="GeoPoint.Kind"/>           </term>  <description> Only, if it isn't set yet </description></item>
-             ''' <item><term> <see cref="GeoPoint.KindText"/>       </term>  <description> Only, if it isn't set yet </description></item>
              ''' <item><term> <see cref="GeoPoint.MarkType"/>       </term>  <description> Only, if it isn't set yet </description></item>
              ''' <item><term> <see cref="GeoIPoint.ActualCantAbs"/> </term>  <description> Only, if it isn't set yet </description></item>
              ''' <item><term> <see cref="GeoIPoint.ActualCant"/>    </term>  <description> Only, if it isn't set yet </description></item>
@@ -424,7 +426,6 @@ Namespace Domain
                                     RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                 Else
                                     Me.Kind = iTC_Kind
-                                    Me.SetKindTextFromKind(Override:=True)
                                     
                                     If (iTC_MarkType.IsNotEmptyOrWhiteSpace()) Then
                                         If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Me.MarkType <> iTC_MarkType)) Then

@@ -246,7 +246,7 @@ Namespace Domain.IO
                                                       p.TrackPos.Kilometer.Value,
                                                       P.CreateInfoTextOutput(Me.OutputOptions),
                                                       P.HeightInfo.TrimToMaxLength(13),
-                                                      P.KindText.TrimToMaxLength(4),
+                                                      P.GetKindTextSmart().TrimToMaxLength(4),
                                                       p.TrackPos.TrackNo,
                                                       p.TrackPos.RailsCode.TrimToMaxLength(1),
                                                       P.HeightSys.TrimToMaxLength(3),

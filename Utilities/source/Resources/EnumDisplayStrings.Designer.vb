@@ -1285,6 +1285,33 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt Höhe ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint1D() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_FixPoint1D", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt Lage ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint2D() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_FixPoint2D", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt Lage &amp; Höhe ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint3D() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_FixPoint3D", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_None() As String

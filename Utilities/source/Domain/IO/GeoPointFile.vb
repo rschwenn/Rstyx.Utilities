@@ -39,9 +39,6 @@ Namespace Domain.IO
             ''' <summary> An internal helper for verifying point ID uniqueness. </summary>
             Protected ReadOnly IDCheckList          As New Dictionary(Of String, String)
             
-            ''' <summary> A map that may assign different kind texts for output. By default it's empty. </summary>
-          #  Protected ReadOnly KindTextOutputMap    As New Dictionary(Of String, String)
-            
         #End Region
         
         #Region "Constuctors"
