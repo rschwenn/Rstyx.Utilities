@@ -225,7 +225,7 @@ Namespace Domain.IO
                                 ip.Attributes = p.Attributes
                                 ip.Comment    = p.Comment
                                 
-                                ' Convert properties to attributes in order to take place in .kv.
+                                ' Convert properties to attributes in order to be placed in .kv.
                                 '   (More candidates: mp, mh)
                                 Dim PropertyName   As String
                                 Dim AttributeName  As String

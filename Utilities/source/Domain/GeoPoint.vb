@@ -166,10 +166,10 @@ Namespace Domain
                 
                 ' Mapping:  Kind => KindText.
                 Kind2KindText = New Dictionary(Of GeoPointKind, String)
-                Kind2KindText.Add(GeoPointKind.None,          ""    )
-                Kind2KindText.Add(GeoPointKind.FixPoint,      "PSx" )
-                Kind2KindText.Add(GeoPointKind.Platform,      "Bstg")
-                Kind2KindText.Add(GeoPointKind.Rails,         "Gls" )
+                Kind2KindText.Add(GeoPointKind.None         , ""    )
+                Kind2KindText.Add(GeoPointKind.FixPoint     , "PSx" )
+                Kind2KindText.Add(GeoPointKind.Platform     , "Bstg")
+                Kind2KindText.Add(GeoPointKind.Rails        , "Gls" )
                 Kind2KindText.Add(GeoPointKind.RailsFixPoint, "GVPV")
                 
                 ' Mapping:  KindText => Kind.

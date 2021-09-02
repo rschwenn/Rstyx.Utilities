@@ -274,7 +274,7 @@ Namespace Domain.IO
                                     CoordFmt = "%14." & CooPrecisionDefault & "f"
                                 End If
                                 
-                                ' Convert properties to attributes in order to take place in .ipkt.
+                                ' Convert properties to attributes in order to be placed in .ipkt.
                                 '   (More candidates: HeightInfo, mp, mh, sp, sh, MarkHints, Job)
                                 Dim PropertyName   As String
                                 Dim AttributeName  As String
