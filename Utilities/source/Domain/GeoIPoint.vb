@@ -314,13 +314,20 @@ Namespace Domain
                 ' Point kind.
                 If (Not (Me.Kind = GeoPointKind.None)) Then
                     Select Case Me.Kind
-                        Case GeoPointKind.Platform      : IpktText &= "-b"
-                        Case GeoPointKind.RailsFixPoint : IpktText &= "-v" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.FixPoint      : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.FixPoint1D    : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.FixPoint2D    : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.FixPoint3D    : IpktText &= "-f" : If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
-                        Case GeoPointKind.Rails         : 
+                        Case GeoPointKind.Platform : IpktText &= "-b"
+
+                        Case GeoPointKind.RailsFixPoint
+                            
+                            IpktText &= "-v"
+                            If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
+
+                        Case GeoPointKind.FixPoint, GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D
+                            
+                            IpktText &= "-f"
+                            If (Me.MarkType.IsNotEmptyOrWhiteSpace()) Then IpktText &= Me.MarkType
+                            
+                        Case GeoPointKind.Rails
+                            
                             Dim IsNanActualCantAbs = Double.IsNaN(Me.ActualCantAbs)
                             Dim IsNanActualCant    = Double.IsNaN(Me.ActualCant)
                             If (IsNanActualCant AndAlso IsNanActualCantAbs) Then
@@ -329,6 +336,7 @@ Namespace Domain
                                 If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%-3.0f", Me.ActualCantAbs * 1000 * -1)
                                 If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%-3.0f", Me.ActualCant * 1000)
                             End If
+                            
                     End Select
                 End If
                 
@@ -434,6 +442,17 @@ Namespace Domain
                                             RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                         Else
                                             Me.MarkType = iTC_MarkType
+                                            
+                                            ' Fixpoint: clarify kind more precisely.
+                                            If (Me.Kind = GeoPointKind.FixPoint) Then
+                                                If (MarkType2Kind.ContainsKey(Me.MarkType)) Then
+                                                    Dim KindFromMark As GeoPointKind = MarkType2Kind(Me.MarkType)
+                                                    Select Case KindFromMark
+                                                        Case GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D :  Me.Kind = KindFromMark
+                                                    End Select
+                                                End If
+                                            End If
+                                            
                                         End If
                                     End If
                                     

@@ -127,7 +127,7 @@ Namespace Domain.IO
                                     ' Smoothing.
                                     If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty
                                     p.SetKindFromKindText()
-                                    p.SetKindFromMarkType()
+                                    If (p.Kind = GeoPointKind.None) Then p.SetKindFromMarkType()
                                     
                                     ' Editing.
                                     ParseResult = p.ParseInfoTextInput(Me.EditOptions)

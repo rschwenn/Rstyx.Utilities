@@ -138,6 +138,7 @@ Namespace Domain
             Private Shared ReadOnly InfoCantPattern     As String
             Private Shared ReadOnly InfoKindPatterns    As Dictionary(Of String, GeoPointKind)
             
+            Protected Shared ReadOnly MarkType2Kind     As Dictionary(Of String, GeoPointKind)
             Protected Shared ReadOnly KindText2Kind     As Dictionary(Of String, GeoPointKind)
             Protected ReadOnly DefaultKindText          As Dictionary(Of GeoPointKind, String)
             
@@ -189,12 +190,32 @@ Namespace Domain
                 KindText2Kind.Add("PPB" , GeoPointKind.FixPoint2D)
                 KindText2Kind.Add("PS0" , GeoPointKind.FixPoint3D)
                 KindText2Kind.Add("PS1" , GeoPointKind.FixPoint3D)
-                KindText2Kind.Add("PS2" , GeoPointKind.FixPoint2D)
+                KindText2Kind.Add("PS2" , GeoPointKind.FixPoint2D) 
                 KindText2Kind.Add("PS3" , GeoPointKind.FixPoint1D)
                 KindText2Kind.Add("PS4" , GeoPointKind.RailsFixPoint)
                 KindText2Kind.Add("PSx" , GeoPointKind.FixPoint)
                 KindText2Kind.Add("PP"  , GeoPointKind.FixPoint)
                 KindText2Kind.Add("AP"  , GeoPointKind.FixPoint)
+                
+                ' Mapping:  MarkType => Kind.
+                MarkType2Kind = New Dictionary(Of String, GeoPointKind)
+                MarkType2Kind.Add("0" , GeoPointKind.None)            ' unvermarkt aus Ril 808 
+                MarkType2Kind.Add("1" , GeoPointKind.RailsFixPoint)   ' Bolzen am Fahrleitungsmast / Fundament 
+                MarkType2Kind.Add("2" , GeoPointKind.RailsFixPoint)   ' Stehbolzen, Nagel, Bolzen in Mauer 
+                MarkType2Kind.Add("3" , GeoPointKind.RailsFixPoint)   ' Bodenvermarkung, Tiefpunkt 
+                MarkType2Kind.Add("4" , GeoPointKind.RailsFixPoint)   ' Tunnelvermarkung 
+                MarkType2Kind.Add("5" , GeoPointKind.FixPoint2D)      ' Lochstein Grundlagen-Vermessung 
+                MarkType2Kind.Add("6" , GeoPointKind.FixPoint2D)      ' Dränrohr 
+                MarkType2Kind.Add("7" , GeoPointKind.FixPoint2D)      ' Eisenrohr 
+                MarkType2Kind.Add("8" , GeoPointKind.None)            ' indirekte Vermarkung 
+                MarkType2Kind.Add("9" , GeoPointKind.FixPoint1D)      ' Höhen- bzw. NivP-Bolzen 
+                MarkType2Kind.Add("10", GeoPointKind.FixPoint2D)      ' TP - Stein 
+                MarkType2Kind.Add("11", GeoPointKind.FixPoint2D)      ' TP - Platte 
+                MarkType2Kind.Add("12", GeoPointKind.None)            ' Grenzstein Kataster-Vermessung 
+                MarkType2Kind.Add("13", GeoPointKind.None)            ' Grenzmarke 
+                MarkType2Kind.Add("14", GeoPointKind.FixPoint2D)      ' Nagel 
+                MarkType2Kind.Add("15", GeoPointKind.FixPoint2D)      ' Kreuz 
+                MarkType2Kind.Add("16", GeoPointKind.FixPoint3D)      ' Bolzen mit eingravierter ID DB-Referenzsystem
             End Sub
             
             ''' <summary> Creates a new GeoPoint. </summary>
@@ -874,6 +895,27 @@ Namespace Domain
             Public Sub SetKindFromKindText()
                 If (Me.KindText.IsNotEmptyOrWhiteSpace() AndAlso KindText2Kind.ContainsKey(Me.KindText)) Then
                     Me.Kind = KindText2Kind(Me.KindText)
+                Else
+                    Me.Kind = GeoPointKind.None
+                End If
+            End Sub
+            
+            ''' <summary> Tries to set <see cref="GeoPoint.Kind"/> according to <see cref="GeoPoint.MarkType"/>. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' There are some internal mappings for this from GND-Edit specification.
+             ''' </para>
+             ''' <para>
+             ''' This method changes the following properties:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Reset to <c>None</c> and maybe set. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+            Public Sub SetKindFromMarkType()
+                If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso MarkType2Kind.ContainsKey(Me.MarkType)) Then
+                    Me.Kind = MarkType2Kind(Me.MarkType)
                 Else
                     Me.Kind = GeoPointKind.None
                 End If

@@ -318,45 +318,6 @@ Namespace Domain
                 _ID = sprintf("%.0f", TargetID * PointNoFactor)
             End Sub
             
-            ''' <summary> Tries to set unknown <see cref="GeoPoint.Kind"/> according to <see cref="GeoPoint.MarkType"/>. </summary>
-             ''' <remarks>
-             ''' <para>
-             ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> and <see cref="GeoPoint.MarkType"/> is not emty or zero, 
-             ''' then <see cref="GeoPoint.Kind"/> will be set to <c>FixPoint</c>
-             ''' </para>
-             ''' <para>
-             ''' This method may change the following properties:
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
-             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Maybe changed. </description></item>
-             ''' </list>
-             ''' </para>
-             ''' <para>
-             ''' <see cref="GeoPoint.Kind"/> is set due to these rules:
-             ''' <list type="table">
-             ''' <listheader> <term> <b>MarkType Value </b> </term>  <description> <b> Kind Value </b> </description></listheader>
-             ''' <item> <term> empty or zero </term>  <description> no change </description></item>
-             ''' <item> <term> 1, 2, 3, 4    </term>  <description> <c>RailsFixPoint</c> </description></item>
-             ''' <item> <term> other value   </term>  <description> <c>FixPoint</c> </description></item>
-             ''' </list>
-             ''' </para>
-             ''' </remarks>
-            Public Sub SetKindFromMarkType()
-                If (Me.Kind = GeoPointKind.None) Then
-                    If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Not (Me.MarkType = "0"))) Then
-                        
-                        Me.Kind = GeoPointKind.FixPoint
-                        
-                        Dim MarkTypeInt As Integer
-                        If (Integer.TryParse(Me.MarkType, MarkTypeInt)) Then
-                            If (MarkTypeInt < 5) Then
-                                Me.Kind = GeoPointKind.RailsFixPoint
-                            End If
-                        End If
-                    End If
-                End If
-            End Sub
-            
             ''' <summary> Creates a point info text of max. 13 chars for kv file, containing cant (if any) and info. </summary>
              ''' <returns> The point info text for kv file, i.e. 'u= 23  info'. </returns>
              ''' <remarks>
