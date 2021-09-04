@@ -318,32 +318,6 @@ Namespace Domain
                 _ID = sprintf("%.0f", TargetID * PointNoFactor)
             End Sub
             
-            ''' <summary> Creates a point info text of max. 13 chars for kv file, containing cant (if any) and info. </summary>
-             ''' <returns> The point info text for kv file, i.e. 'u= 23  info'. </returns>
-             ''' <remarks>
-             ''' DEPRECATED:  Use <see cref="GeoPoint.CreateInfoTextOutput(GeoPointOutputOptions)"/>.
-             ''' </remarks>
-            Public Function OLD_CreateKVInfo() As String
-                
-                Dim KVText As String
-                
-                If (Not Double.IsNaN(Me.ActualCant)) Then
-                    If (Me.Info.Length < 7) Then
-                        KVText = sprintf("u=%3.0f  %-s", Me.ActualCant * 1000, Me.Info)
-                    ElseIf (Me.Info.Length = 7) Then
-                        KVText = sprintf("u=%3.0f %-s", Me.ActualCant * 1000, Me.Info)
-                    ElseIf (Me.Info.Length = 8) Then
-                        KVText = sprintf("u=%2.0f %-s", Me.ActualCant * 1000, Me.Info)
-                    Else
-                        KVText = sprintf("u=%.0f %-s", Me.ActualCant * 1000, Me.Info)
-                    End If
-                Else
-                    KVText = Me.Info
-                End If
-                
-                Return KVText.TrimToMaxLength(13)
-            End Function
-            
         #End Region
         
         #Region "Static Methods"
