@@ -613,16 +613,20 @@ Namespace Domain
              ''' </remarks>
             Public Overridable Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
                 
-                Dim RetText As String = String.Empty
+                Dim RetText         As String  = String.Empty
+                'Dim KindTextAdded   As Boolean = False
                 
                 ' Add rails kind info (actual cant).
                 If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant) OrElse Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
                     If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Double.IsNaN(Me.ActualCantAbs)) ) Then
                         RetText = sprintf("u=%-3.0f ueb=%-3.0f %-s", Me.ActualCant * 1000, Me.ActualCantAbs * 1000 * -1, Me.Info)
+                        'KindTextAdded = True
                     ElseIf (Not Double.IsNaN(Me.ActualCant)) Then
                         RetText = sprintf("u=%-3.0f %-s", Me.ActualCant * 1000, Me.Info)
+                        'KindTextAdded = True
                     ElseIf (Not Double.IsNaN(Me.ActualCantAbs)) Then
                         RetText = sprintf("ueb=%-3.0f %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
+                        'KindTextAdded = True
                     End If
                 End If
                 
@@ -641,6 +645,25 @@ Namespace Domain
                     End If
                     If (AddKindText) Then
                         RetText = Me.GetKindTextSmart() & " " & Me.Info
+                        'KindTextAdded = True
+                    End If
+                End If
+                
+                ' Add MarkTypeAB, if it isn't already in Me.Info.
+                If (RetText.IsEmpty() AndAlso (Not (Me.Kind = GeoPointKind.Rails)) AndAlso Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
+                    Dim cMarkTypeAB As Char = Me.AsGeoIPoint.MarkTypeAB
+                    If (cMarkTypeAB.IsNotEmpty()) Then
+                        Dim AddMarkTypeAB As Boolean = True
+                        If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
+                            Dim oMatch As Match = Regex.Match(Me.Info, "^" & cMarkTypeAB & "\b", RegexOptions.IgnoreCase)
+                            If (oMatch.Success) Then
+                                AddMarkTypeAB = False
+                            End If
+                        End If
+                        If (AddMarkTypeAB) Then
+                            RetText = cMarkTypeAB & " " & Me.Info
+                            'KindTextAdded = True
+                        End If
                     End If
                 End If
                 
@@ -649,7 +672,7 @@ Namespace Domain
                     RetText = Me.Info
                 End If
                 
-                Return RetText
+                Return RetText.TrimEnd()
             End Function
             
             ''' <summary>

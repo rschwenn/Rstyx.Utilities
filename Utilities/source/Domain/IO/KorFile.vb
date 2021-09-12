@@ -182,8 +182,8 @@ Namespace Domain.IO
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
                                 
-                                ' Get access to point methods (which are not interface members).
-                                Dim p As New GeoPoint(SourcePoint)
+                                ' Get access to point methods (which are not interface members) and GeoIPoint.MarkTypeAB.
+                                Dim p As New GeoIPoint(SourcePoint)
                                 
                                 ' Verify, that ID doesn't contain whitespace.
                                 Me.VerifyID(p.ID)
