@@ -410,7 +410,7 @@ Namespace Domain
                             Dim iTC_ActualCantAbs As Double = Double.NaN
                             Dim iTC_ActualCant    As Double = Double.NaN
                             
-                            ' Recognize point kindes with related info.
+                            ' Recognize point kinds with related info.
                             For i As Integer = 3 To 20
                                 If (oMatch.Groups(i).Success) Then
                                     Dim Key As String = oMatch.Groups(i).Value
@@ -426,7 +426,7 @@ Namespace Domain
                                 End If
                             Next
                             
-                            ' Try to apply recognized point kindes with related info.
+                            ' Try to apply recognized point kinds with related info.
                             If (iTC_Kind <> GeoPointKind.None) Then
                                 If ( (Me.Kind <> GeoPointKind.None) AndAlso (Me.Kind <> iTC_Kind)) Then
                                     RetValue.HasConflict = True

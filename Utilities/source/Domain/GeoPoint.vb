@@ -614,19 +614,15 @@ Namespace Domain
             Public Overridable Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
                 
                 Dim RetText         As String  = String.Empty
-                'Dim KindTextAdded   As Boolean = False
                 
                 ' Add rails kind info (actual cant).
                 If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant) OrElse Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
                     If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Double.IsNaN(Me.ActualCantAbs)) ) Then
                         RetText = sprintf("u=%-3.0f ueb=%-3.0f %-s", Me.ActualCant * 1000, Me.ActualCantAbs * 1000 * -1, Me.Info)
-                        'KindTextAdded = True
                     ElseIf (Not Double.IsNaN(Me.ActualCant)) Then
                         RetText = sprintf("u=%-3.0f %-s", Me.ActualCant * 1000, Me.Info)
-                        'KindTextAdded = True
                     ElseIf (Not Double.IsNaN(Me.ActualCantAbs)) Then
                         RetText = sprintf("ueb=%-3.0f %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
-                        'KindTextAdded = True
                     End If
                 End If
                 
@@ -644,12 +640,11 @@ Namespace Domain
                         Next
                     End If
                     If (AddKindText) Then
-                        RetText = Me.GetKindTextSmart() & " " & Me.Info
-                        'KindTextAdded = True
+                        RetText = sprintf("%-4s %-s", Me.GetKindTextSmart(), Me.Info)
                     End If
                 End If
                 
-                ' Add MarkTypeAB, if it isn't already in Me.Info.
+                ' Add MarkTypeAB, if it isn't already part of Me.Info.
                 If (RetText.IsEmpty() AndAlso (Not (Me.Kind = GeoPointKind.Rails)) AndAlso Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
                     Dim cMarkTypeAB As Char = Me.AsGeoIPoint.MarkTypeAB
                     If (cMarkTypeAB.IsNotEmpty()) Then
@@ -662,7 +657,6 @@ Namespace Domain
                         End If
                         If (AddMarkTypeAB) Then
                             RetText = cMarkTypeAB & " " & Me.Info
-                            'KindTextAdded = True
                         End If
                     End If
                 End If
@@ -787,7 +781,11 @@ Namespace Domain
                             If (oMatch.Success) Then
                                 
                                 Success = True
-                                Me.Kind = kvp.Value
+                                
+                                ' Only set kind if still "None", since it may be already "Rails" ...
+                                If (Me.Kind = GeoPointKind.None) Then
+                                    Me.Kind = kvp.Value
+                                End If
                                 
                                 ' Rails: set actual cant and remove cant pattern from SearchText.
                                 If ((kvp.Value = GeoPointKind.Rails) AndAlso (oMatch.Groups.Count > 2)) Then
@@ -804,7 +802,8 @@ Namespace Domain
                                     End If
                                 End If
                                 
-                                Exit For
+                                ' Not exit for rails, because both "ueb=" and "u=" may be there.
+                                If (Me.Kind <> GeoPointKind.Rails) Then  Exit For
                             End If
                         Next
                     End If

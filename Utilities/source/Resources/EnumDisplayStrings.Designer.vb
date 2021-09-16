@@ -1285,7 +1285,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt Höhe ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Festpkt 1D ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint1D() As String
             Get
@@ -1294,7 +1294,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt Lage ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Festpkt 2D ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint2D() As String
             Get
@@ -1303,7 +1303,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt Lage &amp; Höhe ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Festpkt 3D ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint3D() As String
             Get

@@ -742,12 +742,12 @@
     <value>iGeo "iTrassen-Codierung" erzeugen</value>
   </data>
   <data name="Rstyx_Utilities_Domain_GeoPointKind_FixPoint1D" xml:space="preserve">
-    <value>Festpunkt Höhe</value>
+    <value>Festpkt 1D</value>
   </data>
   <data name="Rstyx_Utilities_Domain_GeoPointKind_FixPoint2D" xml:space="preserve">
-    <value>Festpunkt Lage</value>
+    <value>Festpkt 2D</value>
   </data>
   <data name="Rstyx_Utilities_Domain_GeoPointKind_FixPoint3D" xml:space="preserve">
-    <value>Festpunkt Lage &amp; Höhe</value>
+    <value>Festpkt 3D</value>
   </data>
 </root>
