@@ -1158,14 +1158,13 @@
   <data name="GeoPointList_TableHeader" xml:space="preserve">
     <value>            Punkt-ID      RechtsWert       HochWert      Höhe   Ueb  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe    </value>
   </data>
-  <data name="GeoPointFile_EditOptions_2c" xml:space="preserve">
-    <value>            - Punktart aus Info:                          Nein</value>
+  <data name="GeoPointFile_EditOptions_3" xml:space="preserve">
+    <value>            - Punktart aus Info:                          %s\n</value>
+    <comment>Yes|No: String</comment>
   </data>
-  <data name="GeoPointFile_EditOptions_2b" xml:space="preserve">
-    <value>            - Punktart aus Info:                          Ja  (nur Gleispunkte)</value>
-  </data>
-  <data name="GeoPointFile_EditOptions_2a" xml:space="preserve">
-    <value>            - Punktart aus Info:                          Ja  (alle unterstützten Punktarten)</value>
+  <data name="GeoPointFile_EditOptions_2" xml:space="preserve">
+    <value>            - Überhöhung aus Info:                        %s\n</value>
+    <comment>Yes|No: String</comment>
   </data>
   <data name="TcFileReader_LoadStart" xml:space="preserve">
     <value>Lese Datei mit Trassenkoordinaten '%s'.</value>
@@ -1224,22 +1223,21 @@
     <value>  Optionen: - InfoText als iTrassen-Codierung auswerten:  %s\n</value>
     <comment>Flag GeoPointEditOptions.Parse_iTC set?: Boolean</comment>
   </data>
-  <data name="GeoPointFile_EditOptions_3" xml:space="preserve">
-    <value>\n            - Auch Komentar durchsuchen:                  %s\n</value>
+  <data name="GeoPointFile_EditOptions_4" xml:space="preserve">
+    <value>            - Auch Komentar durchsuchen:                  %s\n</value>
     <comment>Flag GeoPointEditOptions.ParseCommentToo set?: Boolean</comment>
   </data>
   <data name="GeoPointFile_OutputOptions_1" xml:space="preserve">
     <value>  Optionen: - InfoText als iTrassen-Codierung erzeugen:  %s\n</value>
     <comment>Flag GeoPointOutputOptions.Create_iTC set?: Boolean</comment>
   </data>
-  <data name="GeoPointFile_OutputOptions_2c" xml:space="preserve">
-    <value>            - Punktart in InfoText ergänzen:             Nein</value>
+  <data name="GeoPointFile_OutputOptions_3" xml:space="preserve">
+    <value>            - Punktart in InfoText ergänzen:             %s\n</value>
+    <comment>Yes|No: String</comment>
   </data>
-  <data name="GeoPointFile_OutputOptions_2b" xml:space="preserve">
-    <value>            - Punktart in InfoText ergänzen:             Ja  (nur Gleispunkte)</value>
-  </data>
-  <data name="GeoPointFile_OutputOptions_2a" xml:space="preserve">
-    <value>            - Punktart in InfoText ergänzen:             Ja  (alle unterstützten Punktarten)</value>
+  <data name="GeoPointFile_OutputOptions_2" xml:space="preserve">
+    <value>            - Überhöhung in InfoText ergänzen:           %s\n</value>
+    <comment>Yes|No: String</comment>
   </data>
   <data name="KorFile_InvalidID" xml:space="preserve">
     <value>Punkt-ID (%s) enthält Leerzeichen.</value>

@@ -1267,7 +1267,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Alle Punktarten aus Info ableiten ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punktarten aus Info ableiten ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForPointKind() As String
             Get

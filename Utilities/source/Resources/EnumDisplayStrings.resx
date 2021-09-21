@@ -628,7 +628,7 @@
     <value>Gleis-Überhöhung aus Info ableiten</value>
   </data>
   <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_ParseInfoForPointKind" xml:space="preserve">
-    <value>Alle Punktarten aus Info ableiten</value>
+    <value>Punktarten aus Info ableiten</value>
   </data>
   <data name="Rstyx_Utilities_IO_DataFieldOptions_MissingAsZero" xml:space="preserve">
     <value>Fehlenden Wert als "0" ansehen</value>

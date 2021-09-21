@@ -40,7 +40,7 @@ Namespace Domain
         ''' <summary> No editing is applied. </summary>
         None = 0
         
-        ''' <summary> The point's <see cref="GeoPoint.Info"/> should be parsed for <see cref="GeoPoint.ActualCant"/>. </summary>
+        ''' <summary> The point's <see cref="GeoPoint.Info"/> should be parsed for <see cref="GeoPoint.ActualCant"/> and  <see cref="GeoPoint.ActualCantAbs"/>. </summary>
          ''' <remarks>
          ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> or <c>Rails</c>, then <see cref="GeoPoint.ParseInfoForActualCant"/> 
          ''' should be invoked to extract a cant value. 
@@ -50,7 +50,7 @@ Namespace Domain
         ''' <summary> The point's <see cref="GeoPoint.Info"/> should be parsed for <see cref="GeoPoint.Kind"/>. </summary>
          ''' <remarks>
          ''' If <see cref="GeoPoint.Kind"/> is <c>None</c>, then <see cref="GeoPoint.ParseInfoForPointKind"/> 
-         ''' should be invoked to guess point kind. This statement includes also <see cref="GeoPointEditOptions.ParseInfoForActualCant"/>
+         ''' should be invoked to guess point kind.
          ''' </remarks>
         ParseInfoForPointKind = 2
         
@@ -135,9 +135,8 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
             
-            Private Shared ReadOnly InfoCantPattern     As String
-            Private Shared ReadOnly InfoKindPatterns    As Dictionary(Of String, GeoPointKind)
-            
+            Protected Shared ReadOnly InfoCantPatterns  As Dictionary(Of String, String)
+            Protected Shared ReadOnly InfoKindPatterns  As Dictionary(Of String, GeoPointKind)
             Protected Shared ReadOnly MarkType2Kind     As Dictionary(Of String, GeoPointKind)
             Protected Shared ReadOnly KindText2Kind     As Dictionary(Of String, GeoPointKind)
             Protected ReadOnly DefaultKindText          As Dictionary(Of GeoPointKind, String)
@@ -160,12 +159,14 @@ Namespace Domain
                 AttributeNames.Add("HeightSys"         , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys     )   ' "SysH"
                 AttributeNames.Add("CoordSys"          , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys      )   ' "SysL"
                 
+                ' Patterns for recognizing actual cant from info text.
+                ' 26.03.2021: "=" now is mandatory .
+                InfoCantPatterns = New Dictionary(Of String, String)
+                InfoCantPatterns.Add("(u) *= *([+-]? *[0-9]+)\s*"  , "relative or indefinite cant")
+                InfoCantPatterns.Add("(ueb) *= *([+-]? *[0-9]+)\s*", "absolute cant")
+                
                 ' Patterns for recognizing point kind from info text.
                 InfoKindPatterns  = New Dictionary(Of String, GeoPointKind)
-                'InfoCantPattern  = "u *=? *([+-]? *[0-9]+)\s*"
-                'InfoCantPattern  = "u *= *([+-]? *[0-9]+)\s*"                  ' 26.03.2021: "=" mandatory 
-                InfoCantPattern  = "(u|ueb) *= *([+-]? *[0-9]+)\s*"             ' 26.03.2021: "=" mandatory 
-                InfoKindPatterns.Add(InfoCantPattern  , GeoPointKind.Rails)
                 InfoKindPatterns.Add("Gls|Gleis"      , GeoPointKind.Rails)
                 InfoKindPatterns.Add("Bst|Bstg|Bahnst", GeoPointKind.Platform)
                 InfoKindPatterns.Add("PS4|GVP"        , GeoPointKind.RailsFixPoint)
@@ -173,7 +174,7 @@ Namespace Domain
                 InfoKindPatterns.Add("PS2|LFP|PPB"    , GeoPointKind.FixPoint2D)
                 InfoKindPatterns.Add("PS1|GPSC|LHFP"  , GeoPointKind.FixPoint3D)
                 InfoKindPatterns.Add("PS0|NXO|DBRF"   , GeoPointKind.FixPoint3D)
-                InfoKindPatterns.Add("PP|AP"          , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("PP|AP|PSx"      , GeoPointKind.FixPoint)
                 
                 ' Mapping:  KindText => Kind.
                 KindText2Kind = New Dictionary(Of String, GeoPointKind)
@@ -613,10 +614,10 @@ Namespace Domain
              ''' </remarks>
             Public Overridable Function CreateInfoTextOutput(Options As GeoPointOutputOptions) As String
                 
-                Dim RetText         As String  = String.Empty
+                Dim RetText As String = String.Empty
                 
-                ' Add rails kind info (actual cant).
-                If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant) OrElse Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
+                ' Add actual rails cant.
+                If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant)) Then
                     If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Double.IsNaN(Me.ActualCantAbs)) ) Then
                         RetText = sprintf("u=%-3.0f ueb=%-3.0f %-s", Me.ActualCant * 1000, Me.ActualCantAbs * 1000 * -1, Me.Info)
                     ElseIf (Not Double.IsNaN(Me.ActualCant)) Then
@@ -626,7 +627,7 @@ Namespace Domain
                     End If
                 End If
                 
-                ' Add other kind info (unless there's already a point kind descriptor in there).
+                ' Add kind info, unless there's already a point kind descriptor in there.
                 If (RetText.IsEmpty() AndAlso (Not (Me.Kind = GeoPointKind.None)) AndAlso Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
                     Dim AddKindText As Boolean = True
                     If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
@@ -661,7 +662,7 @@ Namespace Domain
                     End If
                 End If
                 
-                ' Set output text to original info text.
+                ' Set output text equal to original info text.
                 If (RetText.IsEmpty()) Then
                     RetText = Me.Info
                 End If
@@ -676,6 +677,14 @@ Namespace Domain
              ''' <param name="Options">  Controls what target info should be parsed for. </param>
              ''' <remarks>
              ''' <para>
+             ''' If <see cref="GeoPoint.Kind"/> is already set when this method is invoked, there are two scenarios:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Point Kind</b> </term>  <description> Action </description></listheader>
+             ''' <item> <term> Rails                   </term>  <description> Actual Cant will be parsed if it isn't known already (and <paramref name="Options"/> tells to do so) </description></item>
+             ''' <item> <term> Other Kind              </term>  <description> This method does nothing </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
              ''' The following patterns somewhere in <see cref="GeoPoint.Info"/> (or maybe in <see cref="GeoPoint.Comment"/>) lead to guessing the point kind: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Pattern</b>    </term>  <description> Point Kind </description></listheader>
@@ -684,17 +693,18 @@ Namespace Domain
              ''' <item> <term> Gls, Gleis              </term>  <description> Actual rails (without actual cant)                    </description></item>
              ''' <item> <term> Bstg, Bst, Bahnst       </term>  <description> Platform                                              </description></item>
              ''' <item> <term> PS4, GVP                </term>  <description> Rails fix point                                       </description></item>
-             ''' <item> <term> PS3, HFP, HB, HP        </term>  <description> Other fix point                                       </description></item>
-             ''' <item> <term> PS2, LFP, PPB           </term>  <description> Other fix point                                       </description></item>
-             ''' <item> <term> PS1, GPSC               </term>  <description> Other fix point                                       </description></item>
-             ''' <item> <term> PS0, NXO, DBRF, DBREF   </term>  <description> Other fix point                                       </description></item>
+             ''' <item> <term> PS3, HFP, HB, HP        </term>  <description> Fix point 1D                                          </description></item>
+             ''' <item> <term> PS2, LFP, PPB           </term>  <description> Fix point 2D                                          </description></item>
+             ''' <item> <term> PS1, GPSC, LHFP         </term>  <description> Fix point 3D                                          </description></item>
+             ''' <item> <term> PS0, NXO, DBRF          </term>  <description> Fix point 3D                                          </description></item>
+             ''' <item> <term> PP, AP, PSx             </term>  <description> General fix point                                     </description></item>
              ''' </list>
              ''' </para>
              ''' <para>
              ''' When an actual rails point has been determined by a cant pattern, 
-             ''' this cant pattern (inclusive trailing whitespace) will be removed from source text, 
-             ''' because it will be re-added to the PointInfoText
-             ''' when the point is written to a file. All other tokens are kept in source text.
+             ''' this cant pattern (inclusive trailing whitespace) will be removed from <see cref="GeoPoint.Info"/> 
+             ''' (but not from <see cref="GeoPoint.Comment"/>), because it will be re-added to the point's InfoText 
+             ''' when the point is written to a file. All other tokens are kept as they are.
              ''' </para>
              ''' <para>
              ''' This method changes the following properties:
@@ -712,13 +722,23 @@ Namespace Domain
                 Dim RetValue   As New ParseInfoTextResult()
                 Dim TryComment As Boolean = Options.HasFlag(GeoPointEditOptions.ParseCommentToo)
                 
-                If (Options.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
-                    RetValue = Me.ParseInfoForPointKind(TryComment:=TryComment)
+                ' Parse for actual cant.
+                If (Options.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
                     
-                ElseIf (Options.HasFlag(GeoPointEditOptions.ParseInfoForActualCant)) Then
-                    RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
+                    Dim IsUnknownCant As Boolean = (Double.IsNaN(Me.ActualCant) AndAlso Double.IsNaN(Me.ActualCantAbs))
+                    Dim ParseCant     As Boolean = ((Me.Kind = GeoPointKind.None) OrElse ((Me.Kind = GeoPointKind.Rails) AndAlso IsUnknownCant))
+                    
+                    If (ParseCant) Then
+                        RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
+                    End If
                 End If
                 
+                ' Parse for point kind.
+                If ((Me.Kind = GeoPointKind.None) AndAlso Options.HasFlag(GeoPointEditOptions.ParseInfoForPointKind)) Then
+                    RetValue = Me.ParseInfoForPointKind(TryComment:=TryComment)
+                End If
+                
+                ' RetValue is empty for both invoked methods...
                 Return RetValue
             End Function
             
@@ -729,39 +749,27 @@ Namespace Domain
              ''' The following patterns somewhere in <see cref="GeoPoint.Info"/> lead to guessing the point kind: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Pattern</b>    </term>  <description> Point Kind </description></listheader>
-             ''' <item> <term> u *= *([+-]? *[0-9]+)   </term>  <description> Actual rails with actual cant                         </description></item>
-             ''' <item> <term> ueb *= *([+-]? *[0-9]+) </term>  <description> Actual rails with actual absolute cant (sign as iGeo) </description></item>
              ''' <item> <term> Gls, Gleis              </term>  <description> Actual rails (without actual cant)                    </description></item>
              ''' <item> <term> Bstg, Bst, Bahnst       </term>  <description> Platform                                              </description></item>
              ''' <item> <term> PS4, GVP                </term>  <description> Rails fix point                                       </description></item>
-             ''' <item> <term> PS3, HFP, HB, HP        </term>  <description> Other fix point                                       </description></item>
-             ''' <item> <term> PS2, LFP, PPB           </term>  <description> Other fix point                                       </description></item>
-             ''' <item> <term> PS1, GPSC               </term>  <description> Other fix point                                       </description></item>
-             ''' <item> <term> PS0, NXO, DBRF, DBREF   </term>  <description> Other fix point                                       </description></item>
+             ''' <item> <term> PS3, HFP, HB, HP        </term>  <description> Fix point 1D                                          </description></item>
+             ''' <item> <term> PS2, LFP, PPB           </term>  <description> Fix point 2D                                          </description></item>
+             ''' <item> <term> PS1, GPSC, LHFP         </term>  <description> Fix point 3D                                          </description></item>
+             ''' <item> <term> PS0, NXO, DBRF          </term>  <description> Fix point 3D                                          </description></item>
+             ''' <item> <term> PP, AP, PSx             </term>  <description> General fix point                                     </description></item>
              ''' </list>
-             ''' </para>
-             ''' <para>
-             ''' When an actual rails point has been determined by a cant pattern, 
-             ''' this cant pattern (inclusive trailing whitespace) will be removed from <see cref="GeoPoint.Info"/> 
-             ''' (but not from <see cref="GeoPoint.Comment"/>), because it will be re-added to the PointInfoText
-             ''' when the point is written to a file. All other tokens are kept as they are.
              ''' </para>
              ''' <para>
              ''' This method changes the following properties:
              ''' <list type="table">
-             ''' <listheader> <term> <b>Property</b> </term>  <description> Action </description></listheader>
-             ''' <item> <term> <see cref="GeoPoint.Kind"/>          </term>  <description> Cleared and maybe set. </description></item>
-             ''' <item> <term> <see cref="GeoPoint.ActualCantAbs"/> </term>  <description> Cleared and maybe set. </description></item>
-             ''' <item> <term> <see cref="GeoPoint.ActualCant"/>    </term>  <description> Cleared and maybe set. </description></item>
-             ''' <item> <term> <see cref="GeoPoint.Info"/>          </term>  <description> A found cant pattern will be removed. </description></item>
+             ''' <listheader> <term> <b>Property</b>       </term>  <description> Action </description></listheader>
+             ''' <item> <term> <see cref="GeoPoint.Kind"/> </term>  <description> Cleared and maybe set. </description></item>
              ''' </list>
              ''' </para>
              ''' </remarks>
             Protected Function ParseInfoForPointKind(Optional TryComment As Boolean = False) As ParseInfoTextResult
                 
-                Me.Kind          = GeoPointKind.None
-                Me.ActualCant    = Double.NaN
-                Me.ActualCantAbs = Double.NaN
+                Me.Kind = GeoPointKind.None
                 
                 Dim i           As Integer = 0
                 Dim SearchCount As Integer = If(TryComment, 2, 1)
@@ -779,31 +787,9 @@ Namespace Domain
                             Dim oMatch As Match = Regex.Match(SearchText, kvp.Key, RegexOptions.IgnoreCase)
                             
                             If (oMatch.Success) Then
-                                
                                 Success = True
-                                
-                                ' Only set kind if still "None", since it may be already "Rails" ...
-                                If (Me.Kind = GeoPointKind.None) Then
-                                    Me.Kind = kvp.Value
-                                End If
-                                
-                                ' Rails: set actual cant and remove cant pattern from SearchText.
-                                If ((kvp.Value = GeoPointKind.Rails) AndAlso (oMatch.Groups.Count > 2)) Then
-                                    
-                                    Select Case oMatch.Groups(1).Value
-                                        Case "ueb":  Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
-                                        Case "u":    Me.ActualCant    =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
-                                    End Select
-                                    
-                                    If (i = 1) Then
-                                        Me.Info = SearchText.Remove(oMatch.Index, oMatch.Length).TrimEnd()
-                                    Else
-                                        ' Leave Me.Comment unchanged.
-                                    End If
-                                End If
-                                
-                                ' Not exit for rails, because both "ueb=" and "u=" may be there.
-                                If (Me.Kind <> GeoPointKind.Rails) Then  Exit For
+                                Me.Kind = kvp.Value
+                                Exit For
                             End If
                         Next
                     End If
@@ -826,9 +812,9 @@ Namespace Domain
              ''' </para>
              ''' <para>
              ''' When cant has been found, 
-             ''' this cant pattern (inclusive trailing whitespace) will be removed from info text, 
-             ''' because it will be added to the code part of PointInfoText
-             ''' when the point is written to a file. All other tokens are kept in info text.
+             ''' this cant pattern (inclusive trailing whitespace) will be removed from <see cref="GeoPoint.Info"/> 
+             ''' (but not from <see cref="GeoPoint.Comment"/>), because it will be re-added to the point's InfoText 
+             ''' when the point is written to a file. All other tokens are kept as they are.
              ''' </para>
              ''' <para>
              ''' This method may change the following properties:
@@ -846,24 +832,51 @@ Namespace Domain
                 Me.ActualCant    = Double.NaN
                 Me.ActualCantAbs = Double.NaN
                 
-                Dim oMatch As Match = Regex.Match(Me.Info, InfoCantPattern, RegexOptions.IgnoreCase)
+                Dim i           As Integer = 0
+                Dim SearchCount As Integer = If(TryComment, 2, 1)
+                Dim SearchText  As String  = Me.Info
+                Dim Success     As Boolean = False
                 
-                If ((Not oMatch.Success) AndAlso TryComment AndAlso Me.Comment.IsNotEmptyOrWhiteSpace()) Then
-                    oMatch = Regex.Match(Me.Comment, InfoCantPattern, RegexOptions.IgnoreCase)
-                End If
-                
-                If (oMatch.Success) Then
-                    ' Rails: set actual cant and remove cant pattern from info (but not from comment).
-                    If (oMatch.Groups.Count > 2) Then
-                        Select Case oMatch.Groups(1).Value
-                            Case "ueb":  Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
-                            Case "u":    Me.ActualCant    =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
-                        End Select
+                Do
+                    i += 1
+                    
+                    If (SearchText.IsNotEmptyOrWhiteSpace()) Then
                         
-                        Me.Info = Me.Info.Remove(oMatch.Index, oMatch.Length).TrimEnd()
-                        Me.Kind = GeoPointKind.Rails
+                        ' Test EVERY pattern against SearchText, since both "ueb=" and "u=" may be there (for patterns: see Shared Sub New()).
+                        For Each kvp As KeyValuePair(Of String, String) In InfoCantPatterns
+                            
+                            Dim oMatch As Match = Regex.Match(SearchText, kvp.Key, RegexOptions.IgnoreCase)
+                            
+                            If (oMatch.Success) Then
+                                Success = True
+                                Me.Kind = GeoPointKind.Rails
+                                
+                                ' Set actual cant and remove cant pattern from SearchText.
+                                If (oMatch.Groups.Count > 2) Then
+                                    
+                                    Select Case oMatch.Groups(1).Value
+                                        Case "ueb":  Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "u":    Me.ActualCant    =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
+                                    End Select
+                                    
+                                    If (i = 1) Then
+                                        SearchText = SearchText.Remove(oMatch.Index, oMatch.Length).TrimEnd()
+                                    Else
+                                        ' Leave Me.Comment unchanged.
+                                    End If
+                                End If
+                            End If
+                        Next
+                        If (i = 1) Then
+                            Me.Info = SearchText
+                        Else
+                            ' Leave Me.Comment unchanged.
+                        End If
                     End If
-                End If
+                    
+                    SearchText = Me.Comment
+                    
+                Loop Until (Success OrElse (i = SearchCount))
                 
                 Return (New ParseInfoTextResult())
             End Function

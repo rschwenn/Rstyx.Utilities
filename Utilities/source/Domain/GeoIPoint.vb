@@ -292,10 +292,8 @@ Namespace Domain
                     RetValue = Me.Parse_iTC(TryComment:=Options.HasFlag(GeoPointEditOptions.ParseCommentToo))
                 End If
                 
-                ' Standard kind guessing.
-                If (Me.Kind = GeoPointKind.None) Then
-                   RetValue = MyBase.ParseInfoTextInput(Options)
-                End If
+                ' Standard kind guessing. This doesn't overrides already recognized values.
+                Dim Dummy As ParseInfoTextResult = MyBase.ParseInfoTextInput(Options)
                 
                 Return RetValue
             End Function

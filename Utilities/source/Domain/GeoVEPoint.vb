@@ -387,36 +387,6 @@ Namespace Domain
                 Return RetText.TrimToMaxLength(13)
             End Function
             
-            ''' <summary>
-            ''' <see cref="GeoPoint.Info"/> (and maybe <see cref="GeoPoint.Comment"/>) will be parsed for some info. 
-            ''' The found values will be stored into point properties. 
-            ''' </summary>
-             ''' <param name="Options">  Controls what target info should be parsed for. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' See <see cref="GeoPoint.ParseInfoTextInput"/> for details.
-             ''' </para>
-             ''' <para>
-             ''' <see cref="GeoVEPoint"/> special: If point kind field is "Gls" => only try to get actual cant.
-             ''' </para>
-             ''' </remarks>
-            Public Overrides Function ParseInfoTextInput(Options As GeoPointEditOptions) As ParseInfoTextResult
-                
-                Dim RetValue As New ParseInfoTextResult()
-                
-                ' VermEsn point kind field is "Gls" => try to get actual cant.
-                If (Me.Kind = GeoPointKind.Rails) Then
-                    RetValue = Me.ParseInfoForActualCant(TryComment:=Options.HasFlag(GeoPointEditOptions.ParseCommentToo))
-                End If
-                
-                ' Standard kind guessing.
-                If (Me.Kind = GeoPointKind.None) Then
-                   RetValue = MyBase.ParseInfoTextInput(Options)
-                End If
-                
-                Return RetValue
-            End Function
-            
         #End Region
         
         #Region "Overrides"
