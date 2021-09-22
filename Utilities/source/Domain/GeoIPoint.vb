@@ -404,9 +404,11 @@ Namespace Domain
                         If (oMatch.Success) Then
                             
                             Dim iTC_Kind          As GeoPointKind = GeoPointKind.None
-                            Dim iTC_MarkType      As String = Nothing
-                            Dim iTC_ActualCantAbs As Double = Double.NaN
-                            Dim iTC_ActualCant    As Double = Double.NaN
+                            Dim iTC_MarkType      As String  = Nothing
+                            Dim iTC_ActualCantAbs As Double  = Double.NaN
+                            Dim iTC_ActualCant    As Double  = Double.NaN
+                            Dim ApplyNewKind      As Boolean = False
+                            Dim IsKindConflict    As Boolean = False
                             
                             ' Recognize point kinds with related info.
                             For i As Integer = 3 To 20
@@ -423,55 +425,79 @@ Namespace Domain
                                     'Exit For -> not exit, because both "-iueb" and "-iu" may be there.
                                 End If
                             Next
+                                            
+                            ' Fixpoint: Try to state kind more precisely from mark type.
+                            If ((iTC_Kind = GeoPointKind.FixPoint) AndAlso iTC_MarkType.IsNotEmptyOrWhiteSpace()) Then
+                                If (MarkType2Kind.ContainsKey(iTC_MarkType)) Then
+                                    Dim KindFromMark As GeoPointKind = MarkType2Kind(iTC_MarkType)
+                                    Select Case KindFromMark
+                                        Case GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D :  iTC_Kind = KindFromMark
+                                    End Select
+                                End If
+                            End If
                             
-                            ' Try to apply recognized point kinds with related info.
+                            ' Check for kind conflict and applying.
                             If (iTC_Kind <> GeoPointKind.None) Then
-                                If ( (Me.Kind <> GeoPointKind.None) AndAlso (Me.Kind <> iTC_Kind)) Then
-                                    RetValue.HasConflict = True
-                                    RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Kind, Me.ID, Me.Kind.ToDisplayString(), iTC_Kind.ToDisplayString())
-                                    RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
-                                Else
+                                IsKindConflict = ((Me.Kind <> GeoPointKind.None) AndAlso (Me.Kind <> iTC_Kind))
+                                ApplyNewKind   = True
+                                If (IsKindConflict) Then
+                                    If (Me.Kind = GeoPointKind.FixPoint) Then
+                                        Select Case iTC_Kind
+                                            Case GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D
+                                                IsKindConflict = False
+                                                ApplyNewKind   = True
+                                        End Select
+                                    ElseIf (iTC_Kind = GeoPointKind.FixPoint) Then    
+                                        Select Case Me.Kind
+                                            Case GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D
+                                                IsKindConflict = False
+                                                ApplyNewKind   = False
+                                        End Select
+                                    End If
+                                End If
+                            End If
+                            
+                                
+                            ' Try to apply recognized point kinds with related info.
+                            If (IsKindConflict) Then
+                                
+                                RetValue.HasConflict = True
+                                RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Kind, Me.ID, Me.Kind.ToDisplayString(), iTC_Kind.ToDisplayString())
+                                RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                
+                            ElseIf (iTC_Kind <> GeoPointKind.None) Then
+                                
+                                If (ApplyNewKind) Then
                                     Me.Kind = iTC_Kind
-                                    
-                                    If (iTC_MarkType.IsNotEmptyOrWhiteSpace()) Then
-                                        If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Me.MarkType <> iTC_MarkType)) Then
-                                            RetValue.HasConflict = True
-                                            RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkType, Me.ID, Me.MarkType, iTC_MarkType)
-                                            RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
-                                        Else
-                                            Me.MarkType = iTC_MarkType
-                                            
-                                            ' Fixpoint: clarify kind more precisely.
-                                            If (Me.Kind = GeoPointKind.FixPoint) Then
-                                                If (MarkType2Kind.ContainsKey(Me.MarkType)) Then
-                                                    Dim KindFromMark As GeoPointKind = MarkType2Kind(Me.MarkType)
-                                                    Select Case KindFromMark
-                                                        Case GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D :  Me.Kind = KindFromMark
-                                                    End Select
-                                                End If
-                                            End If
-                                            
-                                        End If
+                                End If
+                                
+                                If (iTC_MarkType.IsNotEmptyOrWhiteSpace()) Then
+                                    If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Me.MarkType <> iTC_MarkType)) Then
+                                        RetValue.HasConflict = True
+                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkType, Me.ID, Me.MarkType, iTC_MarkType)
+                                        RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                    Else
+                                        Me.MarkType = iTC_MarkType
                                     End If
-                                    
-                                    If (Not Double.IsNaN(iTC_ActualCantAbs)) Then
-                                        If ((Not Double.IsNaN(Me.ActualCantAbs)) AndAlso (Not Me.ActualCantAbs.EqualsTolerance(iTC_ActualCantAbs, 0.0006))) Then
-                                            RetValue.HasConflict = True
-                                            RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_CantAbs, Me.ID, -1 * Me.ActualCantAbs, -1 * iTC_ActualCantAbs)
-                                            RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
-                                        Else
-                                            Me.ActualCantAbs = iTC_ActualCantAbs
-                                        End If
+                                End If
+                                
+                                If (Not Double.IsNaN(iTC_ActualCantAbs)) Then
+                                    If ((Not Double.IsNaN(Me.ActualCantAbs)) AndAlso (Not Me.ActualCantAbs.EqualsTolerance(iTC_ActualCantAbs, 0.0006))) Then
+                                        RetValue.HasConflict = True
+                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_CantAbs, Me.ID, -1 * Me.ActualCantAbs, -1 * iTC_ActualCantAbs)
+                                        RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                    Else
+                                        Me.ActualCantAbs = iTC_ActualCantAbs
                                     End If
-                                    
-                                    If (Not Double.IsNaN(iTC_ActualCant)) Then
-                                        If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Me.ActualCant.EqualsTolerance(iTC_ActualCant, 0.0006))) Then
-                                            RetValue.HasConflict = True
-                                            RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Cant, Me.ID, Me.ActualCant, iTC_ActualCant)
-                                            RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
-                                        Else
-                                            Me.ActualCant = iTC_ActualCant
-                                        End If
+                                End If
+                                
+                                If (Not Double.IsNaN(iTC_ActualCant)) Then
+                                    If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Me.ActualCant.EqualsTolerance(iTC_ActualCant, 0.0006))) Then
+                                        RetValue.HasConflict = True
+                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Cant, Me.ID, Me.ActualCant, iTC_ActualCant)
+                                        RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                    Else
+                                        Me.ActualCant = iTC_ActualCant
                                     End If
                                 End If
                             End If
