@@ -1243,4 +1243,11 @@
     <value>Punkt-ID (%s) enthält Leerzeichen.</value>
     <comment>Point ID: String</comment>
   </data>
+  <data name="GeoPoint_MarkKindListHeader" xml:space="preserve">
+    <value>Zuordnung Vermarkungsart =&gt; Punktart:</value>
+  </data>
+  <data name="GeoPoint_MarkKindListRow" xml:space="preserve">
+    <value>\n%+3s =&gt; %s</value>
+    <comment>MarkType: String; PointKind: String</comment>
+  </data>
 </root>

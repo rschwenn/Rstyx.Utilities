@@ -970,6 +970,16 @@ Namespace Domain
                 Return RetValue
             End Function
             
+            ''' <summary> Gets a List of associations: MarkType => PointKind. </summary>
+             ''' <returns> List of associations: MarkType => PointKind </returns>
+            Public Function GetListMarkType2Kind() As String
+                Dim RetValue As String = Rstyx.Utilities.Resources.Messages.GeoPoint_MarkKindListHeader
+                For Each kvp As KeyValuePair(Of String, GeoPointKind) in MarkType2Kind
+                    RetValue &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_MarkKindListRow, kvp.Key, kvp.Value.ToDisplayString())
+                Next
+                Return RetValue
+            End Function
+            
         #End Region
             
         #Region "Overrides"

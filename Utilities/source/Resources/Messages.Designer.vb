@@ -1361,6 +1361,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zuordnung Vermarkungsart =&gt; Punktart: ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPoint_MarkKindListHeader() As String
+            Get
+                Return ResourceManager.GetString("GeoPoint_MarkKindListHeader", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die \n%+3s =&gt; %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPoint_MarkKindListRow() As String
+            Get
+                Return ResourceManager.GetString("GeoPoint_MarkKindListRow", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Das Vorzeichen der Überhöhung kann nicht bestimmt werden, weil der Radius Null ist. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_Hint_MissingCantSign() As String

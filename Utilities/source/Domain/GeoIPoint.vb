@@ -410,7 +410,7 @@ Namespace Domain
                             Dim ApplyNewKind      As Boolean = False
                             Dim IsKindConflict    As Boolean = False
                             
-                            ' Recognize point kinds with related info.
+                            ' Recognize point kinds with attached info.
                             For i As Integer = 3 To 20
                                 If (oMatch.Groups(i).Success) Then
                                     Dim Key As String = oMatch.Groups(i).Value
@@ -457,13 +457,16 @@ Namespace Domain
                                 End If
                             End If
                             
-                                
                             ' Try to apply recognized point kinds with related info.
                             If (IsKindConflict) Then
                                 
                                 RetValue.HasConflict = True
                                 RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Kind, Me.ID, Me.Kind.ToDisplayString(), iTC_Kind.ToDisplayString())
                                 RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                Select Case Me.Kind
+                                    Case GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D
+                                        RetValue.Hints &= vbNewLine & Me.GetListMarkType2Kind()
+                                End Select
                                 
                             ElseIf (iTC_Kind <> GeoPointKind.None) Then
                                 
