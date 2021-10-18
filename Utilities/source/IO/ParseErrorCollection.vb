@@ -346,7 +346,7 @@ Namespace IO
                                 oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                             Next
                             If (oErr.Hints IsNot Nothing) Then
-                                Msg = oErr.Hints.Split("\n")
+                                Msg = oErr.Hints.Split("\r?\n")
                                 For k As Integer = 0 To Msg.Length - 1
                                     oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                                 Next
