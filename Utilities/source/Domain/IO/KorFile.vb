@@ -24,6 +24,7 @@ Namespace Domain.IO
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
                 Me.LineStartCommentToken = "#"
+                Me.LineEndCommentToken   = "#"
                 
                 'Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KorFile_Label_DefaultHeader1)
                 'Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.KorFile_Label_DefaultHeader2)
