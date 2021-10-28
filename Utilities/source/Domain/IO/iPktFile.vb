@@ -239,7 +239,7 @@ Namespace Domain.IO
                     Dim PointFmt   As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
                     Dim CoordFmt   As String  = "%14.5f"
                     Dim PointCount As Integer = 0
-                    Dim UniqueID   As Boolean = True  ' iGeo ignores all but the first point with same ID => hence don't write more than once.
+                    Dim UniqueID   As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     
                     Using oSW As New StreamWriter(Me.FilePath, append:=False, encoding:=Me.FileEncoding)
                         

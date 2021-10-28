@@ -12,7 +12,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseErrorCollection")
+            Private ReadOnly Logger         As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseErrorCollection")
             
             Protected _HasErrors            As Boolean
             Protected _HasWarnings          As Boolean
@@ -43,9 +43,9 @@ Namespace IO
         #Region "Collection Implementation"
             
             ''' <summary> Adds a new error without source information to the collection. </summary>
-             ''' <param name="Message">     The error Message. </param>
-             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
-             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <param name="Message">  The error Message. </param>
+             ''' <param name="Hints">    Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath"> Full path of the source file. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
             Public Sub AddError(Message     As String,
@@ -56,9 +56,9 @@ Namespace IO
             End Sub
             
             ''' <summary> Adds a new warning without source information to the collection. </summary>
-             ''' <param name="Message">     The error Message. </param>
-             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
-             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <param name="Message">  The error Message. </param>
+             ''' <param name="Hints">    Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath"> Full path of the source file. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
             Public Sub AddWarning(Message     As String,
@@ -113,10 +113,10 @@ Namespace IO
             End Sub
             
             ''' <summary> Adds a new Item without source information to the collection. </summary>
-             ''' <param name="Level">       The degree of severity of the error. </param>
-             ''' <param name="Message">     The error Message. </param>
-             ''' <param name="Hints">       Hints that could help the user to understand the error. </param>
-             ''' <param name="FilePath">    Full path of the source file. </param>
+             ''' <param name="Level">    The degree of severity of the error. </param>
+             ''' <param name="Message">  The error Message. </param>
+             ''' <param name="Hints">    Hints that could help the user to understand the error. </param>
+             ''' <param name="FilePath"> Full path of the source file. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
             Public Overloads Sub Add(Level              As ParseErrorLevel,
