@@ -1,6 +1,7 @@
 ﻿
 Imports System
 Imports System.Collections.Generic
+Imports System.Collections.ObjectModel
 Imports System.IO
 
 Imports Rstyx.Utilities.IO
@@ -212,7 +213,7 @@ Namespace Domain.IO
                 End Get
             End Property
             
-            ''' <summary> Writes the points collection to the point file. </summary>
+            ''' <summary> Writes the given point list to the point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
              ''' <param name="MetaData">  An object providing the header for <paramref name="PointList"/>. May be <see langword="null"/>. </param>
              ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
@@ -234,20 +235,27 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Me.Reset(Nothing)
+                    Dim PointFmt    As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim CoordFmt    As String  = "%14.5f"
+                    Dim PointCount  As Integer = 0
+                    Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                    Dim Header      As Collection(Of String) = Nothing
                     
-                    Dim PointFmt   As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
-                    Dim CoordFmt   As String  = "%14.5f"
-                    Dim PointCount As Integer = 0
-                    Dim UniqueID   As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                    ' Reset this GeoPointFile, but save the header if needed.
+                    If (MetaData Is Me) Then
+                        Header = Me.Header?.Clone()
+                    End If
+                    Me.Reset(Nothing)  ' This clears Me.Header, too.
+                    Me.Header = Header
                     
-                    Using oSW As New StreamWriter(Me.FilePath, append:=False, encoding:=Me.FileEncoding)
+                    
+                    Using oSW As New StreamWriter(Me.FilePath, append:=Me.FileAppend, encoding:=Me.FileEncoding)
                         
                         ' Points.
                         For Each SourcePoint As IGeoPoint In PointList
                             Try
                                 ' Header.
-                                If (PointCount = 0) Then
+                                If ((PointCount = 0) AndAlso (Not Me.FileAppend)) Then
                                     ' At this point, the header of a GeoPointFile has been read and coud be written.
                                     Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)

@@ -197,18 +197,25 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Me.Reset(Nothing)
+                    Dim PointFmt    As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s %-s"
+                    Dim PointCount  As Integer = 0
+                    Dim UniqueID    As Boolean = (TypeOf PointList Is GeoPointList)
+                    Dim Header      As Collection(Of String) = Nothing
                     
-                    Dim PointFmt   As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s %-s"
-                    Dim PointCount As Integer = 0
-                    Dim UniqueID   As Boolean = (TypeOf PointList Is GeoPointList)
+                    ' Reset this GeoPointFile, but save the header if needed.
+                    If (MetaData Is Me) Then
+                        Header = Me.Header?.Clone()
+                    End If
+                    Me.Reset(Nothing)  ' This clears Me.Header, too.
+                    Me.Header = Header
                     
-                    Using oSW As New StreamWriter(Me.FilePath, append:=False, encoding:=Me.FileEncoding)
+                    
+                    Using oSW As New StreamWriter(Me.FilePath, append:=Me.FileAppend, encoding:=Me.FileEncoding)
                         
                         For Each SourcePoint As IGeoPoint In PointList
                             Try
                                 ' Header.
-                                If (PointCount = 0) Then
+                                If ((PointCount = 0) AndAlso (Not Me.FileAppend)) Then
                                     ' At this point, the header of a GeoPointFile has been read and coud be written.
                                     Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)

@@ -69,6 +69,9 @@ Namespace IO
             ''' <summary> The encoding to use for the file. Defaults to <see cref="Encoding.Default"/> </summary>
             Public Property FileEncoding()          As Encoding = Encoding.Default
             
+            ''' <summary> If <see langword="true"/>, writing data to the file should be appended, rather than overriding the file. Defaults to <see langword="false"/>. </summary>
+            Public Property FileAppend()            As Boolean = False
+            
             ''' <summary> The minimum buffer size, in number of 16-bit characters. Defaults to 1024. </summary>
             Public Property BufferSize()            As Integer = 1024
             
@@ -221,7 +224,7 @@ Namespace IO
             End Property
             
             ''' <summary> Loads the whole file into the <see cref="DataFile.DataLineBuffer"/>. </summary>
-            ''' <remarks> Derived classes can override this method and provide the read data via different buffer properties. </remarks>
+             ''' <remarks> Derived classes can override this method and provide the read data via different buffer properties. </remarks>
             Public Overridable Sub Load()
                 For Each DataLine As DataTextLine In Me.DataLineStream
                     Me.DataLineBuffer.Add(DataLine)
