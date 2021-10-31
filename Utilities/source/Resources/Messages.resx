@@ -715,7 +715,7 @@
     <value>Seite</value>
   </data>
   <data name="GeoPointConstraints_MissingCantedRailsSystem" xml:space="preserve">
-    <value>Werte im gedrehten Gleissystem sind nicht verfügbar bzw. können nicht bestimmt werden bei Punkt %s.</value>
+    <value>Werte im gedrehten Gleissystem sind nicht verfügbar bzw. können nicht bestimmt werden bei Punkt '%s'.</value>
     <comment>Point ID: String</comment>
   </data>
   <data name="GeoPointConstraints_Hint_MissingCantSign" xml:space="preserve">
@@ -891,11 +891,11 @@
     <comment>Collection Element ID: String</comment>
   </data>
   <data name="GeoPointConstraints_MissingHeight" xml:space="preserve">
-    <value>Höhe fehlt bei Punkt %s.</value>
+    <value>Höhe fehlt bei Punkt '%s'.</value>
     <comment>Point ID: String</comment>
   </data>
   <data name="GeoPointConstraints_MissingPosition" xml:space="preserve">
-    <value>Lagekoorinaten fehlen bei Punkt %s.</value>
+    <value>Lagekoorinaten fehlen bei Punkt '%s'.</value>
     <comment>Point ID: String</comment>
   </data>
   <data name="ParseError_ErrorLevelWithoutLineNo" xml:space="preserve">
@@ -995,19 +995,19 @@
     <value>Punkt-ID fehlt bzw. ist leer.</value>
   </data>
   <data name="GeoPointConstraints_IDNotNumeric" xml:space="preserve">
-    <value>Punkt-ID (%s) ist nicht numerisch.</value>
+    <value>Punkt-ID '%s' ist nicht numerisch.</value>
     <comment>Point ID: String</comment>
   </data>
   <data name="GeoPointConstraints_IDOutOfDblRange" xml:space="preserve">
-    <value>Punkt-ID (%s) ist keine reelle Zahl zwischen %.5f und %.5f.</value>
+    <value>Punkt-ID '%s' ist keine reelle Zahl zwischen %.5f und %.5f.</value>
     <comment>Point ID: String; Min Point ID: Double; Max Point ID: Double</comment>
   </data>
   <data name="GeoPointConstraints_IDOutOfIntRange" xml:space="preserve">
-    <value>Punkt-ID (%s) ist keine ganze Zahl zwischen %d und %d.</value>
+    <value>Punkt-ID '%s' ist keine ganze Zahl zwischen %d und %d.</value>
     <comment>Point ID: String; Min Point ID: Integer; Max Point ID: Integer</comment>
   </data>
   <data name="GeoPointConstraints_IDToLong" xml:space="preserve">
-    <value>Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen.</value>
+    <value>Punkt-ID '%s' überschreitet maximale Länge von %d Zeichen.</value>
     <comment>Point ID: String; Max Point Length: Integer</comment>
   </data>
   <data name="KvFile_StoreParsingFailed" xml:space="preserve">
@@ -1197,23 +1197,23 @@
     <comment>ExcelTable Name: String; ExcelWorksheet Name: String</comment>
   </data>
   <data name="GeoIPoint_ParseITC_Conflict_Cant" xml:space="preserve">
-    <value>Punkt %+20s: Die vorhandene Ist-Überhöhung (u=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.0f)</value>
+    <value>Punkt '%+20s': Die vorhandene Ist-Überhöhung (u=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.0f)</value>
     <comment>Point ID: String; Actual Cant: Double; Actual Cant: Double</comment>
   </data>
   <data name="GeoIPoint_ParseITC_Conflict_CantAbs" xml:space="preserve">
-    <value>Punkt %+20s: Die vorhandene Ist-Überhöhung (ueb=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (ueb=%.0f)</value>
+    <value>Punkt '%+20s': Die vorhandene Ist-Überhöhung (ueb=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (ueb=%.0f)</value>
     <comment>Point ID: String; Actual Cant: Double; Actual Cant: Double</comment>
   </data>
   <data name="GeoIPoint_ParseITC_Conflict_Kind" xml:space="preserve">
-    <value>Punkt %+20s: Die vorhandene Punktart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
+    <value>Punkt '%+20s': Die vorhandene Punktart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
     <comment>Point ID: String; Point Kind: String; Point Kind: String</comment>
   </data>
   <data name="GeoIPoint_ParseITC_Conflict_MarkType" xml:space="preserve">
-    <value>Punkt %+20s: Die vorhandene Vermarkungsart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
+    <value>Punkt '%+20s': Die vorhandene Vermarkungsart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
     <comment>Point ID: String; MarkType: String; MarkType: String</comment>
   </data>
   <data name="GeoIPoint_ParseITC_Conflict_MarkTypeAB" xml:space="preserve">
-    <value>Punkt %+20s: Die vorhandene Vermarkungsart iGeo-AB (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
+    <value>Punkt '%+20s': Die vorhandene Vermarkungsart iGeo-AB (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s)</value>
     <comment>Point ID: String; Point Kind: String; Point Kind: String</comment>
   </data>
   <data name="GeoIPoint_ParseITC_Conflict_RejectITC" xml:space="preserve">

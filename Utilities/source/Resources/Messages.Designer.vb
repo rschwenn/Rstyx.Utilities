@@ -1289,7 +1289,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Ist-Überhöhung (u=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.0f) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt &apos;%+20s&apos;: Die vorhandene Ist-Überhöhung (u=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.0f) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_Cant() As String
             Get
@@ -1298,7 +1298,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Ist-Überhöhung (ueb=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (ueb=%.0f) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt &apos;%+20s&apos;: Die vorhandene Ist-Überhöhung (ueb=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (ueb=%.0f) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_CantAbs() As String
             Get
@@ -1307,7 +1307,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Punktart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt &apos;%+20s&apos;: Die vorhandene Punktart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_Kind() As String
             Get
@@ -1316,7 +1316,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Vermarkungsart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt &apos;%+20s&apos;: Die vorhandene Vermarkungsart (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_MarkType() As String
             Get
@@ -1325,7 +1325,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt %+20s: Die vorhandene Vermarkungsart iGeo-AB (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt &apos;%+20s&apos;: Die vorhandene Vermarkungsart iGeo-AB (%s) unterscheidet sich von der in der iTrassen-Codierung angegebenen (%s) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_MarkTypeAB() As String
             Get
@@ -1406,7 +1406,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist nicht numerisch. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID &apos;%s&apos; ist nicht numerisch. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_IDNotNumeric() As String
             Get
@@ -1415,7 +1415,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine reelle Zahl zwischen %.5f und %.5f. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID &apos;%s&apos; ist keine reelle Zahl zwischen %.5f und %.5f. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_IDOutOfDblRange() As String
             Get
@@ -1424,7 +1424,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) ist keine ganze Zahl zwischen %d und %d. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID &apos;%s&apos; ist keine ganze Zahl zwischen %d und %d. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_IDOutOfIntRange() As String
             Get
@@ -1433,7 +1433,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) überschreitet maximale Länge von %d Zeichen. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID &apos;%s&apos; überschreitet maximale Länge von %d Zeichen. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_IDToLong() As String
             Get
@@ -1442,7 +1442,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Werte im gedrehten Gleissystem sind nicht verfügbar bzw. können nicht bestimmt werden bei Punkt %s. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Werte im gedrehten Gleissystem sind nicht verfügbar bzw. können nicht bestimmt werden bei Punkt &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_MissingCantedRailsSystem() As String
             Get
@@ -1451,7 +1451,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe fehlt bei Punkt %s. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Höhe fehlt bei Punkt &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_MissingHeight() As String
             Get
@@ -1469,7 +1469,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Lagekoorinaten fehlen bei Punkt %s. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lagekoorinaten fehlen bei Punkt &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointConstraints_MissingPosition() As String
             Get

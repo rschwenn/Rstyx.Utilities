@@ -161,13 +161,13 @@ Namespace Domain.IO
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
+                Dim PointCount  As Integer = 0
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreStart, Me.FilePath))
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Dim PointFmt    As String = "%+20s %14.4f %14.4f %14.4f     %-30s %-s"
-                    Dim PointCount  As Integer = 0
                     Dim UniqueID    As Boolean = (TypeOf PointList Is GeoPointList)
                     Dim Header      As Collection(Of String) = Nothing
                     
@@ -185,7 +185,8 @@ Namespace Domain.IO
                             Try
                                 ' Header.
                                 If ((PointCount = 0) AndAlso (Not Me.FileAppend)) Then
-                                    ' At this point, the header of a GeoPointFile has been read and coud be written.
+                                    ' If MetaData is a GeoPointFile and PointList is the same GeoPointFile's PointStream,
+                                    ' then only at this point, the header has been read and coud be written.
                                     Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
@@ -230,8 +231,6 @@ Namespace Domain.IO
                         Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreSuccess, PointCount, Me.FilePath))
-                    
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
@@ -239,6 +238,8 @@ Namespace Domain.IO
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                    
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreSuccess, PointCount, Me.FilePath))
                 End Try
             End Sub
             

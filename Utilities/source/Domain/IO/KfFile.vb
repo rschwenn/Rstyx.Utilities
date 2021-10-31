@@ -220,6 +220,7 @@ Namespace Domain.IO
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
+                Dim PointCount As Integer = 0
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, Me.FilePath))
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
@@ -227,7 +228,6 @@ Namespace Domain.IO
                     
                     Me.Reset(Nothing)
                     
-                    Dim PointCount As Integer = 0
                     Dim UniqueID   As Boolean = True  ' General Constraint for KF: Ensure unique ID.
                     
                     Using oBW As New BinaryWriter(File.Open(Me.FilePath, FileMode.Create, FileAccess.Write), FileEncoding)
@@ -264,8 +264,6 @@ Namespace Domain.IO
                         Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, Me.FilePath))
-                    
                 Catch ex As ParseException
                     Throw
                 Catch ex as System.Exception
@@ -273,6 +271,8 @@ Namespace Domain.IO
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                    
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, Me.FilePath))
                 End Try
             End Sub
             
