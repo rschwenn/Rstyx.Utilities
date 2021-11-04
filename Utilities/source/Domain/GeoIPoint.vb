@@ -196,7 +196,7 @@ Namespace Domain
                     For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
                         AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
                     Next
-                    FreeDataText &= AttString
+                    FreeDataText &= If((AttString.Length > 0), AttString.Substring(1), AttString)
                 End If
                 
                 ' Comment.
