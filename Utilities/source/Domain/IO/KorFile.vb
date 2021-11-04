@@ -167,7 +167,7 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Dim PointFmt    As String = "%+20s %14.4f %14.4f %14.4f     %-30s %-s"
+                    Dim PointFmt    As String = "%+20s %14.4f %14.4f %14.4f     %-29s %-s"
                     Dim UniqueID    As Boolean = (TypeOf PointList Is GeoPointList)
                     Dim Header      As Collection(Of String) = Nothing
                     
@@ -207,7 +207,7 @@ Namespace Domain.IO
                                                       If(Double.IsNaN(p.X), 0, p.X),
                                                       If(Double.IsNaN(p.Z), 0, p.Z),
                                                       p.CreateInfoTextOutput(Me.OutputOptions),
-                                                      If(p.Comment.IsEmptyOrWhiteSpace(), String.Empty, " # " & p.Comment)
+                                                      If(p.Comment.IsEmptyOrWhiteSpace(), String.Empty, "# " & p.Comment)
                                                      ))
                                 PointCount += 1
                                 
