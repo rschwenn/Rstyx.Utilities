@@ -260,8 +260,12 @@ Namespace Domain
         ''' <summary> Height difference between gradient design (vertical curve set) and running surface of rail (at special geometry) in [m]. </summary>
         Property Heb()          As Double     'Hebewert in der Schere [m]
         
+        
         ''' <summary> The distance between rails for determining cant (used for calculations). </summary>
         Property CantBase()     As Double
+        
+        ''' <summary> A point specific speed (used for calculations). </summary>
+        Property Speed()        As Double
         
         
         ''' <summary> Footpoint on alignment: The easting coordinate. </summary>

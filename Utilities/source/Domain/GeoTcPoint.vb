@@ -189,9 +189,13 @@ Namespace Domain
             ''' <inheritdoc/>
             Public Property Heb()           As Double = Double.NaN Implements IPointAtTrackGeometry.Heb
             
+            
             ''' <inheritdoc/>
             ''' <remarks> This value defaults to 1.500. </remarks>
             Public Property CantBase()      As Double = 1.500 Implements IPointAtTrackGeometry.CantBase
+            
+            ''' <inheritdoc/>
+            Public Property Speed()         As Double = Double.NaN Implements IPointAtTrackGeometry.Speed
             
             
             ''' <inheritdoc/>

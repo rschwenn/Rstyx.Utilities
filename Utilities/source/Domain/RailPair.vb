@@ -383,8 +383,8 @@ Namespace Domain
             End Sub
             
             ''' <summary> Re-configures this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
-             ''' <param name="PointGeometry"> The point which provides cant, cant base and radius. </param>
-             ''' <remarks></remarks>
+             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally speed. </param>
+             ''' <remarks> If <paramref name="PointGeometry"/> has a speed, this value overrides <see cref="Speed"/> </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry"/><c>.Ueb</c>) is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry"/><c>.CantBase</c>) is <c>Double.NaN</c>. </exception>
@@ -398,6 +398,10 @@ Namespace Domain
                 Me.Radius         = PointGeometry.Ra
                 Me.VerticalRadius = PointGeometry.RaLGS
                 Me.Fixing         = If(PointGeometry.Kind = GeoPointKind.Platform, RailFixing.Fixed, RailFixing.None)
+                
+                If (Not Double.IsNaN(PointGeometry.Speed)) Then
+                    Me.Speed = PointGeometry.Speed
+                End If
                 
                 If (Not PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
                     If (Double.IsNaN(Me.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
