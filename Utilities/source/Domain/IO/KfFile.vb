@@ -342,7 +342,7 @@ Namespace Domain.IO
                 oBW.Write(GetByteArray(FileEncoding, p.HeightInfo, 13, " "c))
                 oBW.Write(CByte(Asc(p.HeightPostInfo)))
                 
-                oBW.Write(GetByteArray(FileEncoding, p.KindText, 4, " "c))
+                oBW.Write(GetByteArray(FileEncoding, P.GetKindTextSmart(), 4, " "c))
                 oBW.Write(MarkType)
                 oBW.Write(mp)
                 oBW.Write(mh)
