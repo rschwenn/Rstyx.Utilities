@@ -543,8 +543,8 @@ Namespace Domain
                 
                 If (Not (Double.IsNaN(_Cant) OrElse Double.IsNaN(_Radius) OrElse Double.IsNaN(_Speed) )) Then
                     
-                    If (Double.IsInfinity(_Radius)) Then
-                        If (_Cant.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then uf = 0.0
+                    If (Double.IsInfinity(_Radius) AndAlso _Cant.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
+                        uf = 0.0
                     Else
                         uf = (11.8 * _Speed * _Speed / AbsRadius / 1000)  -  (Sign(_Radius) * _Cant)   ' In [m].
                     End If
