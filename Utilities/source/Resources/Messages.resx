@@ -1156,7 +1156,7 @@
     <value>Freie Daten</value>
   </data>
   <data name="GeoPointList_TableHeader" xml:space="preserve">
-    <value>            Punkt-ID      RechtsWert       HochWert      Höhe   Ueb  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe    </value>
+    <value>            Punkt-ID      Rechtswert       Hochwert      Höhe   ueb   UEB  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe    </value>
   </data>
   <data name="GeoPointFile_EditOptions_3" xml:space="preserve">
     <value>            - Punktart aus Info:                          %s\n</value>

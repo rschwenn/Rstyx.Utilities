@@ -1595,7 +1595,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die             Punkt-ID      RechtsWert       HochWert      Höhe   Ueb  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe     ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die             Punkt-ID      Rechtswert       Hochwert      Höhe   ueb   UEB  Punktart   PArt VArt Att  KooSys HöhSys  Info_Lage                 Info_Höhe     ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointList_TableHeader() As String
             Get

@@ -317,7 +317,7 @@ Namespace Domain
             Public Overrides Function ToString() As String
                 Return StringUtils.sprintf("%+20s %11.3f (%2d) %10.3f %8.3f %8.3f   %8.3f %8.3f %8.3f %11.3f  %4.0f   %4.0f %8.3f %7.0f %9.3f  %-16s %-10s %12.3f %12.3f%9.3f",
                                            Me.ID, Me.Km.Value, Me.Km.Status, Me.St.Value, Me.Q, Me.HSOK, Me.QG, Me.HG, Me.RG, Me.Ra, Me.Ueb * 1000, 
-                                           Me.ActualCant * 1000, Me.ZSOK, Me.RaLGS, Me.ZDGM, Me.Info, Me.Kind.ToDisplayString(), Me.Y, Me.X, Me.Z)
+                                           Me.ActualCant * 1000, Me.ActualCantAbs * 1000, Me.ZSOK, Me.RaLGS, Me.ZDGM, Me.Info, Me.Kind.ToDisplayString(), Me.Y, Me.X, Me.Z)
             End Function
             
         #End Region

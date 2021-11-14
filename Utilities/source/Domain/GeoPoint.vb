@@ -40,7 +40,7 @@ Namespace Domain
         ''' <summary> No editing is applied. </summary>
         None = 0
         
-        ''' <summary> The point's <see cref="GeoPoint.Info"/> should be parsed for <see cref="GeoPoint.ActualCant"/> and  <see cref="GeoPoint.ActualCantAbs"/>. </summary>
+        ''' <summary> The point's <see cref="GeoPoint.Info"/> should be parsed for <see cref="GeoPoint.ActualCant"/> and <see cref="GeoPoint.ActualCantAbs"/>. </summary>
          ''' <remarks>
          ''' If <see cref="GeoPoint.Kind"/> is <c>None</c> or <c>Rails</c>, then <see cref="GeoPoint.ParseInfoForActualCant"/> 
          ''' should be invoked to extract a cant value. 
@@ -73,7 +73,7 @@ Namespace Domain
         ''' <summary> No special output is applied. </summary>
         None = 0
         
-        ''' <summary> The point's <see cref="GeoPoint.ActualCant"/> should be added to <see cref="GeoPoint.Info"/> for output. </summary>
+        ''' <summary> The point's <see cref="GeoPoint.ActualCant"/> and <see cref="GeoPoint.ActualCantAbs"/> should be added to <see cref="GeoPoint.Info"/> for output. </summary>
         CreateInfoWithActualCant = 1
         
         ''' <summary> The point's <see cref="GeoPoint.Kind"/> should be added to <see cref="GeoPoint.Info"/> for output. </summary>
