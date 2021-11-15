@@ -294,15 +294,13 @@ Namespace Domain.IO
             ''' <summary> Reads the point file and provides the points as (not lazy established) enumerable. </summary>
              ''' <returns> All read points of all <see cref="TcFileReader.Blocks"/> as flat list. See <b>remarks</b> for details. </returns>
              ''' <remarks>
-             ''' This enumeration will be empty until <see cref="TcFileReader.Load"/> has been invoked successfully.
-             ''' <para>
              ''' This method is for convenience only - see <see cref="TcFileReader.Load"/>.
-             ''' </para>
              ''' </remarks>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
+                    Me.Load()
                     For Each Block As TcBlock In Me.Blocks
                         For Each p As GeoTcPoint In Block.Points
                             Yield p
