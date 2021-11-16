@@ -116,12 +116,14 @@ Namespace IO
                            FilePath    As String
                           )
                 If (Message.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Message")
-                If (FilePath IsNot Nothing) Then
+                If (LineNo < 1)              Then Throw New System.ArgumentException("LineNo")
+                If (StartColumn < 0)         Then Throw New System.ArgumentException("StartColumn")
+                If (EndColumn < 0)           Then Throw New System.ArgumentException("EndColumn")
+                If (EndColumn < StartColumn) Then Throw New System.ArgumentException("EndColumn")
+                
+                ' There are situations where LineNo=0 is valid, but this isn't a real source.
+                If (LineNo > 0) Then
                     Me.HasSource = True
-                    If (LineNo < 1)              Then Throw New System.ArgumentException("LineNo")
-                    If (StartColumn < 0)         Then Throw New System.ArgumentException("StartColumn")
-                    If (EndColumn < 0)           Then Throw New System.ArgumentException("EndColumn")
-                    If (EndColumn < StartColumn) Then Throw New System.ArgumentException("EndColumn")
                 Else
                     Me.HasSource = False
                 End If
