@@ -139,6 +139,7 @@ Namespace Domain
             Protected Shared ReadOnly InfoKindPatterns  As Dictionary(Of String, GeoPointKind)
             Protected Shared ReadOnly MarkType2Kind     As Dictionary(Of String, GeoPointKind)
             Protected Shared ReadOnly KindText2Kind     As Dictionary(Of String, GeoPointKind)
+            
             Protected ReadOnly DefaultKindText          As Dictionary(Of GeoPointKind, String)
             
         #End Region
@@ -862,7 +863,7 @@ Namespace Domain
                                 ' Set actual cant and remove cant pattern from SearchText.
                                 If (oMatch.Groups.Count > 2) Then
                                     
-                                    Select Case oMatch.Groups(1).Value
+                                    Select Case oMatch.Groups(1).Value.ToLower()
                                         Case "ueb":  Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
                                         Case "u":    Me.ActualCant    =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
                                     End Select

@@ -1224,7 +1224,7 @@
     <comment>Flag GeoPointEditOptions.Parse_iTC set?: Boolean</comment>
   </data>
   <data name="GeoPointFile_EditOptions_4" xml:space="preserve">
-    <value>            - Auch Komentar durchsuchen:                  %s\n</value>
+    <value>            - Auch Kommentar durchsuchen:                  %s\n</value>
     <comment>Flag GeoPointEditOptions.ParseCommentToo set?: Boolean</comment>
   </data>
   <data name="GeoPointFile_OutputOptions_1" xml:space="preserve">

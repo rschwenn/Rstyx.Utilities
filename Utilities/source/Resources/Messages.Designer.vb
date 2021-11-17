@@ -1505,7 +1505,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die             - Auch Komentar durchsuchen:                  %s\n ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Auch Kommentar durchsuchen:                  %s\n ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointFile_EditOptions_4() As String
             Get
@@ -2477,7 +2477,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd              PunktNr   Km    (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist  SO-Höhe      ra  DGM-Höhe  Info             Punktart    Rechtswert     Hochwert    Hoehe ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die  lfd              PunktNr   Km    (Status)    Station     Quer     HSOK        QG       HG       RG       Radius Usoll  U_ist UA_ist  SO-Höhe      ra  DGM-Höhe  Info             Punktart    Rechtswert     Hochwert    Hoehe ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcBlock_TableHeader() As String
             Get
