@@ -309,7 +309,7 @@ Namespace Domain.IO
                                                       p.GraficsCode.TrimToMaxLength(2),
                                                       p.GraficsDim,
                                                       p.GraficsEcc,
-                                                      p.ID.TrimToMaxLength(20),
+                                                      p.ID,
                                                       p.CoordType.TrimToMaxLength(3),
                                                       sprintf(CoordFmt, p.Y),
                                                       sprintf(CoordFmt, p.X),

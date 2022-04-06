@@ -191,8 +191,9 @@ Namespace Domain.IO
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
                                 
-                                ' Get access to point methods (which are not interface members) and GeoIPoint.MarkTypeAB.
-                                Dim p As New GeoIPoint(SourcePoint)
+                                ' Convert point: This verifies the ID (as ipkt: max length = 20) and provides
+                                ' access to GeoPoint methods which are not interface members and GeoIPoint.MarkTypeAB.
+                                Dim p As GeoIPoint = SourcePoint.AsGeoIPoint()
                                 
                                 ' Verify, that ID doesn't contain whitespace.
                                 Me.VerifyID(p.ID)
@@ -202,7 +203,7 @@ Namespace Domain.IO
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
-                                                      p.ID.Replace(" "c, "_"c),
+                                                      p.ID,
                                                       If(Double.IsNaN(p.Y), 0, p.Y),
                                                       If(Double.IsNaN(p.X), 0, p.X),
                                                       If(Double.IsNaN(p.Z), 0, p.Z),

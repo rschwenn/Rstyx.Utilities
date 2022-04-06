@@ -501,7 +501,7 @@
     <comment>Block Type: String</comment>
   </data>
   <data name="TcFileReader_IDdoubled" xml:space="preserve">
-    <value>Punkt-ID (%s) existiert bereits in diesem Block.</value>
+    <value>Punkt-ID '%s' existiert bereits in diesem Block.</value>
     <comment>Point ID: String</comment>
   </data>
   <data name="TcFileReader_IDMismatch" xml:space="preserve">
@@ -1057,7 +1057,7 @@
     <comment>Point Count: Integer; File Name: String</comment>
   </data>
   <data name="GeoPointList_ChangeIDInvalidID" xml:space="preserve">
-    <value>Änderung der Punkt-ID (%s) fehlgeschlagen: Neue %s</value>
+    <value>Änderung der Punkt-ID '%s' fehlgeschlagen: Neue %s</value>
     <comment>Source Point ID: String; Base Error Message: String</comment>
   </data>
   <data name="DataFile_MissingEncoding" xml:space="preserve">
@@ -1240,7 +1240,7 @@
     <comment>Yes|No: String</comment>
   </data>
   <data name="KorFile_InvalidID" xml:space="preserve">
-    <value>Punkt-ID (%s) enthält Leerzeichen.</value>
+    <value>Punkt-ID '%s' enthält Leerzeichen.</value>
     <comment>Point ID: String</comment>
   </data>
   <data name="GeoPoint_MarkKindListHeader" xml:space="preserve">

@@ -1541,7 +1541,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Änderung der Punkt-ID (%s) fehlgeschlagen: Neue %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Änderung der Punkt-ID &apos;%s&apos; fehlgeschlagen: Neue %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointList_ChangeIDInvalidID() As String
             Get
@@ -2018,7 +2018,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) enthält Leerzeichen. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID &apos;%s&apos; enthält Leerzeichen. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property KorFile_InvalidID() As String
             Get
@@ -2603,7 +2603,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID (%s) existiert bereits in diesem Block. ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt-ID &apos;%s&apos; existiert bereits in diesem Block. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TcFileReader_IDdoubled() As String
             Get
