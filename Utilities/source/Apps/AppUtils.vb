@@ -127,20 +127,29 @@ Namespace Apps
              ''' Returns an empty String if the application file hasn't been found.
              ''' </para>
              ''' <para>
-             ''' UEdit32.exe is searched for in the following places:
+             ''' UEdit*.exe and UltaEdit*.exe are searched for in the following places:
              ''' </para>
              ''' <list type="number">
              '''     <item>
-             '''         <description> in HKEY_CLASSES_ROOT\Applications\UEdit32.exe\shell\edit\command\ (version 6..10) </description>
+             '''         <description> %PROGRAMFILES%\IDM Computer Solutions\UltraEdit\ </description>
              '''     </item>
              '''     <item>
-             '''         <description> in HKEY_CLASSES_ROOT\UltraEdit-32 Document\shell\open\command\ (version 6..10) </description>
+             '''         <description> %PROGRAMFILES(X86)%\IDM Computer Solutions\UltraEdit\ </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> %PROGRAMW6432%\IDM Computer Solutions\UltraEdit\ </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> in %PATH% without subdirectories </description>
              '''     </item>
              '''     <item>
              '''         <description> in HKEY_CLASSES_ROOT\UltraEdit.txt\shell\open\command\ (version 11) </description>
              '''     </item>
              '''     <item>
-             '''         <description> in %PATH% without subdirectories </description>
+             '''         <description> in HKEY_CLASSES_ROOT\Applications\UEdit32.exe\shell\edit\command\ (version 6..10) </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> in HKEY_CLASSES_ROOT\UltraEdit-32 Document\shell\open\command\ (version 6..10) </description>
              '''     </item>
              ''' </list>
              ''' </remarks>
@@ -460,8 +469,9 @@ Namespace Apps
             ''' <summary> Searches for the Crimson Editor application file in some places. </summary>
              ''' <returns> The found application file path or String.Empty. </returns>
             Private Shared  Function GetAppPathCrimsonEditor() As String
+                
+                Dim CEditExe      As String = String.Empty
                 Dim Key_CEditExe  As String
-                Dim CEditExe      As String
                 Dim CEditDir      As String
                 Dim fi            As FileInfo
                 Dim Success       As Boolean = false
@@ -583,6 +593,7 @@ Namespace Apps
             ''' <summary> Searches for the Java application file in some places and gets it's environment. </summary>
              ''' <remarks> Determines the Java application file path and %JAVA_HOME%. </remarks>
             Private Shared Sub GetJavaEnvironment()
+                
                 Dim JavaExe       As String = String.Empty
                 Dim fi            As FileInfo
                 Const AppNames    As String = "Javaw.exe"
@@ -639,6 +650,7 @@ Namespace Apps
             ''' <summary> Searches for the jEdit application file in some places and gets it's environment. </summary>
              ''' <remarks> Determines jedit.jar path, %JEDIT_HOME% and %JEDIT_SETTINGS%. </remarks>
             Private Shared Sub GetJEditEnvironment()
+                
                 Dim jEditJar      As String = String.Empty
                 Dim jEditHome     As String = String.Empty
                 Dim fi            As FileInfo
