@@ -38,6 +38,7 @@ Namespace IO
              ''' <returns>                     The full path of the found file, or <see langword="null"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
             Public Shared Function findFile(FileFilters    As String,
                                             Folders        As String,
                                             ByVal DelimiterRegEx As String,
@@ -68,6 +69,7 @@ Namespace IO
              ''' <returns>                     The resulting list with found files. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
             Public Shared Function findFiles(FileFilters    As String,
                                              Folders        As String,
                                              ByVal DelimiterRegEx As String,
@@ -91,6 +93,7 @@ Namespace IO
              ''' <returns>                    The resulting list with found files. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
             Public Shared Function findFiles(FileFilters    As IEnumerable(Of String), 
                                              Folders        As IEnumerable(Of DirectoryInfo), 
                                              SearchOptions  As System.IO.SearchOption,
@@ -117,6 +120,7 @@ Namespace IO
              ''' <returns>                    The resulting list with found files. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
             Public Shared Function findFiles(FileFilters    As IEnumerable(Of String), 
                                              Folders        As IEnumerable(Of String), 
                                              SearchOptions  As System.IO.SearchOption,
@@ -163,7 +167,6 @@ Namespace IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="Folders"/> doesn't contain any existent Folder. </exception>
             Private Shared Sub findAddFiles(ByRef FoundFiles As FileInfoCollection,
                                             FileFilters      As IEnumerable(Of String),
                                             Folders          As IEnumerable(Of String),
@@ -211,7 +214,9 @@ Namespace IO
                         ConsolidatedFolders.Add(FolderName)
                     End If
                 Next
-                If (ConsolidatedFolders.Count < 1) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.FileUtils_NoExistentFolderName, "Folders")
+                If (ConsolidatedFolders.Count < 1) Then
+                    Logger.logDebug(Rstyx.Utilities.Resources.Messages.FileUtils_NoExistentFolderName)
+                End If
                 
                 ' Search each folder of given folder list.
                 For Each FolderName As String in ConsolidatedFolders
