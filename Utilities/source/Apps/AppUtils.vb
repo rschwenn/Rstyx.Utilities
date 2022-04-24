@@ -177,6 +177,9 @@ Namespace Apps
              '''         <description> in %JAVA_HOME%\bin </description>
              '''     </item>
              '''     <item>
+             '''         <description> in %JEDIT_HOME% and subdirectories (Java bundled with jEdit) </description>
+             '''     </item>
+             '''     <item>
              '''         <description> in %PATH% </description>
              '''     </item>
              '''     <item>
@@ -610,6 +613,13 @@ Namespace Apps
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End If
                 
+                ' Search Java under %JEDIT_HOME%
+                If (JavaExe.IsEmptyOrWhiteSpace() AndAlso JEDIT_HOME.IsNotEmptyOrWhiteSpace()) Then
+                    Logger.logDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %JEDIT_HOME%.")
+                    fi = IO.FileUtils.findFile(AppNames, JEDIT_HOME, ";", SearchOption.AllDirectories)
+                    If (fi IsNot Nothing) Then JavaExe = fi.FullName
+                End if
+                
                 ' Search dafault Java in %PATH%
                 If (JavaExe.IsEmptyOrWhiteSpace()) Then
                     Logger.logDebug("getJavaEnvironment(): Programmdatei der Java-Standardinstallation im Dateisystem suchen im %PATH%.")
@@ -655,7 +665,7 @@ Namespace Apps
                 Dim jEditHome     As String = String.Empty
                 Dim fi            As FileInfo
                 Const JarName     As String = "jEdit.jar"
-                dim Success       As Boolean = false
+                Dim Success       As Boolean = False
                 Logger.logDebug("getJEditEnvironment(): Pfad\Dateiname von " & JarName & " ermitteln.")
                 
                 ' Search in %JEDIT_HOME%
@@ -666,60 +676,60 @@ Namespace Apps
                 Else
                     _JEDIT_HOME = _JEDIT_HOME.ReplaceWith("\\+$", "")
                     jEditJar = _JEDIT_HOME & "\" & JarName
-                    if (File.Exists(jEditJar)) Then
-                      Success = true
+                    If (File.Exists(jEditJar)) Then
+                      Success = True
                       Logger.logDebug("getJEditEnvironment(): jEdit.jar gefunden im Verzeichnis der Umgebungsvariable %JEDIT_HOME%='" & _JEDIT_HOME & "'")
-                    else
+                    Else
                       Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %JEDIT_HOME%='" & _JEDIT_HOME & "'")
-                    end if
+                    End If
                 End if
                 
                 ' Search in %PROGRAMFILES%
-                If (not Success) Then
+                If (Not Success) Then
                     jEditHome = Environment.GetEnvironmentVariable("PROGRAMFILES") & "\jEdit"
                     jEditJar = jEditHome & "\" & JarName
-                    if (File.Exists(jEditJar)) Then
-                        Success = true
-                    else
+                    If (File.Exists(jEditJar)) Then
+                        Success = True
+                    Else
                         Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES%='" & jEditHome & "'")
-                    end if
+                    End If
                 End if
                 
                 ' Search in %PROGRAMFILES(X86)%
-                If (not Success) Then
+                If (Not Success) Then
                     jEditHome = Environment.GetEnvironmentVariable("PROGRAMFILES(X86)") & "\jEdit"
                     jEditJar = jEditHome & "\" & JarName
-                    if (File.Exists(jEditJar)) Then
-                        Success = true
-                    else
+                    If (File.Exists(jEditJar)) Then
+                        Success = True
+                    Else
                         Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES(X86)%='" & jEditHome & "'")
-                    end if
+                    End If
                 End if
                 
                 ' Search in %PROGRAMW6432%
-                If (not Success) Then
+                If (Not Success) Then
                     jEditHome = Environment.GetEnvironmentVariable("PROGRAMW6432") & "\jEdit"
                     jEditJar = jEditHome & "\" & JarName
-                    if (File.Exists(jEditJar)) Then
-                        Success = true
-                    else
+                    If (File.Exists(jEditJar)) Then
+                        Success = True
+                    Else
                         Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMW6432%='" & jEditHome & "'")
-                    end if
+                    End If
                 End if
                 
                 ' Search in Application Setting "AppUtils_jEdit_FallbackPath"
-                If (not Success) Then
+                If (Not Success) Then
                     jEditHome = My.Settings.AppUtils_jEdit_FallbackPath
                     jEditJar = jEditHome & "\" & JarName
-                    if (File.Exists(jEditJar)) Then
-                        Success = true
-                    else
+                    If (File.Exists(jEditJar)) Then
+                        Success = True
+                    Else
                         Logger.logDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im (hart kodierten) Verzeichnis '" & jEditHome & "'")
-                    end if
+                    End If
                 End if
                 
                 ' Search in %PATH%
-                If (not Success) Then
+                If (Not Success) Then
                     Logger.logDebug("getJEditEnvironment(): jEdit.jar im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.findFile(JarName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then jEditJar = fi.FullName
@@ -736,7 +746,7 @@ Namespace Apps
                 Logger.logDebug("getJEditEnvironment(): Umgebungsvariable %JEDIT_SETTINGS%='" & _JEDIT_SETTINGS & "'")
                 
                 ' Result
-                If (not Success) Then
+                If (Not Success) Then
                     _AppPathJEdit = String.Empty
                     _JEDIT_HOME   = String.Empty
                     Logger.logDebug("getJEditEnvironment(): Programmdatei von jEdit nicht gefunden.")
