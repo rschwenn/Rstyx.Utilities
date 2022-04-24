@@ -35,7 +35,7 @@ Namespace IO
              ''' <param name="Folders">        Folders that should be searched. Absolute or relative (but not "..\" or ".\"), delimited by a given delimiter. Embedded Environment variables (quoted by "%") are expanded. </param>
              ''' <param name="DelimiterRegEx"> The Delimiter for both the FileFilter and Folder lists (Regular Expression). Defaults to ";" (if it's <see langword="null"/>). </param>
              ''' <param name="SearchOptions">  Available System.IO.SearchOptions (mainly recursive or not). </param>
-             ''' <returns>                     The full path of the found file, or <see langword="null"/>. </returns>
+             ''' <returns>                     The <see cref="System.IO.FileInfo"/>  of the found file, or <see langword="null"/>. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="FileFilters"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Folders"/> is <see langword="null"/> or empty or white space. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="FileFilters"/> doesn't contain any valid file filter. </exception>

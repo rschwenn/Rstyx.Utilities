@@ -529,18 +529,28 @@ Namespace Apps
             ''' <summary> Searches for the UltraEdit application file in some places. </summary>
              ''' <returns> The found application file path or String.Empty. </returns>
             Private Shared Function GetAppPathUltraEdit() As String
+                
+                Dim UEditExe      As String = String.Empty
                 Dim Key_UEditExe  As String
-                Dim UEditExe      As String
                 Dim fi            As FileInfo
                 Const AppNames    As String = "UEdit*.exe;UltaEdit*.exe"
                 Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit ermitteln.")
+    
+                ' Check default paths of UltraEdit.
+                Dim DefaultFolder     As String = "\IDM Computer Solutions\UltraEdit"
+                Dim DefaultFolders(2) As String
+                DefaultFolders(0) = "%PROGRAMFILES%" & DefaultFolder
+                DefaultFolders(1) = "%PROGRAMFILES(X86)%" & DefaultFolder
+                DefaultFolders(2) = "%PROGRAMW6432%" & DefaultFolder
+                Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen in Standardpfaden.")
+                fi = IO.FileUtils.findFile(AppNames, DefaultFolders.Join(";"c), ";", SearchOption.TopDirectoryOnly)
+                If (fi IsNot Nothing) Then UEditExe = fi.FullName
                 
-                ' Version 6 ... 10:
-                Key_UEditExe = "HKEY_CLASSES_ROOT\Applications\UEdit32.exe\shell\edit\command\"
-                UEditExe = RegUtils.getApplicationPath(Key_UEditExe)
+                ' Search in %PATH%
                 If (UEditExe.IsEmptyOrWhiteSpace()) Then
-                    Key_UEditExe = "HKEY_CLASSES_ROOT\UltraEdit-32 Document\shell\open\command\"
-                    UEditExe = RegUtils.getApplicationPath(Key_UEditExe)
+                    Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
+                    fi = IO.FileUtils.findFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
+                    If (fi IsNot Nothing) Then UEditExe = fi.FullName
                 End if
                 
                 ' Version 11
@@ -550,11 +560,14 @@ Namespace Apps
                     UEditExe = RegUtils.getApplicationPath(Key_UEditExe)
                 End if
                 
-                ' Search in %PATH%
+                ' Version 6 ... 10:
                 If (UEditExe.IsEmptyOrWhiteSpace()) Then
-                    Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
-                    fi = IO.FileUtils.findFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
-                    If (fi IsNot Nothing) Then UEditExe = fi.FullName
+                    Key_UEditExe = "HKEY_CLASSES_ROOT\Applications\UEdit32.exe\shell\edit\command\"
+                    UEditExe = RegUtils.getApplicationPath(Key_UEditExe)
+                    If (UEditExe.IsEmptyOrWhiteSpace()) Then
+                        Key_UEditExe = "HKEY_CLASSES_ROOT\UltraEdit-32 Document\shell\open\command\"
+                        UEditExe = RegUtils.getApplicationPath(Key_UEditExe)
+                    End if
                 End if
                 
                 ' Result
