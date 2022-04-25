@@ -620,16 +620,16 @@ Namespace Apps
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End if
                 
+                ' Default app for .jar files
+                If (JavaExe.IsEmptyOrWhiteSpace()) Then
+                    JavaExe = RegUtils.getApplicationPath(Key_JavaExe)
+                End if
+                
                 ' Search dafault Java in %PATH%
                 If (JavaExe.IsEmptyOrWhiteSpace()) Then
                     Logger.logDebug("getJavaEnvironment(): Programmdatei der Java-Standardinstallation im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.findFile(AppNames, Environment.GetEnvironmentVariable("PATH"), ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
-                End if
-                
-                ' Default app for .jar files
-                If (JavaExe.IsEmptyOrWhiteSpace()) Then
-                    JavaExe = RegUtils.getApplicationPath(Key_JavaExe)
                 End if
                 
                 '' Search in %PROGRAMFILES%
