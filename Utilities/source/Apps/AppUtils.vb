@@ -140,9 +140,6 @@ Namespace Apps
              '''         <description> %PROGRAMW6432%\IDM Computer Solutions\UltraEdit\ </description>
              '''     </item>
              '''     <item>
-             '''         <description> in %PATH% without subdirectories </description>
-             '''     </item>
-             '''     <item>
              '''         <description> in HKEY_CLASSES_ROOT\UltraEdit.txt\shell\open\command\ (version 11) </description>
              '''     </item>
              '''     <item>
@@ -150,6 +147,9 @@ Namespace Apps
              '''     </item>
              '''     <item>
              '''         <description> in HKEY_CLASSES_ROOT\UltraEdit-32 Document\shell\open\command\ (version 6..10) </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> in %PATH% without subdirectories </description>
              '''     </item>
              ''' </list>
              ''' </remarks>
@@ -559,13 +559,6 @@ Namespace Apps
                 fi = IO.FileUtils.findFile(AppNames, DefaultFolders.Join(";"c), ";", SearchOption.TopDirectoryOnly)
                 If (fi IsNot Nothing) Then UEditExe = fi.FullName
                 
-                ' Search in %PATH%
-                If (UEditExe.IsEmptyOrWhiteSpace()) Then
-                    Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
-                    fi = IO.FileUtils.findFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
-                    If (fi IsNot Nothing) Then UEditExe = fi.FullName
-                End if
-                
                 ' Version 11
                 If (UEditExe.IsEmptyOrWhiteSpace()) Then
                     ' This only works if UltraEdit has made a file association for ".txt"!!!
@@ -581,6 +574,13 @@ Namespace Apps
                         Key_UEditExe = "HKEY_CLASSES_ROOT\UltraEdit-32 Document\shell\open\command\"
                         UEditExe = RegUtils.getApplicationPath(Key_UEditExe)
                     End if
+                End if
+                
+                ' Search in %PATH%
+                If (UEditExe.IsEmptyOrWhiteSpace()) Then
+                    Logger.logDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
+                    fi = IO.FileUtils.findFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
+                    If (fi IsNot Nothing) Then UEditExe = fi.FullName
                 End if
                 
                 ' Result
