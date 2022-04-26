@@ -177,13 +177,13 @@ Namespace Apps
              '''         <description> in %JAVA_HOME%\bin </description>
              '''     </item>
              '''     <item>
-             '''         <description> in %JEDIT_HOME% and subdirectories (Java bundled with jEdit) </description>
-             '''     </item>
-             '''     <item>
-             '''         <description> in %PATH% </description>
+             '''         <description> in %JEDIT_HOME%\jre\bin (Java bundled with jEdit) </description>
              '''     </item>
              '''     <item>
              '''         <description> in HKEY_CLASSES_ROOT\jarfile\shell\open\command\ </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> in %PATH% </description>
              '''     </item>
              ''' </list>
              ''' </remarks>
@@ -613,14 +613,15 @@ Namespace Apps
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End If
                 
-                ' Search Java under %JEDIT_HOME%
+                ' Search Java in %JEDIT_HOME%\jre
                 If (JavaExe.IsEmptyOrWhiteSpace() AndAlso JEDIT_HOME.IsNotEmptyOrWhiteSpace()) Then
-                    Logger.logDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %JEDIT_HOME%.")
-                    fi = IO.FileUtils.findFile(AppNames, JEDIT_HOME, ";", SearchOption.AllDirectories)
+                    Logger.logDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %JEDIT_HOME%\jre")
+                    _JAVA_HOME = JEDIT_HOME & "\jre"
+                    fi = IO.FileUtils.findFile(AppNames, _JAVA_HOME & "\bin", ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End if
                 
-                ' Default app for .jar files
+                ' Default app for .jar files from registry
                 If (JavaExe.IsEmptyOrWhiteSpace()) Then
                     JavaExe = RegUtils.getApplicationPath(Key_JavaExe)
                 End if
