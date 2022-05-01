@@ -337,8 +337,8 @@ Namespace IO
                             Msg        = oErr.Message.splitLines()
                             
                             ' Create new error with main message.
-                            SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s"");",
-                                         Level, SourcePath, oErr.LineNo - 1, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)))
+                            SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s  [Zeile %d]"");",
+                                         Level, SourcePath, oErr.LineNo - 1, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)), oErr.LineNo)
                             oBsh.WriteLine(SourceText)
                             
                             ' Extra message lines.
