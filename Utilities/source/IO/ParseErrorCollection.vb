@@ -269,8 +269,15 @@ Namespace IO
                 Return Builder.ToString()
             End Function
             
-            ''' <summary> Shows all errors and warnings in jEdit's error list (if possible). </summary>
-             ''' <remarks> If this method fails, an error is logged but no exception is thrown. </remarks>
+            ''' <summary> Shows errors and warnings in jEdit's error list (if possible). </summary>
+             ''' <remarks> 
+             ''' <para>
+             ''' The number of items in jEdit's error list will be limited to 100..150 in order to keep jEdit operable.
+             ''' </para>
+             ''' <para>
+             ''' If this method fails, an error is logged but no exception is thrown.
+             ''' </para>
+             ''' </remarks>
             Public Sub ShowInJEdit()
                 
                 If (Me.HasItemsWithSource) Then
@@ -291,7 +298,7 @@ Namespace IO
         
         #Region "Private Members"
             
-            ''' <summary> Creates a beanshell script for jEdit that shows all errors and warnings in jEdit's error list. </summary>
+            ''' <summary> Creates a beanshell script for jEdit that shows max. 100..150 errors and warnings in jEdit's error list. </summary>
              ''' <returns> Full path to the created beanshell script. </returns>
             Private Function ToJeditBeanshell() As String
                 
@@ -301,6 +308,11 @@ Namespace IO
                 Dim SourcePath  As String
                 Dim SourceText  As String
                 Dim ScriptPath  As String = System.IO.Path.GetTempFileName()
+
+                Dim LimitMax    As Integer = 150
+                Dim LimitNorm   As Integer = 100
+                Dim LimitItems  As Boolean = (Me.Count > LimitMax)
+                Dim ItemCount   As Integer = If(LimitItems, LimitNorm, Me.Count)
                 
                 Using oBsh As New System.IO.StreamWriter(ScriptPath, append:=False, encoding:=System.Text.Encoding.Default)
                     
@@ -326,7 +338,7 @@ Namespace IO
                     oBsh.WriteLine("    // *********************************************************************************************")
                     
                     ' Body (variable).
-                    For i As Integer = 0 To Me.Count - 1
+                    For i As Integer = 0 To ItemCount - 1
                         
                         oErr = Me.Item(i)
                         
@@ -356,6 +368,11 @@ Namespace IO
                             oBsh.WriteLine("    errsrc.addError(err);" & Environment.NewLine)
                         End If
                     Next
+
+                    ' Message if item count has been limited.
+                    If (LimitItems) Then
+                        oBsh.WriteLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.ParseErrorCollection_LimitItemsInJEdit, LimitNorm, Me.Count - LimitNorm))
+                    End If
                     
                     ' Footer.
                     oBsh.WriteLine("    //*********************************************************************************************")

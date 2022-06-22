@@ -1253,4 +1253,8 @@
   <data name="AppUtils_ErrorInitializingEditor" xml:space="preserve">
     <value>Fehler beim Initialisieren des aktiven Editors.</value>
   </data>
+  <data name="ParseErrorCollection_LimitItemsInJEdit" xml:space="preserve">
+    <value>    Macros.message(view, "\\nDie Fehlerliste zeigt %d Zeilen.\\n\\nWeitere %d Zeilen werden nicht angezeigt, damit jEdit bedienbar bleibt.\\n\\n");</value>
+    <comment>Limited Items Count: Integer; Suppessed Items Count: Integer</comment>
+  </data>
 </root>
