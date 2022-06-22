@@ -22,7 +22,7 @@ Namespace Resources
     '''<summary>
     '''  Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
     Public Class Messages
@@ -70,6 +70,15 @@ Namespace Resources
         Public Shared ReadOnly Property AppUtils_EditorNotAvailable() As String
             Get
                 Return ResourceManager.GetString("AppUtils_EditorNotAvailable", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Fehler beim Initialisieren des aktiven Editors. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property AppUtils_ErrorInitializingEditor() As String
+            Get
+                Return ResourceManager.GetString("AppUtils_ErrorInitializingEditor", resourceCulture)
             End Get
         End Property
         

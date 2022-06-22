@@ -41,9 +41,15 @@ Namespace Apps
             
             Private Shared Function InitializeStaticVariables() As Boolean
                 Logger.logDebug("initializeStaticVariables(): Initialization of static variables starts ...")
-                
-                _CurrentEditor = InitCurrentEditor()
-                
+
+                Try
+                    _CurrentEditor = InitCurrentEditor()
+                Catch ex As Exception
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.AppUtils_ErrorInitializingEditor)
+                Finally
+                    _CurrentEditor = SupportedEditors.None
+                End Try
+
                 Return True
             End Function
             

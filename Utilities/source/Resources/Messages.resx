@@ -1250,4 +1250,7 @@
     <value>\n%+3s =&gt; %s</value>
     <comment>MarkType: String; PointKind: String</comment>
   </data>
+  <data name="AppUtils_ErrorInitializingEditor" xml:space="preserve">
+    <value>Fehler beim Initialisieren des aktiven Editors.</value>
+  </data>
 </root>

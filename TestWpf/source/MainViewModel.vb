@@ -448,30 +448,33 @@ Public Class MainViewModel
             
             'Try
                 Logger.logInfo("")
-                
-                'Call StartProcessTest()
-                'Call TestExcelDataReader()
-                
-                'Call TestOrder()
-                'Call TestPDF()
-                'Call TestJPEG()
-                
-                
-                Logger.logInfo(sprintf("  GeoPointEditOptions.ParseInfoForActualCant => '%s'", GeoPointEditOptions.ParseInfoForActualCant.ToDisplayString()))
-                Logger.logInfo(sprintf("  GeoPointEditOptions.ParseInfoForPointKind => '%s'" , GeoPointEditOptions.ParseInfoForPointKind.ToDisplayString()))
-                Logger.logInfo(sprintf("  GeoPointEditOptions.Parse_iTC => '%s'"              , GeoPointEditOptions.Parse_iTC.ToDisplayString()))
-                
-                Logger.logInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithActualCant => '%s'", GeoPointOutputOptions.CreateInfoWithActualCant.ToDisplayString()))
-                Logger.logInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithPointKind => '%s'", GeoPointOutputOptions.CreateInfoWithPointKind.ToDisplayString()))
-                Logger.logInfo(sprintf("  GeoPointOutputOptions.Create_iTC => '%s'", GeoPointOutputOptions.Create_iTC.ToDisplayString()))
-                
-                Dim TestString  As String = "u=5  WA   28"
-                Dim TestString2 As String
-                Dim Matches As System.Text.RegularExpressions.MatchCollection = TestString.GetMatches("  ")
-                If (Matches.Count > 0) Then
-                    TestString2 = TestString.Left(Matches(0).Index) & TestString.Substring(Matches(0).Index + 1)
-                End If
-                Logger.logInfo(sprintf("  '%s' => '%s'", TestString, TestString2))
+
+        'Call StartProcessTest()
+        'Call TestExcelDataReader()
+
+        'Call TestOrder()
+        'Call TestPDF()
+        'Call TestJPEG()
+
+        Logger.LogInfo(sprintf("  Environment.GetEnvironmentVariable(""PATH"")       => '%s'", Environment.GetEnvironmentVariable("PATH")))
+        Logger.LogInfo(sprintf("  Environment.ExpandEnvironmentVariables(""%%PATH%%"") => '%s'", Environment.ExpandEnvironmentVariables("%PATH%")))
+        Logger.LogInfo("")
+
+        Logger.LogInfo(sprintf("  GeoPointEditOptions.ParseInfoForActualCant => '%s'", GeoPointEditOptions.ParseInfoForActualCant.ToDisplayString()))
+        Logger.LogInfo(sprintf("  GeoPointEditOptions.ParseInfoForPointKind => '%s'", GeoPointEditOptions.ParseInfoForPointKind.ToDisplayString()))
+        Logger.LogInfo(sprintf("  GeoPointEditOptions.Parse_iTC => '%s'", GeoPointEditOptions.Parse_iTC.ToDisplayString()))
+
+        Logger.LogInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithActualCant => '%s'", GeoPointOutputOptions.CreateInfoWithActualCant.ToDisplayString()))
+        Logger.LogInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithPointKind => '%s'", GeoPointOutputOptions.CreateInfoWithPointKind.ToDisplayString()))
+        Logger.LogInfo(sprintf("  GeoPointOutputOptions.Create_iTC => '%s'", GeoPointOutputOptions.Create_iTC.ToDisplayString()))
+
+        Dim TestString As String = "u=5  WA   28"
+        Dim TestString2 As String = Nothing
+        Dim Matches As System.Text.RegularExpressions.MatchCollection = TestString.GetMatches("  ")
+        If (Matches.Count > 0) Then
+            TestString2 = TestString.Left(Matches(0).Index) & TestString.Substring(Matches(0).Index + 1)
+        End If
+        Logger.logInfo(sprintf("  '%s' => '%s'", TestString, TestString2))
                 
                 'Dim p As New GeoIPoint ()
                 'p.ParseTextForKindCodes(Me.Textbox)
