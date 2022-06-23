@@ -169,6 +169,7 @@ Namespace Domain.IO
                     
                     Dim PointFmt    As String = "%+20s %14.4f %14.4f %14.4f     %-29s %-s"
                     Dim UniqueID    As Boolean = (TypeOf PointList Is GeoPointList)
+                    Dim HeaderDone  As Boolean = False
                     Dim Header      As Collection(Of String) = Nothing
                     
                     ' Reset this GeoPointFile, but save the header if needed.
@@ -184,12 +185,13 @@ Namespace Domain.IO
                         For Each SourcePoint As IGeoPoint In PointList
                             Try
                                 ' Header.
-                                If ((PointCount = 0) AndAlso (Not Me.FileAppend)) Then
+                                If ((Not HeaderDone) AndAlso (Not Me.FileAppend)) Then
                                     ' If MetaData is a GeoPointFile and PointList is the same GeoPointFile's PointStream,
                                     ' then only at this point, the header has been read and coud be written.
                                     Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
+                                HeaderDone = True
                                 
                                 ' Convert point: This verifies the ID (as ipkt: max length = 20) and provides
                                 ' access to GeoPoint methods which are not interface members and GeoIPoint.MarkTypeAB.

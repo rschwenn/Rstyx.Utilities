@@ -236,10 +236,11 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Dim PointFmt   As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
-                    Dim CoordFmt   As String  = "%14.5f"
-                    Dim UniqueID   As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
-                    Dim Header     As Collection(Of String) = Nothing
+                    Dim PointFmt    As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim CoordFmt    As String  = "%14.5f"
+                    Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                    Dim HeaderDone  As Boolean = False
+                    Dim Header      As Collection(Of String) = Nothing
                     
                     ' Reset this GeoPointFile, but save the header if needed.
                     If (MetaData Is Me) Then
@@ -255,12 +256,13 @@ Namespace Domain.IO
                         For Each SourcePoint As IGeoPoint In PointList
                             Try
                                 ' Header.
-                                If ((PointCount = 0) AndAlso (Not Me.FileAppend)) Then
+                                If ((Not HeaderDone) AndAlso (Not Me.FileAppend)) Then
                                     ' If MetaData is a GeoPointFile and PointList is the same GeoPointFile's PointStream,
                                     ' then only at this point, the header has been read and coud be written.
                                     Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
+                                HeaderDone = True
                                 
                                 ' Convert point: This verifies the ID and provides all fields for writing.
                                 Dim p As GeoIPoint = SourcePoint.AsGeoIPoint()
