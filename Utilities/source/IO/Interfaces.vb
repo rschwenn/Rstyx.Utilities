@@ -4,16 +4,16 @@ Imports System.Collections.ObjectModel
 Namespace IO
     
     ''' <summary> Defines properties for handling parse errors. </summary>
-     ''' <remarks> This interface should be implemented by a class that is able to read a file and can parse and check it's content. </remarks>
+     ''' <remarks> This interface should be implemented by a class that is able to read or write a file and can parse and check it's content. </remarks>
     Public Interface IParseErrors
             
-            ''' <summary> Provides access to the errors occurred while parsing the file. </summary>
+            ''' <summary> Provides access to the errors occurred while parsing file data. </summary>
             Property ParseErrors() As ParseErrorCollection
             
             ''' <summary> Determines if parse errors should be collected. Defaults to <see langword="false"/>. </summary>
              ''' <remarks>
-             ''' If <see langword="false"/>, the first parse error breaks reading the file immediately.
-             ''' Otherwise, all lines will be parsed in order to get a survey of all lines with errors.
+             ''' If <see langword="false"/>, the first parse error should break an operation immediately.
+             ''' Otherwise, all data will be parsed in order to get a survey of all errors.
              ''' Nevertheless the first error in a line usually aborts parsing this line. Hence, only one error per line will be stored.
              ''' </remarks>
             Property CollectParseErrors() As Boolean
