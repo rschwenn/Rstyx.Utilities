@@ -156,6 +156,9 @@ Namespace Domain.IO
              ''' <para>
              ''' Spaces in point ID's will be replaced to underscores!
              ''' </para>
+             ''' <para>
+             ''' If <see cref="GeoPoint.StatusHints"/> isn't <b>None</b>, an asterisk will be written after the point ID.
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
@@ -167,7 +170,7 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Dim PointFmt    As String = "%+20s %14.4f %14.4f %14.4f     %-29s %-s"
+                    Dim PointFmt    As String = "%+20s%1s%14.4f %14.4f %14.4f     %-29s %-s"
                     Dim UniqueID    As Boolean = (TypeOf PointList Is GeoPointList)
                     Dim HeaderDone  As Boolean = False
                     Dim Header      As Collection(Of String) = Nothing
@@ -202,10 +205,14 @@ Namespace Domain.IO
                                 
                                 ' Check for unique ID, if PointList is unique (since Point ID may have changed while converting to VE point).
                                 If (UniqueID) Then Me.VerifyUniqueID(SourcePoint.ID)
+
+                                ' Status hints.
+                                Dim StatusHints As Char = If(p.StatusHints = GeoPointStatusHints.None, " "c, "*"c)
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
                                                       p.ID,
+                                                      StatusHints,
                                                       If(Double.IsNaN(p.Y), 0, p.Y),
                                                       If(Double.IsNaN(p.X), 0, p.X),
                                                       If(Double.IsNaN(p.Z), 0, p.Z),

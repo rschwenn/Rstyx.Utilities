@@ -118,6 +118,18 @@ Namespace Domain
         
     End Enum
     
+    ''' <summary> Hints about point status. </summary>
+    <Flags>
+    Public Enum GeoPointStatusHints As Integer
+        
+        ''' <summary> No hints. </summary>
+        None = 0
+        
+        ''' <summary> The point ID may be bad i.e. in means of a schema. </summary>
+        BadID = 1
+        
+    End Enum
+    
     
     ''' <summary> Representation of a geodetic point including some point info. </summary>
      ''' <remarks></remarks>
@@ -410,6 +422,9 @@ Namespace Domain
             
             ''' <inheritdoc/>
             Public Property TimeStamp       As Nullable(Of DateTime) = Nothing Implements IGeoPointInfo.TimeStamp
+            
+            ''' <inheritdoc/>
+            Public Property StatusHints()   As GeoPointStatusHints = GeoPointStatusHints.None Implements IGeoPointInfo.StatusHints
             
         #End Region
         

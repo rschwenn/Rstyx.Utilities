@@ -22,7 +22,7 @@ Namespace Resources
     '''<summary>
     '''  Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
@@ -1371,6 +1371,24 @@ Namespace Resources
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithPointKind() As String
             Get
                 Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointOutputOptions_CreateInfoWithPointKind", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die schlechte ID ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointStatusHints_BadID() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointStatusHints_BadID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointStatusHints_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointStatusHints_None", resourceCulture)
             End Get
         End Property
         

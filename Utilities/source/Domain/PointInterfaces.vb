@@ -102,6 +102,9 @@ Namespace Domain
         ''' <summary> A time stamp designating the point's origin or last change. Defaults to time of object creation. </summary>
         Property TimeStamp()    As Nullable(Of DateTime)
         
+        ''' <summary> Special status hints. </summary>
+        Property StatusHints()  As GeoPointStatusHints
+        
     End Interface
     
     

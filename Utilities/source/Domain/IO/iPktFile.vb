@@ -228,6 +228,9 @@ Namespace Domain.IO
              ''' <item> <term>  KindText   </term>  <description>  PArt  </description></item>
              ''' </list>
              ''' </para>
+             ''' <para>
+             ''' If <see cref="GeoPoint.StatusHints"/> isn't <b>None</b>, an asterisk will be written at line start.
+             ''' </para>
              ''' </remarks>
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Dim PointCount As Integer = 0
@@ -236,7 +239,7 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Dim PointFmt    As String  = " %0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim PointFmt    As String  = "%1s%0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
                     Dim CoordFmt    As String  = "%14.5f"
                     Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     Dim HeaderDone  As Boolean = False
@@ -303,9 +306,14 @@ Namespace Domain.IO
                                         p.Attributes.Add(AttributeName, sprintf("%-4s", p.KindText))
                                     End If
                                 End If
+
+                                ' Status hints.
+                                Dim StatusHints As Char = If(p.StatusHints = GeoPointStatusHints.None, " "c, "*"c)
                                 
                                 ' Write line.
-                                oSW.WriteLine(sprintf(PointFmt, PointCount,
+                                oSW.WriteLine(sprintf(PointFmt,
+                                                      StatusHints,
+                                                      PointCount,
                                                       p.CalcCode.TrimToMaxLength(2),
                                                       KeyText.TrimToMaxLength(6),
                                                       p.GraficsCode.TrimToMaxLength(2),

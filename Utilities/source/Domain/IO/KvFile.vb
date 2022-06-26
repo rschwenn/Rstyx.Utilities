@@ -187,6 +187,9 @@ Namespace Domain.IO
              ''' it's ensured that the point ID's written to the file are unique.
              ''' Otherwise point ID's may be not unique.
              ''' </para>
+             ''' <para>
+             ''' If <see cref="GeoPoint.StatusHints"/> isn't <b>None</b>, an asterisk will be written after the point ID.
+             ''' </para>
              ''' </remarks>
              ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
              ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
@@ -198,7 +201,7 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Dim PointFmt    As String  = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s  %-s"
+                    Dim PointFmt    As String  = "%+7s%1s%15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s  %-s"
                     Dim UniqueID    As Boolean = (TypeOf PointList Is GeoPointList)
                     Dim HeaderDone  As Boolean = False
                     Dim Header      As Collection(Of String) = Nothing
@@ -246,10 +249,14 @@ Namespace Domain.IO
                                         p.Attributes.Add(AttributeName, p.CoordSys)
                                     End If
                                 End If
+
+                                ' Status hints.
+                                Dim StatusHints As Char = If(p.StatusHints = GeoPointStatusHints.None, " "c, "*"c)
                                 
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
                                                       P.ID,
+                                                      StatusHints,
                                                       If(Double.IsNaN(P.Y), 0, P.Y),
                                                       If(Double.IsNaN(P.X), 0, P.X),
                                                       If(Double.IsNaN(P.Z), 0, P.Z),
