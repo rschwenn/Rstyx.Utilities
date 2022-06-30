@@ -192,10 +192,35 @@ Namespace Domain
                 ' Attributes.
                 If (Me.Attributes?.Count > 0) Then
                     Dim AttString   As String = String.Empty
+                    Dim AttName     As String = String.Empty
                     
-                    For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
-                        AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
+                    ' All attributes ordered by name.
+                    'For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
+                    '    AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
+                    'Next
+
+                    ' First certain known attributes in given order.
+                    Dim FirstAttributes As New Dictionary(Of String, Integer)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo,        1)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode, 2)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText,       3)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys,       4)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys,      5)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm,        6)
+                    For Each kvp As KeyValuePair(Of String, Integer) In FirstAttributes.OrderBy(Of Integer)(Function(ByVal kvp2) kvp2.Value)
+                        AttName = kvp.Key
+                        If (Me.Attributes.ContainsKey(AttName)) Then
+                            AttString &= " " & AttName & AttSeparator & Me.Attributes(AttName) & AttSeparator
+                        End If
                     Next
+
+                    ' Remaining Attributes.
+                    For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
+                        If (Not FirstAttributes.ContainsKey(kvp.Key)) Then
+                            AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
+                        End If
+                    Next
+
                     FreeDataText &= If((AttString.Length > 0), AttString.Substring(1), AttString)
                 End If
                 

@@ -343,6 +343,7 @@ Namespace Domain
                     Me.sh              = SourcePoint.sh
                     Me.CoordSys        = SourcePoint.CoordSys
                     Me.HeightSys       = SourcePoint.HeightSys
+                    Me.StatusHints     = SourcePoint.StatusHints
                     
                     Me.SourcePath      = SourcePoint.SourcePath
                     Me.SourceLineNo    = SourcePoint.SourceLineNo
