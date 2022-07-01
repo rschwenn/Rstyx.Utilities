@@ -151,10 +151,10 @@ Namespace IO
                 Me.Add(New ParseError(Level, LineNo, StartColumn, EndColumn, Message, Hints, FilePath))
             End Sub
             
-            ''' <summary> Inserts a new error to the collection at the given index. </summary>
-             ''' <param name="index"> The index to insert item at. </param>
+            ''' <summary> Inserts a new error to the collection at the given Index. </summary>
+             ''' <param name="Index"> The Index to insert item at. </param>
              ''' <param name="Item"> The <see cref="ParseError"/> to add. </param>
-            Protected Overrides Sub InsertItem(ByVal index As Integer, ByVal Item As ParseError)
+            Protected Overrides Sub InsertItem(ByVal Index As Integer, ByVal Item As ParseError)
                 
                 If (Item Is Nothing) Then Throw New System.ArgumentNullException("Item")
                 
@@ -178,18 +178,19 @@ Namespace IO
                 End If
                 
                 ' Add Item.
-                MyBase.InsertItem(index, Item)
+                MyBase.InsertItem(Index, Item)
             End Sub
             
             ''' <summary> Removes all errors and warnings and also clears status information. </summary>
             Protected Overrides Sub ClearItems()
                 MyBase.ClearItems()
                 
-                FilePath      = Nothing
-                _HasErrors    = False
-                _HasWarnings  = False
-                _ErrorCount   = 0
-                _WarningCount = 0
+                FilePath            = Nothing
+                _HasErrors          = False
+                _HasWarnings        = False
+                _HasItemsWithSource = False
+                _ErrorCount         = 0
+                _WarningCount       = 0
                 
                 IndexOfLineNo.Clear()
             End Sub
@@ -222,7 +223,7 @@ Namespace IO
                 End Get
             End Property
             
-            ''' <summary> Gets the info whether or not there is at least one item with source information. </summary>
+            ''' <summary> Gets the info whether or not there is at least one item with source line information. </summary>
             Public ReadOnly Property HasItemsWithSource() As Boolean
                 Get
                     Return _HasItemsWithSource
