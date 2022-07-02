@@ -26,16 +26,30 @@ Namespace Domain
             
             ''' <summary> Creates a new <see cref="GeoTcPoint"/>. </summary>
             Public Sub New()
+                PropertyAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm, "Km")
             End Sub
             
             ''' <summary> Creates a new <see cref="GeoTcPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
-             ''' <remarks>  </remarks>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoTcPoint"/>, then all properties will be taken.
+             ''' Otherwise, all <see cref="IGeoPoint"/> interface properties (including <see cref="Attributes"/>) will be assigned 
+             ''' to properties of this point, and selected other properties will be converted to attributes.
+             ''' </para>
+             ''' <para>
+             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
+             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
+             ''' <item> <term> StrKm   </term>  <description> Km </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
              ''' <exception cref="ParseException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point (The <see cref="ParseError"/> only contains a message.). </exception>
             Public Sub New(SourcePoint As IGeoPoint)
                 MyBase.New(SourcePoint)
                 
-                ' TC + KV specials.
                 If (TypeOf SourcePoint Is GeoTcPoint) Then
                     
                     Dim SourceTcPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
@@ -50,7 +64,7 @@ Namespace Domain
                     Me.HGT        = SourceTcPoint.HGT
                     Me.HSOK       = SourceTcPoint.HSOK
                     Me.Heb        = SourceTcPoint.Heb
-                    Me.Km         = SourceTcPoint.Km
+                    Me.Km         = New Kilometer(SourceTcPoint.Km.TDBValue, SourceTcPoint.Km.Status)    ' .Clone() fails, since Kilometer isn't serializable.
                     Me.L          = SourceTcPoint.L
                     Me.LG         = SourceTcPoint.LG
                     Me.NameOfDTM  = SourceTcPoint.NameOfDTM
@@ -65,20 +79,30 @@ Namespace Domain
                     Me.Ra         = SourceTcPoint.Ra
                     Me.RaLGS      = SourceTcPoint.RaLGS
                     Me.Ri         = SourceTcPoint.Ri
-                    Me.St         = SourceTcPoint.St
+                    Me.St         = New Kilometer(SourceTcPoint.St.TDBValue, SourceTcPoint.St.Status)    ' .Clone() fails, since Kilometer isn't serializable.
                     Me.TM         = SourceTcPoint.TM
-                    Me.TrackRef   = SourceTcPoint.TrackRef
+                    Me.TrackRef   = SourceTcPoint.TrackRef  '.Clone()
                     Me.Ueb        = SourceTcPoint.Ueb
                     Me.V          = SourceTcPoint.V
                     Me.ZDGM       = SourceTcPoint.ZDGM
                     Me.ZLGS       = SourceTcPoint.ZLGS
                     Me.ZSOK       = SourceTcPoint.ZSOK
+
+                    Me.RemovePropertyAttributes()
                 
-                ElseIf (TypeOf SourcePoint Is GeoVEPoint) Then
+                Else
+                    Dim PropertyName   As String
+                    Dim AttStringValue As String
                     
-                    Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
-                    
-                    Me.Km = SourceVEPoint.TrackPos.Kilometer
+                    ' Convert selected attributes to properties.
+                    PropertyName = "Km"
+                    If (Not Me.Km.HasValue()) Then
+                        AttStringValue = GetAttValueByPropertyName(PropertyName)
+                        If (AttStringValue IsNot Nothing) Then
+                            Me.Km.TryParse(AttStringValue)
+                            Me.Attributes.Remove(AttributeNames(PropertyName))
+                        End If
+                    End If
                 End If
             End Sub
             

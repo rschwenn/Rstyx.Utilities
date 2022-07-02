@@ -24,32 +24,20 @@ Namespace Domain
             
             ''' <summary> Creates a new, empty <see cref="GeoIPoint"/>. </summary>
             Public Sub New()
+                PropertyAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB, "MarkTypeAB")
             End Sub
             
             ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks>
              ''' <para>
-             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then all properties will be taken.
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then all properties will be taken. 
+             ''' Otherwise, all <see cref="IGeoPoint"/> interface properties (including <see cref="Attributes"/>) will be assigned 
+             ''' to properties of this point, and selected other properties will be converted to attributes.
              ''' </para>
              ''' <para>
-             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoVEPoint"/>, then the following properties will be converted to attributes:
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
-             ''' <item> <term> TrackPos.TrackNo   </term>  <description> StrNr </description></item>
-             ''' <item> <term> TrackPos.RailsCode </term>  <description> StrRi </description></item>
-             ''' <item> <term> TrackPos.Kilometer </term>  <description> StrKm </description></item>
-             ''' </list>
-             ''' </para>
-             ''' <para>
-             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoTCPoint"/>, then the following properties will be converted to attributes:
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
-             ''' <item> <term> Km </term>  <description> StrKm </description></item>
-             ''' </list>
-             ''' </para>
-             ''' <para>
-             ''' The following attributes will be converted to properties:
+             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
+             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
              ''' <list type="table">
              ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
              ''' <item> <term> VArtAB   </term>  <description> MarkTypeAB </description></item>
@@ -75,59 +63,14 @@ Namespace Domain
                     Me.GraficsDim  = SourceIPoint.GraficsDim
                     Me.GraficsEcc  = SourceIPoint.GraficsEcc
                     Me.MarkTypeAB  = SourceIPoint.MarkTypeAB
+
+                    Me.RemovePropertyAttributes()
                     
                 Else
                     Me.CoordType = "YXZ"
                     
                     Dim PropertyName   As String
-                    Dim AttributeName  As String
                     Dim AttStringValue As String
-                    
-                    ' Source is VermEsn: Convert VE-unique properties to attributes.
-                    If (TypeOf SourcePoint Is GeoVEPoint) Then
-                            
-                        Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
-                        
-                        PropertyName = "TrackPos.TrackNo"
-                        If (SourceVEPoint.TrackPos.TrackNo IsNot Nothing) Then
-                            AttributeName = AttributeNames(PropertyName) 
-                            If (Not Attributes.ContainsKey(AttributeName)) Then
-                                Attributes.Add(AttributeName, sprintf("%4s", SourceVEPoint.TrackPos.TrackNo))
-                            End If
-                        End If
-                        
-                        PropertyName = "TrackPos.RailsCode"
-                        If (SourceVEPoint.TrackPos.RailsCode.IsNotEmptyOrWhiteSpace()) Then 
-                            AttributeName = AttributeNames(PropertyName) 
-                            If (Not Attributes.ContainsKey(AttributeName)) Then
-                                Attributes.Add(AttributeName, SourceVEPoint.TrackPos.RailsCode)
-                            End If
-                        End If
-                        
-                        PropertyName = "TrackPos.Kilometer"
-                        If (SourceVEPoint.TrackPos.Kilometer.HasValue()) Then 
-                            AttributeName = AttributeNames(PropertyName) 
-                            If (Not Attributes.ContainsKey(AttributeName)) Then
-                                Attributes.Add(AttributeName, sprintf("%11.4f", SourceVEPoint.TrackPos.Kilometer.Value))
-                            End If
-                        End If
-                    End If
-                    
-                    
-                    ' Source is TC: Convert TC-unique properties to attributes.
-                    If (TypeOf SourcePoint Is GeoTcPoint) Then
-                            
-                        Dim SourceTCPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
-                        
-                        PropertyName = "Km"
-                        If (SourceTCPoint.Km.HasValue()) Then 
-                            AttributeName = AttributeNames(PropertyName) 
-                            If (Not Attributes.ContainsKey(AttributeName)) Then
-                                Attributes.Add(AttributeName, sprintf("%11.4f", SourceTCPoint.Km.Value))
-                            End If
-                        End If
-                    End If
-                    
                     
                     ' Convert selected attributes to properties.
                     PropertyName = "MarkTypeAB"
@@ -135,7 +78,7 @@ Namespace Domain
                         AttStringValue = GetAttValueByPropertyName(PropertyName)
                         If (AttStringValue IsNot Nothing) Then
                             Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)
-                            Attributes.Remove(AttributeNames(PropertyName))
+                            Me.Attributes.Remove(AttributeNames(PropertyName))
                         End If
                     End If
                     

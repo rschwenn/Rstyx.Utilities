@@ -138,7 +138,7 @@ Namespace Domain
         
         #Region "Public Fields"
             
-            ''' <summary>  Mapping:  property name => attribute name. </summary>
+            ''' <summary> Mapping:  Property name => Attribute name. </summary>
             Public  Shared ReadOnly AttributeNames   As Dictionary(Of String, String)
             
         #End Region
@@ -147,12 +147,44 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
             
+        #End Region
+        
+        #Region "Protected Fields"
+            
+            ''' <summary> Patterns for recognizing actual cant from info text. </summary>
             Protected Shared ReadOnly InfoCantPatterns  As Dictionary(Of String, String)
+            
+            ''' <summary> Mapping:  Patterns for recognizing point kind from info text => point kind. </summary>
             Protected Shared ReadOnly InfoKindPatterns  As Dictionary(Of String, GeoPointKind)
+            
+            ''' <summary> Mapping:  Property name => Attribute name. </summary>
             Protected Shared ReadOnly MarkType2Kind     As Dictionary(Of String, GeoPointKind)
+            
+            ''' <summary> Mapping:  KindText => Kind. </summary>
             Protected Shared ReadOnly KindText2Kind     As Dictionary(Of String, GeoPointKind)
             
-            Protected ReadOnly DefaultKindText          As Dictionary(Of GeoPointKind, String)
+            ''' <summary> Point type dependent Mapping:  Attribute name => Property name </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' This defaults to an empty list. A derived class may declare mappings.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="GetPropsFromIGeoPoint"/> should create these attributes from properties.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="RemovePropertyAttributes"/> removes these attributes from <see cref="Attributes"/>.
+             ''' </para>
+             ''' <para>
+             ''' The constructur of a derived point which takes a <see cref="IGeoPoint"/> to init values,
+             ''' should try to restore these attributes to properties.
+             ''' </para>
+             ''' </remarks>
+            Protected ReadOnly PropertyAttributes As Dictionary(Of String, String)
+            
+            
+            ''' <summary> Mapping:  Kind => Default KindText. </summary>
+             ''' <remarks> A derived class may override default mappings. </remarks>
+            Protected ReadOnly DefaultKindText As Dictionary(Of GeoPointKind, String)
             
         #End Region
         
@@ -161,13 +193,15 @@ Namespace Domain
             ''' <summary> Static initializations. </summary>
             Shared Sub New()
                 
-                ' Mapping:  property name => attribute name.
+                ' Mapping:  Property name => Attribute name.
                 AttributeNames = New Dictionary(Of String, String)
+                ' Properties that DON'T belong to IGeoPoint interface.
                 AttributeNames.Add("MarkTypeAB"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB    )   ' "VArtAB"
                 AttributeNames.Add("TrackPos.TrackNo"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo       )   ' "StrNr"
                 AttributeNames.Add("TrackPos.RailsCode", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode)   ' "StrRi"
                 AttributeNames.Add("TrackPos.Kilometer", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       )   ' "StrKm"
                 AttributeNames.Add("Km"                , Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       )   ' "StrKm"
+                ' Properties that belong to IGeoPoint interface.
                 AttributeNames.Add("KindText"          , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText      )   ' "PArt"
                 AttributeNames.Add("HeightSys"         , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys     )   ' "SysH"
                 AttributeNames.Add("CoordSys"          , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys      )   ' "SysL"
@@ -242,6 +276,9 @@ Namespace Domain
             
             ''' <summary> Creates a new GeoPoint. </summary>
             Public Sub New()
+                ' Mapping:  Attribute name => Property name.
+                PropertyAttributes = New Dictionary(Of String, String)
+
                 ' Mapping:  Kind => Default KindText.
                 DefaultKindText = New Dictionary(Of GeoPointKind, String)
                 DefaultKindText.Add(GeoPointKind.None         , ""    )
@@ -311,14 +348,41 @@ Namespace Domain
             
             ''' <summary> Sets this point's <see cref="IGeoPoint"/> properties from a given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
-             ''' <remarks></remarks>
+             ''' <remarks>
+             ''' Selected properties from <paramref name="SourcePoint"/>, that don't belong to <see cref="IGeoPoint"/> interface,
+             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to attributes</b>:
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then the following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term> MarkTypeAB </term>  <description> VArtAB </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoVEPoint"/>, then the following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term> TrackPos.TrackNo   </term>  <description> StrNr </description></item>
+             ''' <item> <term> TrackPos.RailsCode </term>  <description> StrRi </description></item>
+             ''' <item> <term> TrackPos.Kilometer </term>  <description> StrKm </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoTCPoint"/>, then the following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term> Km </term>  <description> StrKm </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Protected Sub GetPropsFromIGeoPoint(SourcePoint As IGeoPoint)
                 
                 If (SourcePoint IsNot Nothing) Then
+                    
                     Me.ID              = SourcePoint.ID
                     
-                    Me.Attributes      = SourcePoint.Attributes
+                    Me.Attributes      = SourcePoint.Attributes.Clone()
                     Me.ActualCant      = SourcePoint.ActualCant
                     Me.ActualCantAbs   = SourcePoint.ActualCantAbs
                     Me.Info            = SourcePoint.Info
@@ -347,7 +411,82 @@ Namespace Domain
                     
                     Me.SourcePath      = SourcePoint.SourcePath
                     Me.SourceLineNo    = SourcePoint.SourceLineNo
+                    
+
+                    ' Convert selected point type specific properties to attributes.
+                    Dim PropertyName   As String
+                    Dim AttributeName  As String
+                    
+                    ' ipkt.
+                    If (TypeOf SourcePoint Is GeoIPoint) Then
+                        
+                        Dim SourceIPoint As GeoIPoint = DirectCast(SourcePoint, GeoIPoint)
+                        
+                        PropertyName = "MarkTypeAB"
+                        If (SourceIPoint.MarkTypeAB.IsNotEmpty()) Then
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
+                                Me.Attributes.Add(AttributeName, SourceIPoint.MarkTypeAB)
+                            End If
+                        End If
+                    End If
+                    
+                    ' VE.
+                    If (TypeOf SourcePoint Is GeoVEPoint) Then
+                            
+                        Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
+                        
+                        PropertyName = "TrackPos.TrackNo"
+                        If (SourceVEPoint.TrackPos.TrackNo IsNot Nothing) Then
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
+                                Me.Attributes.Add(AttributeName, sprintf("%4s", SourceVEPoint.TrackPos.TrackNo))
+                            End If
+                        End If
+                        
+                        PropertyName = "TrackPos.RailsCode"
+                        If (SourceVEPoint.TrackPos.RailsCode.IsNotEmptyOrWhiteSpace()) Then 
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
+                                Me.Attributes.Add(AttributeName, SourceVEPoint.TrackPos.RailsCode)
+                            End If
+                        End If
+                        
+                        PropertyName = "TrackPos.Kilometer"
+                        If (SourceVEPoint.TrackPos.Kilometer.HasValue()) Then 
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
+                                Me.Attributes.Add(AttributeName, sprintf("%11.4f", SourceVEPoint.TrackPos.Kilometer.Value))
+                            End If
+                        End If
+                    End If
+                    
+                    
+                    ' TC.
+                    If (TypeOf SourcePoint Is GeoTcPoint) Then
+                            
+                        Dim SourceTCPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
+                        
+                        PropertyName = "Km"
+                        If (SourceTCPoint.Km.HasValue()) Then 
+                            AttributeName = AttributeNames(PropertyName) 
+                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
+                                Me.Attributes.Add(AttributeName, sprintf("%11.4f", SourceTCPoint.Km.Value))
+                            End If
+                        End If
+                    End If
+
                 End If
+            End Sub
+
+            ''' <summary> Removes attributes that match properties, hence are listed in <see cref="PropertyAttributes"/>. </summary>
+            Protected Sub RemovePropertyAttributes()
+                For Each kvp As KeyValuePair(Of String, String) In PropertyAttributes
+                    Dim AttributeName As String = kvp.key
+                    If (Me.Attributes.ContainsKey(AttributeName)) Then
+                        Me.Attributes.Remove(AttributeName)
+                    End If
+                Next
             End Sub
             
         #End Region
