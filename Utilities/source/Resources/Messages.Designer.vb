@@ -389,6 +389,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die OrigID ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_OriginID() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_OriginID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die StrKm ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_AttName_TrackKm() As String

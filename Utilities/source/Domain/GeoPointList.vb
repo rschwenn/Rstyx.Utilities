@@ -250,6 +250,10 @@ Namespace Domain
                                 
                                 NewPoint.ID = NewID
                                 ChangeCount += 1
+
+                                If (Not NewPoint.Attributes.ContainsKey(Rstyx.Utilities.Resources.Messages.Domain_AttName_OriginID)) Then
+                                    NewPoint.Attributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_OriginID, SourcePoint.ID)
+                                End If
                             End If
                             
                             NewList.Add(NewPoint)

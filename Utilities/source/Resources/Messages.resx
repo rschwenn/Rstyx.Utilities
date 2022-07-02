@@ -1257,4 +1257,8 @@
     <value>    Macros.message(view, "\\nDie Fehlerliste zeigt %d Zeilen.\\n\\nWeitere %d Zeilen werden nicht angezeigt, damit jEdit bedienbar bleibt.\\n\\n");</value>
     <comment>Limited Items Count: Integer; Suppessed Items Count: Integer</comment>
   </data>
+  <data name="Domain_AttName_OriginID" xml:space="preserve">
+    <value>OrigID</value>
+    <comment>Attribut Name</comment>
+  </data>
 </root>
