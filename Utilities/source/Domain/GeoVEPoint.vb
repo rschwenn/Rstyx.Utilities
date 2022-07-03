@@ -57,9 +57,9 @@ Namespace Domain
                 DefaultKindText(GeoPointKind.FixPoint3D   ) = "PS1"
                 DefaultKindText(GeoPointKind.RailsFixPoint) = "GVPV"
 
-                PropertyAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo       , "TrackPos.TrackNo")
-                PropertyAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode, "TrackPos.RailsCode")
-                PropertyAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       , "TrackPos.Kilometer")
+                PropertyAttributes.Add("TrackPos.TrackNo"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo       )   ' "StrNr"
+                PropertyAttributes.Add("TrackPos.RailsCode", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode)   ' "StrRi"
+                PropertyAttributes.Add("TrackPos.Kilometer", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       )   ' "StrKm"
             End Sub
             
             ''' <summary> Creates a new, empty <see cref="GeoVEPoint"/> with a given Value for <see cref="GeoVEPoint.MaxIDLength"/>. </summary>

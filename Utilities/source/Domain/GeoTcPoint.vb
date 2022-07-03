@@ -26,7 +26,7 @@ Namespace Domain
             
             ''' <summary> Creates a new <see cref="GeoTcPoint"/>. </summary>
             Public Sub New()
-                PropertyAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm, "Km")
+                PropertyAttributes.Add("Km", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm)   ' "StrKm"
             End Sub
             
             ''' <summary> Creates a new <see cref="GeoTcPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>

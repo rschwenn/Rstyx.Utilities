@@ -163,19 +163,21 @@ Namespace Domain
             ''' <summary> Mapping:  KindText => Kind. </summary>
             Protected Shared ReadOnly KindText2Kind     As Dictionary(Of String, GeoPointKind)
             
-            ''' <summary> Point type dependent Mapping:  Attribute name => Property name </summary>
+            ''' <summary> Point type dependent Mapping:  Property name => Attribute name </summary>
              ''' <remarks>
              ''' <para>
-             ''' This defaults to an empty list. A derived class may declare mappings.
+             ''' This defaults to a list of selected attributes matching <see cref="IGeoPoint"/> interface,
+             ''' hence <see cref="GeoPoint"/> properties. A derived class may add mappings.
              ''' </para>
              ''' <para>
-             ''' <see cref="GetPropsFromIGeoPoint"/> should create these attributes from properties.
+             ''' <see cref="GetPropsFromIGeoPoint"/> should create these attributes from those properties,
+             ''' which do not belong to <see cref="IGeoPoint"/> interface.
              ''' </para>
              ''' <para>
-             ''' <see cref="RemovePropertyAttributes"/> removes these attributes from <see cref="Attributes"/>.
+             ''' <see cref="RemovePropertyAttributes"/> removes all these attributes from <see cref="Attributes"/>.
              ''' </para>
              ''' <para>
-             ''' The constructur of a derived point which takes a <see cref="IGeoPoint"/> to init values,
+             ''' The constructur of a derived point which takes an <see cref="IGeoPoint"/> to init values,
              ''' should try to restore these attributes to properties.
              ''' </para>
              ''' </remarks>
@@ -276,8 +278,11 @@ Namespace Domain
             
             ''' <summary> Creates a new GeoPoint. </summary>
             Public Sub New()
-                ' Mapping:  Attribute name => Property name.
+                ' Mapping:  Property name => Attribute name.
                 PropertyAttributes = New Dictionary(Of String, String)
+                PropertyAttributes.Add("KindText" , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText )   ' "PArt"
+                PropertyAttributes.Add("HeightSys", Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)   ' "SysH"
+                PropertyAttributes.Add("CoordSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys )   ' "SysL"
 
                 ' Mapping:  Kind => Default KindText.
                 DefaultKindText = New Dictionary(Of GeoPointKind, String)
@@ -482,7 +487,7 @@ Namespace Domain
             ''' <summary> Removes attributes that match properties, hence are listed in <see cref="PropertyAttributes"/>. </summary>
             Protected Sub RemovePropertyAttributes()
                 For Each kvp As KeyValuePair(Of String, String) In PropertyAttributes
-                    Dim AttributeName As String = kvp.key
+                    Dim AttributeName As String = kvp.Value
                     If (Me.Attributes.ContainsKey(AttributeName)) Then
                         Me.Attributes.Remove(AttributeName)
                     End If
@@ -1056,7 +1061,7 @@ Namespace Domain
              ''' <param name="PropertyName"> The name of the target property. May be <see langword="null"/> </param>
              ''' <returns> The attribute's string value. May be <see langword="null"/> </returns>
              ''' <remarks>
-             ''' If <paramref name="PropertyName"/> is a key in <see cref="AttributeNames"/> the matching dictionary value
+             ''' If <paramref name="PropertyName"/> is a key in <see cref="AttributeNames"/>, the matching dictionary value
              ''' is the attribute name to look for. If this attribute exists in <see cref="Attributes"/>, 
              ''' it's value will be returned.
              ''' </remarks>

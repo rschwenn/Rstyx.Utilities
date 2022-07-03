@@ -24,7 +24,7 @@ Namespace Domain
             
             ''' <summary> Creates a new, empty <see cref="GeoIPoint"/>. </summary>
             Public Sub New()
-                PropertyAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB, "MarkTypeAB")
+                PropertyAttributes.Add("MarkTypeAB", Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB)   ' "VArtAB"
             End Sub
             
             ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
