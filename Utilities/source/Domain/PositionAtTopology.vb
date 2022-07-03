@@ -1,7 +1,10 @@
 ﻿
+Imports System
+
 Namespace Domain
     
     ''' <summary> Position description related to a topology (node-edge model). </summary>
+     <SerializableAttribute> _
     Public Class PositionAtTopology
         
         ''' <summary> A-node. </summary>

@@ -72,6 +72,16 @@ Namespace Domain
             
         #End Region
         
+        #Region "Methods"
+
+            ''' <summary> Performs a deep copy of this object. </summary>
+             ''' <returns> The copied object </returns>
+            Public Function Clone() As TrackGeometryInfo
+                Return DirectCast(Me.MemberwiseClone(), TrackGeometryInfo)
+            End Function
+            
+        #End Region
+        
         #Region "Overrides"
             
             ''' <inheritdoc/>

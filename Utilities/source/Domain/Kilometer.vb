@@ -1,10 +1,12 @@
 ﻿
+Imports System
 Imports System.Math
 Imports System.Text.RegularExpressions
 
 Namespace Domain
     
     ''' <summary> Status of a Kilometer Value. </summary>
+     <SerializableAttribute> _
     Public Enum KilometerStatus As Integer
         
         ''' <summary> Status (ambiguity) is unknown. </summary>
@@ -27,6 +29,7 @@ Namespace Domain
      ''' The properties of this class (except <see cref="Kilometer.Text"/>) are read-only. They can be set at construction 
      ''' or by the <see cref="Kilometer.Parse(String)"/> or <see cref="Kilometer.TryParse(String)"/> methods only.
      ''' </remarks>
+     <SerializableAttribute> _
     Public Class Kilometer
         
         #Region "Private Fields"

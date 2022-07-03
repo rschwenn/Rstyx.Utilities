@@ -1,7 +1,10 @@
 ﻿
+Imports System
+
 Namespace Domain
     
     ''' <summary> A Node of a topology (node-edge model). </summary>
+     <SerializableAttribute> _
     Public Class TopologyNode
         
         ''' <summary> Code (or shortcut title) of the node. </summary>

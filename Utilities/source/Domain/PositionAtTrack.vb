@@ -5,6 +5,7 @@ Imports System.Collections.ObjectModel
 Namespace Domain
     
     ''' <summary> Specification of track side. </summary>
+     <SerializableAttribute> _
     Public Enum TrackSide As Integer
         
         ''' <summary> Side isn't determined. </summary>
@@ -22,6 +23,7 @@ Namespace Domain
     End Enum
     
     ''' <summary> General position description related to a railway track. </summary>
+     <SerializableAttribute> _
     Public Class PositionAtTrack
         
         ''' <summary> Kilometer of object. </summary>
