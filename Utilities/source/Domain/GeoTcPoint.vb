@@ -100,7 +100,7 @@ Namespace Domain
                         AttStringValue = GetAttValueByPropertyName(PropertyName)
                         If (AttStringValue IsNot Nothing) Then
                             Me.Km.TryParse(AttStringValue)
-                            Me.Attributes.Remove(AttributeNames(PropertyName))
+                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
                         End If
                     End If
                 End If

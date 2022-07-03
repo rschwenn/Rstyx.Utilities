@@ -138,8 +138,25 @@ Namespace Domain
         
         #Region "Public Fields"
             
-            ''' <summary> Mapping:  Property name => Attribute name. </summary>
-            Public  Shared ReadOnly AttributeNames   As Dictionary(Of String, String)
+            ''' <summary> Point type dependent Mapping:  Property name => Attribute name </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' This defaults to a list of selected attributes matching <see cref="IGeoPoint"/> interface,
+             ''' hence <see cref="GeoPoint"/> properties. A derived class may add mappings.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="GetPropsFromIGeoPoint"/> should create these attributes from those properties,
+             ''' which do not belong to <see cref="IGeoPoint"/> interface.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="RemovePropertyAttributes"/> removes all these attributes from <see cref="Attributes"/>.
+             ''' </para>
+             ''' <para>
+             ''' The constructur of a derived point which takes an <see cref="IGeoPoint"/> to init values,
+             ''' should try to restore these attributes to properties.
+             ''' </para>
+             ''' </remarks>
+            Public ReadOnly PropertyAttributes As Dictionary(Of String, String)
             
         #End Region
         
@@ -163,26 +180,6 @@ Namespace Domain
             ''' <summary> Mapping:  KindText => Kind. </summary>
             Protected Shared ReadOnly KindText2Kind     As Dictionary(Of String, GeoPointKind)
             
-            ''' <summary> Point type dependent Mapping:  Property name => Attribute name </summary>
-             ''' <remarks>
-             ''' <para>
-             ''' This defaults to a list of selected attributes matching <see cref="IGeoPoint"/> interface,
-             ''' hence <see cref="GeoPoint"/> properties. A derived class may add mappings.
-             ''' </para>
-             ''' <para>
-             ''' <see cref="GetPropsFromIGeoPoint"/> should create these attributes from those properties,
-             ''' which do not belong to <see cref="IGeoPoint"/> interface.
-             ''' </para>
-             ''' <para>
-             ''' <see cref="RemovePropertyAttributes"/> removes all these attributes from <see cref="Attributes"/>.
-             ''' </para>
-             ''' <para>
-             ''' The constructur of a derived point which takes an <see cref="IGeoPoint"/> to init values,
-             ''' should try to restore these attributes to properties.
-             ''' </para>
-             ''' </remarks>
-            Protected ReadOnly PropertyAttributes As Dictionary(Of String, String)
-            
             
             ''' <summary> Mapping:  Kind => Default KindText. </summary>
              ''' <remarks> A derived class may override default mappings. </remarks>
@@ -194,20 +191,6 @@ Namespace Domain
             
             ''' <summary> Static initializations. </summary>
             Shared Sub New()
-                
-                ' Mapping:  Property name => Attribute name.
-                AttributeNames = New Dictionary(Of String, String)
-                ' Properties that DON'T belong to IGeoPoint interface.
-                AttributeNames.Add("MarkTypeAB"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB    )   ' "VArtAB"
-                AttributeNames.Add("TrackPos.TrackNo"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo       )   ' "StrNr"
-                AttributeNames.Add("TrackPos.RailsCode", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode)   ' "StrRi"
-                AttributeNames.Add("TrackPos.Kilometer", Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       )   ' "StrKm"
-                AttributeNames.Add("Km"                , Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm       )   ' "StrKm"
-                ' Properties that belong to IGeoPoint interface.
-                AttributeNames.Add("KindText"          , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText      )   ' "PArt"
-                AttributeNames.Add("HeightSys"         , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys     )   ' "SysH"
-                AttributeNames.Add("CoordSys"          , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys      )   ' "SysL"
-                
                 ' Patterns for recognizing actual cant from info text.
                 ' 26.03.2021: "=" now is mandatory .
                 InfoCantPatterns = New Dictionary(Of String, String)
@@ -280,9 +263,9 @@ Namespace Domain
             Public Sub New()
                 ' Mapping:  Property name => Attribute name.
                 PropertyAttributes = New Dictionary(Of String, String)
-                PropertyAttributes.Add("KindText" , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText )   ' "PArt"
+                PropertyAttributes.Add("KindText" , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText)    ' "PArt"
                 PropertyAttributes.Add("HeightSys", Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)   ' "SysH"
-                PropertyAttributes.Add("CoordSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys )   ' "SysL"
+                PropertyAttributes.Add("CoordSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys)    ' "SysL"
 
                 ' Mapping:  Kind => Default KindText.
                 DefaultKindText = New Dictionary(Of GeoPointKind, String)
@@ -429,7 +412,7 @@ Namespace Domain
                         
                         PropertyName = "MarkTypeAB"
                         If (SourceIPoint.MarkTypeAB.IsNotEmpty()) Then
-                            AttributeName = AttributeNames(PropertyName) 
+                            AttributeName = SourceIPoint.PropertyAttributes(PropertyName) 
                             If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                                 Me.Attributes.Add(AttributeName, SourceIPoint.MarkTypeAB)
                             End If
@@ -443,7 +426,7 @@ Namespace Domain
                         
                         PropertyName = "TrackPos.TrackNo"
                         If (SourceVEPoint.TrackPos.TrackNo IsNot Nothing) Then
-                            AttributeName = AttributeNames(PropertyName) 
+                            AttributeName = SourceVEPoint.PropertyAttributes(PropertyName) 
                             If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                                 Me.Attributes.Add(AttributeName, sprintf("%4s", SourceVEPoint.TrackPos.TrackNo))
                             End If
@@ -451,7 +434,7 @@ Namespace Domain
                         
                         PropertyName = "TrackPos.RailsCode"
                         If (SourceVEPoint.TrackPos.RailsCode.IsNotEmptyOrWhiteSpace()) Then 
-                            AttributeName = AttributeNames(PropertyName) 
+                            AttributeName = SourceVEPoint.PropertyAttributes(PropertyName) 
                             If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                                 Me.Attributes.Add(AttributeName, SourceVEPoint.TrackPos.RailsCode)
                             End If
@@ -459,7 +442,7 @@ Namespace Domain
                         
                         PropertyName = "TrackPos.Kilometer"
                         If (SourceVEPoint.TrackPos.Kilometer.HasValue()) Then 
-                            AttributeName = AttributeNames(PropertyName) 
+                            AttributeName = SourceVEPoint.PropertyAttributes(PropertyName) 
                             If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                                 Me.Attributes.Add(AttributeName, sprintf("%11.4f", SourceVEPoint.TrackPos.Kilometer.Value))
                             End If
@@ -474,7 +457,7 @@ Namespace Domain
                         
                         PropertyName = "Km"
                         If (SourceTCPoint.Km.HasValue()) Then 
-                            AttributeName = AttributeNames(PropertyName) 
+                            AttributeName = SourceTCPoint.PropertyAttributes(PropertyName) 
                             If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                                 Me.Attributes.Add(AttributeName, sprintf("%11.4f", SourceTCPoint.Km.Value))
                             End If
@@ -1056,12 +1039,12 @@ Namespace Domain
             
             ''' <summary>
              ''' Gets the value of an attribute which name is determined by the given property name
-             ''' and the <see cref="AttributeNames"/> assignment table.
+             ''' and the <see cref="PropertyAttributes"/> assignment table.
              ''' </summary>
              ''' <param name="PropertyName"> The name of the target property. May be <see langword="null"/> </param>
-             ''' <returns> The attribute's string value. May be <see langword="null"/> </returns>
+             ''' <returns> The attribute's string value. May be <see langword="null"/>. </returns>
              ''' <remarks>
-             ''' If <paramref name="PropertyName"/> is a key in <see cref="AttributeNames"/>, the matching dictionary value
+             ''' If <paramref name="PropertyName"/> is a key in <see cref="PropertyAttributes"/>, the matching dictionary value
              ''' is the attribute name to look for. If this attribute exists in <see cref="Attributes"/>, 
              ''' it's value will be returned.
              ''' </remarks>
@@ -1070,8 +1053,8 @@ Namespace Domain
                 Dim AttValue As String = Nothing
                 
                 If (PropertyName.IsNotEmptyOrWhiteSpace()) Then
-                    If (AttributeNames.ContainsKey(PropertyName)) Then
-                        Dim AttName As String = AttributeNames(PropertyName)
+                    If (Me.PropertyAttributes.ContainsKey(PropertyName)) Then
+                        Dim AttName As String = Me.PropertyAttributes(PropertyName)
                         If (AttName.IsNotEmptyOrWhiteSpace()) Then
                             If (Me.Attributes.ContainsKey(AttName)) Then
                                 AttValue = Me.Attributes(AttName)

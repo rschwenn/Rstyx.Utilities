@@ -121,7 +121,7 @@ Namespace Domain.IO
                                     AttStringValue = p.GetAttValueByPropertyName(PropertyName)
                                     If (AttStringValue IsNot Nothing) Then
                                         P.CoordSys = AttStringValue.Trim()
-                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
                                     End If
                                     
                                     ' Smoothing.
@@ -244,7 +244,7 @@ Namespace Domain.IO
                                 Dim AttributeName  As String
                                 PropertyName = "CoordSys"
                                 If (p.CoordSys.IsNotEmptyOrWhiteSpace()) Then
-                                    AttributeName = GeoPoint.AttributeNames(PropertyName) 
+                                    AttributeName = p.PropertyAttributes(PropertyName) 
                                     If (Not p.Attributes.ContainsKey(AttributeName)) Then
                                         p.Attributes.Add(AttributeName, p.CoordSys)
                                     End If

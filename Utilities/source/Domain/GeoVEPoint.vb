@@ -130,7 +130,7 @@ Namespace Domain
                             If (Integer.TryParse(AttStringValue, AttIntValue)) Then
                                 Me.TrackPos.TrackNo = AttIntValue
                             End If
-                            Me.Attributes.Remove(AttributeNames(PropertyName))
+                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
                         End If
                     End If
                     
@@ -142,7 +142,7 @@ Namespace Domain
                             If (AttStringValue.Length = 1) Then
                                 Me.TrackPos.RailsCode = AttStringValue
                             End If
-                            Me.Attributes.Remove(AttributeNames(PropertyName))
+                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
                         End If
                     End If
                     
@@ -151,7 +151,7 @@ Namespace Domain
                         AttStringValue = GetAttValueByPropertyName(PropertyName)
                         If (AttStringValue IsNot Nothing) Then
                             Me.TrackPos.Kilometer.TryParse(AttStringValue)
-                            Me.Attributes.Remove(AttributeNames(PropertyName))
+                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
                         End If
                     End If
                     

@@ -1464,13 +1464,13 @@ Namespace Domain.IO
                                     AttStringValue = p.GetAttValueByPropertyName(PropertyName)
                                     If (AttStringValue IsNot Nothing) Then
                                         P.HeightSys = AttStringValue.Trim()
-                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
                                     End If
                                     PropertyName   = "KindText"
                                     AttStringValue = p.GetAttValueByPropertyName(PropertyName)
                                     If (AttStringValue IsNot Nothing) Then
                                         P.KindText = AttStringValue.Trim()
-                                        p.Attributes.Remove(GeoPoint.AttributeNames(PropertyName))
+                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
                                         p.SetKindFromKindText()
                                     End If
                                     

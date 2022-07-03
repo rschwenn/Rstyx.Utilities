@@ -78,7 +78,7 @@ Namespace Domain
                         AttStringValue = GetAttValueByPropertyName(PropertyName)
                         If (AttStringValue IsNot Nothing) Then
                             Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)
-                            Me.Attributes.Remove(AttributeNames(PropertyName))
+                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
                         End If
                     End If
                     
