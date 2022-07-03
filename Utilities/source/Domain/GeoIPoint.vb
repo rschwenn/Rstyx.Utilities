@@ -46,7 +46,9 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
-                MyBase.New(SourcePoint)
+                
+                Me.New()
+                Me.GetPropsFromIGeoPoint(SourcePoint)
                 
                 If (TypeOf SourcePoint Is GeoIPoint) Then
                     
