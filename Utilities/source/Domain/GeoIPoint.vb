@@ -29,62 +29,12 @@ Namespace Domain
             
             ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then all properties will be taken. 
-             ''' Otherwise, all <see cref="IGeoPoint"/> interface properties (including <see cref="Attributes"/>) will be assigned 
-             ''' to properties of this point, and selected other properties will be converted to attributes.
-             ''' </para>
-             ''' <para>
-             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
-             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
-             ''' <item> <term> VArtAB   </term>  <description> MarkTypeAB </description></item>
-             ''' </list>
-             ''' </para>
-             ''' </remarks>
+             ''' <remarks> For details see <see cref="GetPropsFromIGeoPoint"/>. </remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
                 
                 Me.New()
                 Me.GetPropsFromIGeoPoint(SourcePoint)
-                
-                If (TypeOf SourcePoint Is GeoIPoint) Then
-                    
-                    Dim SourceIPoint As GeoIPoint = DirectCast(SourcePoint, GeoIPoint)
-                    
-                    Me.AttKey1     = SourceIPoint.AttKey1
-                    Me.AttKey2     = SourceIPoint.AttKey2
-                    Me.AttValue1   = SourceIPoint.AttValue1
-                    Me.AttValue2   = SourceIPoint.AttValue2
-                    Me.CalcCode    = SourceIPoint.CalcCode
-                    Me.CoordType   = SourceIPoint.CoordType
-                    Me.Flags       = SourceIPoint.Flags
-                    Me.GraficsCode = SourceIPoint.GraficsCode
-                    Me.GraficsDim  = SourceIPoint.GraficsDim
-                    Me.GraficsEcc  = SourceIPoint.GraficsEcc
-                    Me.MarkTypeAB  = SourceIPoint.MarkTypeAB
-
-                    Me.RemovePropertyAttributes()
-                    
-                Else
-                    Me.CoordType = "YXZ"
-                    
-                    Dim PropertyName   As String
-                    Dim AttStringValue As String
-                    
-                    ' Convert selected attributes to properties.
-                    PropertyName = "MarkTypeAB"
-                    If (Me.MarkTypeAB.IsEmpty()) Then
-                        AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        If (AttStringValue IsNot Nothing) Then
-                            Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)
-                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        End If
-                    End If
-                    
-                End If
             End Sub
             
         #End Region
@@ -537,6 +487,69 @@ Namespace Domain
                 
                 Return RetValue
             End Function
+            
+            ''' <summary> Sets this point's <see cref="IGeoPoint"/> properties from a given <see cref="IGeoPoint"/>. </summary>
+             ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then all properties will be taken. 
+             ''' Otherwise, all <see cref="IGeoPoint"/> interface properties (including <see cref="Attributes"/>) will be assigned 
+             ''' to properties of this point, and selected other properties will be converted to attributes.
+             ''' </para>
+             ''' <para>
+             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
+             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
+             ''' <item> <term> VArtAB   </term>  <description> MarkTypeAB </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
+            Protected Overrides Sub GetPropsFromIGeoPoint(SourcePoint As IGeoPoint)
+                
+                If (SourcePoint IsNot Nothing) Then
+                    
+                    MyBase.GetPropsFromIGeoPoint(SourcePoint)
+                    
+                    If (TypeOf SourcePoint Is GeoIPoint) Then
+                        
+                        Dim SourceIPoint As GeoIPoint = DirectCast(SourcePoint, GeoIPoint)
+                        
+                        Me.AttKey1     = SourceIPoint.AttKey1
+                        Me.AttKey2     = SourceIPoint.AttKey2
+                        Me.AttValue1   = SourceIPoint.AttValue1
+                        Me.AttValue2   = SourceIPoint.AttValue2
+                        Me.CalcCode    = SourceIPoint.CalcCode
+                        Me.CoordType   = SourceIPoint.CoordType
+                        Me.Flags       = SourceIPoint.Flags
+                        Me.GraficsCode = SourceIPoint.GraficsCode
+                        Me.GraficsDim  = SourceIPoint.GraficsDim
+                        Me.GraficsEcc  = SourceIPoint.GraficsEcc
+                        Me.MarkTypeAB  = SourceIPoint.MarkTypeAB
+                    
+                        Me.RemovePropertyAttributes()
+                        
+                    Else
+                        Me.CoordType = "YXZ"
+                        
+                        Dim PropertyName   As String
+                        Dim AttStringValue As String
+                        
+                        ' Convert selected attributes to properties.
+                        PropertyName = "MarkTypeAB"
+                        If (Me.MarkTypeAB.IsEmpty()) Then
+                            AttStringValue = GetAttValueByPropertyName(PropertyName)
+                            If (AttStringValue IsNot Nothing) Then
+                                Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)
+                                Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
+                            End If
+                        End If
+                        
+                    End If
+                    
+                End If
+            End Sub
             
             ''' <summary> Returns a very basic output of the point. </summary>
             Public Overrides Function ToString() As String

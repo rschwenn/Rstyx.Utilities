@@ -334,9 +334,13 @@ Namespace Domain
                 End If
             End Function
             
-            ''' <summary> Sets this point's <see cref="IGeoPoint"/> properties from a given <see cref="IGeoPoint"/>. </summary>
+            ''' <summary> Sets this point's <see cref="IGeoPoint"/> interface properties from a given <see cref="IGeoPoint"/>. </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
              ''' <remarks>
+             ''' <para> 
+             ''' A derived class may override this in order to get values from properties, 
+             ''' that don't belong to <see cref="IGeoPoint"/> interface.
+             ''' </para>
              ''' Selected properties from <paramref name="SourcePoint"/>, that don't belong to <see cref="IGeoPoint"/> interface,
              ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to attributes</b>:
              ''' <para>
@@ -364,7 +368,7 @@ Namespace Domain
              ''' </para>
              ''' </remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
-            Protected Sub GetPropsFromIGeoPoint(SourcePoint As IGeoPoint)
+            Protected Overridable Sub GetPropsFromIGeoPoint(SourcePoint As IGeoPoint)
                 
                 If (SourcePoint IsNot Nothing) Then
                     

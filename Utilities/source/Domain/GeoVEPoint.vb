@@ -82,80 +82,12 @@ Namespace Domain
             ''' <see cref="GeoVEPoint.DefaultMaxIDLength"/> and inititializes it's properties from a given <see cref="IGeoPoint"/>.
             ''' </summary>
              ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoVEPoint"/>, then all properties will be taken.
-             ''' Otherwise, all <see cref="IGeoPoint"/> interface properties (including <see cref="Attributes"/>) will be assigned 
-             ''' to properties of this point, and selected other properties will be converted to attributes.
-             ''' </para>
-             ''' <para>
-             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
-             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
-             ''' <list type="table">
-             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
-             ''' <item> <term> StrNr </term>  <description> TrackPos.TrackNo   </description></item>
-             ''' <item> <term> StrRi </term>  <description> TrackPos.RailsCode </description></item>
-             ''' <item> <term> StrKm </term>  <description> TrackPos.Kilometer </description></item>
-             ''' </list>
-             ''' </para>
-             ''' </remarks>
+             ''' <remarks> For details see <see cref="GetPropsFromIGeoPoint"/>. </remarks>
              ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
             Public Sub New(SourcePoint As IGeoPoint)
                 
                 Me.New()
                 Me.GetPropsFromIGeoPoint(SourcePoint)
-                
-                If (TypeOf SourcePoint Is GeoVEPoint) Then
-                    
-                    Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
-                    
-                    Me.HeightPostInfo   = SourceVEPoint.HeightPostInfo
-                    Me.HeightPreInfo    = SourceVEPoint.HeightPreInfo
-                    Me.PositionPostInfo = SourceVEPoint.PositionPostInfo
-                    Me.PositionPreInfo  = SourceVEPoint.PositionPreInfo
-                    Me.TrackPos         = SourceVEPoint.TrackPos.Clone()
-
-                    Me.RemovePropertyAttributes()
-                    
-                Else
-                    Dim PropertyName   As String
-                    Dim AttStringValue As String
-                    Dim AttIntValue    As Integer
-                    
-                    ' Convert selected attributes to properties.
-                    PropertyName = "TrackPos.TrackNo"
-                    If (Me.TrackPos.TrackNo Is Nothing) Then
-                        AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        If (AttStringValue IsNot Nothing) Then
-                            If (Integer.TryParse(AttStringValue, AttIntValue)) Then
-                                Me.TrackPos.TrackNo = AttIntValue
-                            End If
-                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        End If
-                    End If
-                    
-                    PropertyName = "TrackPos.RailsCode"
-                    If (Me.TrackPos.RailsCode.IsEmptyOrWhiteSpace()) Then
-                        AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        If (AttStringValue IsNot Nothing) Then
-                            AttStringValue = AttStringValue.Trim()
-                            If (AttStringValue.Length = 1) Then
-                                Me.TrackPos.RailsCode = AttStringValue
-                            End If
-                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        End If
-                    End If
-                    
-                    PropertyName = "TrackPos.Kilometer"
-                    If (Not Me.TrackPos.Kilometer.HasValue()) Then
-                        AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        If (AttStringValue IsNot Nothing) Then
-                            Me.TrackPos.Kilometer.TryParse(AttStringValue)
-                            Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        End If
-                    End If
-                    
-                End If
             End Sub
             
         #End Region
@@ -409,6 +341,86 @@ Namespace Domain
                 
                 Return RetValue
             End Function
+            
+            ''' <summary> Sets this point's <see cref="IGeoPoint"/> properties from a given <see cref="IGeoPoint"/>. </summary>
+             ''' <param name="SourcePoint"> The source point to get init values from. May be <see langword="null"/>. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' If <paramref name="SourcePoint"/> is a <see cref="GeoVEPoint"/>, then all properties will be taken.
+             ''' Otherwise, all <see cref="IGeoPoint"/> interface properties (including <see cref="Attributes"/>) will be assigned 
+             ''' to properties of this point, and selected other properties will be converted to attributes.
+             ''' </para>
+             ''' <para>
+             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
+             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
+             ''' <item> <term> StrNr </term>  <description> TrackPos.TrackNo   </description></item>
+             ''' <item> <term> StrRi </term>  <description> TrackPos.RailsCode </description></item>
+             ''' <item> <term> StrKm </term>  <description> TrackPos.Kilometer </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="InvalidIDException"> ID of <paramref name="SourcePoint"/> isn't a valid ID for this point. </exception>
+            Protected Overrides Sub GetPropsFromIGeoPoint(SourcePoint As IGeoPoint)
+                
+                If (SourcePoint IsNot Nothing) Then
+                    
+                    MyBase.GetPropsFromIGeoPoint(SourcePoint)
+                
+                    If (TypeOf SourcePoint Is GeoVEPoint) Then
+                        
+                        Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
+                        
+                        Me.HeightPostInfo   = SourceVEPoint.HeightPostInfo
+                        Me.HeightPreInfo    = SourceVEPoint.HeightPreInfo
+                        Me.PositionPostInfo = SourceVEPoint.PositionPostInfo
+                        Me.PositionPreInfo  = SourceVEPoint.PositionPreInfo
+                        Me.TrackPos         = SourceVEPoint.TrackPos.Clone()
+                    
+                        Me.RemovePropertyAttributes()
+                        
+                    Else
+                        Dim PropertyName   As String
+                        Dim AttStringValue As String
+                        Dim AttIntValue    As Integer
+                        
+                        ' Convert selected attributes to properties.
+                        PropertyName = "TrackPos.TrackNo"
+                        If (Me.TrackPos.TrackNo Is Nothing) Then
+                            AttStringValue = GetAttValueByPropertyName(PropertyName)
+                            If (AttStringValue IsNot Nothing) Then
+                                If (Integer.TryParse(AttStringValue, AttIntValue)) Then
+                                    Me.TrackPos.TrackNo = AttIntValue
+                                End If
+                                Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
+                            End If
+                        End If
+                        
+                        PropertyName = "TrackPos.RailsCode"
+                        If (Me.TrackPos.RailsCode.IsEmptyOrWhiteSpace()) Then
+                            AttStringValue = GetAttValueByPropertyName(PropertyName)
+                            If (AttStringValue IsNot Nothing) Then
+                                AttStringValue = AttStringValue.Trim()
+                                If (AttStringValue.Length = 1) Then
+                                    Me.TrackPos.RailsCode = AttStringValue
+                                End If
+                                Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
+                            End If
+                        End If
+                        
+                        PropertyName = "TrackPos.Kilometer"
+                        If (Not Me.TrackPos.Kilometer.HasValue()) Then
+                            AttStringValue = GetAttValueByPropertyName(PropertyName)
+                            If (AttStringValue IsNot Nothing) Then
+                                Me.TrackPos.Kilometer.TryParse(AttStringValue)
+                                Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
+                            End If
+                        End If
+                        
+                    End If
+                End If
+            End Sub
             
             ''' <summary> Returns a KV output of the point. </summary>
             Public Overrides Function ToString() As String
