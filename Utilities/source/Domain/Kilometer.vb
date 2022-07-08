@@ -239,10 +239,10 @@ Namespace Domain
                     
                     ' Insert blanks and maybe prefix for meters.
                     If (_Value >= 0) Then
-                        If ((Meter < 10) AndAlso PrefixMeter.IsNotEmptyOrWhiteSpace()) Then Part2 = replace(Part2, "+", "+" & PrefixMeter)
+                        If ((Meter < 10) AndAlso PrefixMeter.IsNotEmpty()) Then Part2 = replace(Part2, "+", "+" & PrefixMeter)
                         Part2 = replace(Part2, "+", " + ")
                     Else
-                        If ((Meter > -10) AndAlso PrefixMeter.IsNotEmptyOrWhiteSpace()) Then Part2 = replace(Part2, "-", "-" & PrefixMeter)
+                        If ((Meter > -10) AndAlso PrefixMeter.IsNotEmpty()) Then Part2 = replace(Part2, "-", "-" & PrefixMeter)
                         Part2 = replace(Part2, "-", " - ")
                     End If
                 End If
