@@ -2,6 +2,7 @@
 Imports System
 Imports System.Linq
 Imports System.Collections.Generic
+Imports System.ComponentModel
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
@@ -131,15 +132,64 @@ Imports System.Runtime.InteropServices
                 
                 If (pi Is Nothing) Then Exit For
 
-                Dim PropertyValue As Object = pi.GetValue(Subject)
+                Dim PropertyObject As Object = pi.GetValue(Subject)
                 If (i < (PropertyNames.Count - 1)) Then
-                    PropertyValue = GetPropertyValue(PropertyValue, PropertyNames(i + 1), Flags)
+                    PropertyObject = GetPropertyValue(PropertyObject, PropertyNames(i + 1), Flags)
                 End If
-                RetValue = PropertyValue
+                RetValue = PropertyObject
             Next
 
             Return RetValue
         End Function
+
+        ''' <summary>  Tries to set the value of a property given by (cascaded) name, to a given object. </summary>
+         ''' <param name="Subject">      The object to set the property value to. </param>
+         ''' <param name="PropertyPath"> Path to the property name, based on <paramref name="Subject"/>, i.e. "prop1" or "prop1.prop2.prop3". </param>
+         ''' <param name="Value">        The property value to set. </param>
+         ''' <param name="Flags">        Determines, wich properties should be considered. </param>
+         ''' <remarks>
+         ''' <para>
+         ''' <paramref name="PropertyPath"/>: Path separator is a point. The first part has to be a direct property of <paramref name="Subject"/>. 
+         ''' The last part is the property of interest, whose value will be returened.
+         ''' </para>
+         ''' <para>
+         ''' If the returned value is <see langword="null"/>, either this is the property's value or the property hasn't been found.
+         ''' </para>
+         ''' </remarks>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="Subject"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="PropertyPath"/> is <see langword="null"/> or empty or whitespace only. </exception>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Sub SetPropertyValue(Subject As Object, PropertyPath As String, Value As Object, Flags As BindingFlags)
+                
+            If (Subject Is Nothing) Then Throw New System.ArgumentNullException("Subject")
+            If (PropertyPath.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("PropertyPath")
+
+            Dim PropertyNames() As String = PropertyPath.Split("."c)
+            
+            For i As Integer = 0 To PropertyNames.Count - 1
+                
+                Dim pi As PropertyInfo = Subject.GetType().GetProperty(PropertyNames(i), Flags)
+                
+                If (pi Is Nothing) Then Exit For
+
+                Dim PropertyObject As Object = pi.GetValue(Subject)
+                If (i < (PropertyNames.Count - 1)) Then
+                    SetPropertyValue(PropertyObject, PropertyNames(i + 1), Value, Flags)
+                End If
+
+                'Dim Km2 As Kilometer = TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678")
+
+                ' Statement "pi.SetValue(Subject, Value)" complains about impossible conversion
+                ' from String to Kilometer, though these two line work like a charme:
+                '  Dim Km As New Kilometer()
+                '  Km = "1.2 + 345.678"
+                '
+                ' So we call the TypeConverter explicit:
+                Dim TargetObjet As Object = TypeDescriptor.GetConverter(pi.PropertyType).ConvertFromString(Value)
+                pi.SetValue(Subject, TargetObjet)
+                
+            Next
+        End Sub
         
     End Module
     
