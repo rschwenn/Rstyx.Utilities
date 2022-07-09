@@ -1,7 +1,9 @@
 ﻿
 Imports System
 Imports System.Collections.Generic
+Imports System.Reflection
 Imports System.Text.RegularExpressions
+
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.Math.MathExtensions
 Imports Rstyx.Utilities.StringUtils
@@ -341,8 +343,8 @@ Namespace Domain
              ''' A derived class may override this in order to get values from properties, 
              ''' that don't belong to <see cref="IGeoPoint"/> interface.
              ''' </para>
-             ''' Selected properties from <paramref name="SourcePoint"/>, that don't belong to <see cref="IGeoPoint"/> interface,
-             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to attributes</b>:
+             ''' Properties from <paramref name="SourcePoint"/>, that are declared in <see cref="PropertyAttributes"/>, 
+             ''' but don't belong to <see cref="IGeoPoint"/> interface will be <b>added to attributes</b>:
              ''' <para>
              ''' If <paramref name="SourcePoint"/> is a <see cref="GeoIPoint"/>, then the following properties will be converted to attributes:
              ''' <list type="table">
@@ -405,67 +407,9 @@ Namespace Domain
                     Me.SourceLineNo    = SourcePoint.SourceLineNo
                     
 
-                    ' Convert selected point type specific properties to attributes.
-                    Dim PropertyName   As String
-                    Dim AttributeName  As String
-                    
-                    ' ipkt.
-                    If (TypeOf SourcePoint Is GeoIPoint) Then
-                        
-                        Dim SourceIPoint As GeoIPoint = DirectCast(SourcePoint, GeoIPoint)
-                        
-                        PropertyName = "MarkTypeAB"
-                        If (SourceIPoint.MarkTypeAB.IsNotEmpty()) Then
-                            AttributeName = SourceIPoint.PropertyAttributes(PropertyName) 
-                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
-                                Me.Attributes.Add(AttributeName, SourceIPoint.MarkTypeAB)
-                            End If
-                        End If
-                    End If
-                    
-                    ' VE.
-                    If (TypeOf SourcePoint Is GeoVEPoint) Then
-                            
-                        Dim SourceVEPoint As GeoVEPoint = DirectCast(SourcePoint, GeoVEPoint)
-                        
-                        PropertyName = "TrackPos.TrackNo"
-                        If (SourceVEPoint.TrackPos.TrackNo IsNot Nothing) Then
-                            AttributeName = SourceVEPoint.PropertyAttributes(PropertyName) 
-                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
-                                Me.Attributes.Add(AttributeName, sprintf("%4s", SourceVEPoint.TrackPos.TrackNo))
-                            End If
-                        End If
-                        
-                        PropertyName = "TrackPos.RailsCode"
-                        If (SourceVEPoint.TrackPos.RailsCode.IsNotEmptyOrWhiteSpace()) Then 
-                            AttributeName = SourceVEPoint.PropertyAttributes(PropertyName) 
-                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
-                                Me.Attributes.Add(AttributeName, SourceVEPoint.TrackPos.RailsCode)
-                            End If
-                        End If
-                        
-                        PropertyName = "TrackPos.Kilometer"
-                        If (SourceVEPoint.TrackPos.Kilometer.HasValue()) Then 
-                            AttributeName = SourceVEPoint.PropertyAttributes(PropertyName) 
-                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
-                                Me.Attributes.Add(AttributeName, sprintf("%11.4f", SourceVEPoint.TrackPos.Kilometer.Value))
-                            End If
-                        End If
-                    End If
-                    
-                    
-                    ' TC.
-                    If (TypeOf SourcePoint Is GeoTcPoint) Then
-                            
-                        Dim SourceTCPoint As GeoTcPoint = DirectCast(SourcePoint, GeoTcPoint)
-                        
-                        PropertyName = "Km"
-                        If (SourceTCPoint.Km.HasValue()) Then 
-                            AttributeName = SourceTCPoint.PropertyAttributes(PropertyName) 
-                            If (Not Me.Attributes.ContainsKey(AttributeName)) Then
-                                Me.Attributes.Add(AttributeName, sprintf("%11.4f", SourceTCPoint.Km.Value))
-                            End If
-                        End If
+                    ' Convert declared point type specific properties to attributes.
+                    If (TypeOf SourcePoint Is GeoPoint) Then 
+                        Me.AddPropertyAttributes(SourcePoint)        
                     End If
 
                 End If
@@ -477,6 +421,38 @@ Namespace Domain
                     Dim AttributeName As String = kvp.Value
                     If (Me.Attributes.ContainsKey(AttributeName)) Then
                         Me.Attributes.Remove(AttributeName)
+                    End If
+                Next
+            End Sub
+
+            ''' <summary>
+            ''' Adds attributes that represent properties from <paramref name="SourcePoint"/>, 
+            ''' that are declared in <see cref="PropertyAttributes"/>, and are unique to the type of <paramref name="SourcePoint"/>.
+            ''' </summary>
+             ''' <remarks>
+             ''' The string attribute values will be converted from property value by <see cref="ToString()"/>. 
+             ''' An exception is a <see cref="Kilometer"/>, where the conversion is done by <see cref="Kilometer.ToKilometerNotation"/> 
+             ''' with a precision set to 4.
+             ''' </remarks>
+             ''' <param name="SourcePoint"> Point to get property values from. </param>
+            Protected Sub AddPropertyAttributes(SourcePoint As GeoPoint)
+                
+                For Each kvp As KeyValuePair(Of String, String) In SourcePoint.PropertyAttributes
+                    
+                    Dim PropertyPath  As String = kvp.key
+                    Dim AttributeName As String = kvp.Value
+                    Dim PropertyValue As Object = SourcePoint.GetPropertyValue(PropertyPath, BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.Instance)
+            
+                    If (PropertyValue IsNot Nothing) Then
+                        If (Not Me.Attributes.ContainsKey(AttributeName)) Then
+                            Dim AttributeValue As String
+                            If (TypeOf PropertyValue Is Kilometer) Then
+                                AttributeValue = DirectCast(PropertyValue, Kilometer).ToKilometerNotation(4, " ")
+                            Else
+                                AttributeValue = PropertyValue.ToString()
+                            End If
+                            Me.Attributes.Add(AttributeName, AttributeValue)
+                        End If
                     End If
                 Next
             End Sub

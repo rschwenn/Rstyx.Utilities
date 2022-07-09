@@ -11,6 +11,7 @@ Imports System.Linq
 Imports System.Linq.Expressions
 Imports System.Math
 Imports System.IO
+Imports System.Reflection
 Imports System.Text
 Imports System.Threading.Tasks
 
@@ -337,7 +338,7 @@ Public Class MainViewModel
          '  For Each ex As Exception In Exceptions
          '      If (TypeOf ex Is ExcelToEnumerableCellException) Then
          '          Dim ex2 As ExcelToEnumerableCellException = DirectCast(ex, ExcelToEnumerableCellException)
-         '          Logger.logInfo(sprintf("Fehler:  Zeile %2d, Feld=%s:  %s", ex2.RowNumber, ex2.PropertyName, ex2.Message))
+         '          Logger.logInfo(sprintf("Fehler:  Zeile %2d, Feld=%s:  %s", ex2.RowNumber, ex2.PropertyPath, ex2.Message))
          '      Else 
          '          Logger.logInfo(sprintf("Fehler:  %s", ex.Message))
          '      End If
@@ -442,47 +443,123 @@ Public Class MainViewModel
             Logger.logInfo("StartProcessTest Ende.")
         End Sub
         
+
+        ''' <summary>  Gets the value of a property given by (cascaded) name, from a given object. </summary>
+         ''' <param name="Subject">      The object to inspect. </param>
+         ''' <param name="PropertyPath"> Path to the property name, based on <paramref name="Subject"/>, i.e. "prop1" or "prop1.prop2.prop3" </param>
+         ''' <param name="Flags">        Determines, wich properties should be considered. </param>
+         ''' <returns> The found property value on success, otherwise <see langword="null"/>. </returns>
+         ''' <remarks>
+         ''' <para>
+         ''' <paramref name="PropertyPath"/>: Path separator is a point. The first part has to be a direct property of <paramref name="Subject"/>. 
+         ''' The last part is the property of interest, whose value will be returened.
+         ''' </para>
+         ''' <para>
+         ''' If the returned value is <see langword="null"/>, either this is the property's value or the property hasn't been found.
+         ''' </para>
+         ''' </remarks>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="Subject"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="PropertyPath"/> is <see langword="null"/> or empty or whitespace only. </exception>
+        Private Function Tmp_GetPropertyValue(Subject As Object, PropertyPath As String, Flags As BindingFlags) As Object
+                
+            If (Subject Is Nothing) Then Throw New System.ArgumentNullException("Subject")
+            If (PropertyPath.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("PropertyPath")
+
+            Dim RetValue        As Object = Nothing
+            Dim PropertyNames() As String = PropertyPath.Split("."c)
+            
+            For i As Integer = 0 To PropertyNames.Count - 1
+                
+                Dim pi As PropertyInfo = Subject.GetType().GetProperty(PropertyNames(i), Flags)
+                
+                If (pi Is Nothing) Then Exit For
+
+                Dim PropertyValue As Object = pi.GetValue(Subject)
+                If (i < (PropertyNames.Count - 1)) Then
+                    PropertyValue = Tmp_GetPropertyValue(PropertyValue, PropertyNames(i + 1), Flags)
+                End If
+                RetValue = PropertyValue
+            Next
+
+            Return RetValue
+        End Function
+
+        Private Function GetPropertyInfo(Subject As Object, PropertyPath As String) As PropertyInfo
+                
+            Dim RetValue        As PropertyInfo = Nothing
+            Dim PropertyNames() As String  = PropertyPath.Split("."c)
+            Dim NamesCount      As Integer = PropertyNames.Count
+            Dim DeclaringType   As Type    = Subject.GetType()
+            
+            For i As Integer = 0 To NamesCount - 1
+                
+                Dim PropertyName As String = PropertyNames(i)
+                Dim pi As PropertyInfo = DeclaringType.GetProperty(PropertyName)
+                
+                If (pi IsNot Nothing) Then
+                    If (pi.DeclaringType.Name = DeclaringType.Name) Then
+                        If (i < (NamesCount - 1)) Then
+                            pi = GetPropertyInfo(pi.GetValue(Subject), PropertyNames(i + 1))
+                        End If
+                        RetValue = pi
+                    End If
+                End If
+            Next
+            Return RetValue
+        End Function
+
         Public Sub Test_1(CancelToken As System.Threading.CancellationToken)
             
             'Dim TcReader As TcFileReader
             
             'Try
                 Logger.logInfo("")
-
-        'Call StartProcessTest()
-        'Call TestExcelDataReader()
-
-        'Call TestOrder()
-        'Call TestPDF()
-        'Call TestJPEG()
-
-        Logger.LogInfo(sprintf("  Environment.GetEnvironmentVariable(""PATH"")       => '%s'", Environment.GetEnvironmentVariable("PATH")))
-        Logger.LogInfo(sprintf("  Environment.ExpandEnvironmentVariables(""%%PATH%%"") => '%s'", Environment.ExpandEnvironmentVariables("%PATH%")))
-        Logger.LogInfo("")
-
-        Logger.LogInfo(sprintf("  GeoPointEditOptions.ParseInfoForActualCant => '%s'", GeoPointEditOptions.ParseInfoForActualCant.ToDisplayString()))
-        Logger.LogInfo(sprintf("  GeoPointEditOptions.ParseInfoForPointKind => '%s'", GeoPointEditOptions.ParseInfoForPointKind.ToDisplayString()))
-        Logger.LogInfo(sprintf("  GeoPointEditOptions.Parse_iTC => '%s'", GeoPointEditOptions.Parse_iTC.ToDisplayString()))
-
-        Logger.LogInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithActualCant => '%s'", GeoPointOutputOptions.CreateInfoWithActualCant.ToDisplayString()))
-        Logger.LogInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithPointKind => '%s'", GeoPointOutputOptions.CreateInfoWithPointKind.ToDisplayString()))
-        Logger.LogInfo(sprintf("  GeoPointOutputOptions.Create_iTC => '%s'", GeoPointOutputOptions.Create_iTC.ToDisplayString()))
-
-        Dim TestString As String = "u=5  WA   28"
-        Dim TestString2 As String = Nothing
-        Dim Matches As System.Text.RegularExpressions.MatchCollection = TestString.GetMatches("  ")
-        If (Matches.Count > 0) Then
-            TestString2 = TestString.Left(Matches(0).Index) & TestString.Substring(Matches(0).Index + 1)
-        End If
-        Logger.logInfo(sprintf("  '%s' => '%s'", TestString, TestString2))
                 
-                'Dim p As New GeoIPoint ()
-                'p.ParseTextForKindCodes(Me.Textbox)
-                'Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", p.Kind.ToDisplayString(), p.MarkTypeAB, p.MarkType, p.ActualCant * 1000, p.Info))
-                'p.Info    = Me.Textbox
-                'p.Comment = " HB 22.33"
-                'p.ParseInfoForKindHints(TryComment:=False)
-                'Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, p.Kind.ToDisplayString(), p.ActualCant * 1000, p.Info))
+                Dim InputFile As GeoPointFile = New KvFile() With {.EditOptions = GeoPointEditOptions.None}
+                InputFile.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\GisPnr2i_Beispiele\Test2.kv"
+                'Dim Points As New GeoPointList(SourcePointList:=InputFile.PointStream, MetaData:=InputFile, CancelToken:=CancelToken, StatusIndicator:=Me)
+                For Each vp1 As GeoVEPoint In InputFile.PointStream
+                    Dim tcp   As GeoTcPoint  = vp1.AsGeoTcPoint
+                    'Dim vp2  As GeoVEPoint = ip.AsGeoVEPoint
+                    Logger.LogInfo(vp1.ID)
+                Next
+                
+                
+                
+                ''Call StartProcessTest()
+                ''Call TestExcelDataReader()
+                '
+                ''Call TestOrder()
+                ''Call TestPDF()
+                ''Call TestJPEG()
+                '
+                'Logger.LogInfo(sprintf("  Environment.GetEnvironmentVariable(""PATH"")       => '%s'", Environment.GetEnvironmentVariable("PATH")))
+                'Logger.LogInfo(sprintf("  Environment.ExpandEnvironmentVariables(""%%PATH%%"") => '%s'", Environment.ExpandEnvironmentVariables("%PATH%")))
+                'Logger.LogInfo("")
+                '
+                'Logger.LogInfo(sprintf("  GeoPointEditOptions.ParseInfoForActualCant => '%s'", GeoPointEditOptions.ParseInfoForActualCant.ToDisplayString()))
+                'Logger.LogInfo(sprintf("  GeoPointEditOptions.ParseInfoForPointKind => '%s'", GeoPointEditOptions.ParseInfoForPointKind.ToDisplayString()))
+                'Logger.LogInfo(sprintf("  GeoPointEditOptions.Parse_iTC => '%s'", GeoPointEditOptions.Parse_iTC.ToDisplayString()))
+                '
+                'Logger.LogInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithActualCant => '%s'", GeoPointOutputOptions.CreateInfoWithActualCant.ToDisplayString()))
+                'Logger.LogInfo(sprintf("  GeoPointOutputOptions.CreateInfoWithPointKind => '%s'", GeoPointOutputOptions.CreateInfoWithPointKind.ToDisplayString()))
+                'Logger.LogInfo(sprintf("  GeoPointOutputOptions.Create_iTC => '%s'", GeoPointOutputOptions.Create_iTC.ToDisplayString()))
+                '
+                'Dim TestString As String = "u=5  WA   28"
+                'Dim TestString2 As String = Nothing
+                'Dim Matches As System.Text.RegularExpressions.MatchCollection = TestString.GetMatches("  ")
+                'If (Matches.Count > 0) Then
+                '    TestString2 = TestString.Left(Matches(0).Index) & TestString.Substring(Matches(0).Index + 1)
+                'End If
+                'Logger.logInfo(sprintf("  '%s' => '%s'", TestString, TestString2))
+                
+                'Dim SourcePoint As New GeoIPoint ()
+                'SourcePoint.ParseTextForKindCodes(Me.Textbox)
+                'Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", SourcePoint.Kind.ToDisplayString(), SourcePoint.MarkTypeAB, SourcePoint.MarkType, SourcePoint.ActualCant * 1000, SourcePoint.Info))
+                'SourcePoint.Info    = Me.Textbox
+                'SourcePoint.Comment = " HB 22.33"
+                'SourcePoint.ParseInfoForKindHints(TryComment:=False)
+                'Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, SourcePoint.Kind.ToDisplayString(), SourcePoint.ActualCant * 1000, SourcePoint.Info))
                 
                 'Dim Km1 As Kilometer = New Kilometer("-0.1 - 212.13")
                 'Dim Km2 As Kilometer = New Kilometer("-0.1 - 12.13")
@@ -495,41 +572,41 @@ Public Class MainViewModel
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
                 'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
                 
-                Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
-                Dim d1 As Double = Double.NaN
-                d1.TryParse("+Unendlich")
-                Logger.logInfo(sprintf("%+5.3f", d1))
-                
-                Dim d2 As Double = Double.NegativeInfinity
-                Dim d3 As Double = Double.PositiveInfinity
-                Logger.logInfo(d2.ToString())
-                Logger.logInfo(d3.ToString())
-                Logger.logInfo(sprintf("%+5.3f", d2))
-                'Logger.logInfo(sprintf("%+5.3f", d3))
-
-                Dim NegInf As String = "" & ChrW(&H221E)
-
-                Logger.logInfo("")
-                
-                System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture.Clone()
-                System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.PositiveInfinitySymbol = ChrW(&H221E)
-                System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NegativeInfinitySymbol = "-" & ChrW(&H221E)
-                
-                'System.Threading.Thread.CurrentThread.CurrentCulture = New System.Globalization.CultureInfo("de")
-                Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
-                
-                d1 = Double.NaN
-                d1.TryParse("+Unendlich")
-                Logger.logInfo(sprintf("%+5.3f", d1))
-                
-                d2 = Double.NegativeInfinity
-                d3 = Double.PositiveInfinity
-                Logger.logInfo(d2.ToString())
-                Logger.logInfo(d3.ToString())
-                Logger.logInfo(sprintf("%+5.3f", d2))
-                
-                d1.TryParse(NegInf)
-                Logger.logInfo(sprintf(" %s => %+5.3f", NegInf, d1))
+                'Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
+                'Dim d1 As Double = Double.NaN
+                'd1.TryParse("+Unendlich")
+                'Logger.logInfo(sprintf("%+5.3f", d1))
+                '
+                'Dim d2 As Double = Double.NegativeInfinity
+                'Dim d3 As Double = Double.PositiveInfinity
+                'Logger.logInfo(d2.ToString())
+                'Logger.logInfo(d3.ToString())
+                'Logger.logInfo(sprintf("%+5.3f", d2))
+                ''Logger.logInfo(sprintf("%+5.3f", d3))
+                '
+                'Dim NegInf As String = "" & ChrW(&H221E)
+                '
+                'Logger.logInfo("")
+                '
+                'System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture.Clone()
+                'System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.PositiveInfinitySymbol = ChrW(&H221E)
+                'System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NegativeInfinitySymbol = "-" & ChrW(&H221E)
+                '
+                ''System.Threading.Thread.CurrentThread.CurrentCulture = New System.Globalization.CultureInfo("de")
+                'Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
+                '
+                'd1 = Double.NaN
+                'd1.TryParse("+Unendlich")
+                'Logger.logInfo(sprintf("%+5.3f", d1))
+                '
+                'd2 = Double.NegativeInfinity
+                'd3 = Double.PositiveInfinity
+                'Logger.logInfo(d2.ToString())
+                'Logger.logInfo(d3.ToString())
+                'Logger.logInfo(sprintf("%+5.3f", d2))
+                '
+                'd1.TryParse(NegInf)
+                'Logger.logInfo(sprintf(" %s => %+5.3f", NegInf, d1))
                 
                 'Dim int1 As Integer = 1
                 'Dim int2 As Nullable(Of Integer) = 2
