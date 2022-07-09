@@ -2,6 +2,7 @@
 Imports System
 Imports System.Linq
 Imports System.Collections.Generic
+Imports System.Reflection
 Imports System.Runtime.InteropServices
 
 'Namespace Extensions
@@ -60,44 +61,85 @@ Imports System.Runtime.InteropServices
             Return If(Value, Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue, Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse)
         End Function
             
-            ''' <summary> Replacement for <c>Boolean.TryParse</c> which converts strings localized by resources. </summary>
-             ''' <param name="Result"> The parsing result. </param>
-             ''' <param name="Value">  String to parse. </param>
-             ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
-             ''' <remarks>
-             ''' If <c>Boolean.TryParse</c> fails, then special parsing will be done for 
-             ''' <see cref="Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue"/> and
-             ''' <see cref="Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse"/> (not case sensitive).
-             ''' If <paramref name="Value"/> contains is only one character, it will be successfuly parsed 
-             ''' if it matches the first character of one of the resorce strings.
-             ''' </remarks>
-            <System.Runtime.CompilerServices.Extension()> 
-            Public Function TryParse(<out> ByRef Result As Boolean, Value As String) As Boolean
-                Dim success As Boolean = False
+        ''' <summary> Replacement for <c>Boolean.TryParse</c> which converts strings localized by resources. </summary>
+         ''' <param name="Result"> The parsing result. </param>
+         ''' <param name="Value">  String to parse. </param>
+         ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>
+         ''' <remarks>
+         ''' If <c>Boolean.TryParse</c> fails, then special parsing will be done for 
+         ''' <see cref="Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue"/> and
+         ''' <see cref="Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse"/> (not case sensitive).
+         ''' If <paramref name="Value"/> contains is only one character, it will be successfuly parsed 
+         ''' if it matches the first character of one of the resorce strings.
+         ''' </remarks>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function TryParse(<out> ByRef Result As Boolean, Value As String) As Boolean
+            Dim success As Boolean = False
+            
+            If (Value.IsNotEmptyOrWhiteSpace()) Then
                 
-                If (Value.IsNotEmptyOrWhiteSpace()) Then
-                    
-                    success = Boolean.TryParse(Value, Result)
-                    
-                    If (Not success) Then
-                        Select Case Value.ToLowerInvariant()
-                            Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue.ToLower()  :  Result = True  : success = True
-                            Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse.ToLower() :  Result = False : success = True
-                        End Select
-                    End If
-                    
-                    If (Not success) Then
-                        If (Value.Length = 1) Then
-                            Select Case Value.Left(1).ToLowerInvariant()
-                                Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue.Left(1).ToLower()  :  Result = True  : success = True
-                                Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse.Left(1).ToLower() :  Result = False : success = True
-                            End Select
-                        End If
-                    End If
+                success = Boolean.TryParse(Value, Result)
+                
+                If (Not success) Then
+                    Select Case Value.ToLowerInvariant()
+                        Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue.ToLower()  :  Result = True  : success = True
+                        Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse.ToLower() :  Result = False : success = True
+                    End Select
                 End If
                 
-                Return success
-            End Function
+                If (Not success) Then
+                    If (Value.Length = 1) Then
+                        Select Case Value.Left(1).ToLowerInvariant()
+                            Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue.Left(1).ToLower()  :  Result = True  : success = True
+                            Case Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse.Left(1).ToLower() :  Result = False : success = True
+                        End Select
+                    End If
+                End If
+            End If
+            
+            Return success
+        End Function
+
+        ''' <summary>  Gets the value of a property given by (cascaded) name, from a given object. </summary>
+         ''' <param name="Subject">      The object to inspect. </param>
+         ''' <param name="PropertyPath"> Path to the property name, based on <paramref name="Subject"/>, i.e. "prop1" or "prop1.prop2.prop3" </param>
+         ''' <param name="Flags">        Determines, wich properties should be considered. </param>
+         ''' <returns> The found property value on success, otherwise <see langword="null"/>. </returns>
+         ''' <remarks>
+         ''' <para>
+         ''' <paramref name="PropertyPath"/>: Path separator is a point. The first part has to be a direct property of <paramref name="Subject"/>. 
+         ''' The last part is the property of interest, whose value will be returened.
+         ''' </para>
+         ''' <para>
+         ''' If the returned value is <see langword="null"/>, either this is the property's value or the property hasn't been found.
+         ''' </para>
+         ''' </remarks>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="Subject"/> is <see langword="null"/>. </exception>
+         ''' <exception cref="System.ArgumentNullException"> <paramref name="PropertyPath"/> is <see langword="null"/> or empty or whitespace only. </exception>
+        <System.Runtime.CompilerServices.Extension()> 
+        Public Function GetPropertyValue(Subject As Object, PropertyPath As String, Flags As BindingFlags) As Object
+                
+            If (Subject Is Nothing) Then Throw New System.ArgumentNullException("Subject")
+            If (PropertyPath.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("PropertyPath")
+
+            Dim RetValue        As Object = Nothing
+            Dim PropertyNames() As String = PropertyPath.Split("."c)
+            
+            For i As Integer = 0 To PropertyNames.Count - 1
+                
+                Dim pi As PropertyInfo = Subject.GetType().GetProperty(PropertyNames(i), Flags)
+                
+                If (pi Is Nothing) Then Exit For
+
+                Dim PropertyValue As Object = pi.GetValue(Subject)
+                If (i < (PropertyNames.Count - 1)) Then
+                    PropertyValue = GetPropertyValue(PropertyValue, PropertyNames(i + 1), Flags)
+                End If
+                RetValue = PropertyValue
+            Next
+
+            Return RetValue
+        End Function
         
     End Module
     
