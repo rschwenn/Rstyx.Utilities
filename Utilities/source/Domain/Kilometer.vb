@@ -1,35 +1,84 @@
 ﻿
 Imports System
+Imports System.ComponentModel
+Imports System.Globalization
 Imports System.Math
 Imports System.Text.RegularExpressions
 
 Namespace Domain
     
     ''' <summary> Status of a Kilometer Value. </summary>
-     <SerializableAttribute> _
+     <Serializable> _
     Public Enum KilometerStatus As Integer
         
         ''' <summary> Status (ambiguity) is unknown. </summary>
         Unknown = -1
         
-        ''' <summary> Unambiguous Kilometer value (at least not located in the incoming sector of a Kilometer skip of overlegth). </summary>
+        ''' <summary> Unambiguous Kilometer Value (at least not located in the incoming sector of a Kilometer skip of overlegth). </summary>
         Normal = 0
         
-        ''' <summary> Ambiguous Kilometer value. It's located in the incoming sector of a Kilometer skip of overlegth. </summary>
+        ''' <summary> Ambiguous Kilometer Value. It's located in the incoming sector of a Kilometer skip of overlegth. </summary>
         SkipIncoming = 1
         
-        ''' <summary> Ambiguous Kilometer value. It's located in the outgoing sector of a Kilometer skip of overlegth. </summary>
+        ''' <summary> Ambiguous Kilometer Value. It's located in the outgoing sector of a Kilometer skip of overlegth. </summary>
         SkipOutgoing = 2
         
     End Enum
-    
+
+    ''' <summary> Provides Conversions for a <see cref="Kilometer"/>. </summary>
+    Public Class KilometerConverter
+        Inherits TypeConverter
+            
+        ''' <summary> Creates an instance of this converter. </summary>
+        Public Sub New()
+        End Sub
+        
+        ''' <summary> Determines whether this converter can convert an object of given type to a <see cref="Kilometer"/>. </summary>
+         ''' <param name="Context">    An <see cref="ITypeDescriptorContext"/>, that provides a format context. </param>
+         ''' <param name="SourceType"> The Type to convert a <see cref="Kilometer"/>  from. </param>
+         ''' <returns> <see langword="true"/>, if this converter can perform the conversion, otherwise <see langword="false"/>. </returns>
+        Public Overrides Overloads Function CanConvertFrom(Context As ITypeDescriptorContext, SourceType As Type) As Boolean
+            Return ((SourceType Is GetType(String)) OrElse MyBase.CanConvertFrom(Context, SourceType))
+        End Function
+        
+        ''' <summary> Converts a given object of any type into a <see cref="Kilometer"/>. </summary>
+         ''' <param name="Context"> An <see cref="ITypeDescriptorContext"/>, that provides a format context. </param>
+         ''' <param name="Culture"> The <see cref="CultureInfo"/>  to use as the current culture. </param>
+         ''' <param name="Value">   The source object to convert. </param>
+         ''' <returns> A new <see cref="Kilometer"/>, created from <paramref name="Value"/>. </returns>
+        Public Overrides Overloads Function ConvertFrom(Context As ITypeDescriptorContext, Culture As CultureInfo, Value As Object) As Object
+            Dim RetValue As New Kilometer()
+            If (TypeOf Value Is String) Then
+                RetValue.Parse(CStr(Value))
+            Else
+                RetValue = MyBase.ConvertFrom(Context, Culture, Value)
+            End If
+            Return RetValue
+        End Function
+        
+        ''' <summary> Converts a <see cref="Kilometer"/>  into an object of given type. </summary>
+         ''' <param name="Context"> An <see cref="ITypeDescriptorContext"/>, that provides a format context. </param>
+         ''' <param name="Culture"> The <see cref="CultureInfo"/>  to use as the current culture. </param>
+         ''' <param name="Value">   The <see cref="Kilometer"/>  to convert. </param>
+         ''' <param name="DestinationType"> The type to convert the <see cref="Kilometer"/>  into. </param>
+         ''' <returns> The converted <see cref="Kilometer"/>. </returns>
+        Public Overrides Overloads Function ConvertTo(Context As ITypeDescriptorContext, Culture As CultureInfo, Value As Object, DestinationType As Type) As Object
+            ' Should be default behavior (?):
+            'If (DestinationType Is GetType(String)) Then
+            '   Return DirectCast(Value, Kilometer).ToString()
+            'End If
+            Return MyBase.ConvertTo(Context, Culture, Value, DestinationType)
+        End Function
+       
+    End Class    
     
     ''' <summary> Represents a Kilometer, supporting several notations. </summary>
      ''' <remarks>
      ''' The properties of this class (except <see cref="Kilometer.Text"/>) are read-only. They can be set at construction 
      ''' or by the <see cref="Kilometer.Parse(String)"/> or <see cref="Kilometer.TryParse(String)"/> methods only.
      ''' </remarks>
-     <SerializableAttribute> _
+     <Serializable> _
+     <TypeConverter(GetType(KilometerConverter))> _
     Public Class Kilometer
         
         #Region "Private Fields"
@@ -41,7 +90,6 @@ Namespace Domain
         #Region "Constuctor"
             
             ''' <summary> Creates a new Kilometer. </summary>
-            ''' <remarks>  </remarks>
             Public Sub New()
             End Sub
             
@@ -96,7 +144,7 @@ Namespace Domain
              ''' <para>
              ''' Examples for <paramref name="KilometerString"/>: 
              ''' <list type="table">
-             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <listheader> <term> <b>Input Value</b>  </term>  <description> Result </description></listheader>
              ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
              ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
              ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
@@ -132,7 +180,7 @@ Namespace Domain
              ''' <para>
              ''' Examples for <paramref name="KilometerString"/>: 
              ''' <list type="table">
-             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <listheader> <term> <b>Input Value</b>  </term>  <description> Result </description></listheader>
              ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
              ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
              ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
@@ -163,14 +211,14 @@ Namespace Domain
             Private _Status     As KilometerStatus = KilometerStatus.Unknown
             Private _Text       As String = Nothing
             
-            ''' <summary> The ordinary Kilometer value. Defaults to <c>Double.NaN</c>. </summary>
+            ''' <summary> The ordinary Kilometer Value. Defaults to <c>Double.NaN</c>. </summary>
             Public ReadOnly Property Value() As Double
                 Get
                     Return _Value
                 End Get
             End Property
             
-            ''' <summary> The Kilometer value in TDB format. Defaults to <c>Double.NaN</c>. </summary>
+            ''' <summary> The Kilometer Value in TDB format. Defaults to <c>Double.NaN</c>. </summary>
             Public ReadOnly Property TDBValue()  As Double
                 Get
                     Return _TDBValue
@@ -264,7 +312,7 @@ Namespace Domain
              ''' <para>
              ''' Examples for <paramref name="KilometerString"/>: 
              ''' <list type="table">
-             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <listheader> <term> <b>Input Value</b>  </term>  <description> Result </description></listheader>
              ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
              ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
              ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
@@ -283,7 +331,7 @@ Namespace Domain
             
             ''' <summary> Tries to parse a string as usual Kilometer notation. </summary>
              ''' <param name="KilometerString"> A usual Kilometer notation or a (special) numerical String. </param>
-             ''' <returns> <see langword="true"/> if the string has been parsed successful as Kilometer, otherwise <see langword="false"/>. </returns>
+             ''' <returns> <see langword="true"/>, if the string has been parsed successful as Kilometer, otherwise <see langword="false"/>. </returns>
              ''' <remarks>
              ''' <para>
              ''' If parsing has been successful, the properties provide the recognized values. Otherwise they will be set to <c>Double.NaN</c>.
@@ -296,7 +344,7 @@ Namespace Domain
              ''' <para>
              ''' Examples for <paramref name="KilometerString"/>: 
              ''' <list type="table">
-             ''' <listheader> <term> <b>Input value</b>  </term>  <description> Result </description></listheader>
+             ''' <listheader> <term> <b>Input Value</b>  </term>  <description> Result </description></listheader>
              ''' <item> <term> 12.3 + 45.678    </term>  <description> 12345.678, staus = normal   </description></item>
              ''' <item> <term> -0.1 - 212.13    </term>  <description>   -312.13, staus = incoming </description></item>
              ''' <item> <term> -0.1 - 12.13     </term>  <description>   -112.13, staus = normal   </description></item>
@@ -361,7 +409,7 @@ Namespace Domain
             End Function
             
             ''' <summary> Checks if <see cref="Value"/> isn't <c>Double.NAN</c>. </summary>
-             ''' <returns> <see langword="true"/> if this Kilometer has a value. </returns>
+             ''' <returns> <see langword="true"/>, if this Kilometer has a Value. </returns>
             Public Function HasValue() As Boolean
                 Return (Not Double.IsNaN(_Value))
             End Function
@@ -440,6 +488,23 @@ Namespace Domain
                 Return New Kilometer(Km1.Value - Km2)
             End Operator
             
+
+            ''' <summary> Converts a <see cref="Kilometer"/>  into a String. </summary>
+             ''' <param name="Km"> The <see cref="Kilometer"/>  to convert. </param>
+             ''' <returns> A usual Kilometer notation. </returns>
+            Public Shared Overloads Widening Operator CType(ByVal Km As Kilometer) As String
+                Return Km.ToString()
+            End Operator
+
+            ''' <summary> Converts a String into a <see cref="Kilometer"/>. </summary>
+             ''' <param name="KilometerString"> A usual Kilometer notation or a (special) numerical String. </param>
+             ''' <returns> The matching Kilometer. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="KilometerString"/> is <see langword="null"/> or <c>String.Empty</c>. </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="KilometerString"/> isn't a valid Kilometer notation. </exception>
+            Public Shared Overloads Widening Operator CType(ByVal KilometerString As String) As Kilometer
+                Return New Kilometer(KilometerString)
+            End Operator
+
         #End Region
 
 
