@@ -1379,6 +1379,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die &quot;Punkt %s:  Attribut &apos;%s&apos; = &apos;%s&apos;:  ungültiger Wert.&quot; ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPoint_InvalidAttributeValue() As String
+            Get
+                Return ResourceManager.GetString("GeoPoint_InvalidAttributeValue", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Zuordnung Vermarkungsart =&gt; Punktart: ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPoint_MarkKindListHeader() As String

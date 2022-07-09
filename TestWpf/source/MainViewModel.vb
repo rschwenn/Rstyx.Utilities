@@ -2,6 +2,7 @@
 Imports System
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
+Imports System.ComponentModel
 Imports System.Data
 Imports System.Data.OleDb
 Imports System.Data.DataTableExtensions
@@ -515,13 +516,24 @@ Public Class MainViewModel
             'Try
                 Logger.logInfo("")
                 
-                Dim InputFile As GeoPointFile = New KvFile() With {.EditOptions = GeoPointEditOptions.None}
-                InputFile.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\GisPnr2i_Beispiele\Test2.kv"
+                Dim Km3 As New Kilometer()
+                Km3 = "1.2 + 345.678"
+                'Km3 = CType("1.2 + 345.678", Kilometer)
+                'Dim Km2 As Kilometer = CType(TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678"), Kilometer)
+                Dim Km2 As Kilometer = TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678")
+                Dim Km1 As New Kilometer()
+                Dim KilometerAttributes As AttributeCollection = TypeDescriptor.GetAttributes(Km1)
+                Dim myAttribute As TypeConverterAttribute = CType(KilometerAttributes(GetType(TypeConverterAttribute)), TypeConverterAttribute)
+                Logger.LogInfo("Type Conveter für 'Kilometer' ist: " & myAttribute.ConverterTypeName)
+                
+
+                Dim InputFile As GeoPointFile = New IpktFile() With {.EditOptions = GeoPointEditOptions.None}
+                InputFile.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\GisPnr2i_Beispiele\Test2_i.ipkt"
                 'Dim Points As New GeoPointList(SourcePointList:=InputFile.PointStream, MetaData:=InputFile, CancelToken:=CancelToken, StatusIndicator:=Me)
-                For Each vp1 As GeoVEPoint In InputFile.PointStream
-                    Dim tcp   As GeoTcPoint  = vp1.AsGeoTcPoint
+                For Each ip As GeoIPoint In InputFile.PointStream
+                    Dim tcp   As GeoTcPoint  = ip.AsGeoTcPoint
                     'Dim vp2  As GeoVEPoint = ip.AsGeoVEPoint
-                    Logger.LogInfo(vp1.ID)
+                    Logger.LogInfo(ip.ID)
                 Next
                 
                 

@@ -162,13 +162,9 @@ Namespace Domain
             
         #End Region
         
-        #Region "Private Fields"
-            
-            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
-            
-        #End Region
-        
         #Region "Protected Fields"
+            
+            Protected Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
             
             ''' <summary> Patterns for recognizing actual cant from info text. </summary>
             Protected Shared ReadOnly InfoCantPatterns  As Dictionary(Of String, String)
@@ -415,7 +411,7 @@ Namespace Domain
                 End If
             End Sub
 
-            ''' <summary> Removes attributes that match properties, hence are listed in <see cref="PropertyAttributes"/>. </summary>
+            ''' <summary> Removes attributes representing properties, hence are listed in <see cref="PropertyAttributes"/>. </summary>
             Protected Sub RemovePropertyAttributes()
                 For Each kvp As KeyValuePair(Of String, String) In PropertyAttributes
                     Dim AttributeName As String = kvp.Value
@@ -426,13 +422,18 @@ Namespace Domain
             End Sub
 
             ''' <summary>
-            ''' Adds attributes that represent properties from <paramref name="SourcePoint"/>, 
-            ''' that are declared in <see cref="PropertyAttributes"/>, and are unique to the type of <paramref name="SourcePoint"/>.
+            ''' Adds attributes representing properties from <paramref name="SourcePoint"/>, 
+            ''' which are declared in <see cref="PropertyAttributes"/>, and are unique to the type of <paramref name="SourcePoint"/>.
             ''' </summary>
              ''' <remarks>
-             ''' The string attribute values will be converted from property value by <see cref="ToString()"/>. 
+             ''' <para>
+             ''' The string attribute value will be converted from property value by <see cref="ToString()"/>. 
              ''' An exception is a <see cref="Kilometer"/>, where the conversion is done by <see cref="Kilometer.ToKilometerNotation"/> 
              ''' with a precision set to 4.
+             ''' </para>
+             ''' <para>
+             ''' If an attribute already exists, it won't be changed.
+             ''' </para>
              ''' </remarks>
              ''' <param name="SourcePoint"> Point to get property values from. </param>
             Protected Sub AddPropertyAttributes(SourcePoint As GeoPoint)
@@ -453,6 +454,40 @@ Namespace Domain
                             End If
                             Me.Attributes.Add(AttributeName, AttributeValue)
                         End If
+                    End If
+                Next
+            End Sub
+
+            ''' <summary> Converts all attributes declared in <see cref="PropertyAttributes"/> into matching properties, if possible. </summary>
+             ''' <remarks>
+             ''' The string attribute value will be converted into property value by "CType". 
+             ''' If the conversion fails, the attribute won't be removed from <see cref="Attributes"/>.
+             ''' </remarks>
+            Protected Sub ConvertPropertyAttributes()
+                
+                For Each kvp As KeyValuePair(Of String, String) In Me.PropertyAttributes
+                    
+                    Dim PropertyPath  As String = kvp.key
+                    Dim AttributeName As String = kvp.Value
+            
+                    If (Me.Attributes.ContainsKey(AttributeName)) Then
+                        
+                        Dim AttributeValue As String = Me.Attributes(AttributeName)
+                        Try
+                            If (AttributeValue.IsNotEmptyOrWhiteSpace()) Then
+                                Me.SetPropertyValue(PropertyPath, AttributeValue, BindingFlags.Public Or BindingFlags.Instance)
+                            End If
+                            Me.Attributes.Remove(AttributeName)
+
+                        Catch ex As Exception
+                            Throw New ParseException(New ParseError(ParseErrorLevel.Warning,
+                                                                    Me.SourceLineNo, 0, 0,
+                                                                    sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_InvalidAttributeValue, Me.ID, AttributeName, AttributeValue),
+                                                                    Nothing,
+                                                                    Me.SourcePath
+                                                                   ))
+                            'Logger.LogWarning(sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_InvalidAttributeValue, Me.ID, AttributeName, AttributeValue))
+                        End Try
                     End If
                 Next
             End Sub
@@ -1021,20 +1056,20 @@ Namespace Domain
              ''' Gets the value of an attribute which name is determined by the given property name
              ''' and the <see cref="PropertyAttributes"/> assignment table.
              ''' </summary>
-             ''' <param name="PropertyName"> The name of the target property. May be <see langword="null"/> </param>
+             ''' <param name="PropertyPath"> Path to the property name, i.e. "prop1" or "prop1.prop2.prop3". May be <see langword="null"/>. </param>
              ''' <returns> The attribute's string value. May be <see langword="null"/>. </returns>
              ''' <remarks>
-             ''' If <paramref name="PropertyName"/> is a key in <see cref="PropertyAttributes"/>, the matching dictionary value
+             ''' If <paramref name="PropertyPath"/> is a key in <see cref="PropertyAttributes"/>, the matching dictionary value
              ''' is the attribute name to look for. If this attribute exists in <see cref="Attributes"/>, 
              ''' it's value will be returned.
              ''' </remarks>
-            Public Function GetAttValueByPropertyName(PropertyName As String) As String
+            Public Function GetAttValueByPropertyName(PropertyPath As String) As String
                 
                 Dim AttValue As String = Nothing
                 
-                If (PropertyName.IsNotEmptyOrWhiteSpace()) Then
-                    If (Me.PropertyAttributes.ContainsKey(PropertyName)) Then
-                        Dim AttName As String = Me.PropertyAttributes(PropertyName)
+                If (PropertyPath.IsNotEmptyOrWhiteSpace()) Then
+                    If (Me.PropertyAttributes.ContainsKey(PropertyPath)) Then
+                        Dim AttName As String = Me.PropertyAttributes(PropertyPath)
                         If (AttName.IsNotEmptyOrWhiteSpace()) Then
                             If (Me.Attributes.ContainsKey(AttName)) Then
                                 AttValue = Me.Attributes(AttName)

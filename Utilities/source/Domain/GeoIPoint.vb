@@ -532,19 +532,20 @@ Namespace Domain
                         
                     Else
                         Me.CoordType = "YXZ"
+                        Me.ConvertPropertyAttributes()
                         
-                        Dim PropertyName   As String
-                        Dim AttStringValue As String
-                        
-                        ' Convert selected attributes to properties.
-                        PropertyName = "MarkTypeAB"
-                        If (Me.MarkTypeAB.IsEmpty()) Then
-                            AttStringValue = GetAttValueByPropertyName(PropertyName)
-                            If (AttStringValue IsNot Nothing) Then
-                                Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)
-                                Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                            End If
-                        End If
+                        'Dim PropertyName   As String
+                        'Dim AttStringValue As String
+                        '
+                        '' Convert selected attributes to properties.
+                        'PropertyName = "MarkTypeAB"
+                        'If (Me.MarkTypeAB.IsEmpty()) Then
+                        '    AttStringValue = GetAttValueByPropertyName(PropertyName)
+                        '    If (AttStringValue IsNot Nothing) Then
+                        '        Char.TryParse(AttStringValue.Trim(), Me.MarkTypeAB)
+                        '        Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
+                        '    End If
+                        'End If
                         
                     End If
                     

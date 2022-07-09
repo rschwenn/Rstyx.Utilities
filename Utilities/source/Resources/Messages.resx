@@ -1261,4 +1261,8 @@
     <value>OrigID</value>
     <comment>Attribut Name</comment>
   </data>
+  <data name="GeoPoint_InvalidAttributeValue" xml:space="preserve">
+    <value>"Punkt %s:  Attribut '%s' = '%s':  ungültiger Wert."</value>
+    <comment>Point ID: String; Attribute Name: String; Attribute Value: String</comment>
+  </data>
 </root>
