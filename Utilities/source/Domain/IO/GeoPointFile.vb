@@ -39,6 +39,20 @@ Namespace Domain.IO
             ''' <summary> An internal helper for verifying point ID uniqueness. </summary>
             Protected ReadOnly IDCheckList          As New Dictionary(Of String, String)
             
+            ''' <summary>
+            ''' A list of properties that should be written to file as attributes 
+            ''' in order to not lose their information, because there's no fix place in the file for them.
+            ''' </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' Mapping:  Property name => Attribute name.
+             ''' </para>
+             ''' <para>
+             ''' This defaults to an empty list. A derived class may add mappings.
+             ''' </para>
+             ''' </remarks>
+            Protected ReadOnly PropertyAttributes   As New Dictionary(Of String, String)
+            
         #End Region
         
         #Region "Constuctors"

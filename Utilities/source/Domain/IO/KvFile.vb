@@ -32,6 +32,8 @@ Namespace Domain.IO
             
                 Me.HeaderDiscardLines.Add(" PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr")
                 Me.HeaderDiscardLines.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------")
+
+                Me.PropertyAttributes.Add("CoordSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys)
                 
                 Logger.logDebug("New(): KvFile instantiated")
             End Sub
@@ -113,16 +115,9 @@ Namespace Domain.IO
                                     IpktAux.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
-                    
-                                    ' Convert selected attributes to properties, which don't belong to .kv file.
-                                    Dim PropertyName   As String
-                                    Dim AttStringValue As String
-                                    PropertyName   = "CoordSys"
-                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
-                                    If (AttStringValue IsNot Nothing) Then
-                                        P.CoordSys = AttStringValue.Trim()
-                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
-                                    End If
+
+                                    ' Convert attributes into matching properties.
+                                    p.ConvertPropertyAttributes()
                                     
                                     ' Smoothing.
                                     If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty

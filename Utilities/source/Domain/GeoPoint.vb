@@ -436,7 +436,7 @@ Namespace Domain
              ''' </para>
              ''' </remarks>
              ''' <param name="SourcePoint"> Point to get property values from. </param>
-            Protected Sub AddPropertyAttributes(SourcePoint As GeoPoint)
+            Public Sub AddPropertyAttributes(SourcePoint As GeoPoint)
                 
                 For Each kvp As KeyValuePair(Of String, String) In SourcePoint.PropertyAttributes
                     
@@ -470,7 +470,7 @@ Namespace Domain
              ''' hence they can't get into jEdit's error-list.
              ''' </para>
              ''' </remarks>
-            Protected Sub ConvertPropertyAttributes()
+            Public Sub ConvertPropertyAttributes()
                 
                 For Each kvp As KeyValuePair(Of String, String) In Me.PropertyAttributes
                     

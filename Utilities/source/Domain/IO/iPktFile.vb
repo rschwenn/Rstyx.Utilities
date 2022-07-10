@@ -37,6 +37,9 @@ Namespace Domain.IO
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader3)
                 
                 Me.HeaderDiscardLines.Add(" @Kommentar=")
+
+                Me.PropertyAttributes.Add("KindText" , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText)
+                Me.PropertyAttributes.Add("HeightSys", Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)
                 
                 Logger.logDebug("New(): iPktFile instantiated")
             End Sub
@@ -146,23 +149,9 @@ Namespace Domain.IO
                                     
                                     ' Attributes and comment from free data.
                                     p.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
-                    
-                                    ' Convert selected attributes to properties, which don't belong to .ipkt file.
-                                    Dim PropertyName   As String
-                                    Dim AttStringValue As String
-                                    PropertyName   = "HeightSys"
-                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
-                                    If (AttStringValue IsNot Nothing) Then
-                                        P.HeightSys = AttStringValue.Trim()
-                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
-                                    End If
-                                    PropertyName   = "KindText"
-                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
-                                    If (AttStringValue IsNot Nothing) Then
-                                        P.KindText = AttStringValue.Trim()
-                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
-                                        p.SetKindFromKindText()
-                                    End If
+                                    
+                                    ' Convert attributes into matching properties.
+                                    p.ConvertPropertyAttributes()
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
                                     ParseResult = p.ParseInfoTextInput(Me.EditOptions)
@@ -290,6 +279,7 @@ Namespace Domain.IO
                                 
                                 ' Convert properties to attributes in order to be placed in .ipkt.
                                 '   (More candidates: HeightInfo, mp, mh, sp, sh, MarkHints, Job)
+                                ' => sprintf("%-4s", p.KindText)
                                 Dim PropertyName   As String
                                 Dim AttributeName  As String
                                 PropertyName = "HeightSys"

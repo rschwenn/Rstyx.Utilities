@@ -1456,23 +1456,9 @@ Namespace Domain.IO
                                     IpktAux.ParseFreeData(FreeDataText)
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
-                    
-                                    ' Convert selected attributes to properties, which don't belong to .A0 file.
-                                    Dim PropertyName   As String
-                                    Dim AttStringValue As String
-                                    PropertyName   = "HeightSys"
-                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
-                                    If (AttStringValue IsNot Nothing) Then
-                                        P.HeightSys = AttStringValue.Trim()
-                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
-                                    End If
-                                    PropertyName   = "KindText"
-                                    AttStringValue = p.GetAttValueByPropertyName(PropertyName)
-                                    If (AttStringValue IsNot Nothing) Then
-                                        P.KindText = AttStringValue.Trim()
-                                        p.Attributes.Remove(p.PropertyAttributes(PropertyName))
-                                        p.SetKindFromKindText()
-                                    End If
+
+                                    ' Convert attributes into matching properties.
+                                    p.ConvertPropertyAttributes()
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
                                     p.Info          = DataLine.ParseField(RecDef.Text).Value
