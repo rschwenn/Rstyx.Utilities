@@ -24,7 +24,18 @@ Namespace Domain
             
             ''' <summary> Creates a new, empty <see cref="GeoIPoint"/>. </summary>
             Public Sub New()
-                PropertyAttributes.Add("MarkTypeAB", Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB)   ' "VArtAB"
+                PropertyAttributes.Add("MarkTypeAB", Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB)    ' "VArtAB"
+
+                PropertyAttributes.Add("AttKey1"    , Rstyx.Utilities.Resources.Messages.Domain_AttName_AttKey1)      ' "CodeAtt1"
+                PropertyAttributes.Add("AttKey2"    , Rstyx.Utilities.Resources.Messages.Domain_AttName_AttKey2)      ' "CodeAtt2"
+                PropertyAttributes.Add("AttValue1"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_AttValue1)    ' "Att1"
+                PropertyAttributes.Add("AttValue2"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_AttValue2)    ' "Att2"
+                PropertyAttributes.Add("CalcCode"   , Rstyx.Utilities.Resources.Messages.Domain_AttName_CalcCode)     ' "CodeBC"
+                PropertyAttributes.Add("CoordType"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordType)    ' "KooKz"
+                PropertyAttributes.Add("Flags"      , Rstyx.Utilities.Resources.Messages.Domain_AttName_Flags)        ' "Flags"
+                PropertyAttributes.Add("GraficsCode", Rstyx.Utilities.Resources.Messages.Domain_AttName_GraficsCode)  ' "CodeGC"
+                PropertyAttributes.Add("GraficsDim" , Rstyx.Utilities.Resources.Messages.Domain_AttName_GraficsDim)   ' "CodeGDim"
+                PropertyAttributes.Add("GraficsEcc" , Rstyx.Utilities.Resources.Messages.Domain_AttName_GraficsEcc)   ' "CodeGExz"
             End Sub
             
             ''' <summary> Creates a new <see cref="GeoIPoint"/> and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>

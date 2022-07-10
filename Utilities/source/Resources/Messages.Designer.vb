@@ -353,11 +353,110 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die CodeAtt1 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_AttKey1() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_AttKey1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die CodeAtt2 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_AttKey2() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_AttKey2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Att1 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_AttValue1() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_AttValue1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Att2 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_AttValue2() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_AttValue2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die CodeBC ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_CalcCode() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_CalcCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die SysL ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_AttName_CoordSys() As String
             Get
                 Return ResourceManager.GetString("Domain_AttName_CoordSys", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die KooKz ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_CoordType() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_CoordType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Flags ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_Flags() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_Flags", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die CodeGC ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_GraficsCode() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_GraficsCode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die CodeGDim ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_GraficsDim() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_GraficsDim", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die CodeGExz ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_GraficsEcc() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_GraficsEcc", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die TextH ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_HeightInfo() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_HeightInfo", resourceCulture)
             End Get
         End Property
         
@@ -371,11 +470,29 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Auftrag ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_Job() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_Job", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die PArt ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_AttName_KindText() As String
             Get
                 Return ResourceManager.GetString("Domain_AttName_KindText", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Stabil ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_MarkHints() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_MarkHints", resourceCulture)
             End Get
         End Property
         
@@ -389,11 +506,56 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die mh ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_mh() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_mh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die mp ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_mp() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_mp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die OrigID ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_AttName_OriginID() As String
             Get
                 Return ResourceManager.GetString("Domain_AttName_OriginID", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die SH ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_sh() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_sh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die SP ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_sp() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_sp", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zeit ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_TimeStamp() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_TimeStamp", resourceCulture)
             End Get
         End Property
         
@@ -457,6 +619,24 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_AttName_TrackZone() As String
             Get
                 Return ResourceManager.GetString("Domain_AttName_TrackZone", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die GH ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_wh() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_wh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die GL ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_wp() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_wp", resourceCulture)
             End Get
         End Property
         
@@ -1532,7 +1712,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die             - Auch Kommentar durchsuchen:                  %s\n ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die             - Auch Kommentar durchsuchen:                 %s\n ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointFile_EditOptions_4() As String
             Get

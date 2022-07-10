@@ -1224,7 +1224,7 @@
     <comment>Flag GeoPointEditOptions.Parse_iTC set?: Boolean</comment>
   </data>
   <data name="GeoPointFile_EditOptions_4" xml:space="preserve">
-    <value>            - Auch Kommentar durchsuchen:                  %s\n</value>
+    <value>            - Auch Kommentar durchsuchen:                 %s\n</value>
     <comment>Flag GeoPointEditOptions.ParseCommentToo set?: Boolean</comment>
   </data>
   <data name="GeoPointFile_OutputOptions_1" xml:space="preserve">
@@ -1264,5 +1264,85 @@
   <data name="GeoPoint_InvalidAttributeValue" xml:space="preserve">
     <value>"Punkt %s:  Attribut '%s' = '%s':  ungültiger Wert."</value>
     <comment>Point ID: String; Attribute Name: String; Attribute Value: String</comment>
+  </data>
+  <data name="Domain_AttName_AttKey1" xml:space="preserve">
+    <value>CodeAtt1</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_AttKey2" xml:space="preserve">
+    <value>CodeAtt2</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_AttValue1" xml:space="preserve">
+    <value>Att1</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_AttValue2" xml:space="preserve">
+    <value>Att2</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_CalcCode" xml:space="preserve">
+    <value>CodeBC</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_CoordType" xml:space="preserve">
+    <value>KooKz</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_Flags" xml:space="preserve">
+    <value>Flags</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_GraficsCode" xml:space="preserve">
+    <value>CodeGC</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_GraficsDim" xml:space="preserve">
+    <value>CodeGDim</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_GraficsEcc" xml:space="preserve">
+    <value>CodeGExz</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_HeightInfo" xml:space="preserve">
+    <value>TextH</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_Job" xml:space="preserve">
+    <value>Auftrag</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_MarkHints" xml:space="preserve">
+    <value>Stabil</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_mh" xml:space="preserve">
+    <value>mh</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_mp" xml:space="preserve">
+    <value>mp</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_sh" xml:space="preserve">
+    <value>SH</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_sp" xml:space="preserve">
+    <value>SP</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_TimeStamp" xml:space="preserve">
+    <value>Zeit</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_wh" xml:space="preserve">
+    <value>GH</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="Domain_AttName_wp" xml:space="preserve">
+    <value>GL</value>
+    <comment>Attribut Name</comment>
   </data>
 </root>

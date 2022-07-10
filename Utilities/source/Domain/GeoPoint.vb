@@ -257,9 +257,19 @@ Namespace Domain
             Public Sub New()
                 ' Mapping:  Property name => Attribute name.
                 PropertyAttributes = New Dictionary(Of String, String)
-                PropertyAttributes.Add("KindText" , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText)    ' "PArt"
-                PropertyAttributes.Add("HeightSys", Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)   ' "SysH"
-                PropertyAttributes.Add("CoordSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys)    ' "SysL"
+                PropertyAttributes.Add("CoordSys"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys)   ' "SysL"
+                PropertyAttributes.Add("HeightInfo", Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightInfo) ' "TextH"
+                PropertyAttributes.Add("HeightSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)  ' "SysH"
+                PropertyAttributes.Add("Job"       , Rstyx.Utilities.Resources.Messages.Domain_AttName_Job)        ' "Auftrag"
+                PropertyAttributes.Add("KindText"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText)   ' "PArt"
+                PropertyAttributes.Add("MarkHints" , Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkHints)  ' "Stabil"
+                PropertyAttributes.Add("mh"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_mh)         ' "mh"
+                PropertyAttributes.Add("mp"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_mp)         ' "mp"
+                PropertyAttributes.Add("sh"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_sh)         ' "SH"
+                PropertyAttributes.Add("sp"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_sp)         ' "SL"
+                PropertyAttributes.Add("TimeStamp" , Rstyx.Utilities.Resources.Messages.Domain_AttName_TimeStamp)  ' "Zeit"
+                PropertyAttributes.Add("wh"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_wh)         ' "GH"
+                PropertyAttributes.Add("wp"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_Wp)         ' "GL"
 
                 ' Mapping:  Kind => Default KindText.
                 DefaultKindText = New Dictionary(Of GeoPointKind, String)
@@ -462,7 +472,7 @@ Namespace Domain
                                         AttributeValue = AttributeValue.PadRight(4)
                                     End If
                                     ' AttributeValue may be empty if PropertyValue is an object (i.e. Kilometer).
-                                    If (AttributeValue.IsNotEmptyOrWhiteSpace()) Then
+                                    If (AttributeValue.IsNotEmptyOrWhiteSpace() AndAlso (AttributeValue <> "NaN")) Then
                                         Me.Attributes.Add(AttributeName, AttributeValue)
                                     End If
                                 End If
@@ -470,43 +480,6 @@ Namespace Domain
                         End If
                     Next
                 End If
-            End Sub
-
-            ''' <summary>
-            ''' Adds attributes representing properties from <paramref name="SourcePoint"/>, 
-            ''' which are declared in <see cref="PropertyAttributes"/>, and are unique to the type of <paramref name="SourcePoint"/>.
-            ''' </summary>
-             ''' <remarks>
-             ''' <para>
-             ''' The string attribute value will be converted from property value by <see cref="ToString()"/>. 
-             ''' An exception is a <see cref="Kilometer"/>, where the conversion is done by <see cref="Kilometer.ToKilometerNotation"/> 
-             ''' with a precision set to 4.
-             ''' </para>
-             ''' <para>
-             ''' If an attribute already exists, it won't be changed.
-             ''' </para>
-             ''' </remarks>
-             ''' <param name="SourcePoint"> Point to get property values from. </param>
-            Public Sub OLD_AddPropertyAttributes(SourcePoint As GeoPoint)
-                
-                For Each kvp As KeyValuePair(Of String, String) In SourcePoint.PropertyAttributes
-                    
-                    Dim PropertyPath  As String = kvp.key
-                    Dim AttributeName As String = kvp.Value
-                    Dim PropertyValue As Object = SourcePoint.GetPropertyValue(PropertyPath, BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.Instance)
-                    
-                    If (PropertyValue IsNot Nothing) Then
-                        If (Not Me.Attributes.ContainsKey(AttributeName)) Then
-                            Dim AttributeValue As String
-                            If (TypeOf PropertyValue Is Kilometer) Then
-                                AttributeValue = DirectCast(PropertyValue, Kilometer).ToKilometerNotation(4, " ")
-                            Else
-                                AttributeValue = PropertyValue.ToString()
-                            End If
-                            Me.Attributes.Add(AttributeName, AttributeValue)
-                        End If
-                    End If
-                Next
             End Sub
 
             ''' <summary> Tries to convert all attributes declared in <see cref="PropertyAttributes"/> into matching properties. </summary>
