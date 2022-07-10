@@ -72,7 +72,7 @@ Namespace Domain
             Public Property AttValue2   As String = Nothing
             
             ''' <summary> Special mark type (iGeo Trassen-Absteckbuch). </summary>
-            Public Property MarkTypeAB  As Char = vbNullChar
+            Public Property MarkTypeAB  As String = Nothing
             
         #End Region
         
@@ -225,7 +225,7 @@ Namespace Domain
                 Dim IpktText As String = String.Empty
                 
                 ' Special mark type (iGeo Trassen-Absteckbuch).
-                If (Me.MarkTypeAB.IsNotEmpty()) Then
+                If (Me.MarkTypeAB.IsNotEmptyOrWhiteSpace()) Then
                     IpktText = Me.MarkTypeAB
                 End If
                 
@@ -427,9 +427,9 @@ Namespace Domain
                             
                             ' Special mark type.
                             If (oMatch.Groups(1).Success) Then
-                                Dim iTC_MarkTypeAB As Char = oMatch.Groups(1).Value
+                                Dim iTC_MarkTypeAB As String = oMatch.Groups(1).Value
                                 
-                                If ((Me.MarkTypeAB <> vbNullChar) AndAlso (Me.MarkTypeAB <> iTC_MarkTypeAB)) Then
+                                If ((Me.MarkTypeAB.IsNotEmptyOrWhiteSpace()) AndAlso (Me.MarkTypeAB <> iTC_MarkTypeAB)) Then
                                     RetValue.HasConflict = True
                                     RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkTypeAB, Me.ID, Me.MarkTypeAB, iTC_MarkTypeAB)
                                     RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC

@@ -815,8 +815,8 @@ Namespace Domain
                 
                 ' Add MarkTypeAB, if it isn't already part of Me.Info.
                 If (RetText.IsEmpty() AndAlso (Not (Me.Kind = GeoPointKind.Rails)) AndAlso Options.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind)) Then
-                    Dim cMarkTypeAB As Char = Me.AsGeoIPoint.MarkTypeAB
-                    If (cMarkTypeAB.IsNotEmpty()) Then
+                    Dim cMarkTypeAB As String = Me.AsGeoIPoint.MarkTypeAB
+                    If (cMarkTypeAB.IsNotEmptyOrWhiteSpace()) Then
                         Dim AddMarkTypeAB As Boolean = True
                         If (Me.Info.IsNotEmptyOrWhiteSpace()) Then
                             Dim oMatch As Match = Regex.Match(Me.Info, "^" & cMarkTypeAB & "\b", RegexOptions.IgnoreCase)

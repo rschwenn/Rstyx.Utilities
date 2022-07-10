@@ -516,6 +516,12 @@ Public Class MainViewModel
             'Try
                 Logger.logInfo("")
                 
+                Dim Zeichen As Char = Nothing
+                Dim Text As String = Nothing
+                Zeichen = ""
+                Text = Zeichen
+                Text = ""
+
                 Dim Km3 As New Kilometer()
                 Km3 = "1.2 + 345.678"
                 'Km3 = CType("1.2 + 345.678", Kilometer)
