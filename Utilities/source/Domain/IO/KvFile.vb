@@ -3,6 +3,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Reflection
 
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
@@ -33,7 +34,33 @@ Namespace Domain.IO
                 Me.HeaderDiscardLines.Add(" PktNr  ____Rechtswert ______Hochwert ____Hoehe _____Station  Erlaeute_Lage Erlaeut_Hoehe PArt Str. 5  HSy ___mp ___mh  S __V  12  Auftrag# OSKA-Nr")
                 Me.HeaderDiscardLines.Add("-----------------------------------------------------------------------------------------------------------------------------------------------------")
 
-                Me.PropertyAttributes.Add("CoordSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys)
+                Me.FileFormatProperties.Add("ActualCant"        , 0)   
+                Me.FileFormatProperties.Add("ActualCantAbs"     , 0)
+                Me.FileFormatProperties.Add("Comment"           , 0)
+                Me.FileFormatProperties.Add("HeightInfo"        , 0)
+                Me.FileFormatProperties.Add("HeightPostInfo"    , 0)
+                Me.FileFormatProperties.Add("HeightPreInfo"     , 0)
+                Me.FileFormatProperties.Add("HeightSys"         , 0)
+                Me.FileFormatProperties.Add("ID"                , 0)
+                Me.FileFormatProperties.Add("Info"              , 0)
+                Me.FileFormatProperties.Add("Job"               , 0)
+                Me.FileFormatProperties.Add("KindText"          , 0)
+                Me.FileFormatProperties.Add("MarkHints"         , 0)
+                Me.FileFormatProperties.Add("MarkType"          , 0)
+                Me.FileFormatProperties.Add("mh"                , 0)
+                Me.FileFormatProperties.Add("mp"                , 0)
+                Me.FileFormatProperties.Add("ObjectKey"         , 0)
+                Me.FileFormatProperties.Add("StatusHints"       , 0)
+                Me.FileFormatProperties.Add("PositionPostInfo " , 0)
+                Me.FileFormatProperties.Add("PositionPreInfo"   , 0)
+                Me.FileFormatProperties.Add("sh"                , 0)
+                Me.FileFormatProperties.Add("sp"                , 0)
+                Me.FileFormatProperties.Add("TrackPos.Kilometer", 0)
+                Me.FileFormatProperties.Add("TrackPos.RailsCode", 0)
+                Me.FileFormatProperties.Add("TrackPos.TrackNo"  , 0)
+                Me.FileFormatProperties.Add("X"                 , 0)
+                Me.FileFormatProperties.Add("Y"                 , 0)
+                Me.FileFormatProperties.Add("Z"                 , 0)
                 
                 Logger.logDebug("New(): KvFile instantiated")
             End Sub
@@ -233,17 +260,8 @@ Namespace Domain.IO
                                 ip.Attributes = p.Attributes
                                 ip.Comment    = p.Comment
                                 
-                                ' Convert properties to attributes in order to be placed in .kv.
-                                '   (More candidates: mp, mh)
-                                Dim PropertyName   As String
-                                Dim AttributeName  As String
-                                PropertyName = "CoordSys"
-                                If (p.CoordSys.IsNotEmptyOrWhiteSpace()) Then
-                                    AttributeName = p.PropertyAttributes(PropertyName) 
-                                    If (Not p.Attributes.ContainsKey(AttributeName)) Then
-                                        p.Attributes.Add(AttributeName, p.CoordSys)
-                                    End If
-                                End If
+                                ' Convert properties to attributes in order to be written to file.
+                                p.AddPropertyAttributes(SourcePoint, Me.FileFormatProperties, BindingFlags.Public Or BindingFlags.Instance)
 
                                 ' Status hints.
                                 Dim StatusHints As Char = If(p.StatusHints = GeoPointStatusHints.None, " "c, "*"c)

@@ -3,6 +3,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Reflection
 
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
@@ -38,8 +39,33 @@ Namespace Domain.IO
                 
                 Me.HeaderDiscardLines.Add(" @Kommentar=")
 
-                Me.PropertyAttributes.Add("KindText" , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText)
-                Me.PropertyAttributes.Add("HeightSys", Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)
+                Me.FileFormatProperties.Add("ActualCant"   , 0)   
+                Me.FileFormatProperties.Add("ActualCantAbs", 0)
+                Me.FileFormatProperties.Add("AttKey1"      , 0)
+                Me.FileFormatProperties.Add("AttKey2"      , 0)
+                Me.FileFormatProperties.Add("AttValue1"    , 0)
+                Me.FileFormatProperties.Add("AttValue2"    , 0)
+                Me.FileFormatProperties.Add("CalcCode"     , 0)
+                Me.FileFormatProperties.Add("Comment"      , 0)
+                Me.FileFormatProperties.Add("CoordSys"     , 0)
+                Me.FileFormatProperties.Add("CoordType"    , 0)
+                Me.FileFormatProperties.Add("Flags"        , 0)
+                Me.FileFormatProperties.Add("GraficsCode"  , 0)
+                Me.FileFormatProperties.Add("GraficsDim"   , 0)
+                Me.FileFormatProperties.Add("GraficsEcc"   , 0)
+                Me.FileFormatProperties.Add("ID"           , 0)
+                Me.FileFormatProperties.Add("Info"         , 0)
+                Me.FileFormatProperties.Add("Kind"         , 0)
+                Me.FileFormatProperties.Add("MarkType"     , 0)
+                Me.FileFormatProperties.Add("MarkTypeAB"   , 0)
+                Me.FileFormatProperties.Add("ObjectKey"    , 0)
+                Me.FileFormatProperties.Add("StatusHints"  , 0)
+                Me.FileFormatProperties.Add("TimeStamp"    , 0)
+                Me.FileFormatProperties.Add("wh"           , 0)
+                Me.FileFormatProperties.Add("wp"           , 0)
+                Me.FileFormatProperties.Add("X"            , 0)
+                Me.FileFormatProperties.Add("Y"            , 0)
+                Me.FileFormatProperties.Add("Z"            , 0)
                 
                 Logger.logDebug("New(): iPktFile instantiated")
             End Sub
@@ -277,25 +303,8 @@ Namespace Domain.IO
                                     CoordFmt = "%14." & CooPrecisionDefault & "f"
                                 End If
                                 
-                                ' Convert properties to attributes in order to be placed in .ipkt.
-                                '   (More candidates: HeightInfo, mp, mh, sp, sh, MarkHints, Job)
-                                ' => sprintf("%-4s", p.KindText)
-                                Dim PropertyName   As String
-                                Dim AttributeName  As String
-                                PropertyName = "HeightSys"
-                                If (p.HeightSys.IsNotEmptyOrWhiteSpace()) Then
-                                    AttributeName = p.PropertyAttributes(PropertyName) 
-                                    If (Not p.Attributes.ContainsKey(AttributeName)) Then
-                                        p.Attributes.Add(AttributeName, p.HeightSys)
-                                    End If
-                                End If
-                                PropertyName = "KindText"
-                                If (p.KindText.IsNotEmptyOrWhiteSpace()) Then 
-                                    AttributeName = p.PropertyAttributes(PropertyName) 
-                                    If (Not p.Attributes.ContainsKey(AttributeName)) Then
-                                        p.Attributes.Add(AttributeName, sprintf("%-4s", p.KindText))
-                                    End If
-                                End If
+                                ' Convert properties to attributes in order to be written to file.
+                                p.AddPropertyAttributes(SourcePoint, Me.FileFormatProperties, BindingFlags.Public Or BindingFlags.Instance)
 
                                 ' Status hints.
                                 Dim StatusHints As Char = If(p.StatusHints = GeoPointStatusHints.None, " "c, "*"c)

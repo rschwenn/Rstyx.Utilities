@@ -138,30 +138,6 @@ Namespace Domain
     Public Class GeoPoint
         Implements IGeoPoint
         
-        #Region "Public Fields"
-            
-            ''' <summary> Point type dependent Mapping:  Property name => Attribute name </summary>
-             ''' <remarks>
-             ''' <para>
-             ''' This defaults to a list of selected attributes matching <see cref="IGeoPoint"/> interface,
-             ''' hence <see cref="GeoPoint"/> properties. A derived class may add mappings.
-             ''' </para>
-             ''' <para>
-             ''' <see cref="GetPropsFromIGeoPoint"/> should create these attributes from those properties,
-             ''' which do not belong to <see cref="IGeoPoint"/> interface.
-             ''' </para>
-             ''' <para>
-             ''' <see cref="RemovePropertyAttributes"/> removes all these attributes from <see cref="Attributes"/>.
-             ''' </para>
-             ''' <para>
-             ''' The constructur of a derived point which takes an <see cref="IGeoPoint"/> to init values,
-             ''' should try to restore these attributes to properties.
-             ''' </para>
-             ''' </remarks>
-            Public ReadOnly PropertyAttributes As Dictionary(Of String, String)
-            
-        #End Region
-        
         #Region "Protected Fields"
             
             Protected Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
@@ -182,6 +158,26 @@ Namespace Domain
             ''' <summary> Mapping:  Kind => Default KindText. </summary>
              ''' <remarks> A derived class may override default mappings. </remarks>
             Protected ReadOnly DefaultKindText As Dictionary(Of GeoPointKind, String)
+            
+            ''' <summary> Point type dependent Mapping:  Property name => Attribute name </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' This defaults to a list of selected attributes matching <see cref="IGeoPoint"/> interface,
+             ''' hence <see cref="GeoPoint"/> properties. A derived class may add mappings.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="GetPropsFromIGeoPoint"/> should create these attributes from those properties,
+             ''' which do not belong to <see cref="IGeoPoint"/> interface.
+             ''' </para>
+             ''' <para>
+             ''' <see cref="RemovePropertyAttributes"/> removes all these attributes from <see cref="Attributes"/>.
+             ''' </para>
+             ''' <para>
+             ''' The constructur of a derived point which takes an <see cref="IGeoPoint"/> to init values,
+             ''' should try to restore these attributes to properties.
+             ''' </para>
+             ''' </remarks>
+            Protected ReadOnly PropertyAttributes As Dictionary(Of String, String)
             
         #End Region
         
@@ -405,7 +401,7 @@ Namespace Domain
 
                     ' Convert declared point type specific properties to attributes.
                     If (TypeOf SourcePoint Is GeoPoint) Then 
-                        Me.AddPropertyAttributes(SourcePoint)        
+                        Me.AddPropertyAttributes(SourcePoint, Nothing, BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.Instance)
                     End If
 
                 End If
@@ -425,6 +421,61 @@ Namespace Domain
             ''' Adds attributes representing properties from <paramref name="SourcePoint"/>, 
             ''' which are declared in <see cref="PropertyAttributes"/>, and are unique to the type of <paramref name="SourcePoint"/>.
             ''' </summary>
+             ''' <param name="SourcePoint">       Point to get property values and also the list of <see cref="PropertyAttributes"/> from. </param>
+             ''' <param name="ExcludeProperties"> A list of properties that shouln't be added as attributes. May be <see langword="null"/>. </param>
+             ''' <param name="PropertyFilter">    Determines, which properties of <paramref name="SourcePoint"/>  should be considered. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' The string attribute value will be converted from property value by <see cref="ToString()"/>. 
+             ''' An exception is a <see cref="Kilometer"/>, where the conversion is done by <see cref="Kilometer.ToKilometerNotation"/> 
+             ''' with a precision set to 4.
+             ''' </para>
+             ''' <para>
+             ''' <paramref name="ExcludeProperties"/>: The key is the property path. Items are dummies.
+             ''' </para>
+             ''' <para>
+             ''' If an attribute already exists, it won't be changed.
+             ''' </para>
+             ''' </remarks>
+            Public Sub AddPropertyAttributes(SourcePoint As GeoPoint, ExcludeProperties As Dictionary(Of String, String), PropertyFilter As BindingFlags)
+                
+                If (SourcePoint IsNot Nothing) Then
+                    
+                    For Each kvp As KeyValuePair(Of String, String) In SourcePoint.PropertyAttributes
+                        
+                        Dim PropertyPath  As String = kvp.key
+                        Dim AttributeName As String = kvp.Value
+
+                        If ((ExcludeProperties Is Nothing) OrElse (Not ExcludeProperties.ContainsKey(PropertyPath))) Then
+
+                            Dim PropertyValue As Object = SourcePoint.GetPropertyValue(PropertyPath, PropertyFilter)
+                            
+                            If (PropertyValue IsNot Nothing) Then
+                                If (Not Me.Attributes.ContainsKey(AttributeName)) Then
+                                    Dim AttributeValue As String
+                                    If (TypeOf PropertyValue Is Kilometer) Then
+                                        AttributeValue = sprintf("%+15s", DirectCast(PropertyValue, Kilometer).ToKilometerNotation(4, " "))
+                                    Else
+                                        AttributeValue = PropertyValue.ToString()
+                                    End If
+                                    If (PropertyPath = "KindText") Then
+                                        AttributeValue = AttributeValue.PadRight(4)
+                                    End If
+                                    ' AttributeValue may be empty if PropertyValue is an object (i.e. Kilometer).
+                                    If (AttributeValue.IsNotEmptyOrWhiteSpace()) Then
+                                        Me.Attributes.Add(AttributeName, AttributeValue)
+                                    End If
+                                End If
+                            End If
+                        End If
+                    Next
+                End If
+            End Sub
+
+            ''' <summary>
+            ''' Adds attributes representing properties from <paramref name="SourcePoint"/>, 
+            ''' which are declared in <see cref="PropertyAttributes"/>, and are unique to the type of <paramref name="SourcePoint"/>.
+            ''' </summary>
              ''' <remarks>
              ''' <para>
              ''' The string attribute value will be converted from property value by <see cref="ToString()"/>. 
@@ -436,7 +487,7 @@ Namespace Domain
              ''' </para>
              ''' </remarks>
              ''' <param name="SourcePoint"> Point to get property values from. </param>
-            Public Sub AddPropertyAttributes(SourcePoint As GeoPoint)
+            Public Sub OLD_AddPropertyAttributes(SourcePoint As GeoPoint)
                 
                 For Each kvp As KeyValuePair(Of String, String) In SourcePoint.PropertyAttributes
                     
@@ -458,7 +509,7 @@ Namespace Domain
                 Next
             End Sub
 
-            ''' <summary> Converts all attributes declared in <see cref="PropertyAttributes"/> into matching properties, if possible. </summary>
+            ''' <summary> Tries to convert all attributes declared in <see cref="PropertyAttributes"/> into matching properties. </summary>
              ''' <remarks>
              ''' <para>
              ''' The string attribute value will be converted into property value by "CType". 

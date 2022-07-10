@@ -382,44 +382,6 @@ Namespace Domain
                         
                     Else
                         Me.ConvertPropertyAttributes()
-                        
-                        'Dim PropertyName   As String
-                        'Dim AttStringValue As String
-                        'Dim AttIntValue    As Integer
-                        '
-                        '' Convert selected attributes to properties.
-                        'PropertyName = "TrackPos.TrackNo"
-                        'If (Me.TrackPos.TrackNo Is Nothing) Then
-                        '    AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        '    If (AttStringValue IsNot Nothing) Then
-                        '        If (Integer.TryParse(AttStringValue, AttIntValue)) Then
-                        '            Me.TrackPos.TrackNo = AttIntValue
-                        '        End If
-                        '        Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        '    End If
-                        'End If
-                        '
-                        'PropertyName = "TrackPos.RailsCode"
-                        'If (Me.TrackPos.RailsCode.IsEmptyOrWhiteSpace()) Then
-                        '    AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        '    If (AttStringValue IsNot Nothing) Then
-                        '        AttStringValue = AttStringValue.Trim()
-                        '        If (AttStringValue.Length = 1) Then
-                        '            Me.TrackPos.RailsCode = AttStringValue
-                        '        End If
-                        '        Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        '    End If
-                        'End If
-                        '
-                        'PropertyName = "TrackPos.Kilometer"
-                        'If (Not Me.TrackPos.Kilometer.HasValue()) Then
-                        '    AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        '    If (AttStringValue IsNot Nothing) Then
-                        '        Me.TrackPos.Kilometer.TryParse(AttStringValue)
-                        '        Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        '    End If
-                        'End If
-                        
                     End If
                 End If
             End Sub

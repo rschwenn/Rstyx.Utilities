@@ -146,7 +146,7 @@ Imports System.Runtime.InteropServices
          ''' <param name="Subject">      The object to set the property value to. </param>
          ''' <param name="PropertyPath"> Path to the property name, based on <paramref name="Subject"/>, i.e. "prop1" or "prop1.prop2.prop3". </param>
          ''' <param name="Value">        The property value to set. </param>
-         ''' <param name="Flags">        Determines, wich properties should be considered. </param>
+         ''' <param name="Flags">        Determines, which properties should be considered. </param>
          ''' <remarks>
          ''' <para>
          ''' <paramref name="PropertyPath"/>: Path separator is a point. The first part has to be a direct property of <paramref name="Subject"/>. 

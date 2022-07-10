@@ -335,19 +335,6 @@ Namespace Domain
                     
                     Else
                         Me.ConvertPropertyAttributes()
-                        
-                        'Dim PropertyName   As String
-                        'Dim AttStringValue As String
-                        '
-                        '' Convert selected attributes to properties.
-                        'PropertyName = "Km"
-                        'If (Not Me.Km.HasValue()) Then
-                        '    AttStringValue = GetAttValueByPropertyName(PropertyName)
-                        '    If (AttStringValue IsNot Nothing) Then
-                        '        Me.Km.TryParse(AttStringValue)
-                        '        Me.Attributes.Remove(Me.PropertyAttributes(PropertyName))
-                        '    End If
-                        'End If
                     End If
                 End If
             End Sub
