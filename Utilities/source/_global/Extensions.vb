@@ -175,19 +175,16 @@ Imports System.Runtime.InteropServices
                 Dim PropertyObject As Object = pi.GetValue(Subject)
                 If (i < (PropertyNames.Count - 1)) Then
                     SetPropertyValue(PropertyObject, PropertyNames(i + 1), Value, Flags)
+                Else
+                    ' Statement "pi.SetValue(Subject, Value)" complains about impossible conversion
+                    ' from String to Kilometer, though these two line work like a charme:
+                    '  Dim Km As New Kilometer()
+                    '  Km = "1.2 + 345.678"
+                    '
+                    ' So we call the TypeConverter explicit:
+                    Dim TargetObjet As Object = TypeDescriptor.GetConverter(pi.PropertyType).ConvertFromString(Value)
+                    pi.SetValue(Subject, TargetObjet)
                 End If
-
-                'Dim Km2 As Kilometer = TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678")
-
-                ' Statement "pi.SetValue(Subject, Value)" complains about impossible conversion
-                ' from String to Kilometer, though these two line work like a charme:
-                '  Dim Km As New Kilometer()
-                '  Km = "1.2 + 345.678"
-                '
-                ' So we call the TypeConverter explicit:
-                Dim TargetObjet As Object = TypeDescriptor.GetConverter(pi.PropertyType).ConvertFromString(Value)
-                pi.SetValue(Subject, TargetObjet)
-                
             Next
         End Sub
         

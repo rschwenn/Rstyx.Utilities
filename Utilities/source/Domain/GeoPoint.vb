@@ -443,7 +443,7 @@ Namespace Domain
                     Dim PropertyPath  As String = kvp.key
                     Dim AttributeName As String = kvp.Value
                     Dim PropertyValue As Object = SourcePoint.GetPropertyValue(PropertyPath, BindingFlags.DeclaredOnly Or BindingFlags.Public Or BindingFlags.Instance)
-            
+                    
                     If (PropertyValue IsNot Nothing) Then
                         If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                             Dim AttributeValue As String
@@ -460,8 +460,15 @@ Namespace Domain
 
             ''' <summary> Converts all attributes declared in <see cref="PropertyAttributes"/> into matching properties, if possible. </summary>
              ''' <remarks>
+             ''' <para>
              ''' The string attribute value will be converted into property value by "CType". 
-             ''' If the conversion fails, the attribute won't be removed from <see cref="Attributes"/>.
+             ''' If the conversion fails, the attribute won't be removed from <see cref="Attributes"/>,
+             ''' and a warning will be logged.
+             ''' </para>
+             ''' <para>
+             ''' Hint: At this time there is no way to for the warnings to get into the <see cref="IO.GeoPointFile.ParseErrors"/>,
+             ''' hence they can't get into jEdit's error-list.
+             ''' </para>
              ''' </remarks>
             Protected Sub ConvertPropertyAttributes()
                 
@@ -480,13 +487,7 @@ Namespace Domain
                             Me.Attributes.Remove(AttributeName)
 
                         Catch ex As Exception
-                            Throw New ParseException(New ParseError(ParseErrorLevel.Warning,
-                                                                    Me.SourceLineNo, 0, 0,
-                                                                    sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_InvalidAttributeValue, Me.ID, AttributeName, AttributeValue),
-                                                                    Nothing,
-                                                                    Me.SourcePath
-                                                                   ))
-                            'Logger.LogWarning(sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_InvalidAttributeValue, Me.ID, AttributeName, AttributeValue))
+                            Logger.LogWarning(sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_InvalidAttributeValue, Me.ID, AttributeName, AttributeValue))
                         End Try
                     End If
                 Next
