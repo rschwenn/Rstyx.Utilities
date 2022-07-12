@@ -20,11 +20,17 @@ Namespace Domain
             
         #End Region
         
+        #Region "Public Fields"
+            
+            Public Shared ReadOnly DefaultCoordType   As String = "YXZ"
+            
+        #End Region
+        
         #Region "Constuctor"
             
             ''' <summary> Creates a new, empty <see cref="GeoIPoint"/>. </summary>
             Public Sub New()
-                PropertyAttributes.Add("MarkTypeAB", Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB)    ' "VArtAB"
+                PropertyAttributes.Add("MarkTypeAB" , Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkTypeAB)   ' "VArtAB"
 
                 PropertyAttributes.Add("AttKey1"    , Rstyx.Utilities.Resources.Messages.Domain_AttName_AttKey1)      ' "CodeAtt1"
                 PropertyAttributes.Add("AttKey2"    , Rstyx.Utilities.Resources.Messages.Domain_AttName_AttKey2)      ' "CodeAtt2"
@@ -508,8 +514,8 @@ Namespace Domain
              ''' to properties of this point, and selected other properties will be converted to attributes.
              ''' </para>
              ''' <para>
-             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
-             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
+             ''' All attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
+             ''' and are declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
              ''' <list type="table">
              ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
              ''' <item> <term> VArtAB   </term>  <description> MarkTypeAB </description></item>
@@ -542,7 +548,7 @@ Namespace Domain
                         Me.RemovePropertyAttributes()
                         
                     Else
-                        Me.CoordType = "YXZ"
+                        Me.CoordType = GeoIPoint.DefaultCoordType
                         Me.ConvertPropertyAttributes()
                     End If
                     

@@ -429,7 +429,7 @@ Namespace Domain
 
             ''' <summary>
             ''' Adds attributes representing properties from <paramref name="SourcePoint"/>, 
-            ''' which are declared in <see cref="PropertyAttributes"/>, and are unique to the type of <paramref name="SourcePoint"/>.
+            ''' which are declared in <see cref="PropertyAttributes"/>.
             ''' </summary>
              ''' <param name="SourcePoint">       Point to get property values and also the list of <see cref="PropertyAttributes"/> from. </param>
              ''' <param name="ExcludeProperties"> A list of properties that shouln't be added as attributes. May be <see langword="null"/>. </param>
@@ -471,10 +471,13 @@ Namespace Domain
                                     If (PropertyPath = "KindText") Then
                                         AttributeValue = AttributeValue.PadRight(4)
                                     End If
-                                    ' AttributeValue may be empty if PropertyValue is an object (i.e. Kilometer).
-                                    If (AttributeValue.IsNotEmptyOrWhiteSpace() AndAlso (AttributeValue <> "NaN")) Then
-                                        Me.Attributes.Add(AttributeName, AttributeValue)
-                                    End If
+
+                                    Dim DoNotAdd As Boolean = False
+                                    DoNotAdd = DoNotAdd Or (AttributeValue.IsEmptyOrWhiteSpace())  ' Value may be empty if PropertyValue is an object (i.e. Kilometer).
+                                    DoNotAdd = DoNotAdd Or (AttributeValue = "NaN")
+                                    DoNotAdd = DoNotAdd Or ((AttributeName.ToLower() = Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordType.ToLower()) AndAlso (AttributeValue = GeoIPoint.DefaultCoordType))
+
+                                    If (Not DoNotAdd) Then Me.Attributes.Add(AttributeName, AttributeValue)
                                 End If
                             End If
                         End If

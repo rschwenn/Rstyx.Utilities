@@ -278,8 +278,8 @@ Namespace Domain
              ''' to properties of this point, and selected other properties will be converted to attributes.
              ''' </para>
              ''' <para>
-             ''' Selected attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
-             ''' and should be declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
+             ''' All attributes from <paramref name="SourcePoint"/>, matching properties that don't belong to <see cref="IGeoPoint"/> interface,
+             ''' and are declared in <see cref="PropertyAttributes"/>, will be <b>converted to properties</b>, if the properties have no value yet:
              ''' <list type="table">
              ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
              ''' <item> <term> StrKm   </term>  <description> Km </description></item>
