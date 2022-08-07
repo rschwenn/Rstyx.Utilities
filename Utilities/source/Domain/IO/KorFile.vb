@@ -216,7 +216,7 @@ Namespace Domain.IO
                                                       If(Double.IsNaN(p.Y), 0, p.Y),
                                                       If(Double.IsNaN(p.X), 0, p.X),
                                                       If(Double.IsNaN(p.Z), 0, p.Z),
-                                                      p.CreateInfoTextOutput(Me.OutputOptions),
+                                                      p.CreateInfoTextOutput(Me.OutputOptions).Replace(" "c, "_"c),
                                                       If(p.Comment.IsEmptyOrWhiteSpace(), String.Empty, "# " & p.Comment)
                                                      ))
                                 PointCount += 1
