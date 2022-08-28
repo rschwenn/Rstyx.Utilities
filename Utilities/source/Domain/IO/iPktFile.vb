@@ -288,7 +288,6 @@ Namespace Domain.IO
                                 ' Check for unique ID.
                                 If (UniqueID) Then Me.VerifyUniqueID(p.ID)
                                 
-                                PointCount += 1
                                 Dim TimeStamp As String = If(p.TimeStamp.HasValue, p.TimeStamp.Value.ToString("s"), Nothing)
                                     
                                 ' Object key: Add leading zero's if integer.
@@ -312,7 +311,7 @@ Namespace Domain.IO
                                 ' Write line.
                                 oSW.WriteLine(sprintf(PointFmt,
                                                       StatusHints,
-                                                      PointCount,
+                                                      PointCount + 1,
                                                       p.CalcCode.TrimToMaxLength(2),
                                                       KeyText.TrimToMaxLength(6),
                                                       p.GraficsCode.TrimToMaxLength(2),
@@ -334,6 +333,7 @@ Namespace Domain.IO
                                                       p.AttValue2.TrimToMaxLength(25),
                                                       p.CreateFreeDataText()
                                                      ))
+                                PointCount += 1
                                 
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
