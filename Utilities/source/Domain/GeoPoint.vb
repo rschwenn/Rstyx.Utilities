@@ -436,9 +436,9 @@ Namespace Domain
              ''' <param name="PropertyFilter">    Determines, which properties of <paramref name="SourcePoint"/>  should be considered. </param>
              ''' <remarks>
              ''' <para>
-             ''' The string attribute value will be converted from property value by <see cref="ToString()"/>. 
+             ''' The string attribute value will be converted from property value by it's <see cref="Object.ToString()"/> method/>. 
              ''' An exception is a <see cref="Kilometer"/>, where the conversion is done by <see cref="Kilometer.ToKilometerNotation"/> 
-             ''' with a precision set to 4.
+             ''' with a precision set to 6.
              ''' </para>
              ''' <para>
              ''' <paramref name="ExcludeProperties"/>: The key is the property path. Items are dummies.
@@ -464,18 +464,15 @@ Namespace Domain
                                 If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                                     Dim AttributeValue As String
                                     If (TypeOf PropertyValue Is Kilometer) Then
-                                        AttributeValue = sprintf("%+15s", DirectCast(PropertyValue, Kilometer).ToKilometerNotation(4, " "))
+                                        AttributeValue = sprintf("%s", DirectCast(PropertyValue, Kilometer).ToKilometerNotation(6, " "))
                                     Else
                                         AttributeValue = PropertyValue.ToString()
                                     End If
-                                    If (PropertyPath = "KindText") Then
-                                        AttributeValue = AttributeValue.PadRight(4)
-                                    End If
 
                                     Dim DoNotAdd As Boolean = False
-                                    DoNotAdd = DoNotAdd Or (AttributeValue.IsEmptyOrWhiteSpace())  ' Value may be empty if PropertyValue is an object (i.e. Kilometer).
-                                    DoNotAdd = DoNotAdd Or (AttributeValue = "NaN")
-                                    DoNotAdd = DoNotAdd Or ((AttributeName.ToLower() = Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordType.ToLower()) AndAlso (AttributeValue = GeoIPoint.DefaultCoordType))
+                                    DoNotAdd = (DoNotAdd Or AttributeValue.IsEmptyOrWhiteSpace())  ' Value may be empty if PropertyValue is an object (i.e. Kilometer).
+                                    DoNotAdd = (DoNotAdd Or (AttributeValue = "NaN"))
+                                    DoNotAdd = (DoNotAdd Or ((AttributeName.ToLower() = Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordType.ToLower()) AndAlso (AttributeValue = GeoIPoint.DefaultCoordType)))
 
                                     If (Not DoNotAdd) Then Me.Attributes.Add(AttributeName, AttributeValue)
                                 End If
@@ -493,7 +490,7 @@ Namespace Domain
              ''' and a warning will be logged.
              ''' </para>
              ''' <para>
-             ''' Hint: At this time there is no way to for the warnings to get into the <see cref="IO.GeoPointFile.ParseErrors"/>,
+             ''' Hint: At this time there is no way for the warnings to get into the <see cref="IO.GeoPointFile.ParseErrors"/>,
              ''' hence they can't get into jEdit's error-list.
              ''' </para>
              ''' </remarks>

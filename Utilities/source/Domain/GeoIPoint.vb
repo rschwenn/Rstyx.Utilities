@@ -103,9 +103,21 @@ Namespace Domain
                                 
                 ' Attributes.
                 If (Me.Attributes?.Count > 0) Then
-                    Dim AttString   As String = String.Empty
-                    Dim AttName     As String = String.Empty
+                    Dim AttString   As String
+                    Dim AttName     As String
+                    Dim AttNames()  As String = Me.Attributes.Keys.ToArray()
                     
+                    ' Format certain attribut values for output.
+                    For i As Integer = 0 To AttNames.Count - 1
+                        AttName   = AttNames(i)
+                        AttString = Me.Attributes(AttName)
+                        Select Case AttName
+                            Case Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText : Me.Attributes(AttName) = AttString.PadRight(4)
+                            Case Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo  : Me.Attributes(AttName) = AttString.PadLeft(4)
+                            Case Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm  : Me.Attributes(AttName) = sprintf("%+15s", New Kilometer(AttString).ToKilometerNotation(4, " "))
+                        End Select
+                    Next
+
                     ' All attributes ordered by name.
                     'For Each kvp As KeyValuePair(Of String, String) In Me.Attributes.OrderBy(Of String)(Function(ByVal kvp2) kvp2.Key)
                     '    AttString &= " " & kvp.Key & AttSeparator & kvp.Value & AttSeparator
@@ -113,12 +125,13 @@ Namespace Domain
 
                     ' First certain known attributes in given order.
                     Dim FirstAttributes As New Dictionary(Of String, Integer)
-                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo,        1)
-                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode, 2)
-                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText,       3)
-                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys,       4)
-                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys,      5)
-                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm,        6)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText,       1)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo,        2)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackRailsCode, 3)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm,        4)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys,       5)
+                    FirstAttributes.Add(Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys,      6)
+                    AttString = String.Empty
                     For Each kvp As KeyValuePair(Of String, Integer) In FirstAttributes.OrderBy(Of Integer)(Function(ByVal kvp2) kvp2.Value)
                         AttName = kvp.Key
                         If (Me.Attributes.ContainsKey(AttName)) Then

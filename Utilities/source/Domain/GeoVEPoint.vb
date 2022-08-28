@@ -377,7 +377,7 @@ Namespace Domain
                         Me.PositionPostInfo = SourceVEPoint.PositionPostInfo
                         Me.PositionPreInfo  = SourceVEPoint.PositionPreInfo
                         Me.TrackPos         = SourceVEPoint.TrackPos.Clone()
-                    
+                        
                         Me.RemovePropertyAttributes()
                         
                     Else
