@@ -754,6 +754,8 @@ Namespace Domain.IO
                             For i As Integer = 0 To CommentLines.Length - 1
                                 Dim ip As New GeoIPoint()
                                 ip.ParseFreeData(CommentLines(i))
+
+                                ' TODO: Avoid or create own exception about empty or duplicated attribute name.
                                 Me.Attributes.AddRangeUnique(ip.Attributes)
                             Next
                         End If

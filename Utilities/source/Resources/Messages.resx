@@ -1345,4 +1345,15 @@
     <value>GL</value>
     <comment>Attribut Name</comment>
   </data>
+  <data name="GeoIPoint_ParseFreeData_AttName_Empty" xml:space="preserve">
+    <value>Name des %d. Attributs ist leer.</value>
+    <comment>Attribute Count: Integer</comment>
+  </data>
+  <data name="GeoIPoint_ParseFreeData_AttName_Repeated" xml:space="preserve">
+    <value>Name des %d. Attributs '%s' wird wiederholt genannt.</value>
+    <comment>Attribute Count: Integer; Attribute Name: String</comment>
+  </data>
+  <data name="GeoIPoint_ParseFreeData_UnexpectedError" xml:space="preserve">
+    <value>Unerwarteter Fehler beim Extrahieren der Attribute.</value>
+  </data>
 </root>

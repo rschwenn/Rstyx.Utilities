@@ -62,7 +62,7 @@ Namespace IO
             Protected Sub New()
             End Sub
              
-            ''' <summary> Creates a new instance of DataWord. </summary>
+            ''' <summary> Creates a new instance of DataFieldSource. </summary>
              ''' <param name="Column"> The zero-based colulmn number in the source string determining the start of this data field. </param>
              ''' <param name="Length"> The length of this data field. </param>
              ''' <param name="Value">  The string representing the field's value. </param>

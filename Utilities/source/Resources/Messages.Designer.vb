@@ -1487,6 +1487,33 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Name des %d. Attributs ist leer. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseFreeData_AttName_Empty() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseFreeData_AttName_Empty", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Name des %d. Attributs &apos;%s&apos; wird wiederholt genannt. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseFreeData_AttName_Repeated() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseFreeData_AttName_Repeated", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Extrahieren der Attribute. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseFreeData_UnexpectedError() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseFreeData_UnexpectedError", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Punkt &apos;%+20s&apos;: Die vorhandene Ist-Überhöhung (u=%.0f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.0f) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_Cant() As String

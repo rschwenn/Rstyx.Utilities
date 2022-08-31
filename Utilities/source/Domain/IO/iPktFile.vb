@@ -174,7 +174,8 @@ Namespace Domain.IO
                                     End If
                                     
                                     ' Attributes and comment from free data.
-                                    p.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
+                                    Dim FieldFreeData As DataField(Of String) = DataLine.ParseField(RecDef.FreeData)
+                                    p.ParseFreeData(FieldFreeData.Value, FieldFreeData.Source)
                                     
                                     ' Convert attributes into matching properties.
                                     p.ConvertPropertyAttributes()

@@ -1,4 +1,5 @@
 ﻿
+Imports System
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Math
@@ -6,6 +7,7 @@ Imports System.Text.RegularExpressions
 
 Imports Rstyx.Utilities.StringUtils
 Imports Rstyx.Utilities.Math
+Imports Rstyx.Utilities.IO
 
 Namespace Domain
     
@@ -168,24 +170,80 @@ Namespace Domain
              ''' This method clears and sets the <see cref="GeoPoint.Attributes"/> and <see cref="GeoPoint.Comment"/> properties.
              ''' </para>
              ''' </remarks>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> At least one found attribute has an empty name. </exception>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> At least two found attributes have the same name. </exception>
             Public Sub ParseFreeData(FreeDataText As String)
-                
-                Me.Attributes = Nothing
-                Me.Comment    = String.Empty
-                
-                If (FreeDataText.IsNotEmptyOrWhiteSpace()) Then
-                    
-                    Dim FreeFields() As String = FreeDataText.Split(AttSeparator)
-                    Dim i As Integer
-                    For i = 0 To FreeFields.Length - 3 Step 2
-                        If (i = 0) Then Me.Attributes = New Dictionary(Of String, String)
-                        Me.Attributes.Add(FreeFields(i).Trim(), FreeFields(i + 1))
-                    Next
-                    Me.Comment = FreeFields(i)
-                    If (FreeFields.Length > (i + 1)) Then
-                        Me.Comment &= AttSeparator & FreeFields(i + 1)
+                Me.ParseFreeData(FreeDataText, Nothing)
+            End Sub
+            
+            ''' <summary> A given String will be parsed for attributes and a comment. May be <see langword="null"/>. </summary>
+             ''' <param name="FreeDataText"> The string to parse. </param>
+             ''' <param name="FieldSource"/> Position of <paramref name="FreeDataText"/> in source line for error highlighting. May be <see langword="null"/>. 
+             ''' <remarks>
+             ''' <para>
+             ''' <paramref name="FreeDataText"/> is required to look <b>like in ipkt, A0, A1</b>: <code>AttName|AttValue|AttName|AttValue|comment</code>. 
+             ''' There may be zero, one or more attributes (name/value pairs). The attribute names are trimmed.
+             ''' </para>
+             ''' <para>
+             ''' This method clears and sets the <see cref="GeoPoint.Attributes"/> and <see cref="GeoPoint.Comment"/> properties.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> At least one found attribute has an empty name. </exception>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> At least two found attributes have the same name. </exception>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> Any other Exception will be wrapped by a <see cref="Rstyx.Utilities.IO.ParseException"/>. </exception>
+            Public Sub ParseFreeData(FreeDataText As String, FieldSource As DataFieldSource)
+                Try
+                    Me.Attributes.Clear()
+                    Me.Comment = String.Empty
+                    If (FieldSource Is Nothing) Then FieldSource = New DataFieldSource(0, 0, String.Empty)
+
+                    If (FreeDataText.IsNotEmptyOrWhiteSpace()) Then
+                        Dim i            As Integer
+                        Dim AttCount     As Integer = 0
+                        Dim FreeFields() As String  = FreeDataText.Split(AttSeparator)
+                        
+                        For i = 0 To FreeFields.Length - 3 Step 2
+                            
+                            Dim AttName As String = FreeFields(i).Trim()
+                            Dim ErrMsg  As String = Nothing
+
+                            AttCount += 1
+                            
+                            ' Verify Attribute Name.
+                            If (AttName.IsEmptyOrWhiteSpace()) Then
+                                ErrMsg = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Empty, AttCount)
+                            ElseIf (Me.Attributes.ContainsKey(AttName)) Then
+                                ErrMsg = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Repeated, AttCount, AttName)
+                            End If
+                            If (ErrMsg IsNot Nothing) Then
+                                Dim LineNo As Integer = If(Me.SourceLineNo < 0, 0, Me.SourceLineNo)
+                                Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
+                                                                        LineNo,
+                                                                        FieldSource.Column,
+                                                                        FieldSource.Column + FieldSource.Length,
+                                                                        ErrMsg,
+                                                                        If(LineNo > 0, Me.SourcePath, Nothing)))
+                            End If
+                            
+                            Me.Attributes.Add(AttName, FreeFields(i + 1))
+                        Next
+                        
+                        Me.Comment = FreeFields(i)
+                        If (FreeFields.Length > (i + 1)) Then
+                            Me.Comment &= AttSeparator & FreeFields(i + 1)
+                        End If
                     End If
-                End If
+                    
+                Catch ex As Exception When (TypeOf ex IsNot ParseException)
+                    Dim LineNo As Integer = If(Me.SourceLineNo < 0, 0, Me.SourceLineNo)
+                    Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
+                                                            LineNo,
+                                                            FieldSource.Column,
+                                                            FieldSource.Column + FieldSource.Length,
+                                                            Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_UnexpectedError,
+                                                            If(LineNo > 0, Me.SourcePath, Nothing)
+                                                           ), ex)
+                End Try
             End Sub
             
         #End Region

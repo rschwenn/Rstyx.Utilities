@@ -106,7 +106,6 @@ Namespace Domain.IO
                             If (DataLine.HasData) Then
                                 Try
     		                        Dim p       As New GeoVEPoint()
-                                    Dim IpktAux As New GeoIPoint()
                                     
                                     ' Keep some data fields for later issue tracking.
                                     FieldID                            = DataLine.ParseField(RecDef.PointID)
@@ -139,7 +138,9 @@ Namespace Domain.IO
                                     p.SourceLineNo       = DataLine.SourceLineNo
                                     
                                     ' Attributes and comment from free data.
-                                    IpktAux.ParseFreeData(DataLine.ParseField(RecDef.FreeData).Value)
+                                    Dim FieldFreeData As DataField(Of String) = DataLine.ParseField(RecDef.FreeData)
+                                    Dim IpktAux       As New GeoIPoint() With {.SourceLineNo = p.SourceLineNo, .SourcePath = p.SourcePath}
+                                    IpktAux.ParseFreeData(FieldFreeData.Value, FieldFreeData.Source)
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
 
