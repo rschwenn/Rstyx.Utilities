@@ -748,14 +748,31 @@ Namespace Domain.IO
                     
                     ''' <summary> Tries to extract attributes from <see cref="TcBlock.Comment"/>. </summary>
                      ''' <remarks> On success the <see cref="TcBlock.Attributes"/> collection will be expanded. </remarks>
+                     ''' <exception cref="Rstyx.Utilities.IO.ParseException"> Invalid block attribute name. </exception>
                     Public Sub ParseCommentForAttributes()
                         If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
                             Dim CommentLines() As String = Me.Comment.splitLines()
                             For i As Integer = 0 To CommentLines.Length - 1
                                 Dim ip As New GeoIPoint()
+                                ip.SourcePath   = Me.Source.FilePath
+                                ip.SourceLineNo = Me.Source.StartLineNo + i
                                 ip.ParseFreeData(CommentLines(i))
 
-                                ' TODO: Avoid or create own exception about empty or duplicated attribute name.
+                                ' Verify Attribute Name.
+                                Dim AttCount As Integer = 0
+                                For Each AttName As String In ip.Attributes.Keys
+                                    AttCount += 1
+                                    If (Me.Attributes.ContainsKey(AttName)) Then
+                                        Dim LineNo As Integer = If(ip.SourceLineNo < 0, 0, ip.SourceLineNo)
+                                        Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
+                                                                                LineNo,
+                                                                                0,
+                                                                                0,
+                                                                                sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Repeated, AttCount, AttName),
+                                                                                If(LineNo > 0, ip.SourcePath, Nothing)))
+                                    End If
+                                Next
+
                                 Me.Attributes.AddRangeUnique(ip.Attributes)
                             Next
                         End If
@@ -1171,7 +1188,14 @@ Namespace Domain.IO
                 If (UniqueIDPerBlock) Then Me.IDCheckList.Clear()
                 
                 ' Parse header.
-                FindBlockMetaDataVermEsn(DataLines, SourceBlock, Block)
+                Try
+                    FindBlockMetaDataVermEsn(DataLines, SourceBlock, Block)
+                Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                    Me.ParseErrors.Add(ex.ParseError)
+                    If (Not Me.CollectParseErrors) Then
+                        Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Block.Source.FilePath))
+                    End If
+                End Try
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
@@ -1330,7 +1354,14 @@ Namespace Domain.IO
                 If (UniqueIDPerBlock) Then Me.IDCheckList.Clear()
                 
                 ' Parse header.
-                FindBlockMetaDataIGeo(DataLines, SourceBlock, Block)
+                Try
+                    FindBlockMetaDataIGeo(DataLines, SourceBlock, Block)
+                Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                    Me.ParseErrors.Add(ex.ParseError)
+                    If (Not Me.CollectParseErrors) Then
+                        Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Block.Source.FilePath))
+                    End If
+                End Try
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
@@ -1423,6 +1454,13 @@ Namespace Domain.IO
                                     p.MiniR   = DataLine.ParseField(RecDef.MiniR).Value
                                     p.MiniUeb = DataLine.ParseField(RecDef.MiniUeb).Value
                                     
+                                    p.CantBase = Me.CantBase
+                                    p.TrackRef = Block.TrackRef
+
+                                    ' Source info, neccessary for creating ParseError in point parsing methods.
+                                    p.SourcePath   = Block.Source.FilePath
+                                    p.SourceLineNo = DataLine.SourceLineNo
+                                    
                                     ' Kilometer: Text and Status.
                                     Dim KmStat As KilometerStatus = DataLine.ParseField(RecDef.KmStatus).Value
                                     Dim KmText As String          = DataLine.ParseField(RecDef.KmText).Value
@@ -1446,16 +1484,15 @@ Namespace Domain.IO
                                     End If
                                     
                                     ' Attributes and comment.
-                                    Dim FreeDataText As String
+                                    IpktAux = p.AsGeoIPoint()
                                     If (Block.BlockType.Format = TcBlockFormat.A0) Then
                                         ' A0:
-                                        FreeDataText = DataLine.ParseField(RecDef.FreeData).Value
+                                        Dim FieldFreeData As DataField(Of String) = DataLine.ParseField(RecDef.FreeData)
+                                        IpktAux.ParseFreeData(FieldFreeData.Value, FieldFreeData.Source)
                                     Else
                                         ' A1:
-                                        FreeDataText = DataLine.Comment
+                                        IpktAux.ParseFreeData(DataLine.Comment)
                                     End If
-                                    IpktAux      = p.AsGeoIPoint()
-                                    IpktAux.ParseFreeData(FreeDataText)
                                     p.Attributes = IpktAux.Attributes
                                     p.Comment    = IpktAux.Comment
 
@@ -1463,8 +1500,7 @@ Namespace Domain.IO
                                     p.ConvertPropertyAttributes()
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    p.Info          = DataLine.ParseField(RecDef.Text).Value
-                                    IpktAux         = p.AsGeoIPoint()
+                                    IpktAux.Info    = DataLine.ParseField(RecDef.Text).Value
                                     ParseResult     = IpktAux.ParseInfoTextInput(ParseOptions)
                                     If (ParseResult.HasConflict) Then
                                         Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
@@ -1476,12 +1512,6 @@ Namespace Domain.IO
                                     p.Kind          = IpktAux.Kind
                                     p.KindText      = IpktAux.KindText
                                     p.MarkType      = IpktAux.MarkType
-                                    
-                                    ' Other info.
-                                    p.CantBase     = Me.CantBase
-                                    p.SourcePath   = Block.Source.FilePath
-                                    p.SourceLineNo = DataLine.SourceLineNo
-                                    p.TrackRef     = Block.TrackRef
                                     
                                     ' Justify Cant and Resolve Ambiguities.
                                     ' TODO: Check tolerances and infinities.
@@ -1587,6 +1617,7 @@ Namespace Domain.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> Invalid block attribute name. </exception>
             Private Sub FindBlockMetaDataVermEsn(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
                 If (DataLines Is Nothing)   Then Throw New System.ArgumentNullException("DataLines")
@@ -1735,6 +1766,7 @@ Namespace Domain.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="DataLines"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="SourceBlock"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Block"/> is <see langword="null"/>. </exception>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> Invalid block attribute name. </exception>
             Private Sub FindBlockMetaDataIGeo(ByRef DataLines As Collection(Of DataTextLine), ByRef SourceBlock As TcSourceBlockInfo, ByRef Block As TcBlock)
                 
                 If (DataLines Is Nothing)   Then Throw New System.ArgumentNullException("DataLines")

@@ -172,6 +172,7 @@ Namespace Domain
              ''' </remarks>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> At least one found attribute has an empty name. </exception>
              ''' <exception cref="Rstyx.Utilities.IO.ParseException"> At least two found attributes have the same name. </exception>
+             ''' <exception cref="Rstyx.Utilities.IO.ParseException"> Any other Exception will be wrapped by a <see cref="Rstyx.Utilities.IO.ParseException"/>. </exception>
             Public Sub ParseFreeData(FreeDataText As String)
                 Me.ParseFreeData(FreeDataText, Nothing)
             End Sub
