@@ -4,6 +4,7 @@ Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
 Imports System.Reflection
+Imports System.Text.RegularExpressions
 
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
@@ -144,7 +145,6 @@ Namespace Domain.IO
                                     p.GraficsDim   = DataLine.ParseField(RecDef.GraficsDim ).Value
                                     p.GraficsEcc   = DataLine.ParseField(RecDef.GraficsEcc ).Value
                                     p.CoordType    = DataLine.ParseField(RecDef.CoordType  ).Value
-                                    p.CoordSys     = DataLine.ParseField(RecDef.CoordSys   ).Value
                                     p.Flags        = DataLine.ParseField(RecDef.Flags      ).Value
                                     p.wp           = DataLine.ParseField(RecDef.wp         ).Value
                                     p.wh           = DataLine.ParseField(RecDef.wh         ).Value
@@ -184,6 +184,33 @@ Namespace Domain.IO
                                     ParseResult = p.ParseInfoTextInput(Me.EditOptions)
                                     If (ParseResult.HasConflict) Then
                                         Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
+                                    End If
+
+                                    ' Coord and height system.
+                                    Dim MixedSys As String = DataLine.ParseField(RecDef.CoordSys).Value
+                                    If (MixedSys.IsNotEmptyOrWhiteSpace()) Then
+                                        ' There may be conflicts systems from/in attributes and ipkt systems field.
+                                        ' But ipkt systems field has priority over attribute.
+                                        p.CoordSys = MixedSys
+                                    End If
+                                    If (p.CoordSys.IsNotEmptyOrWhiteSpace()) Then
+                                        ' Check for pattern of combined AVANI system notations.
+                                        Dim oMatch As Match = Regex.Match(p.CoordSys, "^([A-Z][A-Z][0-9])([A-Z][0-9][0-9])$")
+                                        If (oMatch.Success) Then
+                                            Dim CoordSys  As String = oMatch.Groups(1).Value
+                                            Dim HeightSys As String = oMatch.Groups(2).Value
+                                            ' Height system may have been read from attribute.
+                                            If (p.HeightSys.IsEmptyOrWhiteSpace()) Then
+                                                p.CoordSys  = CoordSys
+                                                p.HeightSys = HeightSys
+                                            ElseIf (p.HeightSys = HeightSys) Then
+                                                p.CoordSys  = CoordSys
+                                            Else
+                                                ' Conflict: different height systems in attribute and ipkt systems field.
+                                                ' Maybe add warning to Me.ParseErrors.
+                                                ' Attribute height system has priority over ipkt combined systems field.
+                                            End If
+                                        End If
                                     End If
                                     
                                     ' Verifying.
@@ -255,7 +282,7 @@ Namespace Domain.IO
                     Logger.logInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Dim PointFmt    As String  = "%1s%0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%+6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim PointFmt    As String  = "%1s%0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%-6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
                     Dim CoordFmt    As String  = "%14.5f"
                     Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     Dim HeaderDone  As Boolean = False
@@ -302,7 +329,13 @@ Namespace Domain.IO
                                 Else
                                     CoordFmt = "%14." & CooPrecisionDefault & "f"
                                 End If
-                                
+
+                                ' Combine AVANI coord and height system into ipkt systems field.
+                                If (p.CoordSys?.IsMatchingTo("^[A-Z][A-Z][0-9]$") AndAlso p.HeightSys?.IsMatchingTo("^[A-Z][0-9][0-9]$")) Then
+                                    p.CoordSys &= p.HeightSys
+                                    p.HeightSys = Nothing
+                                End If
+
                                 ' Convert properties to attributes in order to be written to file.
                                 p.AddPropertyAttributes(SourcePoint, Me.FileFormatProperties, BindingFlags.Public Or BindingFlags.Instance)
 
