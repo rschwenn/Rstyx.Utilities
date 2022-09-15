@@ -22,7 +22,7 @@ Imports System.Threading.Tasks
      ''' Code (License: MS-LPL) found there: https://github.com/slashdotdash/ParallelExtensionsExtras
      ''' </para>
      ''' <para>
-     ''' Expanations: http://blogs.msdn.com/b/pfxteam/archive/2010/04/07/9990421.aspx
+     ''' Explanations: http://blogs.msdn.com/b/pfxteam/archive/2010/04/07/9990421.aspx
      ''' </para>
      ''' </remarks>
 	Public NotInheritable Class StaTaskScheduler

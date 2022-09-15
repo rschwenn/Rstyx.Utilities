@@ -436,7 +436,7 @@ Namespace Domain
              ''' <param name="PropertyFilter">    Determines, which properties of <paramref name="SourcePoint"/>  should be considered. </param>
              ''' <remarks>
              ''' <para>
-             ''' The string attribute value will be converted from property value by it's <see cref="Object.ToString()"/> method/>. 
+             ''' The string attribute value will be converted from property value by it's <see cref="Object.ToString"/> method. 
              ''' An exception is a <see cref="Kilometer"/>, where the conversion is done by <see cref="Kilometer.ToKilometerNotation"/> 
              ''' with a precision set to 6.
              ''' </para>

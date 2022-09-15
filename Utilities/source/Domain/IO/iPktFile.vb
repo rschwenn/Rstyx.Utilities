@@ -334,6 +334,7 @@ Namespace Domain.IO
                                 If (p.CoordSys?.IsMatchingTo("^[A-Z][A-Z][0-9]$") AndAlso p.HeightSys?.IsMatchingTo("^[A-Z][0-9][0-9]$")) Then
                                     p.CoordSys &= p.HeightSys
                                     p.HeightSys = Nothing
+                                    SourcePoint.HeightSys = Nothing  ' Avoid the SysH attribute to be created in next statement.
                                 End If
 
                                 ' Convert properties to attributes in order to be written to file.
