@@ -5,8 +5,15 @@ Imports System.Collections.ObjectModel
 
 Namespace IO
     
-    ''' <summary>  A collection of <see cref="Rstyx.Utilities.IO.ParseError"/> objects. </summary>
-     ''' <remarks> There are methods to show the errors in jEdit and to log them to LoggingConsole. </remarks>
+    ''' <summary> A collection of <see cref="Rstyx.Utilities.IO.ParseError"/> objects. </summary>
+     ''' <remarks> 
+     ''' <para>
+     ''' There are methods to show the errors in jEdit and to log them to LoggingConsole.
+     ''' </para>
+     ''' <para>
+     ''' This collection should be thread-safe.
+     ''' </para>
+     ''' </remarks>
     Public Class ParseErrorCollection
         Inherits System.Collections.ObjectModel.Collection(Of Rstyx.Utilities.IO.ParseError)
         
@@ -14,6 +21,8 @@ Namespace IO
             
             Private ReadOnly Logger         As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseErrorCollection")
             
+            Protected ReadOnly SyncHandle   As New Object()
+
             Protected _HasErrors            As Boolean
             Protected _HasWarnings          As Boolean
             Protected _HasItemsWithSource   As Boolean
@@ -157,48 +166,54 @@ Namespace IO
             Protected Overrides Sub InsertItem(ByVal Index As Integer, ByVal Item As ParseError)
                 
                 If (Item Is Nothing) Then Throw New System.ArgumentNullException("Item")
-                
-                ' Track Error Level.
-                If (Item.Level = ParseErrorLevel.Error) Then
-                    _HasErrors = True
-                    _ErrorCount += 1
-                Else
-                    _HasWarnings = True
-                    _WarningCount += 1
-                End If
-                
-                ' Track availability of error source information.
-                If (Item.HasSource) Then
-                    _HasItemsWithSource = True
-                End If
-                
-                ' Track Line Numbers.
-                If (Not IndexOfLineNo.ContainsKey(Item.LineNo)) Then
-                    IndexOfLineNo.Add(Item.LineNo, Me.Count)
-                End If
-                
-                ' Add Item.
-                MyBase.InsertItem(Index, Item)
+
+                SyncLock (SyncHandle)
+                    ' Track Error Level.
+                    If (Item.Level = ParseErrorLevel.Error) Then
+                        _HasErrors = True
+                        _ErrorCount += 1
+                    Else
+                        _HasWarnings = True
+                        _WarningCount += 1
+                    End If
+                    
+                    ' Track availability of error source information.
+                    If (Item.HasSource) Then
+                        _HasItemsWithSource = True
+                    End If
+                    
+                    ' Track Line Numbers.
+                    If (Not IndexOfLineNo.ContainsKey(Item.LineNo)) Then
+                        IndexOfLineNo.Add(Item.LineNo, Me.Count)
+                    End If
+                    
+                    ' Add Item.
+                    MyBase.InsertItem(Index, Item)
+                End SyncLock
             End Sub
             
             ''' <summary> Removes all errors and warnings and also clears status information. </summary>
             Protected Overrides Sub ClearItems()
-                MyBase.ClearItems()
-                
-                FilePath            = Nothing
-                _HasErrors          = False
-                _HasWarnings        = False
-                _HasItemsWithSource = False
-                _ErrorCount         = 0
-                _WarningCount       = 0
-                
-                IndexOfLineNo.Clear()
+                SyncLock (SyncHandle)
+                    MyBase.ClearItems()
+                    
+                    FilePath            = Nothing
+                    _HasErrors          = False
+                    _HasWarnings        = False
+                    _HasItemsWithSource = False
+                    _ErrorCount         = 0
+                    _WarningCount       = 0
+                    
+                    IndexOfLineNo.Clear()
+                End SyncLock
             End Sub
             
             ''' <summary> Hides the inherited method. </summary>
              ''' <param name="Item"> The <see cref="ParseError"/> to remove. </param>
             Protected Shadows Function Remove(Item As Rstyx.Utilities.IO.ParseError) As Boolean
-                Return MyBase.Remove(Item)
+                SyncLock (SyncHandle)
+                    Return MyBase.Remove(Item)
+                End SyncLock
             End Function
             
         #End Region
@@ -250,24 +265,28 @@ Namespace IO
             
             ''' <summary> Logs all messages to LoggingConsole considering the error level (without column values and hints). </summary>
             Public Sub ToLoggingConsole()
-                For i As Integer = 0 to Me.Count - 1
-                    If (Me.Item(i).Level = ParseErrorLevel.Error) Then
-                        Logger.logError(Me.Item(i).ToString())
-                    Else
-                        Logger.logWarning(Me.Item(i).ToString())
-                    End If
-                Next
+                SyncLock (SyncHandle)
+                    For i As Integer = 0 to Me.Count - 1
+                        If (Me.Item(i).Level = ParseErrorLevel.Error) Then
+                            Logger.logError(Me.Item(i).ToString())
+                        Else
+                            Logger.logWarning(Me.Item(i).ToString())
+                        End If
+                    Next
+                End SyncLock
             End Sub
             
             ''' <summary> Returns a list of formatted error messages (without column values and hints). </summary>
             Public Overrides Function ToString() As String
-                Dim Builder  As New System.Text.StringBuilder()
-                
-                For i As Integer = 0 to Me.Count - 1
-                    Builder.AppendLine(Me.Item(i).ToString())
-                Next
-                
-                Return Builder.ToString()
+                SyncLock (SyncHandle)
+                    Dim Builder  As New System.Text.StringBuilder()
+                    
+                    For i As Integer = 0 to Me.Count - 1
+                        Builder.AppendLine(Me.Item(i).ToString())
+                    Next
+                    
+                    Return Builder.ToString()
+                End SyncLock
             End Function
             
             ''' <summary> Shows errors and warnings in jEdit's error list (if possible). </summary>
@@ -280,19 +299,20 @@ Namespace IO
              ''' </para>
              ''' </remarks>
             Public Sub ShowInJEdit()
-                
-                If (Me.HasItemsWithSource) Then
-                    ' Create Beanshell script.
-                    Dim BshPath As String = Me.ToJeditBeanshell()
-                    
-                    Try
-                        ' Start jEdit and run Beanshell script.
-                        Apps.AppUtils.StartEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
+                SyncLock (SyncHandle)
+                    If (Me.HasItemsWithSource) Then
+                        ' Create Beanshell script.
+                        Dim BshPath As String = Me.ToJeditBeanshell()
                         
-                    Catch ex As Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.ParseErrorCollection_ErrorShowInJEdit)
-                    End Try
-                End If
+                        Try
+                            ' Start jEdit and run Beanshell script.
+                            Apps.AppUtils.StartEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
+                            
+                        Catch ex As Exception
+                            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.ParseErrorCollection_ErrorShowInJEdit)
+                        End Try
+                    End If
+                End SyncLock
             End Sub
             
         #End Region
