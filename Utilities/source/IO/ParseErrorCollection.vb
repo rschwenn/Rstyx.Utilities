@@ -50,6 +50,24 @@ Namespace IO
         #End Region
         
         #Region "Collection Implementation"
+
+            ''' <summary> Adds a given error to the collection only if there is no error yet, hence <see cref="ErrorCount"/> is zero. </summary>
+             ''' <param name="Item"> The error to add. </param>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Item"/> is <see langword="null"/>. </exception>
+             ''' <returns> <see langword="true"/>, if the <paramref name="Item"/> has been added, otherwise <see langword="false"/>. </returns>
+             ''' <remarks>
+             ''' Using this method, two threads can avoid adding errors at the same time, though only one of the errors should be added.
+             ''' </remarks>
+            Public Function AddIfNoError(Item As ParseError) As Boolean
+                SyncLock (SyncHandle)
+                    Dim RetValue As Boolean = False
+                    If (_ErrorCount = 0) Then
+                        Me.Add(Item)
+                        RetValue = True
+                    End If
+                    Return RetValue
+                End SyncLock
+            End Function
             
             ''' <summary> Adds a new error without source information to the collection. </summary>
              ''' <param name="Message">  The error Message. </param>
@@ -163,6 +181,7 @@ Namespace IO
             ''' <summary> Inserts a new error to the collection at the given Index. </summary>
              ''' <param name="Index"> The Index to insert item at. </param>
              ''' <param name="Item"> The <see cref="ParseError"/> to add. </param>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Item"/> is <see langword="null"/>. </exception>
             Protected Overrides Sub InsertItem(ByVal Index As Integer, ByVal Item As ParseError)
                 
                 If (Item Is Nothing) Then Throw New System.ArgumentNullException("Item")
