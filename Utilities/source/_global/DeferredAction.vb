@@ -121,7 +121,7 @@ Public Class DeferredAction
          ''' <exception cref="ArgumentOutOfRangeException"> <paramref name="Delay"/> is less than -1. </exception>
          ''' <exception cref="NotSupportedException">       <paramref name="Delay"/> is greater than 4294967294 milliseconds. </exception>
         Public Sub Defer(Delay As TimeSpan)
-            Me.DeferTimer.Change(Delay, TimeSpan.FromMilliseconds(-1))
+            Me.DeferTimer.Change(Delay, Timeout.InfiniteTimeSpan)
         End Sub
         
         ''' <summary>
@@ -137,7 +137,7 @@ Public Class DeferredAction
          ''' <exception cref="NotSupportedException">       <paramref name="Delay"/> is greater than 4294967294 milliseconds. </exception>
          ''' <exception cref="ArgumentException">           <paramref name="MaxDelay"/> isn't greater than <paramref name="Delay"/>. </exception>
         Public Sub Defer(Delay As Double, MaxDelay As Double)
-            Me.DeferTimer.Change(TimeSpan.FromMilliseconds(Delay), TimeSpan.FromMilliseconds(-1))
+            Me.Defer(TimeSpan.FromMilliseconds(Delay), TimeSpan.FromMilliseconds(MaxDelay))
         End Sub
         
         ''' <summary>
@@ -151,32 +151,35 @@ Public Class DeferredAction
          ''' <exception cref="ObjectDisposedException">     This <see cref="DeferredAction"/> (resp. it's DeferTimer) has been already disposed of. </exception>
          ''' <exception cref="ArgumentOutOfRangeException"> <paramref name="Delay"/> is less than -1. </exception>
          ''' <exception cref="NotSupportedException">       <paramref name="Delay"/> is greater than 4294967294 milliseconds. </exception>
-         ''' <exception cref="ArgumentException">           <paramref name="MaxDelay"/> isn't greater than <paramref name="Delay"/>. </exception>
+         ''' <exception cref="ArgumentException">           <paramref name="MaxDelay"/> is greater than Zero, but not greater than <paramref name="Delay"/>. </exception>
         Public Sub Defer(Delay As TimeSpan, MaxDelay As TimeSpan)
 
-            If (MaxDelay <= Delay) Then Throw New System.ArgumentException("MaxDelay")
-
-            If (IsStatusSupported) Then
-                If (Me.IsDeferring) Then
-                    If (DelayCounter.ElapsedMilliseconds > MaxDelay.Milliseconds) Then
-                        ' Execute now, hence schedule in 1 millisecond.
-                        Me.IsDeferring = False
-                        Delay = TimeSpan.FromMilliseconds(0)
+            If (MaxDelay.TotalMilliseconds > 0) Then
+                
+                If (MaxDelay <= Delay) Then Throw New System.ArgumentException("MaxDelay")
+                
+                If (IsStatusSupported) Then
+                    If (Me.IsDeferring) Then
+                        If (DelayCounter.ElapsedMilliseconds > MaxDelay.TotalMilliseconds) Then
+                            ' Execute now, hence schedule in 0 millisecond.
+                            Me.IsDeferring = False
+                            Delay = TimeSpan.FromMilliseconds(0)
+                        End If
+                    Else
+                        Me.IsDeferring = True
+                        DelayCounter.Restart()
                     End If
-                Else
-                    Me.IsDeferring = True
-                    DelayCounter.Restart()
                 End If
             End If
 
-            Me.DeferTimer.Change(Delay, TimeSpan.FromMilliseconds(-1))
+            Me.DeferTimer.Change(Delay, Timeout.InfiniteTimeSpan)
         End Sub
         
 
         ''' <summary> Aborts an active schedule, if there is one. </summary>
          ''' <exception cref="ObjectDisposedException"> This <see cref="DeferredAction"/> (resp. it's DeferTimer) has been already disposed of. </exception>
         Public Sub Abort()
-            Me.DeferTimer.Change(TimeSpan.FromMilliseconds(-1), TimeSpan.FromMilliseconds(-1))
+            Me.DeferTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan)
             Me.IsDeferring = False
         End Sub
         
