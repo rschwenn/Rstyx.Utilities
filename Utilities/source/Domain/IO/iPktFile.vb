@@ -1,10 +1,14 @@
 ﻿
 Imports System
+Imports System.Collections.Concurrent
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Linq
 Imports System.Reflection
 Imports System.Text.RegularExpressions
+Imports System.Threading
+Imports System.Threading.Tasks
 
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
@@ -82,17 +86,17 @@ Namespace Domain.IO
         
         #Region "Overrides"
             
-            ''' <summary> Reads the point file and provides the points as lazy established enumerable. </summary>
+            ''' <summary> Reads the Point file and provides the points as lazy established enumerable. </summary>
              ''' <returns> All points of <see cref="DataFile.FilePath"/> as lazy established enumerable. </returns>
              ''' <remarks>
              ''' <para>
-             ''' If a file header is recognized it will be stored in <see cref="GeoPointFile.Header"/> property before yielding the first point.
+             ''' If a file header is recognized it will be stored in <see cref="GeoPointFile.Header"/> property before yielding the first Point.
              ''' </para>
              ''' <para>
              ''' If this method fails, <see cref="GeoPointFile.ParseErrors"/> should provide the parse errors occurred."
              ''' </para>
              ''' <para>
-             ''' The following point attributes will be converted to properties:
+             ''' The following Point attributes will be converted to properties:
              ''' <list type="table">
              ''' <listheader> <term> <b>Attribute Name</b> </term>  <description> <b>Property Name</b> </description></listheader>
              ''' <item> <term>  SysH  </term>  <description>  HeightSys  </description></item>
@@ -104,135 +108,15 @@ Namespace Domain.IO
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
-                    Try 
+                    Dim PointCount  As Integer = 0
+                    Try
                         Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, Me.FilePath))
                         Logger.logInfo(Me.GetPointEditOptionsLogText())
-                        
-                        Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
-                        Dim RecDef      As New RecordDefinition()
-                        Dim PointCount  As Integer = 0
-                        Dim ParseResult As GeoPoint.ParseInfoTextResult
-                        
-                        For Each DataLine As DataTextLine In Me.DataLineStream
-                            
-                            Dim FieldID  As DataField(Of String) = Nothing
-                            
-                            If (DataLine.HasData) Then
-                                Try
-    		                        Dim p As New GeoIPoint()
-                                    
-                                    ' Keep some data fields for later issue tracking.
-                                    FieldID                                = DataLine.ParseField(RecDef.PointID)
-                                    Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
-                                    Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
-                                    Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
-                                    Dim FieldTime  As DataField(Of String) = DataLine.ParseField(RecDef.TimeStamp)
-                                    
-                                    p.ID = FieldID.Value
-                                    p.Y  = FieldY.Value
-                                    p.X  = FieldX.Value
-                                    p.Z  = FieldZ.Value
-                                    
-                                    ' Object key: Remove leading zero's if integer.
-                                    Dim KeyText    As String = DataLine.ParseField(RecDef.ObjectKey).Value
-                                    Dim KeyInt     As Integer
-                                    If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = KeyInt.ToString()
-                                    If (KeyText = "0") Then KeyText = String.Empty
-                                    p.ObjectKey    = KeyText
-                                    
-                                    p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
-                                    p.GraficsCode  = DataLine.ParseField(RecDef.GraficsCode).Value
-                                    p.GraficsDim   = DataLine.ParseField(RecDef.GraficsDim ).Value
-                                    p.GraficsEcc   = DataLine.ParseField(RecDef.GraficsEcc ).Value
-                                    p.CoordType    = DataLine.ParseField(RecDef.CoordType  ).Value
-                                    p.Flags        = DataLine.ParseField(RecDef.Flags      ).Value
-                                    p.wp           = DataLine.ParseField(RecDef.wp         ).Value
-                                    p.wh           = DataLine.ParseField(RecDef.wh         ).Value
-                                    p.Info         = DataLine.ParseField(RecDef.Text       ).Value
-                                    p.AttKey1      = DataLine.ParseField(RecDef.AttKey1    ).Value
-                                    p.AttValue1    = DataLine.ParseField(RecDef.AttValue1  ).Value
-                                    p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
-                                    p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
-                                    
-                                    p.SourcePath   = FilePath
-                                    p.SourceLineNo = DataLine.SourceLineNo
-                                    
-                                    ' Parse time stamp if given (DataLine.ParseField is unable to do it).
-                                    If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
-                                        Dim TimeStamp As DateTime
-                                        Dim success   As Boolean = DateTime.TryParseExact(FieldTime.Value, "s", Nothing, Globalization.DateTimeStyles.None, TimeStamp)
-                                        If (success) Then
-                                            p.TimeStamp = TimeStamp
-                                        Else
-                                            Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
-                                                                                       DataLine.SourceLineNo,
-                                                                                       FieldTime,
-                                                                                       sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
-                                                                                       sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
-                                                                                       FilePath))
-                                        End If
-                                    End If
-                                    
-                                    ' Attributes and comment from free data.
-                                    Dim FieldFreeData As DataField(Of String) = DataLine.ParseField(RecDef.FreeData)
-                                    p.ParseFreeData(FieldFreeData.Value, FieldFreeData.Source)
-                                    
-                                    ' Convert attributes into matching properties.
-                                    p.ConvertPropertyAttributes()
-                                    
-                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
-                                    ParseResult = p.ParseInfoTextInput(Me.EditOptions)
-                                    If (ParseResult.HasConflict) Then
-                                        Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
-                                    End If
 
-                                    ' Coord and height system.
-                                    Dim MixedSys As String = DataLine.ParseField(RecDef.CoordSys).Value
-                                    If (MixedSys.IsNotEmptyOrWhiteSpace()) Then
-                                        ' There may be conflicts systems from/in attributes and ipkt systems field.
-                                        ' But ipkt systems field has priority over attribute.
-                                        p.CoordSys = MixedSys
-                                    End If
-                                    If (p.CoordSys.IsNotEmptyOrWhiteSpace()) Then
-                                        ' Check for pattern of combined AVANI system notations.
-                                        Dim oMatch As Match = Regex.Match(p.CoordSys, "^([A-Z][A-Z][0-9])([A-Z][0-9][0-9])$")
-                                        If (oMatch.Success) Then
-                                            Dim CoordSys  As String = oMatch.Groups(1).Value
-                                            Dim HeightSys As String = oMatch.Groups(2).Value
-                                            ' Height system may have been read from attribute.
-                                            If (p.HeightSys.IsEmptyOrWhiteSpace()) Then
-                                                p.CoordSys  = CoordSys
-                                                p.HeightSys = HeightSys
-                                            ElseIf (p.HeightSys = HeightSys) Then
-                                                p.CoordSys  = CoordSys
-                                            Else
-                                                ' Conflict: different height systems in attribute and ipkt systems field.
-                                                ' Maybe add warning to Me.ParseErrors.
-                                                ' Attribute height system has priority over ipkt combined systems field.
-                                            End If
-                                        End If
-                                    End If
-                                    
-                                    ' Verifying.
-                                    If (UniqueID) Then Me.VerifyUniqueID(p.ID)
-                                    p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
-                                    PointCount += 1
-                                    
-                                    Yield p
-                                    
-                                Catch ex As InvalidIDException
-                                    Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, FilePath))
-                                    If (Not CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                    End If
-                                    
-                                Catch ex As ParseException When (ex.ParseError IsNot Nothing)
-                                    Me.ParseErrors.Add(ex.ParseError)
-                                    If (Not CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
-                                    End If
-                                End Try
-                            End If
+                        For Each p As IGeoPoint In Me.DataLineStream.AsParallel().Select(AddressOf ParseTextLine) _
+                                                                                 .Where(Function(Point) ((Point IsNot Nothing) AndAlso Point.ID.IsNotEmptyOrWhiteSpace()))
+                            PointCount += 1
+                            Yield p
                         Next
                         
                         ' Throw exception if parsing errors has been collected.
@@ -245,7 +129,16 @@ Namespace Domain.IO
                         'Logger.logDebug(PointList.ToString())
                         Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointCount, FilePath))
                         
+
+                    Catch ex As AggregateException
+                        ' Any exception from parallel processing (Me.DataLineStream.AsParallel...) is wrapped in an AggregateException.
+                        If (TypeOf ex.InnerException Is ParseException) Then
+                            Throw
+                        Else
+                            Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, FilePath), ex)
+                        End If
                     Catch ex As ParseException
+                        ' Signals errors that has been collected, because CollectParseErrors = True.
                         Throw
                     Catch ex as System.Exception
                         Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, FilePath), ex)
@@ -256,7 +149,144 @@ Namespace Domain.IO
                 End Get
             End Property
             
-            ''' <summary> Writes the given point list to the point file. </summary>
+            ''' <summary> Parses one single <see cref="DataTextLine"/>. </summary>
+             ''' <param name="DataLine"> The Line to parse. </param>
+             ''' <returns> The newly creatd Point. May be <see langword="null"/>. </returns>
+            Private Function ParseTextLine(DataLine As DataTextLine) As IGeoPoint
+	            Dim p           As GeoIPoint = Nothing
+                
+                Dim RecDef      As New RecordDefinition()  '** Nicht für jeden Punkt einzeln
+                Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                Dim ParseResult As GeoPoint.ParseInfoTextResult
+                Dim FieldID     As DataField(Of String) = Nothing
+                
+                If (DataLine.HasData) Then
+                    Try
+    		            p = New GeoIPoint()
+                        
+                        ' Keep some data fields for later issue tracking.
+                        FieldID                                = DataLine.ParseField(RecDef.PointID)
+                        Dim FieldY     As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
+                        Dim FieldX     As DataField(Of Double) = DataLine.ParseField(RecDef.X)
+                        Dim FieldZ     As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
+                        Dim FieldTime  As DataField(Of String) = DataLine.ParseField(RecDef.TimeStamp)
+                        
+                        p.ID = FieldID.Value
+                        p.Y  = FieldY.Value
+                        p.X  = FieldX.Value
+                        p.Z  = FieldZ.Value
+                        
+                        ' Object key: Remove leading zero's if integer.
+                        Dim KeyText    As String = DataLine.ParseField(RecDef.ObjectKey).Value
+                        Dim KeyInt     As Integer
+                        If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = KeyInt.ToString()
+                        If (KeyText = "0") Then KeyText = String.Empty
+                        p.ObjectKey    = KeyText
+                        
+                        p.CalcCode     = DataLine.ParseField(RecDef.CalcCode   ).Value
+                        p.GraficsCode  = DataLine.ParseField(RecDef.GraficsCode).Value
+                        p.GraficsDim   = DataLine.ParseField(RecDef.GraficsDim ).Value
+                        p.GraficsEcc   = DataLine.ParseField(RecDef.GraficsEcc ).Value
+                        p.CoordType    = DataLine.ParseField(RecDef.CoordType  ).Value
+                        p.Flags        = DataLine.ParseField(RecDef.Flags      ).Value
+                        p.wp           = DataLine.ParseField(RecDef.wp         ).Value
+                        p.wh           = DataLine.ParseField(RecDef.wh         ).Value
+                        p.Info         = DataLine.ParseField(RecDef.Text       ).Value
+                        p.AttKey1      = DataLine.ParseField(RecDef.AttKey1    ).Value
+                        p.AttValue1    = DataLine.ParseField(RecDef.AttValue1  ).Value
+                        p.AttKey2      = DataLine.ParseField(RecDef.AttKey2    ).Value
+                        p.AttValue2    = DataLine.ParseField(RecDef.AttValue2  ).Value
+                        
+                        p.SourcePath   = FilePath
+                        p.SourceLineNo = DataLine.SourceLineNo
+                        
+                        ' Parse time stamp if given (DataLine.ParseField is unable to do it).
+                        If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
+                            Dim TimeStamp As DateTime
+                            Dim success   As Boolean = DateTime.TryParseExact(FieldTime.Value, "s", Nothing, Globalization.DateTimeStyles.None, TimeStamp)
+                            If (success) Then
+                                p.TimeStamp = TimeStamp
+                            Else
+                                Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
+                                                                           DataLine.SourceLineNo,
+                                                                           FieldTime,
+                                                                           sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
+                                                                           sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
+                                                                           FilePath))
+                            End If
+                        End If
+                        
+                        ' Attributes and comment from free data.
+                        Dim FieldFreeData As DataField(Of String) = DataLine.ParseField(RecDef.FreeData)
+                        p.ParseFreeData(FieldFreeData.Value, FieldFreeData.Source)
+                        
+                        ' Convert attributes into matching properties.
+                        p.ConvertPropertyAttributes()
+                        
+                        ' Info and Point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                        ParseResult = p.ParseInfoTextInput(Me.EditOptions)
+                        If (ParseResult.HasConflict) Then
+                            Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
+                        End If
+                
+                        ' Coord and height system.
+                        Dim MixedSys As String = DataLine.ParseField(RecDef.CoordSys).Value
+                        If (MixedSys.IsNotEmptyOrWhiteSpace()) Then
+                            ' There may be conflicts systems from/in attributes and ipkt systems field.
+                            ' But ipkt systems field has priority over attribute.
+                            p.CoordSys = MixedSys
+                        End If
+                        If (p.CoordSys.IsNotEmptyOrWhiteSpace()) Then
+                            ' Check for pattern of combined AVANI system notations.
+                            Dim oMatch As Match = Regex.Match(p.CoordSys, "^([A-Z][A-Z][0-9])([A-Z][0-9][0-9])$")
+                            If (oMatch.Success) Then
+                                Dim CoordSys  As String = oMatch.Groups(1).Value
+                                Dim HeightSys As String = oMatch.Groups(2).Value
+                                ' Height system may have been read from attribute.
+                                If (p.HeightSys.IsEmptyOrWhiteSpace()) Then
+                                    p.CoordSys  = CoordSys
+                                    p.HeightSys = HeightSys
+                                ElseIf (p.HeightSys = HeightSys) Then
+                                    p.CoordSys  = CoordSys
+                                Else
+                                    ' Conflict: different height systems in attribute and ipkt systems field.
+                                    ' Maybe add warning to Me.ParseErrors.
+                                    ' Attribute height system has priority over ipkt combined systems field.
+                                End If
+                            End If
+                        End If
+                        
+                        ' Verifying.
+                        If (UniqueID) Then Me.VerifyUniqueID(p.ID)
+                        p.VerifyConstraints(Me.Constraints, FieldX, FieldY, FieldZ)
+                        
+                    Catch ex As InvalidIDException
+                        Dim oError As ParseError = ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, FilePath)
+                        If (CollectParseErrors) Then
+                            Me.ParseErrors.Add(oError)
+                            p = Nothing
+                        Else
+                            If (Me.ParseErrors.AddIfNoError(oError)) Then
+                                Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            End If
+                        End If
+                        
+                    Catch ex As ParseException When (ex.ParseError IsNot Nothing)
+                        If (CollectParseErrors) Then
+                            Me.ParseErrors.Add(ex.ParseError)
+                            p = Nothing
+                        Else
+                            If (Me.ParseErrors.AddIfNoError(ex.ParseError)) Then
+                                Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            End If
+                        End If
+                    End Try
+                End If
+                
+                Return p
+            End Function
+            
+            ''' <summary> Writes the given Point list to the Point file. </summary>
              ''' <param name="PointList"> The points to store. </param>
              ''' <param name="MetaData">  An object providing the header for <paramref name="PointList"/>. May be <see langword="null"/>. </param>
              ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
@@ -304,13 +334,13 @@ Namespace Domain.IO
                                 ' Header.
                                 If ((Not HeaderDone) AndAlso (Not Me.FileAppend)) Then
                                     ' If MetaData is a GeoPointFile and PointList is the same GeoPointFile's PointStream,
-                                    ' then only at this point, the header has been read and coud be written.
+                                    ' then only at this Point, the header has been read and coud be written.
                                     Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
                                     If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
                                 End If
                                 HeaderDone = True
                                 
-                                ' Convert point: This verifies the ID and provides all fields for writing.
+                                ' Convert Point: This verifies the ID and provides all fields for writing.
                                 Dim p As GeoIPoint = SourcePoint.AsGeoIPoint()
                                 
                                 ' Check for unique ID.
