@@ -102,7 +102,17 @@ Namespace IO
             Dim _Header As Collection(Of String) = Nothing
             
             ''' <summary> Gets or sets the Header lines of the text file. </summary>
-            ''' <remarks> The Getter never returns <see langword="null"/>. </remarks>
+            ''' <remarks>
+            ''' <para>
+            ''' The Getter never returns <see langword="null"/>.
+            ''' </para>
+            ''' <para>
+            ''' CAUTION: The header lines will be read from file using <see cref="DataLineStream"/> or <see cref="Load()"/>. 
+            ''' Just before <see cref="DataLineStream"/> yields the first <see cref="DataTextLine"/>, 
+            ''' the header has been recognized an can be accessed by this property. 
+            ''' Before that point the header is empty.
+            ''' </para>
+            ''' </remarks>
             Public Property Header() As Collection(Of String) Implements IHeader.Header
                 Get
                     If (_Header Is Nothing) Then

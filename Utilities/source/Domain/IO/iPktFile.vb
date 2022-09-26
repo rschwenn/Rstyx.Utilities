@@ -123,11 +123,11 @@ Namespace Domain.IO
                         If (Me.ParseErrors.HasErrors) Then
                             Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                         ElseIf (PointCount = 0) Then
-                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
+                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, Me.FilePath))
                         End If
                         
                         'Logger.logDebug(PointList.ToString())
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointCount, FilePath))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointCount, Me.FilePath))
                         
 
                     Catch ex As AggregateException
@@ -135,13 +135,13 @@ Namespace Domain.IO
                         If (TypeOf ex.InnerException Is ParseException) Then
                             Throw
                         Else
-                            Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, FilePath), ex)
+                            Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, Me.FilePath), ex)
                         End If
                     Catch ex As ParseException
                         ' Signals errors that has been collected, because CollectParseErrors = True.
                         Throw
                     Catch ex as System.Exception
-                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, FilePath), ex)
+                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadFailed, Me.FilePath), ex)
                     Finally
                         Me.ParseErrors.ToLoggingConsole()
                         If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
@@ -152,7 +152,11 @@ Namespace Domain.IO
             ''' <summary> Parses one single <see cref="DataTextLine"/>. </summary>
              ''' <param name="DataLine"> The Line to parse. </param>
              ''' <returns> The newly creatd Point. May be <see langword="null"/>. </returns>
-            Private Function ParseTextLine(DataLine As DataTextLine) As IGeoPoint
+             ''' <exception cref="ArgumentNullException"> <paramref name="DataLine"/> is <see langword="null"/>. </exception>
+            Protected Function ParseTextLine(DataLine As DataTextLine) As IGeoPoint
+                
+                If (DataLine Is Nothing) Then Throw New System.ArgumentNullException("DataLine")
+                
 	            Dim p           As GeoIPoint = Nothing
                 
                 Dim RecDef      As New RecordDefinition()  '** Nicht für jeden Punkt einzeln
@@ -305,7 +309,180 @@ Namespace Domain.IO
              ''' If <see cref="GeoPoint.StatusHints"/> isn't <b>None</b>, an asterisk will be written at line start.
              ''' </para>
              ''' </remarks>
+             ''' <exception cref="ArgumentNullException"> <paramref name="PointList"/> is <see langword="null"/>. </exception>
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
+                
+                If (PointList Is Nothing) Then Throw New System.ArgumentNullException("PointList")
+
+                Dim PointCount As Integer = 0
+                Try
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, Me.FilePath))
+                    Logger.logInfo(Me.GetPointOutputOptionsLogText)
+                    If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
+                    
+                    Dim PointFmt    As String  = "%1s%0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%-6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim CoordFmt    As String  = "%14.5f"
+                    Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
+                    Dim HeaderDone  As Boolean = False
+                    Dim Header      As Collection(Of String) = Nothing
+                    Dim SyncHandle  As New Object()
+                    
+                    ' Reset this GeoPointFile, but save the header if needed.
+                    If (MetaData Is Me) Then
+                        Header = Me.Header?.Clone()
+                    End If
+                    Me.Reset(Nothing)  ' This clears Me.Header, too.
+                    Me.Header = Header
+                    
+                    
+                    Using oSW As New StreamWriter(Me.FilePath, append:=Me.FileAppend, encoding:=Me.FileEncoding)
+                        
+                        ' Process every point (all in parallel) to a text output line.
+                        For Each TextLine As String In PointList.AsParallel().AsOrdered().Select(
+                            Function(SourcePoint As IGeoPoint) As String
+                                Dim FileTextLine As String = Nothing
+                                Try
+                                    ' Convert Point: This verifies the ID and provides all fields for writing.
+                                    Dim p As GeoIPoint = SourcePoint.AsGeoIPoint()
+                                    
+                                    ' Check for unique ID.
+                                    If (UniqueID) Then Me.VerifyUniqueID(p.ID)
+                                    
+                                    Dim TimeStamp As String = If(p.TimeStamp.HasValue, p.TimeStamp.Value.ToString("s"), Nothing)
+                                        
+                                    ' Object key: Add leading zero's if integer.
+                                    Dim KeyText As String = p.ObjectKey
+                                    Dim KeyInt  As Integer
+                                    If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = sprintf("%6.6d", KeyInt)
+                                    
+                                    ' Format for coordinates.
+                                    If (p.CoordType.Trim() = "BLh") Then
+                                        CoordFmt = "%14." & CooPrecisionBLh & "f"
+                                    Else
+                                        CoordFmt = "%14." & CooPrecisionDefault & "f"
+                                    End If
+                                
+                                    ' Combine AVANI coord and height system into ipkt systems field.
+                                    If (p.CoordSys?.IsMatchingTo("^[A-Z][A-Z][0-9]$") AndAlso p.HeightSys?.IsMatchingTo("^[A-Z][0-9][0-9]$")) Then
+                                        p.CoordSys &= p.HeightSys
+                                        p.HeightSys = Nothing
+                                        SourcePoint.HeightSys = Nothing  ' Avoid the SysH attribute to be created in next statement.
+                                    End If
+                                
+                                    ' Convert properties to attributes in order to be written to file.
+                                    p.AddPropertyAttributes(SourcePoint, Me.FileFormatProperties, BindingFlags.Public Or BindingFlags.Instance)
+                                
+                                    ' Status hints.
+                                    Dim StatusHints As Char = If(p.StatusHints = GeoPointStatusHints.None, " "c, "*"c)
+                                    
+                                    ' Create line.
+                                    FileTextLine = sprintf(PointFmt,
+                                                           StatusHints,
+                                                           PointCount + 1,
+                                                           p.CalcCode.TrimToMaxLength(2),
+                                                           KeyText.TrimToMaxLength(6),
+                                                           p.GraficsCode.TrimToMaxLength(2),
+                                                           p.GraficsDim,
+                                                           p.GraficsEcc,
+                                                           p.ID,
+                                                           p.CoordType.TrimToMaxLength(3),
+                                                           sprintf(CoordFmt, p.Y),
+                                                           sprintf(CoordFmt, p.X),
+                                                           sprintf(CoordFmt, p.Z),
+                                                           sprintf("%19s", TimeStamp),
+                                                           p.CoordSys.TrimToMaxLength(6),
+                                                           p.Flags.TrimToMaxLength(4),
+                                                           p.wp, p.wh,
+                                                           p.CreateInfoTextOutput(Me.OutputOptions),
+                                                           p.AttKey1.TrimToMaxLength(2),
+                                                           p.AttValue1.TrimToMaxLength(25),
+                                                           p.AttKey2.TrimToMaxLength(2),
+                                                           p.AttValue2.TrimToMaxLength(25),
+                                                           p.CreateFreeDataText()
+                                                          )
+                                    Interlocked.Increment(PointCount)
+                                    
+                                Catch ex As InvalidIDException
+                                    Dim oError As New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath)
+                                    If (CollectParseErrors) Then
+                                        Me.ParseErrors.Add(oError)
+                                    Else
+                                        If (Me.ParseErrors.AddIfNoError(oError)) Then
+                                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                                        End If
+                                    End If
+                                End Try
+                                Return FileTextLine 
+                            End Function
+                            ).Where(Function(Text As String) (Text IsNot Nothing))
+
+                            ' Write Header.
+                            If (Not HeaderDone) Then
+                                SyncLock (SyncHandle)
+                                    If ((Not HeaderDone) AndAlso (Not Me.FileAppend)) Then
+                                        ' If MetaData is a GeoPointFile and PointList is the same GeoPointFile's PointStream,
+                                        ' then only at this Point, the header has been read and coud be written.
+                                        Dim HeaderLines As String = Me.CreateFileHeader(PointList, MetaData).ToString()
+                                        If (HeaderLines.IsNotEmptyOrWhiteSpace()) Then oSW.Write(HeaderLines)
+                                    End If
+                                    HeaderDone = True
+                                End SyncLock
+                            End If
+
+                            ' Write line.
+                            oSW.WriteLine(TextLine)
+                        Next
+                    End Using
+                    
+                    ' Throw exception if parsing errors has been collected.
+                    If (Me.ParseErrors.HasErrors) Then
+                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                    End If
+                    
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreSuccess, PointCount, Me.FilePath))
+                    
+                Catch ex As AggregateException
+                    ' Any exception from parallel processing (PointList.AsParallel...) is wrapped in an AggregateException.
+                    If (TypeOf ex.InnerException Is ParseException) Then
+                        Throw
+                    Else
+                        Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreFailed, Me.FilePath), ex)
+                    End If
+                Catch ex As ParseException
+                    ' Signals errors that has been collected, because CollectParseErrors = True.
+                    Throw
+                Catch ex as Exception
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreFailed, Me.FilePath), ex)
+                Finally
+                    Me.ParseErrors.ToLoggingConsole()
+                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                End Try
+            End Sub
+            
+            ''' <summary> Writes the given Point list to the Point file. </summary>
+             ''' <param name="PointList"> The points to store. </param>
+             ''' <param name="MetaData">  An object providing the header for <paramref name="PointList"/>. May be <see langword="null"/>. </param>
+             ''' <exception cref="System.InvalidOperationException"> <see cref="DataFile.FilePath"/> is <see langword="null"/> or empty. </exception>
+             ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="GeoPointFile.ParseErrors"/> isn't empty. </exception>
+             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
+             ''' <remarks>
+             ''' <para>
+             ''' The following properties will be converted to attributes:
+             ''' <list type="table">
+             ''' <listheader> <term> <b>Property Name</b> </term>  <description> <b>Attribute Name</b> </description></listheader>
+             ''' <item> <term>  HeightSys  </term>  <description>  SysH  </description></item>
+             ''' <item> <term>  KindText   </term>  <description>  PArt  </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If <see cref="GeoPoint.StatusHints"/> isn't <b>None</b>, an asterisk will be written at line start.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="ArgumentNullException"> <paramref name="PointList"/> is <see langword="null"/>. </exception>
+            Public Sub OLD_Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
+                
+                If (PointList Is Nothing) Then Throw New System.ArgumentNullException("PointList")
+
                 Dim PointCount As Integer = 0
                 Try
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, Me.FilePath))
