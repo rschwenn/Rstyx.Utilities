@@ -515,6 +515,11 @@ Public Class MainViewModel
             
             'Try
                 Logger.logInfo("")
+
+                Dim Str1 As String = "5"
+                Dim Str2 As String = " "
+                Dim result As Integer = Str1.CompareTo(Str2)
+                Logger.logInfo(sprintf(" '%s' CompareTo '%s' = %d\n", Str1, Str2, result))
                 
                 Dim Zeichen As Char = Nothing
                 Dim Text As String = Nothing
@@ -531,6 +536,7 @@ Public Class MainViewModel
                 Dim KilometerAttributes As AttributeCollection = TypeDescriptor.GetAttributes(Km1)
                 Dim myAttribute As TypeConverterAttribute = CType(KilometerAttributes(GetType(TypeConverterAttribute)), TypeConverterAttribute)
                 Logger.LogInfo("Type Conveter für 'Kilometer' ist: " & myAttribute.ConverterTypeName)
+                Logger.logInfo("")
                 
 
                 Dim InputFile As GeoPointFile = New IpktFile() With {.EditOptions = GeoPointEditOptions.None}

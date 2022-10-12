@@ -38,15 +38,24 @@ Namespace Collections
              ''' <param name="x"> First string </param>
              ''' <param name="y"> Second string </param>
              ''' <returns> See: <see cref="System.Collections.Generic.Comparer(Of T)"/> </returns>
+             ''' <remarks> A null string is considered to be smaller than any non-null string. </remarks>
             Public Function Compare(x As String, y As String) As Integer Implements IComparer(Of String).Compare
                 
                 Dim finished  As Boolean = False
                 Dim RetValue  As Integer = 0
                 
-                If (Not ((x Is Nothing) OrElse (y Is Nothing))) Then
-                    
-                    Dim s1       As String  = x
-                    Dim s2       As String  = y
+                If (x Is Nothing) Then
+                    If (y IsNot Nothing) Then
+                        RetValue = -1
+                    End If
+
+                ElseIf (y Is Nothing) Then
+                    RetValue = +1
+
+                Else
+                    ' Neither x or y are null.
+                    Dim s1 As String = x
+                    Dim s2 As String = y
                     
                     If (_IgnoreCase) Then
                         s1 = s1.ToLower()
@@ -59,7 +68,8 @@ Namespace Collections
                     Dim marker2  As Integer = 0
                     
                     ' Walk through the strings with two markers.
-                    Do While (marker1 < len1 AndAlso marker2 < len2)
+                    Do While ((marker1 < len1) AndAlso (marker2 < len2))
+                        
                         Dim ch1 As Char = s1(marker1)
                         Dim ch2 As Char = s2(marker2)
                         
@@ -109,7 +119,8 @@ Namespace Collections
                             Dim thatNumericChunk As Double = Double.Parse(str2)
                             result = thisNumericChunk.CompareTo(thatNumericChunk)
                         Else
-                            result = str1.CompareTo(str2)
+                            'result = str1.CompareTo(str2)
+                            result = str1.Replace(vbNullChar, String.Empty).TrimEnd().CompareTo(str2.Replace(vbNullChar, String.Empty).TrimEnd())
                         End If
                         
                         If (Not (result = 0)) Then

@@ -29,7 +29,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPointList")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.GeoPointList")
             
         #End Region
         
@@ -39,7 +39,7 @@ Namespace Domain
             Public Sub New()
                 ' Inits a new SortedKeyedCollection: 1. ignoring case when checking for key equality, 2. sorting keys alphanumeric.
                 'MyBase.New(System.StringComparer.InvariantCultureIgnoreCase)
-                'MyBase.KeyComparer = New Rstyx.Utilities.Collections.AlphanumericComparer(IgnoreCase:=True)
+                MyBase.KeyComparer = New Rstyx.Utilities.Collections.AlphanumericComparer(IgnoreCase:=True)
                 Logger.logDebug("New(): GeoPointList instantiated")
             End Sub
             
