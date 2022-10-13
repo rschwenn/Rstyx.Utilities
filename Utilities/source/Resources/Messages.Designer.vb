@@ -542,7 +542,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die SP ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die SL ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_AttName_sp() As String
             Get
