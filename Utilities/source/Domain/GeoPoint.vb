@@ -378,7 +378,7 @@ Namespace Domain
                     
                     Me.ID              = SourcePoint.ID
                     
-                    Me.Attributes      = SourcePoint.Attributes.Clone()
+                    Me.Attributes      = SourcePoint.Attributes?.Clone()
                     Me.ActualCant      = SourcePoint.ActualCant
                     Me.ActualCantAbs   = SourcePoint.ActualCantAbs
                     Me.Info            = SourcePoint.Info

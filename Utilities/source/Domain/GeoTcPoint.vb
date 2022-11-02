@@ -307,7 +307,7 @@ Namespace Domain
                         Me.HGT        = SourceTcPoint.HGT
                         Me.HSOK       = SourceTcPoint.HSOK
                         Me.Heb        = SourceTcPoint.Heb
-                        Me.Km         = SourceTcPoint.Km.Clone()
+                        Me.Km         = SourceTcPoint.Km?.Clone()
                         Me.L          = SourceTcPoint.L
                         Me.LG         = SourceTcPoint.LG
                         Me.NameOfDTM  = SourceTcPoint.NameOfDTM
@@ -322,9 +322,9 @@ Namespace Domain
                         Me.Ra         = SourceTcPoint.Ra
                         Me.RaLGS      = SourceTcPoint.RaLGS
                         Me.Ri         = SourceTcPoint.Ri
-                        Me.St         = SourceTcPoint.St.Clone()
+                        Me.St         = SourceTcPoint.St?.Clone()
                         Me.TM         = SourceTcPoint.TM
-                        Me.TrackRef   = SourceTcPoint.TrackRef.Clone()
+                        Me.TrackRef   = SourceTcPoint.TrackRef?.Clone()
                         Me.Ueb        = SourceTcPoint.Ueb
                         Me.V          = SourceTcPoint.V
                         Me.ZDGM       = SourceTcPoint.ZDGM
