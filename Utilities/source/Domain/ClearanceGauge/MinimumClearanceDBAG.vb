@@ -8,7 +8,8 @@ Imports Rstyx.Utilities.Math
 
 Namespace Domain.ClearanceGauge
     
-    ''' <summary> Minimum clearance outline for DBAG railway track ("Grenzlinie"). </summary>
+    ''' <summary> Provides minimum clearance outline for DBAG railway track ("Grenzlinie"). </summary>
+     ''' <remarks> The outlines are provided in canted rails system. </remarks>
     Public Class MinimumClearanceDBAG
         
         #Region "Private Fields"
