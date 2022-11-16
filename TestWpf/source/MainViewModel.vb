@@ -521,11 +521,9 @@ Public Class MainViewModel
                 Dim result As Integer = Str1.CompareTo(Str2)
                 Logger.logInfo(sprintf(" '%s' CompareTo '%s' = %d\n", Str1, Str2, result))
                 
-                Dim Zeichen As Char = Nothing
-                Dim Text As String = Nothing
-                Zeichen = ""
-                Text = Zeichen
-                Text = ""
+                Dim Zahl1 As Double = Double.NaN
+                Dim Zahl2 As Double = Double.NaN
+                Logger.logInfo(sprintf(" '%.3f' = '%.3f' => %s\n", Zahl1, Zahl1, Zahl1.EqualsTolerance(Zahl2, 0.1)))
 
                 Dim Km3 As New Kilometer()
                 Km3 = "1.2 + 345.678"
@@ -544,8 +542,8 @@ Public Class MainViewModel
                 'Dim Points As New GeoPointList(SourcePointList:=InputFile.PointStream, MetaData:=InputFile, CancelToken:=CancelToken, StatusIndicator:=Me)
                 For Each ip As GeoIPoint In InputFile.PointStream
                     Dim tcp   As GeoTcPoint  = ip.AsGeoTcPoint
-                    'Dim vp2  As GeoVEPoint = ip.AsGeoVEPoint
-                    Logger.LogInfo(ip.ID)
+                    ''Dim vp2  As GeoVEPoint = ip.AsGeoVEPoint
+                    'Logger.LogInfo(ip.ID)
                 Next
                 
                 
