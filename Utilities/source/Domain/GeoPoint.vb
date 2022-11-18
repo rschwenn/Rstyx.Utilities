@@ -195,6 +195,7 @@ Namespace Domain
                 InfoKindPatterns  = New Dictionary(Of String, GeoPointKind)
                 InfoKindPatterns.Add("\bGls\b|\bGleis\b"                , GeoPointKind.Rails)
                 InfoKindPatterns.Add("\bBst\b|\bBstg\b|\bBahnst"        , GeoPointKind.Platform)
+                InfoKindPatterns.Add("\bBst_|\bBstg_"                   , GeoPointKind.Platform)
                 InfoKindPatterns.Add("\bPS4\b|\bGVP"                    , GeoPointKind.RailsFixPoint)
                 InfoKindPatterns.Add("\bPS3\b|\bHFP\b|\bHB|\bHP"        , GeoPointKind.FixPoint1D)
                 InfoKindPatterns.Add("\bPS2\b|\bLFP\b|\bPPB\b|\bP[0-9]+", GeoPointKind.FixPoint2D)
