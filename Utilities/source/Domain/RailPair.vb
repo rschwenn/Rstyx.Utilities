@@ -403,8 +403,16 @@ Namespace Domain
                     Me.Speed = PointGeometry.Speed
                 End If
                 
-                If (Not PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
-                    If (Double.IsNaN(Me.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
+                'If (Not PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
+                '    If (Double.IsNaN(Me.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
+                'End If
+                
+                If (Double.IsNaN(Me.Radius)) Then
+                    If (PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
+                        Me.Radius = Double.PositiveInfinity
+                    Else
+                        Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
+                    End If
                 End If
                 
                 Me.Reconfigure(PointGeometry.Ueb * Sign(Me.Radius), PointGeometry.CantBase)
