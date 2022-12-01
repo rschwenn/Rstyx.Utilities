@@ -37,10 +37,10 @@ Namespace UI.ViewModel
         
         #Region "Fields"
             
-            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.ViewModelBase")
+            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.ViewModel.ViewModelBase")
             
-            Protected ReadOnly DeferredDoEventsAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf DoEventsIfWpfUiThread, System.Windows.Threading.Dispatcher.CurrentDispatcher)
-            Protected ReadOnly DoEventsDelay            As System.TimeSpan = System.TimeSpan.FromMilliseconds(250)
+            'Protected ReadOnly DeferredDoEventsAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf DoEventsIfWpfUiThread, System.Windows.Threading.Dispatcher.CurrentDispatcher)
+            'Protected ReadOnly DoEventsDelay            As System.TimeSpan = System.TimeSpan.FromMilliseconds(250)
             
         #End Region
         
@@ -338,8 +338,8 @@ Namespace UI.ViewModel
                     If (Value Xor _IsInProgress) Then
                         _IsInProgress = Value
                         MyBase.NotifyPropertyChanged("IsInProgress")
-                        'DoEventsIfWpfUiThread()
-                        DeferredDoEventsAction.Defer(DoEventsDelay)
+                        DoEventsIfWpfUiThread()
+                        'DeferredDoEventsAction.Defer(DoEventsDelay)
                     End If
                 End Set
             End Property
@@ -377,8 +377,8 @@ Namespace UI.ViewModel
                         ' Notify about change: only at discrete values.
                         If (_Progress >= NextProgressThreshold) Then
                             MyBase.NotifyPropertyChanged("Progress")
-                            'DoEventsIfWpfUiThread()
-                            DeferredDoEventsAction.Defer(DoEventsDelay)
+                            DoEventsIfWpfUiThread()
+                            'DeferredDoEventsAction.Defer(DoEventsDelay)
                             NextProgressThreshold += 100 / VisibleProgressStepCount
                         End if
                     End if
@@ -409,8 +409,8 @@ Namespace UI.ViewModel
                         _StatusTextToolTip = Nothing
                         MyBase.NotifyPropertyChanged("StatusText")
                         MyBase.NotifyPropertyChanged("StatusTextToolTip")
-                        'DoEventsIfWpfUiThread()
-                        DeferredDoEventsAction.Defer(DoEventsDelay)
+                        DoEventsIfWpfUiThread()
+                        'DeferredDoEventsAction.Defer(DoEventsDelay)
                     End if
                 End Set
             End Property
@@ -447,8 +447,8 @@ Namespace UI.ViewModel
                     If (Not (value = _StatusTextToolTip)) Then
                         _StatusTextToolTip = value
                         MyBase.NotifyPropertyChanged("StatusTextToolTip")
-                        'DoEventsIfWpfUiThread()
-                        DeferredDoEventsAction.Defer(DoEventsDelay)
+                        DoEventsIfWpfUiThread()
+                        'DeferredDoEventsAction.Defer(DoEventsDelay)
                     End if
                 End Set
             End Property
