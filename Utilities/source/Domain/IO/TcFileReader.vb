@@ -1814,20 +1814,20 @@ Namespace Domain.IO
                                         End If
                                     
                                     Case "Datei":               CommentEnd = True
+                                    Case "Feldnamen":           Block.BlockType.FieldNames = kvp.Value  :  CommentEnd = True  ' Format "A0"
                                     
-                                    Case "Achse":               Block.TrackRef.NameOfAlignment      = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Stationierungsachse": Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iTrassePC
-                                    Case "Km-Linie":            Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iGeo
-                                    Case "Ueberhöhungsband":    Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iTrassePC
-                                    Case "Überhöhungsband":     Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, False) : CommentEnd = True  ' iGeo
-                                    Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Profilpunktbereich":  Block.TrackRef.NameOfSectionPoints  = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "Gleisprofilbereich":  Block.TrackRef.NameOfRailSections   = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    Case "DGM":                 Block.TrackRef.NameOfDTM            = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
-                                    
-                                    Case "Feldnamen":           Block.BlockType.FieldNames          = kvp.Value                          : CommentEnd = True  ' Format "A0"
+                                    ' The file names are w/o extensions, so a "." belongs to name => that's why "true" in GetNameFromMatch(kvp.Value, True):
+                                    Case "Achse":               Block.TrackRef.NameOfAlignment      = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
+                                    Case "Stationierungsachse": Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iTrassePC
+                                    Case "Km-Linie":            Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iGeo
+                                    Case "Ueberhöhungsband":    Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iTrassePC
+                                    Case "Überhöhungsband":     Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iGeo
+                                    Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
+                                    Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
+                                    Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
+                                    Case "Profilpunktbereich":  Block.TrackRef.NameOfSectionPoints  = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
+                                    Case "Gleisprofilbereich":  Block.TrackRef.NameOfRailSections   = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
+                                    Case "DGM":                 Block.TrackRef.NameOfDTM            = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
                                     
                                 End Select
                             End If
