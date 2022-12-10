@@ -1384,6 +1384,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die extreme Geometrie ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointStatusHints_ExtremeGeometry() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointStatusHints_ExtremeGeometry", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die keine ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointStatusHints_None() As String

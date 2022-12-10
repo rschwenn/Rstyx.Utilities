@@ -130,6 +130,9 @@ Namespace Domain
         ''' <summary> The point ID may be bad i.e. in means of a schema. </summary>
         BadID = 1
         
+        ''' <summary> The geometry values are not exactly for the point, but rather sector extreme values. </summary>
+        ExtremeGeometry = 2
+        
     End Enum
     
     
