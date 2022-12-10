@@ -214,7 +214,7 @@ Namespace Domain
                     
                     Me.QG = ((Me.Q - Y0) * CosPhi) + ((Me.HSOK - X0) * SinPhi)
                     Me.HG = ((Me.HSOK - X0) * CosPhi) - ((Me.Q - Y0) * SinPhi)
-            Else
+                Else
                     Me.QG = Double.NaN
                     Me.HG = Double.NaN
                 End If
@@ -259,10 +259,35 @@ Namespace Domain
                     
                     Me.HSOK = X0 + (((Me.QG / CosPhi) + (Me.HG / SinPhi)) / ((CosPhi / SinPhi) + (SinPhi / CosPhi)))
                     Me.Q    = Y0 + ((Me.QG - ((Me.HSOK - X0) * SinPhi)) / CosPhi)
-            Else
+                Else
                     Me.Q    = Double.NaN
                     Me.HSOK = Double.NaN
                 End If
+            End Sub
+            
+            ''' <summary> Gets cant, cant base, vertical radius and radius from a rail pair. </summary>
+             ''' <param name="Rails"> The <see cref="RailPair"/>, to get goemetry from. </param>
+             ''' <remarks>
+             ''' This overrides <see cref="GeoTcPoint.Ra"/>, <see cref="GeoTcPoint.RaLGS"/>, <see cref="GeoTcPoint.Ueb"/>
+             ''' and <see cref="GeoTcPoint.CantBase"/> with the matching values of <paramref name="Rails"/>.
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="Rails"/> is <see langword="null"/>. </exception>
+            Public Sub GetGeometry(Rails As RailPair)
+                
+                If (Rails Is Nothing) Then Throw New System.ArgumentNullException("PointGeometry")
+                
+                ' Radius specials.
+                If ( (Not (Double.IsNaN(Rails.Cant) OrElse Rails.Cant.EqualsTolerance(0, RailPair.CantZeroSnap))) AndAlso Double.IsNaN(Rails.Radius)) Then
+                    ' Ensure that sign of cant is determinable by setting a special radius.
+                    Me.Ra = If(Rails.Cant < 0, Double.NegativeInfinity, Double.PositiveInfinity)
+                Else
+                    Me.Ra = Rails.Radius
+                End If
+                
+                Me.Ueb      = Rails.Cant * Sign(Rails.Radius)
+                Me.CantBase = Rails.CantBase
+                Me.RaLGS    = Rails.VerticalRadius
+                
             End Sub
             
         #End Region

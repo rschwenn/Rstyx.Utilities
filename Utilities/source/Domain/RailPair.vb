@@ -213,7 +213,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets the absolute cant (negative, if right running surface is higher). </summary>
-             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property Cant() As Double
                 Get
                     Return _Cant
@@ -221,7 +221,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets the CantBase. </summary>
-             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property CantBase() As Double
                 Get
                     Return _CantBase
@@ -229,7 +229,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Left Running Surface in track system. </summary>
-             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property RSLeft() As Point
                 Get
                     Return _RSLeft
@@ -237,7 +237,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Higher Running Surface in track system. </summary>
-             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property RSHigher() As Point
                 Get
                     Dim RetRS As Point = If((_Cant < 0), RSRight, RSLeft)
@@ -246,7 +246,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Lower Running Surface in track system. </summary>
-             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property RSLower() As Point
                 Get
                     Dim RetRS As Point = If((_Cant < 0), RSLeft, RSRight)
@@ -255,7 +255,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets coordinates of Right Running Surface in track system. </summary>
-             ''' <remarks> This value can be set via <see cref="RailPair.reconfigure"/>. </remarks>
+             ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property RSRight() As Point
                 Get
                     Return _RSRight
@@ -383,7 +383,7 @@ Namespace Domain
             End Sub
             
             ''' <summary> Re-configures this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
-             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally speed. </param>
+             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
              ''' <remarks> If <paramref name="PointGeometry"/> has a speed, this value overrides <see cref="Speed"/> </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry"/><c>.Ueb</c>) is <c>Double.NaN</c>. </exception>
@@ -403,10 +403,6 @@ Namespace Domain
                     Me.Speed = PointGeometry.Speed
                 End If
                 
-                'If (Not PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
-                '    If (Double.IsNaN(Me.Radius)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_Reconfigure_UnknownRadius)
-                'End If
-                
                 If (Double.IsNaN(Me.Radius)) Then
                     If (PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap)) Then
                         Me.Radius = Double.PositiveInfinity
@@ -417,6 +413,53 @@ Namespace Domain
                 
                 Me.Reconfigure(PointGeometry.Ueb * Sign(Me.Radius), PointGeometry.CantBase)
             End Sub
+            
+            ''' <summary> Tries to re-configure this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
+             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
+             ''' <returns> <see langword="true"/>, if re-configuration has been successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' Re-configuration will be successfull, if <paramref name="PointGeometry"/> provides <c>.Ueb</c>, <c>.CantBase</c> and <c>.Ra</c>. 
+             ''' If cant is zero, then radius may be NaN and is set to <c>Double.PositiveInfinity</c>.
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="PointGeometry"/> has a speed, this value overrides <see cref="Speed"/>
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
+            Public Function TryReconfigure(PointGeometry As GeoTcPoint) As Boolean
+                
+                If (PointGeometry Is Nothing) Then Throw New System.ArgumentNullException("PointGeometry")
+                
+                Dim RetValue As Boolean = IsFullPointGeometry(PointGeometry)
+                
+                If (RetValue) Then
+                    Me.Reconfigure(PointGeometry)
+                End If
+                
+                Return RetValue
+            End Function
+            
+            ''' <summary> Tells if this RailPair could be re-configured based on <paramref name="PointGeometry"/>. </summary>
+             ''' <param name="PointGeometry"> The point which should provide cant, cant base and radius. </param>
+             ''' <returns> <see langword="true"/>, if re-configuration could be successfull, otherwise <see langword="false"/>. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' Re-configuration would be successfull, if <paramref name="PointGeometry"/> provides <c>.Ueb</c>, <c>.CantBase</c> and <c>.Ra</c>. 
+             ''' If cant is zero, then radius may be <c>NaN</c>.
+             ''' </para>
+             ''' </remarks>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
+            Public Shared Function IsFullPointGeometry(PointGeometry As GeoTcPoint) As Boolean
+                
+                If (PointGeometry Is Nothing) Then Throw New System.ArgumentNullException("PointGeometry")
+                
+                Return ((Not Double.IsNaN(PointGeometry.Ueb))      AndAlso
+                        (Not Double.IsNaN(PointGeometry.CantBase)) AndAlso
+                        ((Not Double.IsNaN(PointGeometry.Ra)) OrElse PointGeometry.Ueb.EqualsTolerance(0.0, RailPair.CantZeroSnap))
+                       )
+            End Function
+            
             
             ''' <summary> Tells if a given point is inside of canted train. </summary>
              ''' <param name="Point"> The point, given in canted rails system. </param>
