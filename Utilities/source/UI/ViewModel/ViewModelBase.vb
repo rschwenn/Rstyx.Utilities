@@ -320,12 +320,13 @@ Namespace UI.ViewModel
             Private ReadOnly DeferredSetProgressAction  As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf SetProgressTo100, System.Windows.Threading.Dispatcher.CurrentDispatcher)
             Private ReadOnly SetProgressDelay           As System.TimeSpan = System.TimeSpan.FromMilliseconds(300)
             
-            Private ReadOnly DeferredResetStateAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf resetStateIndication, System.Windows.Threading.Dispatcher.CurrentDispatcher)
+            Private ReadOnly DeferredResetStateAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf ResetStateIndication, System.Windows.Threading.Dispatcher.CurrentDispatcher)
             
             Private Sub SetProgressTo100()
                 _Progress = 100
                 NextProgressThreshold = 0
                 MyBase.NotifyPropertyChanged("Progress")
+                DoEventsIfWpfUiThread()
             End Sub
             
             ''' <summary> <see langword="true"/> signals "work in progress" or "busy". </summary>
@@ -339,7 +340,6 @@ Namespace UI.ViewModel
                         _IsInProgress = Value
                         MyBase.NotifyPropertyChanged("IsInProgress")
                         DoEventsIfWpfUiThread()
-                        'DeferredDoEventsAction.Defer(DoEventsDelay)
                     End If
                 End Set
             End Property
@@ -416,7 +416,7 @@ Namespace UI.ViewModel
             End Property
             
             ''' <summary> A default value for <see cref="StatusText"/>. Deaults to String.Empty. </summary>
-             ''' <remarks> <see cref="resetStateIndication"/>() sets <see cref="StatusText"/> to this default value. </remarks>
+             ''' <remarks> <see cref="ResetStateIndication"/>() sets <see cref="StatusText"/> to this default value. </remarks>
             Public Property StatusTextDefault() As String Implements IStatusIndicator.StatusTextDefault
                 Get
                     Return _StatusTextDefault
@@ -454,7 +454,7 @@ Namespace UI.ViewModel
             End Property
             
             ''' <summary> A default value for <see cref="StatusTextToolTip"/>. Deaults to String.Empty. </summary>
-             ''' <remarks> <see cref="resetStateIndication"/>() sets <see cref="StatusTextToolTip"/> to this default value. </remarks>
+             ''' <remarks> <see cref="ResetStateIndication"/>() sets <see cref="StatusTextToolTip"/> to this default value. </remarks>
             Public Property StatusTextToolTipDefault() As String Implements IStatusIndicator.StatusTextToolTipDefault
                 Get
                     Return _StatusTextToolTipDefault
@@ -470,21 +470,29 @@ Namespace UI.ViewModel
             
             ''' <summary> Sets status text to <see cref="StatusTextDefault"/>, <see cref="Progress"/> to zero and <see cref="IsInProgress"/> to <see langword="false"/> (immediately). </summary>
              ''' <remarks> If there's already a delayed reset pending, it's aborted. </remarks>
-            Public Sub resetStateIndication() Implements IStatusIndicator.resetStateIndication
+            Public Sub ResetStateIndication() Implements IStatusIndicator.ResetStateIndication
                 Debug.Print("ViewModelBase \ resetStateIndication:  Start...")
                 DeferredResetStateAction.Abort()
-                Me.StatusTextToolTip = Nothing
-                Me.StatusText = Me.StatusTextDefault
-                Me.Progress = 0
+                DeferredSetProgressAction.Abort()
+                
                 Me.ProgressTickRange = 100
                 Me.ProgressTickRangeCount = 100
-                Me.IsInProgress = False
+                _StatusTextToolTip = Nothing
+                _StatusText = Me.StatusTextDefault
+                _Progress = 0
+                _IsInProgress = False
+                MyBase.NotifyPropertyChanged("StatusText")
+                MyBase.NotifyPropertyChanged("StatusTextToolTip")
+                MyBase.NotifyPropertyChanged("Progress")
+                MyBase.NotifyPropertyChanged("IsInProgress")
+                DoEventsIfWpfUiThread()
+                
                 Debug.Print("ViewModelBase \ resetStateIndication:  End.")
             End Sub
             
             ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay), but immediately <see cref="IsInProgress"/> to <see langword="false"/>. </summary>
              ''' <param name="Delay"> Delay for reset (in Milliseconds). </param>
-            Public Sub resetStateIndication(Delay As Double) Implements IStatusIndicator.resetStateIndication
+            Public Sub ResetStateIndication(Delay As Double) Implements IStatusIndicator.ResetStateIndication
                 Me.IsInProgress = False
                 DeferredResetStateAction.Defer(Delay)
             End Sub

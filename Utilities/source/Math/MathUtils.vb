@@ -42,7 +42,7 @@ Namespace Math
             
         #Region "Parsing"
             
-            ''' <summary> Replacement for <c>Double.TryParse</c>. Returns <c>Double.NaN</c> if parsing fails. </summary>
+            ''' <summary> Replacement for <c>Double.TryParse</c>. Sets <paramref name="Result"/> to <c>Double.NaN</c> if parsing fails. </summary>
              ''' <param name="Result"> The parsing result. <c>Double.NaN</c> if parsing fails. </param>
              ''' <param name="Value">  String to parse. </param>
              ''' <returns> <see langword="true"/> if <paramref name="Value"/> has been parsed successfull, otherwise <see langword="false"/>. </returns>

@@ -45,10 +45,10 @@
         
         
         ''' <summary> Sets status text to <see cref="StatusTextDefault"/>, <see cref="Progress"/> to zero and <see cref="IsInProgress"/> to <see langword="false"/> (immediately). </summary>
-        Sub resetStateIndication()
+        Sub ResetStateIndication()
         
         ''' <summary> Sets status text to <see cref="StatusTextDefault"/> and <see cref="Progress"/> to zero (after a delay), but immediately <see cref="IsInProgress"/> to <see langword="false"/>. </summary>
-        Sub resetStateIndication(Delay As Double)
+        Sub ResetStateIndication(Delay As Double)
         
     End Interface
     

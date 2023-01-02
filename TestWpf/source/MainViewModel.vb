@@ -523,7 +523,7 @@ Public Class MainViewModel
                 
                 Dim Zahl1 As Double = Double.NaN
                 Dim Zahl2 As Double = Double.NaN
-                Logger.logInfo(sprintf(" '%.3f' = '%.3f' => %s\n", Zahl1, Zahl1, Zahl1.EqualsTolerance(Zahl2, 0.1)))
+                Logger.logInfo(sprintf(" '%.3f' = '%.3f' => %s\n", Zahl1, Zahl2, Zahl1.EqualsTolerance(Zahl2, 0.1)))
 
                 Dim Km3 As New Kilometer()
                 Km3 = "1.2 + 345.678"
@@ -535,6 +535,11 @@ Public Class MainViewModel
                 Dim myAttribute As TypeConverterAttribute = CType(KilometerAttributes(GetType(TypeConverterAttribute)), TypeConverterAttribute)
                 Logger.LogInfo("Type Conveter für 'Kilometer' ist: " & myAttribute.ConverterTypeName)
                 Logger.logInfo("")
+                
+                Dim Bool1 As Boolean = False
+                Dim Bool2 As Boolean = False
+                Dim Bool3 As Boolean = (Bool1 = Bool2)
+                Logger.logInfo(sprintf(" '%s' = '%s' => %s\n", Bool1, Bool2, Bool3))
                 
 
                 Dim InputFile As GeoPointFile = New IpktFile() With {.EditOptions = GeoPointEditOptions.None}
