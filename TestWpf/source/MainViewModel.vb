@@ -14,6 +14,7 @@ Imports System.Math
 Imports System.IO
 Imports System.Reflection
 Imports System.Text
+Imports System.Text.RegularExpressions
 Imports System.Threading.Tasks
 
 'Imports PdfSharp.Pdf
@@ -515,41 +516,118 @@ Public Class MainViewModel
             
             'Try
                 Logger.logInfo("")
+                'Me.Textbox = "-iu=12.3"
+                'Dim PatternXX    As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]?([0-9]*[.])?[0-9]+)|(-iu) *=? *([+-]?([0-9]*[.])?[0-9]+))? *((#) ?(.*))?$"
+                'Dim Pattern    As String = "(-iu) *=? *([+-]?([0-9]*[.])?[0-9]+)"
+                'Dim Pattern    As String = "(-iueb) *=? *([+-]?([0-9]*[.])?[0-9]+) *(-iu) *=? *([+-]?([0-9]*[.])?[0-9]+)"
+                'Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#) ?(.*))?$"
+                '                                                      [+-]?([0-9]*[.])?[0-9]+      [+-]?([0-9]*[.])?[0-9]+
 
-                Dim Str1 As String = "5"
-                Dim Str2 As String = " "
-                Dim result As Integer = Str1.CompareTo(Str2)
-                Logger.logInfo(sprintf(" '%s' CompareTo '%s' = %d\n", Str1, Str2, result))
+                ' Regular Expression Pattern to recognize a text as iTrassen-Codierung.
+                Dim RegExDecimal As String = " *=? *([+-]?([0-9]*[.])?[0-9]+)"
                 
-                Dim Zahl1 As Double = Double.NaN
-                Dim Zahl2 As Double = Double.NaN
-                Logger.logInfo(sprintf(" '%.3f' = '%.3f' => %s\n", Zahl1, Zahl2, Zahl1.EqualsTolerance(Zahl2, 0.1)))
+                Dim Pattern As String
+                Pattern  = "^ *"
+                Pattern &= "(\w)?"            ' PointKindAB
 
-                Dim Km3 As New Kilometer()
-                Km3 = "1.2 + 345.678"
-                'Km3 = CType("1.2 + 345.678", Kilometer)
-                'Dim Km2 As Kilometer = CType(TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678"), Kilometer)
-                Dim Km2 As Kilometer = TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678")
-                Dim Km1 As New Kilometer()
-                Dim KilometerAttributes As AttributeCollection = TypeDescriptor.GetAttributes(Km1)
-                Dim myAttribute As TypeConverterAttribute = CType(KilometerAttributes(GetType(TypeConverterAttribute)), TypeConverterAttribute)
-                Logger.LogInfo("Type Conveter für 'Kilometer' ist: " & myAttribute.ConverterTypeName)
-                Logger.logInfo("")
-                
-                Dim Bool1 As Boolean = False
-                Dim Bool2 As Boolean = False
-                Dim Bool3 As Boolean = (Bool1 = Bool2)
-                Logger.logInfo(sprintf(" '%s' = '%s' => %s\n", Bool1, Bool2, Bool3))
-                
+                Pattern &= "("                ' Start attributes
+                Pattern &= "(-b)"             ' Platform
+                Pattern &= "|"
+                Pattern &= "(-v)([0-9]+)?"    ' Rails fixpoint
+                Pattern &= "|"
+                Pattern &= "(-f)([0-9]+)?"    ' Fixpoint
+                Pattern &= "|"
+                Pattern &= "(-s1)"            ' Rail point 1
+                Pattern &= "|"
+                Pattern &= "(-s2)"            ' Rail point 2
+                Pattern &= "|"
+                Pattern &= "(-m1)"            ' Measure point 1
+                Pattern &= "|"
+                Pattern &= "(-m2)"            ' Measure point 2
+                Pattern &= "|"
 
-                Dim InputFile As GeoPointFile = New IpktFile() With {.EditOptions = GeoPointEditOptions.None}
-                InputFile.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\GisPnr2i_Beispiele\Test2_i.ipkt"
-                'Dim Points As New GeoPointList(SourcePointList:=InputFile.PointStream, MetaData:=InputFile, CancelToken:=CancelToken, StatusIndicator:=Me)
-                For Each ip As GeoIPoint In InputFile.PointStream
-                    Dim tcp   As GeoTcPoint  = ip.AsGeoTcPoint
-                    ''Dim vp2  As GeoVEPoint = ip.AsGeoVEPoint
-                    'Logger.LogInfo(ip.ID)
-                Next
+                ' Rails may have up to three attributes in arbitrary order:
+                Pattern &= "(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iueb)" & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-iu)"   & RegExDecimal
+                Pattern &= "|"
+                Pattern &= "(-sp)"   & RegExDecimal
+
+                Pattern &= "|"
+                Pattern &= "(-i)"             ' Rails w/o cant
+                Pattern &= ")?"               ' End attributes
+
+                Pattern &= " *((#) ?(.*))?"   ' Comment
+                Pattern &= "$"
+
+                Dim SearchText As String = "-iu123.4-iueb78"
+
+                Dim oMatch  As Match = Regex.Match(SearchText, Pattern)
+                If (oMatch.Success) Then
+                    Logger.logInfo("=> Treffer: " & SearchText)
+                    'Logger.logInfo(sprintf("=> Treffer: '%s' CompareTo '%s' = %d\n", SearchText, Str2, result))
+                Else
+                    Logger.logInfo("*** KEIN Treffer: " & SearchText)
+                End If
+                
+                'Dim Str1 As String = "5"
+                'Dim Str2 As String = " "
+                'Dim result As Integer = Str1.CompareTo(Str2)
+                'Logger.logInfo(sprintf(" '%s' CompareTo '%s' = %d\n", Str1, Str2, result))
+                '
+                'Dim Zahl1 As Double = Double.NaN
+                'Dim Zahl2 As Double = Double.NaN
+                'Logger.logInfo(sprintf(" '%.3f' = '%.3f' => %s\n", Zahl1, Zahl2, Zahl1.EqualsTolerance(Zahl2, 0.1)))
+                '
+                'Dim Km3 As New Kilometer()
+                'Km3 = "1.2 + 345.678"
+                ''Km3 = CType("1.2 + 345.678", Kilometer)
+                ''Dim Km2 As Kilometer = CType(TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678"), Kilometer)
+                'Dim Km2 As Kilometer = TypeDescriptor.GetConverter(GetType(Kilometer)).ConvertFromString("1.2 + 345.678")
+                'Dim Km1 As New Kilometer()
+                'Dim KilometerAttributes As AttributeCollection = TypeDescriptor.GetAttributes(Km1)
+                'Dim myAttribute As TypeConverterAttribute = CType(KilometerAttributes(GetType(TypeConverterAttribute)), TypeConverterAttribute)
+                'Logger.LogInfo("Type Conveter für 'Kilometer' ist: " & myAttribute.ConverterTypeName)
+                'Logger.logInfo("")
+                '
+                'Dim Bool1 As Boolean = False
+                'Dim Bool2 As Boolean = False
+                'Dim Bool3 As Boolean = (Bool1 = Bool2)
+                'Logger.logInfo(sprintf(" '%s' = '%s' => %s\n", Bool1, Bool2, Bool3))
+                '
+                '
+                'Dim InputFile As GeoPointFile = New IpktFile() With {.EditOptions = GeoPointEditOptions.None}
+                'InputFile.FilePath = "X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\GisPnr2i_Beispiele\Test2_i.ipkt"
+                ''Dim Points As New GeoPointList(SourcePointList:=InputFile.PointStream, MetaData:=InputFile, CancelToken:=CancelToken, StatusIndicator:=Me)
+                'For Each ip As GeoIPoint In InputFile.PointStream
+                '    Dim tcp   As GeoTcPoint  = ip.AsGeoTcPoint
+                '    ''Dim vp2  As GeoVEPoint = ip.AsGeoVEPoint
+                '    'Logger.LogInfo(ip.ID)
+                'Next
                 
                 
                 

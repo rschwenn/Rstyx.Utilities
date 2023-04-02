@@ -759,4 +759,22 @@
   <data name="Rstyx_Utilities_Domain_GeoPointStatusHints_ExtremeGeometry" xml:space="preserve">
     <value>extreme Geometrie</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint" xml:space="preserve">
+    <value>Messpkt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint1" xml:space="preserve">
+    <value>Messpkt 1</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint2" xml:space="preserve">
+    <value>Messpkt 2</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_RailTop" xml:space="preserve">
+    <value>Schiene</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_RailTop1" xml:space="preserve">
+    <value>Schiene 1</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointKind_RailTop2" xml:space="preserve">
+    <value>Schiene 2</value>
+  </data>
 </root>

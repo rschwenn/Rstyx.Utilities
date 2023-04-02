@@ -25,10 +25,75 @@ Namespace Domain
         #Region "Public Fields"
             
             Public Shared ReadOnly DefaultCoordType   As String = "YXZ"
+            Public Shared ReadOnly iTC_Pattern        As String
             
         #End Region
         
         #Region "Constuctor"
+            
+            ''' <summary> Static initializations. </summary>
+            Shared Sub New()
+                    
+                ' Regular Expression pattern to recognize a text as iGeo "iTrassen-Codierung".
+                Dim RegExDecimal As String = " *=? *([+-]?([0-9]*[.])?[0-9]+)"
+                
+                iTC_Pattern  = "^ *"
+                iTC_Pattern &= "(\w)?"            ' PointKindAB
+                
+                iTC_Pattern &= "("                ' Start attributes
+                iTC_Pattern &= "(-b)"             ' Platform
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-v)([0-9]+)?"    ' Rails fixpoint
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-f)([0-9]+)?"    ' Fixpoint
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-s1)"            ' Rail point 1
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-s2)"            ' Rail point 2
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-m1)"            ' Measure point 1
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-m2)"            ' Measure point 2
+                iTC_Pattern &= "|"
+                
+                ' Rails may have up to three attributes in arbitrary order:
+                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iueb)" & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-iu)"   & RegExDecimal
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-sp)"   & RegExDecimal
+                
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-i)"             ' Rails w/o cant
+                iTC_Pattern &= ")?"               ' End attributes
+                
+                iTC_Pattern &= " *((#) ?(.*))?"   ' Comment
+                iTC_Pattern &= "$"
+            End Sub
             
             ''' <summary> Creates a new, empty <see cref="GeoIPoint"/>. </summary>
             Public Sub New()
@@ -323,6 +388,12 @@ Namespace Domain
                     Select Case Me.Kind
                         Case GeoPointKind.Platform : IpktText &= "-b"
 
+                        Case GeoPointKind.RailTop1 : IpktText &= "-s1"
+                        Case GeoPointKind.RailTop2 : IpktText &= "-s2"
+
+                        Case GeoPointKind.MeasurePoint1 : IpktText &= "-m1"
+                        Case GeoPointKind.MeasurePoint2 : IpktText &= "-m2"
+
                         Case GeoPointKind.RailsFixPoint
                             
                             IpktText &= "-v"
@@ -337,13 +408,17 @@ Namespace Domain
                             
                             Dim IsNanActualCantAbs = Double.IsNaN(Me.ActualCantAbs)
                             Dim IsNanActualCant    = Double.IsNaN(Me.ActualCant)
+                            Dim IsNanActualGauge   = Double.IsNaN(Me.ActualTrackGauge)
+
                             If (IsNanActualCant AndAlso IsNanActualCantAbs) Then
                                 IpktText &= "-i"
                             Else
-                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%-3.0f", Me.ActualCantAbs * 1000 * -1)
-                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%-3.0f", Me.ActualCant * 1000)
+                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%-5.1f", Me.ActualCantAbs * 1000 * -1).Replace(".0", String.Empty)
+                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%-5.1f"  , Me.ActualCant    * 1000).Replace(".0", String.Empty)
                             End If
-                            
+
+                            If (Not IsNanActualGauge) Then IpktText &= sprintf("-sp=%-6.1f", Me.ActualTrackGauge * 1000).Replace(".0", String.Empty)
+
                     End Select
                 End If
                 
@@ -402,13 +477,8 @@ Namespace Domain
                     j += 1
                     
                     If (SearchText.IsNotEmptyOrWhiteSpace()) Then
-                
-                        ' Both "-iueb" and "-iu" may be there (in any order).
-                        'Dim Pattern As String = "^\s*(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))?\s*((#|x)\s?(.+))?$"
-                        'Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#|x) ?(.*))?$"
-                        Dim Pattern As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]? *[0-9]+) *(-iu) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+) *(-iueb) *=? *([+-]? *[0-9]+)|(-iueb) *=? *([+-]? *[0-9]+)|(-iu) *=? *([+-]? *[0-9]+)|(-i))? *((#) ?(.*))?$"
-                                    
-                        Dim oMatch  As Match  = Regex.Match(SearchText, Pattern)
+                        
+                        Dim oMatch  As Match = Regex.Match(SearchText, iTC_Pattern)
                         
                         If (oMatch.Success) Then
                             
@@ -416,11 +486,12 @@ Namespace Domain
                             Dim iTC_MarkType      As String  = Nothing
                             Dim iTC_ActualCantAbs As Double  = Double.NaN
                             Dim iTC_ActualCant    As Double  = Double.NaN
+                            Dim iTC_ActualGauge   As Double  = Double.NaN
                             Dim ApplyNewKind      As Boolean = False
                             Dim IsKindConflict    As Boolean = False
                             
                             ' Recognize point kinds with attached info.
-                            For i As Integer = 3 To 20
+                            For i As Integer = 3 To 111
                                 If (oMatch.Groups(i).Success) Then
                                     Dim Key As String = oMatch.Groups(i).Value
                                     Select Case Key
@@ -429,9 +500,17 @@ Namespace Domain
                                         Case "-f":     iTC_Kind = GeoPointKind.FixPoint      : iTC_MarkType      = oMatch.Groups(i + 1).Value
                                         Case "-iueb":  iTC_Kind = GeoPointKind.Rails         : iTC_ActualCantAbs = -1 * CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
                                         Case "-iu":    iTC_Kind = GeoPointKind.Rails         : iTC_ActualCant    =      CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-sp":    iTC_Kind = GeoPointKind.Rails         : iTC_ActualGauge   =      CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
                                         Case "-i":     iTC_Kind = GeoPointKind.Rails
+                                        Case "-s1":    iTC_Kind = GeoPointKind.RailTop1
+                                        Case "-s2":    iTC_Kind = GeoPointKind.RailTop2
+                                        Case "-m1":    iTC_Kind = GeoPointKind.MeasurePoint1
+                                        Case "-m2":    iTC_Kind = GeoPointKind.MeasurePoint2
                                     End Select
-                                    'Exit For -> not exit, because both "-iueb" and "-iu" may be there.
+                                    ' Exit For -> not if rails, because "-iueb", "-iu" and "-sp" may be there.
+                                    If ((iTC_Kind <> GeoPointKind.None) AndAlso (iTC_Kind <> GeoPointKind.Rails)) Then
+                                        Exit For
+                                    End If
                                 End If
                             Next
                                             
@@ -512,6 +591,16 @@ Namespace Domain
                                         Me.ActualCant = iTC_ActualCant
                                     End If
                                 End If
+                                
+                                If (Not Double.IsNaN(iTC_ActualGauge)) Then
+                                    If ((Not Double.IsNaN(Me.ActualTrackGauge)) AndAlso (Not Me.ActualTrackGauge.EqualsTolerance(iTC_ActualGauge, 0.0006))) Then
+                                        RetValue.HasConflict = True
+                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Gauge, Me.ID, Me.ActualTrackGauge, iTC_ActualGauge)
+                                        RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
+                                    Else
+                                        Me.ActualTrackGauge = iTC_ActualGauge
+                                    End If
+                                End If
                             End If
                             
                             ' Special mark type.
@@ -528,8 +617,8 @@ Namespace Domain
                             End If
                             
                             ' Point info text.
-                            If (oMatch.Groups(23).Success) Then
-                                Dim iTC_InfoText As String = oMatch.Groups(23).Value.Trim()
+                            If (oMatch.Groups(114).Success) Then
+                                Dim iTC_InfoText As String = oMatch.Groups(114).Value.Trim()
                                 
                                 If ((j = 1) OrElse Me.Info.IsEmptyOrWhiteSpace()) Then
                                     Me.Info = iTC_InfoText

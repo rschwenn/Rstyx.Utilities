@@ -1312,6 +1312,33 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Messpkt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Messpkt 1 ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint1() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Messpkt 2 ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint2() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_MeasurePoint2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_None() As String
@@ -1344,6 +1371,33 @@ Namespace Resources
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_RailsFixPoint() As String
             Get
                 Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_RailsFixPoint", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schiene ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_RailTop() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_RailTop", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schiene 1 ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_RailTop1() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_RailTop1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Schiene 2 ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_RailTop2() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointKind_RailTop2", resourceCulture)
             End Get
         End Property
         

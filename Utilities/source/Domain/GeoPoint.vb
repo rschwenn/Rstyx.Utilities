@@ -118,6 +118,24 @@ Namespace Domain
         ''' <summary> Rails fix point. </summary>
         RailsFixPoint = 7
         
+        ''' <summary> Measure point. </summary>
+        MeasurePoint = 8
+        
+        ''' <summary> Measure point 1. </summary>
+        MeasurePoint1 = 9
+        
+        ''' <summary> Measure point 2. </summary>
+        MeasurePoint2 = 10
+        
+        ''' <summary> Top of rail. </summary>
+        RailTop = 11
+        
+        ''' <summary> Top of rail 1. </summary>
+        RailTop1 = 12
+        
+        ''' <summary> Top of rail 2. </summary>
+        RailTop2 = 13
+        
     End Enum
     
     ''' <summary> Hints about point status. </summary>
@@ -205,14 +223,12 @@ Namespace Domain
                 InfoKindPatterns.Add("\bPS1\b|\bGPSC\b|\bLHFP\b"        , GeoPointKind.FixPoint3D)
                 InfoKindPatterns.Add("\bPS0\b|\bNXO\b|\bDBRF\b"         , GeoPointKind.FixPoint3D)
                 InfoKindPatterns.Add("\bPP\b|\bAP\b|\bPSx\b"            , GeoPointKind.FixPoint)
-                'InfoKindPatterns.Add("Gls|Gleis"      , GeoPointKind.Rails)
-                'InfoKindPatterns.Add("Bst|Bstg|Bahnst", GeoPointKind.Platform)
-                'InfoKindPatterns.Add("PS4|GVP"        , GeoPointKind.RailsFixPoint)
-                'InfoKindPatterns.Add("PS3|HFP|HB|HP"  , GeoPointKind.FixPoint1D)
-                'InfoKindPatterns.Add("PS2|LFP|PPB"    , GeoPointKind.FixPoint2D)
-                'InfoKindPatterns.Add("PS1|GPSC|LHFP"  , GeoPointKind.FixPoint3D)
-                'InfoKindPatterns.Add("PS0|NXO|DBRF"   , GeoPointKind.FixPoint3D)
-                'InfoKindPatterns.Add("PP|AP|PSx"      , GeoPointKind.FixPoint)
+                InfoKindPatterns.Add("\bSOK1\b"                         , GeoPointKind.RailTop1)
+                InfoKindPatterns.Add("\bSOK2\b"                         , GeoPointKind.RailTop2)
+                InfoKindPatterns.Add("\bSOK\b"                          , GeoPointKind.RailTop)
+                InfoKindPatterns.Add("\bMesspkt1\b|\bMesspunkt1\b"      , GeoPointKind.MeasurePoint1)
+                InfoKindPatterns.Add("\bMesspkt2\b|\bMesspunkt2\b"      , GeoPointKind.MeasurePoint2)
+                InfoKindPatterns.Add("\bMesspkt\b|\bMesspunkt\b"        , GeoPointKind.MeasurePoint)
                 
                 ' Mapping:  KindText => Kind.
                 KindText2Kind = New Dictionary(Of String, GeoPointKind)
@@ -235,6 +251,12 @@ Namespace Domain
                 KindText2Kind.Add("PSx" , GeoPointKind.FixPoint)
                 KindText2Kind.Add("PP"  , GeoPointKind.FixPoint)
                 KindText2Kind.Add("AP"  , GeoPointKind.FixPoint)
+                KindText2Kind.Add("SOK" , GeoPointKind.RailTop)
+                KindText2Kind.Add("SOK1", GeoPointKind.RailTop1)
+                KindText2Kind.Add("SOK2", GeoPointKind.RailTop2)
+                KindText2Kind.Add("MP"  , GeoPointKind.MeasurePoint)
+                KindText2Kind.Add("MP1" , GeoPointKind.MeasurePoint1)
+                KindText2Kind.Add("MP2" , GeoPointKind.MeasurePoint2)
                 
                 ' Mapping:  MarkType => Kind.
                 MarkType2Kind = New Dictionary(Of String, GeoPointKind)
@@ -261,30 +283,37 @@ Namespace Domain
             Public Sub New()
                 ' Mapping:  Property name => Attribute name.
                 PropertyAttributes = New Dictionary(Of String, String)
-                PropertyAttributes.Add("CoordSys"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys)   ' "SysL"
-                PropertyAttributes.Add("HeightInfo", Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightInfo) ' "TextH"
-                PropertyAttributes.Add("HeightSys" , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)  ' "SysH"
-                PropertyAttributes.Add("Job"       , Rstyx.Utilities.Resources.Messages.Domain_AttName_Job)        ' "Auftrag"
-                PropertyAttributes.Add("KindText"  , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText)   ' "PArt"
-                PropertyAttributes.Add("MarkHints" , Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkHints)  ' "Stabil"
-                PropertyAttributes.Add("mh"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_mh)         ' "mh"
-                PropertyAttributes.Add("mp"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_mp)         ' "mp"
-                PropertyAttributes.Add("sh"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_sh)         ' "SH"
-                PropertyAttributes.Add("sp"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_sp)         ' "SL"
-                PropertyAttributes.Add("TimeStamp" , Rstyx.Utilities.Resources.Messages.Domain_AttName_TimeStamp)  ' "Zeit"
-                PropertyAttributes.Add("wh"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_wh)         ' "GH"
-                PropertyAttributes.Add("wp"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_Wp)         ' "GL"
+                PropertyAttributes.Add("ActualTrackGauge", Rstyx.Utilities.Resources.Messages.Domain_AttName_ActualTrackGauge)  ' "Spurweite"
+                PropertyAttributes.Add("CoordSys"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_CoordSys)          ' "SysL"
+                PropertyAttributes.Add("HeightInfo"      , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightInfo)        ' "TextH"
+                PropertyAttributes.Add("HeightSys"       , Rstyx.Utilities.Resources.Messages.Domain_AttName_HeightSys)         ' "SysH"
+                PropertyAttributes.Add("Job"             , Rstyx.Utilities.Resources.Messages.Domain_AttName_Job)               ' "Auftrag"
+                PropertyAttributes.Add("KindText"        , Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText)          ' "PArt"
+                PropertyAttributes.Add("MarkHints"       , Rstyx.Utilities.Resources.Messages.Domain_AttName_MarkHints)         ' "Stabil"
+                PropertyAttributes.Add("mh"              , Rstyx.Utilities.Resources.Messages.Domain_AttName_mh)                ' "mh"
+                PropertyAttributes.Add("mp"              , Rstyx.Utilities.Resources.Messages.Domain_AttName_mp)                ' "mp"
+                PropertyAttributes.Add("sh"              , Rstyx.Utilities.Resources.Messages.Domain_AttName_sh)                ' "SH"
+                PropertyAttributes.Add("sp"              , Rstyx.Utilities.Resources.Messages.Domain_AttName_sp)                ' "SL"
+                PropertyAttributes.Add("TimeStamp"       , Rstyx.Utilities.Resources.Messages.Domain_AttName_TimeStamp)         ' "Zeit"
+                PropertyAttributes.Add("wh"              , Rstyx.Utilities.Resources.Messages.Domain_AttName_wh)                ' "GH"
+                PropertyAttributes.Add("wp"              , Rstyx.Utilities.Resources.Messages.Domain_AttName_Wp)                ' "GL"
 
                 ' Mapping:  Kind => Default KindText.
                 DefaultKindText = New Dictionary(Of GeoPointKind, String)
-                DefaultKindText.Add(GeoPointKind.None         , ""    )
-                DefaultKindText.Add(GeoPointKind.FixPoint     , "FP"  )
-                DefaultKindText.Add(GeoPointKind.FixPoint1D   , "HFP" )
-                DefaultKindText.Add(GeoPointKind.FixPoint2D   , "LFP" )
-                DefaultKindText.Add(GeoPointKind.FixPoint3D   , "LHFP")
-                DefaultKindText.Add(GeoPointKind.Platform     , "Bstg")
-                DefaultKindText.Add(GeoPointKind.Rails        , "Gls" )
-                DefaultKindText.Add(GeoPointKind.RailsFixPoint, "GVP" )
+                DefaultKindText.Add(GeoPointKind.None          , ""    )
+                DefaultKindText.Add(GeoPointKind.FixPoint      , "FP"  )
+                DefaultKindText.Add(GeoPointKind.FixPoint1D    , "HFP" )
+                DefaultKindText.Add(GeoPointKind.FixPoint2D    , "LFP" )
+                DefaultKindText.Add(GeoPointKind.FixPoint3D    , "LHFP")
+                DefaultKindText.Add(GeoPointKind.Platform      , "Bstg")
+                DefaultKindText.Add(GeoPointKind.Rails         , "Gls" )
+                DefaultKindText.Add(GeoPointKind.RailsFixPoint , "GVP" )
+                DefaultKindText.Add(GeoPointKind.RailTop       , "SOK" )
+                DefaultKindText.Add(GeoPointKind.RailTop1      , "SOK1")
+                DefaultKindText.Add(GeoPointKind.RailTop2      , "SOK2")
+                DefaultKindText.Add(GeoPointKind.MeasurePoint  , "MP"  )
+                DefaultKindText.Add(GeoPointKind.MeasurePoint1 , "MP1" )
+                DefaultKindText.Add(GeoPointKind.MeasurePoint2 , "MP2" )
             End Sub
             
             ''' <summary> Creates a new GeoPoint and inititializes it's properties from any given <see cref="IGeoPoint"/>. </summary>
@@ -380,37 +409,38 @@ Namespace Domain
                 
                 If (SourcePoint IsNot Nothing) Then
                     
-                    Me.ID              = SourcePoint.ID
+                    Me.ID               = SourcePoint.ID
                     
-                    Me.Attributes      = SourcePoint.Attributes?.Clone()
-                    Me.ActualCant      = SourcePoint.ActualCant
-                    Me.ActualCantAbs   = SourcePoint.ActualCantAbs
-                    Me.Info            = SourcePoint.Info
-                    Me.HeightInfo      = SourcePoint.HeightInfo
-                    Me.Comment         = SourcePoint.Comment
-                    Me.Kind            = SourcePoint.Kind
-                    Me.KindText        = SourcePoint.KindText
-                    Me.MarkType        = SourcePoint.MarkType
-                    Me.MarkHints       = SourcePoint.MarkHints
-                    Me.ObjectKey       = SourcePoint.ObjectKey
-                    Me.Job             = SourcePoint.Job
-                    Me.TimeStamp       = SourcePoint.TimeStamp
+                    Me.Attributes       = SourcePoint.Attributes?.Clone()
+                    Me.ActualCant       = SourcePoint.ActualCant
+                    Me.ActualCantAbs    = SourcePoint.ActualCantAbs
+                    Me.ActualTrackGauge = SourcePoint.ActualTrackGauge
+                    Me.Info             = SourcePoint.Info
+                    Me.HeightInfo       = SourcePoint.HeightInfo
+                    Me.Comment          = SourcePoint.Comment
+                    Me.Kind             = SourcePoint.Kind
+                    Me.KindText         = SourcePoint.KindText
+                    Me.MarkType         = SourcePoint.MarkType
+                    Me.MarkHints        = SourcePoint.MarkHints
+                    Me.ObjectKey        = SourcePoint.ObjectKey
+                    Me.Job              = SourcePoint.Job
+                    Me.TimeStamp        = SourcePoint.TimeStamp
                     
-                    Me.X               = SourcePoint.X
-                    Me.Y               = SourcePoint.Y
-                    Me.Z               = SourcePoint.Z
-                    Me.mp              = SourcePoint.mp
-                    Me.mh              = SourcePoint.mh
-                    Me.wp              = SourcePoint.wp
-                    Me.wh              = SourcePoint.wh
-                    Me.sp              = SourcePoint.sp
-                    Me.sh              = SourcePoint.sh
-                    Me.CoordSys        = SourcePoint.CoordSys
-                    Me.HeightSys       = SourcePoint.HeightSys
-                    Me.StatusHints     = SourcePoint.StatusHints
+                    Me.X                = SourcePoint.X
+                    Me.Y                = SourcePoint.Y
+                    Me.Z                = SourcePoint.Z
+                    Me.mp               = SourcePoint.mp
+                    Me.mh               = SourcePoint.mh
+                    Me.wp               = SourcePoint.wp
+                    Me.wh               = SourcePoint.wh
+                    Me.sp               = SourcePoint.sp
+                    Me.sh               = SourcePoint.sh
+                    Me.CoordSys         = SourcePoint.CoordSys
+                    Me.HeightSys        = SourcePoint.HeightSys
+                    Me.StatusHints      = SourcePoint.StatusHints
                     
-                    Me.SourcePath      = SourcePoint.SourcePath
-                    Me.SourceLineNo    = SourcePoint.SourceLineNo
+                    Me.SourcePath       = SourcePoint.SourcePath
+                    Me.SourceLineNo     = SourcePoint.SourceLineNo
                     
 
                     ' Convert declared point type specific properties to attributes.
@@ -560,43 +590,46 @@ Namespace Domain
             End Property
             
             ''' <inheritdoc/>
-            Public Property ActualCant()    As Double = Double.NaN Implements IGeoPointInfo.ActualCant
+            Public Property ActualCant()        As Double = Double.NaN Implements IGeoPointInfo.ActualCant
             
             ''' <inheritdoc/>
-            Public Property ActualCantAbs() As Double = Double.NaN Implements IGeoPointInfo.ActualCantAbs
+            Public Property ActualCantAbs()     As Double = Double.NaN Implements IGeoPointInfo.ActualCantAbs
             
             ''' <inheritdoc/>
-            Public Property Info()          As String = String.Empty Implements IGeoPointInfo.Info
+            Public Property ActualTrackGauge()  As Double = Double.NaN Implements IGeoPointInfo.ActualTrackGauge
             
             ''' <inheritdoc/>
-            Public Property HeightInfo()    As String = String.Empty Implements IGeoPointInfo.HeightInfo
+            Public Property Info()              As String = String.Empty Implements IGeoPointInfo.Info
             
             ''' <inheritdoc/>
-            Public Property Comment()       As String = String.Empty Implements IGeoPointInfo.Comment
+            Public Property HeightInfo()        As String = String.Empty Implements IGeoPointInfo.HeightInfo
             
             ''' <inheritdoc/>
-            Public Property Kind()          As GeoPointKind = GeoPointKind.None Implements IGeoPointInfo.Kind
+            Public Property Comment()           As String = String.Empty Implements IGeoPointInfo.Comment
             
             ''' <inheritdoc/>
-            Public Property KindText()      As String = String.Empty Implements IGeoPointInfo.KindText
+            Public Property Kind()              As GeoPointKind = GeoPointKind.None Implements IGeoPointInfo.Kind
             
             ''' <inheritdoc/>
-            Public Property MarkType()      As String = String.Empty Implements IGeoPointInfo.MarkType
+            Public Property KindText()          As String = String.Empty Implements IGeoPointInfo.KindText
             
             ''' <inheritdoc/>
-            Public Property MarkHints()     As String = String.Empty Implements IGeoPointInfo.MarkHints
+            Public Property MarkType()          As String = String.Empty Implements IGeoPointInfo.MarkType
             
             ''' <inheritdoc/>
-            Public Property ObjectKey()     As String = String.Empty Implements IGeoPointInfo.ObjectKey
+            Public Property MarkHints()         As String = String.Empty Implements IGeoPointInfo.MarkHints
             
             ''' <inheritdoc/>
-            Public Property Job()           As String = String.Empty Implements IGeoPointInfo.Job
+            Public Property ObjectKey()         As String = String.Empty Implements IGeoPointInfo.ObjectKey
             
             ''' <inheritdoc/>
-            Public Property TimeStamp       As Nullable(Of DateTime) = Nothing Implements IGeoPointInfo.TimeStamp
+            Public Property Job()               As String = String.Empty Implements IGeoPointInfo.Job
             
             ''' <inheritdoc/>
-            Public Property StatusHints()   As GeoPointStatusHints = GeoPointStatusHints.None Implements IGeoPointInfo.StatusHints
+            Public Property TimeStamp           As Nullable(Of DateTime) = Nothing Implements IGeoPointInfo.TimeStamp
+            
+            ''' <inheritdoc/>
+            Public Property StatusHints()       As GeoPointStatusHints = GeoPointStatusHints.None Implements IGeoPointInfo.StatusHints
             
         #End Region
         

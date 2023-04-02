@@ -56,7 +56,7 @@ Namespace Domain
          ''' </list>
          ''' </para>
          ''' </remarks>
-        Property ActualCant()   As Double
+        Property ActualCant()       As Double
         
         ''' <summary> Actual rails cant. <b>Absolute</b> (geometry independent) specification in [m]. </summary>
          ''' <remarks>
@@ -67,43 +67,46 @@ Namespace Domain
          ''' </list>
          ''' </para>
          ''' </remarks>
-        Property ActualCantAbs() As Double
+        Property ActualCantAbs()    As Double
+
+        ''' <summary> Actual track gauge in [m]. </summary>
+        Property ActualTrackGauge() As Double
             
         ''' <summary> A bunch of free attributes (key/value pairs). May be <see langword="null"/>. </summary>
-        Property Attributes()   As Dictionary(Of String, String)
+        Property Attributes()       As Dictionary(Of String, String)
         
         ''' <summary> A comment. </summary>
-        Property Comment()      As String
+        Property Comment()          As String
         
         ''' <summary> A general information text. </summary>
-        Property Info()         As String
+        Property Info()             As String
 
         ''' <summary> An information text regarding point height. </summary>
-        Property HeightInfo     As String
+        Property HeightInfo         As String
         
         ''' <summary> The point's kind or type. </summary>
-        Property Kind()         As GeoPointKind
+        Property Kind()             As GeoPointKind
         
         ''' <summary> The point's kind or type (free text). </summary>
-        Property KindText()     As String
+        Property KindText()         As String
         
         ''' <summary> The type of marking used to realize the point. </summary>
-        Property MarkType()     As String
+        Property MarkType()         As String
         
         ''' <summary> Hints for marking, i.e. stability. </summary>
-        Property MarkHints()    As String
+        Property MarkHints()        As String
         
         ''' <summary> A unique object or feature key. </summary>
-        Property ObjectKey()    As String
+        Property ObjectKey()        As String
         
         ''' <summary> A Job designation. </summary>
-        Property Job()          As String
+        Property Job()              As String
         
         ''' <summary> A time stamp designating the point's origin or last change. Defaults to time of object creation. </summary>
-        Property TimeStamp()    As Nullable(Of DateTime)
+        Property TimeStamp()        As Nullable(Of DateTime)
         
         ''' <summary> Special status hints. </summary>
-        Property StatusHints()  As GeoPointStatusHints
+        Property StatusHints()      As GeoPointStatusHints
         
     End Interface
     

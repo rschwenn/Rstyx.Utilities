@@ -353,6 +353,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Spurweite ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_AttName_ActualTrackGauge() As String
+            Get
+                Return ResourceManager.GetString("Domain_AttName_ActualTrackGauge", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die CodeAtt1 ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_AttName_AttKey1() As String
@@ -1528,6 +1537,15 @@ Namespace Resources
         Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_CantAbs() As String
             Get
                 Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_CantAbs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Punkt &apos;%+20s&apos;: Die vorhandene Ist-Spurweite (sp=%.1f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.1f) ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoIPoint_ParseITC_Conflict_Gauge() As String
+            Get
+                Return ResourceManager.GetString("GeoIPoint_ParseITC_Conflict_Gauge", resourceCulture)
             End Get
         End Property
         

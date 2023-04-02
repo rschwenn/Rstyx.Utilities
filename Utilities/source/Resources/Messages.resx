@@ -1356,4 +1356,12 @@
   <data name="GeoIPoint_ParseFreeData_UnexpectedError" xml:space="preserve">
     <value>Unerwarteter Fehler beim Extrahieren der Attribute.</value>
   </data>
+  <data name="Domain_AttName_ActualTrackGauge" xml:space="preserve">
+    <value>Spurweite</value>
+    <comment>Attribut Name</comment>
+  </data>
+  <data name="GeoIPoint_ParseITC_Conflict_Gauge" xml:space="preserve">
+    <value>Punkt '%+20s': Die vorhandene Ist-Spurweite (sp=%.1f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.1f)</value>
+    <comment>Point ID: String; Actual Track Gauge: Double; Actual Track Gauge: Double</comment>
+  </data>
 </root>
