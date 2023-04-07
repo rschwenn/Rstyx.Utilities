@@ -207,10 +207,14 @@ Namespace Domain
             ''' <summary> Static initializations. </summary>
             Shared Sub New()
                 ' Patterns for recognizing actual cant from info text.
-                ' 26.03.2021: "=" now is mandatory .
+                ' 26.03.2021: "=" now is mandatory.
+                ' 07.04.2023: Cant value now may be a decimal instead of only integer.
+                Dim RegExDecimal As String = " *= *([+-]?([0-9]*[.])?[0-9]+)\s*"
                 InfoCantPatterns = New Dictionary(Of String, String)
-                InfoCantPatterns.Add("(u) *= *([+-]? *[0-9]+)\s*"  , "relative or indefinite cant")
-                InfoCantPatterns.Add("(ueb) *= *([+-]? *[0-9]+)\s*", "absolute cant")
+                InfoCantPatterns.Add("(u)"   & RegExDecimal, "relative or indefinite cant")
+                InfoCantPatterns.Add("(ueb)" & RegExDecimal, "absolute cant")
+                'InfoCantPatterns.Add("(u) *= *([+-]? *[0-9]+)\s*"  , "relative or indefinite cant")
+                'InfoCantPatterns.Add("(ueb) *= *([+-]? *[0-9]+)\s*", "absolute cant")
                 
                 ' Patterns for recognizing point kind from info text.
                 InfoKindPatterns  = New Dictionary(Of String, GeoPointKind)

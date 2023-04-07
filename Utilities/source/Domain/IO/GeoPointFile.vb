@@ -37,7 +37,7 @@ Namespace Domain.IO
         #Region "Protected Fields"
             
             ''' <summary> An internal helper for verifying point ID uniqueness. </summary>
-            Protected ReadOnly IDCheckList          As New Dictionary(Of String, String)
+            Protected ReadOnly IDCheckList          As New Dictionary(Of String, Integer)
             
             ''' <summary> A list of properties that are part of the file format. </summary>
              ''' <remarks>
@@ -139,7 +139,7 @@ Namespace Domain.IO
                 If (IDCheckList.ContainsKey(ID)) Then
                     Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.IDCollection_RepeatedID, ID))
                 Else
-                    IDCheckList.Add(ID, String.Empty)
+                    IDCheckList.Add(ID, 0)
                 End If
             End Sub
             
