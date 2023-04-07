@@ -41,6 +41,7 @@ Namespace Domain
                 iTC_Pattern &= "(\w)?"            ' PointKindAB
                 
                 iTC_Pattern &= "("                ' Start attributes
+
                 iTC_Pattern &= "(-b)"             ' Platform
                 iTC_Pattern &= "|"
                 iTC_Pattern &= "(-v)([0-9]+)?"    ' Rails fixpoint
@@ -56,39 +57,46 @@ Namespace Domain
                 iTC_Pattern &= "(-m2)"            ' Measure point 2
                 iTC_Pattern &= "|"
                 
-                ' Rails may have up to three attributes in arbitrary order:
-                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal
+                ' Rails may have and are recognized by several attributes in arbitrary order:
+                ' - 3 different attributes: relative and absolute cant, track gauge.
+                ' - 2 attributes each in 2 different notations:
+                '   - Absolute cant is "-iueb*" or "-ueb*"
+                '   - Relative cant is "-iu*"   or "-u*"
+                iTC_Pattern &= "(-i?ueb)" & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "(-i?u)"   & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal
+                iTC_Pattern &= "(-sp)"    & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+
+                iTC_Pattern &= "(-i?ueb)" & RegExDecimal & " *(-i?u)"   & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "(-i?ueb)" & RegExDecimal & " *(-sp)"    & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                iTC_Pattern &= "(-i?u)"   & RegExDecimal & " *(-i?ueb)" & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "(-i?u)"   & RegExDecimal & " *(-sp)"    & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iueb)" & RegExDecimal & " *(-sp)"   & RegExDecimal
+                iTC_Pattern &= "(-sp)"    & RegExDecimal & " *(-i?u)"   & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                iTC_Pattern &= "(-sp)"    & RegExDecimal & " *(-i?ueb)" & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iu)"   & RegExDecimal & " *(-sp)"   & RegExDecimal
+
+                iTC_Pattern &= "(-i?ueb)" & RegExDecimal & " *(-i?u)"   & RegExDecimal & " *(-sp)"    & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iu)"   & RegExDecimal
+                iTC_Pattern &= "(-i?ueb)" & RegExDecimal & " *(-sp)"    & RegExDecimal & " *(-i?u)"   & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-sp)"   & RegExDecimal & " *(-iueb)" & RegExDecimal
+                iTC_Pattern &= "(-i?u)"   & RegExDecimal & " *(-i?ueb)" & RegExDecimal & " *(-sp)"    & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iueb)" & RegExDecimal
+                iTC_Pattern &= "(-i?u)"   & RegExDecimal & " *(-sp)"    & RegExDecimal & " *(-i?ueb)" & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-iu)"   & RegExDecimal
+                iTC_Pattern &= "(-sp)"    & RegExDecimal & " *(-i?ueb)" & RegExDecimal & " *(-i?u)"   & RegExDecimal
                 iTC_Pattern &= "|"
-                iTC_Pattern &= "(-sp)"   & RegExDecimal
+                iTC_Pattern &= "(-sp)"    & RegExDecimal & " *(-i?u)"   & RegExDecimal & " *(-i?ueb)" & RegExDecimal
+
+                iTC_Pattern &= "|"
+                iTC_Pattern &= "(-i)"             ' Rails.  In fact, in iGeo this is meant generally as *actual position*.
                 
-                iTC_Pattern &= "|"
-                iTC_Pattern &= "(-i)"             ' Rails w/o cant
                 iTC_Pattern &= ")?"               ' End attributes
                 
                 iTC_Pattern &= " *((#) ?(.*))?"   ' Comment
@@ -410,7 +418,7 @@ Namespace Domain
                             Dim IsNanActualCant    = Double.IsNaN(Me.ActualCant)
                             Dim IsNanActualGauge   = Double.IsNaN(Me.ActualTrackGauge)
 
-                            If (IsNanActualCant AndAlso IsNanActualCantAbs) Then
+                            If (IsNanActualCant AndAlso IsNanActualCantAbs AndAlso IsNanActualGauge) Then
                                 IpktText &= "-i"
                             Else
                                 If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%-5.1f", Me.ActualCantAbs * 1000 * -1).Replace(".0", String.Empty)
@@ -495,17 +503,17 @@ Namespace Domain
                                 If (oMatch.Groups(i).Success) Then
                                     Dim Key As String = oMatch.Groups(i).Value
                                     Select Case Key
-                                        Case "-b":     iTC_Kind = GeoPointKind.Platform
-                                        Case "-v":     iTC_Kind = GeoPointKind.RailsFixPoint : iTC_MarkType      = oMatch.Groups(i + 1).Value
-                                        Case "-f":     iTC_Kind = GeoPointKind.FixPoint      : iTC_MarkType      = oMatch.Groups(i + 1).Value
-                                        Case "-iueb":  iTC_Kind = GeoPointKind.Rails         : iTC_ActualCantAbs = -1 * CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
-                                        Case "-iu":    iTC_Kind = GeoPointKind.Rails         : iTC_ActualCant    =      CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
-                                        Case "-sp":    iTC_Kind = GeoPointKind.Rails         : iTC_ActualGauge   =      CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
-                                        Case "-i":     iTC_Kind = GeoPointKind.Rails
-                                        Case "-s1":    iTC_Kind = GeoPointKind.RailTop1
-                                        Case "-s2":    iTC_Kind = GeoPointKind.RailTop2
-                                        Case "-m1":    iTC_Kind = GeoPointKind.MeasurePoint1
-                                        Case "-m2":    iTC_Kind = GeoPointKind.MeasurePoint2
+                                        Case "-b":             iTC_Kind = GeoPointKind.Platform
+                                        Case "-v":             iTC_Kind = GeoPointKind.RailsFixPoint : iTC_MarkType      = oMatch.Groups(i + 1).Value
+                                        Case "-f":             iTC_Kind = GeoPointKind.FixPoint      : iTC_MarkType      = oMatch.Groups(i + 1).Value
+                                        Case "-iueb", "-ueb":  iTC_Kind = GeoPointKind.Rails         : iTC_ActualCantAbs = -1 * CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-iu"  , "-u":    iTC_Kind = GeoPointKind.Rails         : iTC_ActualCant    =      CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-sp":            iTC_Kind = GeoPointKind.Rails         : iTC_ActualGauge   =      CDbl(oMatch.Groups(i + 1).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "-i":             iTC_Kind = GeoPointKind.Rails
+                                        Case "-s1":            iTC_Kind = GeoPointKind.RailTop1
+                                        Case "-s2":            iTC_Kind = GeoPointKind.RailTop2
+                                        Case "-m1":            iTC_Kind = GeoPointKind.MeasurePoint1
+                                        Case "-m2":            iTC_Kind = GeoPointKind.MeasurePoint2
                                     End Select
                                     ' Exit For -> not if rails, because "-iueb", "-iu" and "-sp" may be there.
                                     If ((iTC_Kind <> GeoPointKind.None) AndAlso (iTC_Kind <> GeoPointKind.Rails)) Then
