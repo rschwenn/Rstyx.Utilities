@@ -448,13 +448,16 @@ Namespace Domain
              ''' Point kind codes are required to have the expected format: 
              ''' <list type="table">
              ''' <listheader> <term> <b>Format / Pattern</b> </term>  <description> Point Kind </description></listheader>
-             ''' <item> <term> -b                   </term>  <description> Platform                                              </description></item>
-             ''' <item> <term> -iueb[=]?[+-]?[0-9]+ </term>  <description> Actual rails with actual absolute cant (sign as iGeo) </description></item>
-             ''' <item> <term> -iu[=]?[+-]?[0-9]+   </term>  <description> Actual rails with actual relative cant                </description></item>
-             ''' <item> <term> -i                   </term>  <description> Actual rails without actual cant                      </description></item>
-             ''' <item> <term> -v[0-9]+             </term>  <description> Rails fix point [with numeric mark type]              </description></item>
-             ''' <item> <term> -f[0-9]+             </term>  <description> Other fix point [with numeric mark type]              </description></item>
-             ''' <item> <term> ?-                   </term>  <description> If one of the above codes is there, it may be preceeded by a single word character which will be treated as <see cref="GeoIPoint.MarkTypeAB"/>. </description></item>
+             ''' <item> <term> -b                    </term>  <description> Platform                                              </description></item>
+             ''' <item> <term> -i?ueb *=? *a decimal </term>  <description> Actual rails with actual absolute cant (sign as iGeo) </description></item>
+             ''' <item> <term> -i?u *=? *a decimal   </term>  <description> Actual rails with actual relative cant                </description></item>
+             ''' <item> <term> -i                    </term>  <description> Actual rails without actual cant                      </description></item>
+             ''' <item> <term> -sp                   </term>  <description> Actual rails with actual track gauge                  </description></item>
+             ''' <item> <term> -s1 or -s2            </term>  <description> Rail top 1 or 2                                       </description></item>
+             ''' <item> <term> -m1 or -m2            </term>  <description> Measure point 1 or 2                                  </description></item>
+             ''' <item> <term> -v[0-9]+              </term>  <description> Rails fix point [with numeric mark type]              </description></item>
+             ''' <item> <term> -f[0-9]+              </term>  <description> Other fix point [with numeric mark type]              </description></item>
+             ''' <item> <term> ?-                    </term>  <description> If one of the above codes is there, it may be preceeded by a single word character which will be treated as <see cref="GeoIPoint.MarkTypeAB"/>. </description></item>
              ''' </list>
              ''' </para>
              ''' <para>

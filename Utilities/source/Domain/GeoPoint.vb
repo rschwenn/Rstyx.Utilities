@@ -920,17 +920,19 @@ Namespace Domain
              ''' <para>
              ''' The following patterns somewhere in <see cref="GeoPoint.Info"/> (or maybe in <see cref="GeoPoint.Comment"/>) lead to guessing the point kind: 
              ''' <list type="table">
-             ''' <listheader> <term> <b>Pattern</b>    </term>  <description> Point Kind </description></listheader>
-             ''' <item> <term> u *= *([+-]? *[0-9]+)   </term>  <description> Actual rails with actual cant                         </description></item>
-             ''' <item> <term> ueb *= *([+-]? *[0-9]+) </term>  <description> Actual rails with actual absolute cant (sign as iGeo) </description></item>
-             ''' <item> <term> Gls, Gleis              </term>  <description> Actual rails (without actual cant)                    </description></item>
-             ''' <item> <term> Bstg, Bst, Bahnst       </term>  <description> Platform                                              </description></item>
-             ''' <item> <term> PS4, GVP                </term>  <description> Rails fix point                                       </description></item>
-             ''' <item> <term> PS3, HFP, HB, HP        </term>  <description> Fix point 1D                                          </description></item>
-             ''' <item> <term> PS2, LFP, PPB           </term>  <description> Fix point 2D                                          </description></item>
-             ''' <item> <term> PS1, GPSC, LHFP         </term>  <description> Fix point 3D                                          </description></item>
-             ''' <item> <term> PS0, NXO, DBRF          </term>  <description> Fix point 3D                                          </description></item>
-             ''' <item> <term> PP, AP, PSx             </term>  <description> General fix point                                     </description></item>
+             ''' <listheader> <term> <b>Pattern</b>                 </term>  <description> Point Kind                                            </description></listheader>
+             ''' <item> <term> u *= *([+-]?([0-9]*[.])?[0-9]+)\s*   </term>  <description> Actual rails with actual cant                         </description></item>
+             ''' <item> <term> ueb *= *([+-]?([0-9]*[.])?[0-9]+)\s* </term>  <description> Actual rails with actual absolute cant (sign as iGeo) </description></item>
+             ''' <item> <term> Gls, Gleis                           </term>  <description> Actual rails (without actual cant)                    </description></item>
+             ''' <item> <term> Bstg, Bst, Bahnst                    </term>  <description> Platform                                              </description></item>
+             ''' <item> <term> PS4, GVP                             </term>  <description> Rails fix point                                       </description></item>
+             ''' <item> <term> PS3, HFP, HB, HP                     </term>  <description> Fix point 1D                                          </description></item>
+             ''' <item> <term> PS2, LFP, PPB, P[0-9]+               </term>  <description> Fix point 2D                                          </description></item>
+             ''' <item> <term> PS1, GPSC, LHFP                      </term>  <description> Fix point 3D                                          </description></item>
+             ''' <item> <term> PS0, NXO, DBRF                       </term>  <description> Fix point 3D                                          </description></item>
+             ''' <item> <term> PP, AP, PSx                          </term>  <description> General fix point                                     </description></item>
+             ''' <item> <term> SOK, SOK1, SOK2                      </term>  <description> Rail top (1, 2)                                       </description></item>
+             ''' <item> <term> Messpkt, Messpkt1, Messpkt2          </term>  <description> Measure Point (1, 2)                                  </description></item>
              ''' </list>
              ''' </para>
              ''' <para>
@@ -981,15 +983,17 @@ Namespace Domain
              ''' <para>
              ''' The following patterns somewhere in <see cref="GeoPoint.Info"/> lead to guessing the point kind: 
              ''' <list type="table">
-             ''' <listheader> <term> <b>Pattern</b>    </term>  <description> Point Kind </description></listheader>
-             ''' <item> <term> Gls, Gleis              </term>  <description> Actual rails (without actual cant)                    </description></item>
-             ''' <item> <term> Bstg, Bst, Bahnst       </term>  <description> Platform                                              </description></item>
-             ''' <item> <term> PS4, GVP                </term>  <description> Rails fix point                                       </description></item>
-             ''' <item> <term> PS3, HFP, HB, HP        </term>  <description> Fix point 1D                                          </description></item>
-             ''' <item> <term> PS2, LFP, PPB           </term>  <description> Fix point 2D                                          </description></item>
-             ''' <item> <term> PS1, GPSC, LHFP         </term>  <description> Fix point 3D                                          </description></item>
-             ''' <item> <term> PS0, NXO, DBRF          </term>  <description> Fix point 3D                                          </description></item>
-             ''' <item> <term> PP, AP, PSx             </term>  <description> General fix point                                     </description></item>
+             ''' <listheader> <term> <b>Pattern</b>        </term>  <description> Point Kind                         </description></listheader>
+             ''' <item> <term> Gls, Gleis                  </term>  <description> Actual rails (without actual cant) </description></item>
+             ''' <item> <term> Bstg, Bst, Bahnst           </term>  <description> Platform                           </description></item>
+             ''' <item> <term> PS4, GVP                    </term>  <description> Rails fix point                    </description></item>
+             ''' <item> <term> PS3, HFP, HB, HP            </term>  <description> Fix point 1D                       </description></item>
+             ''' <item> <term> PS2, LFP, PPB, P[0-9]+      </term>  <description> Fix point 2D                       </description></item>
+             ''' <item> <term> PS1, GPSC, LHFP             </term>  <description> Fix point 3D                       </description></item>
+             ''' <item> <term> PS0, NXO, DBRF              </term>  <description> Fix point 3D                       </description></item>
+             ''' <item> <term> PP, AP, PSx                 </term>  <description> General fix point                  </description></item>
+             ''' <item> <term> SOK, SOK1, SOK2             </term>  <description> Rail top (1, 2)                    </description></item>
+             ''' <item> <term> Messpkt, Messpkt1, Messpkt2 </term>  <description> Measure Point (1, 2)               </description></item>
              ''' </list>
              ''' </para>
              ''' <para>
@@ -1038,10 +1042,10 @@ Namespace Domain
              ''' <param name="TryComment"> If <see langword="true"/> and no cant has been found in <see cref="GeoPoint.Info"/>, the <see cref="GeoPoint.Comment"/> will be parsed, too. </param>
              ''' <remarks>
              ''' <para>
-             ''' The cant is recognized by this pattern in <see cref="GeoPoint.Info"/>:  u *= *([+-]? *[0-9]+)
+             ''' The cant is recognized by this pattern in <see cref="GeoPoint.Info"/>:  u *= *([+-]?([0-9]*[.])?[0-9]+)\s*
              ''' </para>
              ''' <para>
-             ''' The absolute cant (sign as iGeo) is recognized by this pattern in <see cref="GeoPoint.Info"/>:  ueb *= *([+-]? *[0-9]+)
+             ''' The absolute cant (sign as iGeo) is recognized by this pattern in <see cref="GeoPoint.Info"/>:  ueb *= *([+-]?([0-9]*[.])?[0-9]+)\s*
              ''' </para>
              ''' <para>
              ''' When cant has been found, 
