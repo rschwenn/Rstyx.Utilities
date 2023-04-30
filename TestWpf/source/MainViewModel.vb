@@ -516,6 +516,9 @@ Public Class MainViewModel
             
             'Try
                 Logger.logInfo("")
+
+                Dim d1 As Double = 20.3 * Sign(Double.NaN)
+
                 'Me.Textbox = "-iu=12.3"
                 'Dim PatternXX    As String = "^ *(\w)?((-b)|(-v)([0-9]+)?|(-f)([0-9]+)?|(-iueb) *=? *([+-]?([0-9]*[.])?[0-9]+)|(-iu) *=? *([+-]?([0-9]*[.])?[0-9]+))? *((#) ?(.*))?$"
                 'Dim Pattern    As String = "(-iu) *=? *([+-]?([0-9]*[.])?[0-9]+)"

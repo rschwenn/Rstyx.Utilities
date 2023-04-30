@@ -284,7 +284,7 @@ Namespace Domain
                     Me.Ra = Rails.Radius
                 End If
                 
-                Me.Ueb      = Rails.Cant * Sign(Rails.Radius)
+                Me.Ueb      = Rails.Cant * Sign( If(Double.IsNaN(Rails.Radius), 1, Rails.Radius) )
                 Me.CantBase = Rails.CantBase
                 Me.RaLGS    = Rails.VerticalRadius
                 
