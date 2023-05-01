@@ -208,6 +208,7 @@ Namespace Domain
             
             Private _Value      As Double = Double.NaN
             Private _TDBValue   As Double = Double.NaN
+            Private _SD         As Double = Double.NaN
             Private _Status     As KilometerStatus = KilometerStatus.Unknown
             Private _Text       As String = Nothing
             
@@ -244,6 +245,16 @@ Namespace Domain
                 End Get
                 Set(ByVal KmText As String)
                     _Text = KmText
+                End Set
+            End Property
+
+            ''' <summary> The standard deviation of Kilometer Value. Defaults to <c>Double.NaN</c>. </summary>
+            Public Property SD() As String
+                Get
+                    Return _SD
+                End Get
+                Set(ByVal KmSD As String)
+                    _SD = KmSD
                 End Set
             End Property
             
@@ -296,6 +307,36 @@ Namespace Domain
                 End If
                 
                 Return Part1 & Part2
+            End Function
+            
+            ''' <summary>
+            ''' Formats this Kilometer object to a usual Kilometer notation inclusive standard deviation, if available.
+            ''' (i.e 123456.789 => "123.4+56.789 (±0.01)"). 
+            ''' </summary>
+             ''' <param name="Precision">   Desired output precison. </param>
+             ''' <returns> Usual Kilometer Notation. </returns>
+             ''' <remarks> Example output: "12.3 + 05.67 (± 0.01)", "12.3 + 5.67 (± 100.00)", "12.3 +  5.67". </remarks>
+            Public Function ToKilometerNotationSD(byVal Precision As Integer) As String
+                Return ToKilometerNotationSD(Precision, Nothing)
+            End Function
+            
+            ''' <summary>
+            ''' Formats this Kilometer object to a usual Kilometer notation inclusive standard deviation, if available.
+            ''' (i.e 123456.789 => "123.4+56.789 (±0.01)"). 
+            ''' </summary>
+             ''' <param name="Precision">   Desired output precison. </param>
+             ''' <param name="PrefixMeter"> Prefix for Meters if &lt; 10 m  (useful seem only to be: "", " ", "0"). </param>
+             ''' <returns> Usual Kilometer Notation. </returns>
+             ''' <remarks> Example output: "12.3 + 05.67 (±0.01)", "12.3 + 5.67 (±100.00)", "12.3 +  5.67". </remarks>
+            Public Function ToKilometerNotationSD(byVal Precision As Integer, byVal PrefixMeter As String) As String
+                
+                Dim RetValue As String = ToKilometerNotation(Precision, PrefixMeter)
+
+                If (Not Double.IsNaN(_SD)) Then
+                    RetValue += StringUtils.sprintf(" (±%." & CStr(Precision) & "f)", _SD)
+                End If
+
+                Return RetValue
             End Function
             
             ''' <summary> Parses a string as usual Kilometer notation. </summary>
@@ -564,6 +605,7 @@ Namespace Domain
                 _Status   = KilometerStatus.Unknown
                 _TDBValue = Double.NaN
                 _Value    = Double.NaN
+                _SD       = Double.NaN
                 _Text     = Nothing
             End Sub
             
