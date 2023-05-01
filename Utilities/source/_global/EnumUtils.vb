@@ -187,13 +187,20 @@ Imports Rstyx.Utilities.StringUtils
         
         ''' <summary> Converts a localized display string for the given Enum type to the underlying Enum object. </summary>
          ''' <typeparam name="TEnum">         The target Enum type. </typeparam>
-         ''' <param name="Result">            The resulting Enum object. It's type will be treated as target Enum type. </param>
+         ''' <param name="Result">            [Out] The resulting Enum object. It's type will be treated as target Enum type. </param>
          ''' <param name="EnumDisplayString"> The localized display string of a Enum of type . </param>
          ''' <returns> <see langword="true"/> on success, otherwise <see langword="false"/>. </returns>
-         ''' <remarks> See <see cref="ToDisplayString"/> for more information. </remarks>
+         ''' <remarks>
+         ''' <para>
+         ''' <paramref name="Result"/> won't be changed, if parsing isn't successfull.
+         ''' </para>
+         ''' <para>
+         ''' See <see cref="ToDisplayString"/> for more information.
+         ''' </para>
+         ''' </remarks>
          ''' <exception cref="System.ArgumentException"> <paramref name="Result"/> is not an Enum type. </exception>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function TryParseDisplayString(Of TEnum As Structure)(<OutAttribute> ByRef Result As TEnum, EnumDisplayString As String) As Boolean
+        Public Function TryParseDisplayString(Of TEnum As Structure)(<Out> ByRef Result As TEnum, EnumDisplayString As String) As Boolean
             
             Dim TargetType As Type = GetType(TEnum)
             If (Not (TargetType.BaseType.Name = GetType(System.Enum).Name)) Then
