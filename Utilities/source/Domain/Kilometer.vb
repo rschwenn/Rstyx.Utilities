@@ -249,11 +249,11 @@ Namespace Domain
             End Property
 
             ''' <summary> The standard deviation of Kilometer Value. Defaults to <c>Double.NaN</c>. </summary>
-            Public Property SD() As String
+            Public Property SD() As Double
                 Get
                     Return _SD
                 End Get
-                Set(ByVal KmSD As String)
+                Set(ByVal KmSD As Double)
                     _SD = KmSD
                 End Set
             End Property
