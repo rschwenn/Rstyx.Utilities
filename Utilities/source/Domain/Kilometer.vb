@@ -326,14 +326,23 @@ Namespace Domain
             ''' </summary>
              ''' <param name="Precision">   Desired output precison. </param>
              ''' <param name="PrefixMeter"> Prefix for Meters if &lt; 10 m  (useful seem only to be: "", " ", "0"). </param>
-             ''' <returns> Usual Kilometer Notation. </returns>
-             ''' <remarks> Example output: "12.3 + 05.67 (±0.01)", "12.3 + 5.67 (±100.00)", "12.3 +  5.67". </remarks>
+             ''' <returns> Usual Kilometer Notation inclusive standard deviation, if available. </returns>
+             ''' <remarks>
+             ''' <para>
+             ''' A negative value of <see cref="SD"/> is treated like <c>NaN</c>.
+             ''' </para>
+             ''' <para>
+             ''' Example output: "12.3 + 05.67 (±0.01)", "12.3 + 5.67 (±100.00)", "12.3 +  5.67". 
+             ''' </para>
+             ''' </remarks>
             Public Function ToKilometerNotationSD(byVal Precision As Integer, byVal PrefixMeter As String) As String
                 
                 Dim RetValue As String = ToKilometerNotation(Precision, PrefixMeter)
 
-                If (Not Double.IsNaN(_SD)) Then
-                    RetValue += StringUtils.sprintf(" (±%." & CStr(Precision) & "f)", _SD)
+                If (RetValue.IsNotEmptyOrWhiteSpace()) Then
+                    If ((Not Double.IsNaN(_SD)) AndAlso (_SD >= 0.0) ) Then
+                        RetValue += StringUtils.sprintf(" (±%." & CStr(Precision) & "f)", _SD)
+                    End If
                 End If
 
                 Return RetValue
