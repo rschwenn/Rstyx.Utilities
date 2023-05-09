@@ -784,7 +784,7 @@ Namespace Domain.IO
                     
                     ''' <inheritdoc/>
                     Public Overrides Function ToString() As String
-                        Return sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString, Me.TrackRef.NameOfAlignment, Me.Points.Count, Me.BlockType.ToString())
+                        Return sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString, Me.TrackRef.NameOfTrackOrAlignment, Me.Points.Count, Me.BlockType.ToString())
                     End Function
                     
                 #End Region
@@ -1816,18 +1816,19 @@ Namespace Domain.IO
                                     Case "Datei":               CommentEnd = True
                                     Case "Feldnamen":           Block.BlockType.FieldNames = kvp.Value  :  CommentEnd = True  ' Format "A0"
                                     
-                                    ' The file names are w/o extensions, so a "." belongs to name => that's why "true" in GetNameFromMatch(kvp.Value, True):
-                                    Case "Achse":               Block.TrackRef.NameOfAlignment      = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
-                                    Case "Stationierungsachse": Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iTrassePC
-                                    Case "Km-Linie":            Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iGeo
-                                    Case "Ueberhöhungsband":    Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iTrassePC
-                                    Case "Überhöhungsband":     Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, True) : CommentEnd = True  ' iGeo
-                                    Case "Gradiente":           Block.TrackRef.NameOfGradientLine   = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
-                                    Case "Regelprofilbereich":  Block.TrackRef.NameOfRoadSections   = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
-                                    Case "Tunnelprofilbereich": Block.TrackRef.NameOfTunnelSections = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
-                                    Case "Profilpunktbereich":  Block.TrackRef.NameOfSectionPoints  = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
-                                    Case "Gleisprofilbereich":  Block.TrackRef.NameOfRailSections   = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
-                                    Case "DGM":                 Block.TrackRef.NameOfDTM            = GetNameFromMatch(kvp.Value, True) : CommentEnd = True
+                                    ' The file names (except ACFG) are w/o extensions, so a "." belongs to name => that's why "true" in GetNameFromMatch(kvp.Value, True):
+                                    Case "Trassenkonfiguration": Block.TrackRef.NameOfTrackConfig    = GetNameFromMatch(kvp.Value, False) : CommentEnd = True
+                                    Case "Achse":                Block.TrackRef.NameOfAlignment      = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True
+                                    Case "Stationierungsachse":  Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True  ' iTrassePC
+                                    Case "Km-Linie":             Block.TrackRef.NameOfKmAlignment    = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True  ' iGeo
+                                    Case "Ueberhöhungsband":     Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True  ' iTrassePC
+                                    Case "Überhöhungsband":      Block.TrackRef.NameOfCantLine       = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True  ' iGeo
+                                    Case "Gradiente":            Block.TrackRef.NameOfGradientLine   = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True
+                                    Case "Regelprofilbereich":   Block.TrackRef.NameOfRoadSections   = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True
+                                    Case "Tunnelprofilbereich":  Block.TrackRef.NameOfTunnelSections = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True
+                                    Case "Profilpunktbereich":   Block.TrackRef.NameOfSectionPoints  = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True
+                                    Case "Gleisprofilbereich":   Block.TrackRef.NameOfRailSections   = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True
+                                    Case "DGM":                  Block.TrackRef.NameOfDTM            = GetNameFromMatch(kvp.Value, True)  : CommentEnd = True
                                     
                                 End Select
                             End If
@@ -1853,6 +1854,7 @@ Namespace Domain.IO
                 ' Set record definition. Only now, because for A0 the format and field names are required.
                 SourceBlock.RecordDefinition = GetIGeoRecordDefinition(Block.BlockType)
                 
+                Logger.logDebug(sprintf("  Name of Track Config : %s", Block.TrackRef.NameOfTrackConfig))
                 Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
                 Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
                 Logger.logDebug(sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))

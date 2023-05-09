@@ -3107,6 +3107,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Trassenkonfig:   %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TrackGeometryInfo_NameOfTrackConfig() As String
+            Get
+                Return ResourceManager.GetString("TrackGeometryInfo_NameOfTrackConfig", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Tunnelprofile:   %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TrackGeometryInfo_NameOfTunnelSections() As String

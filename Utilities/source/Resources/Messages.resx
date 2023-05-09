@@ -553,7 +553,7 @@
   </data>
   <data name="TcBlock_ToString" xml:space="preserve">
     <value>%s [%d Punkte, %s]</value>
-    <comment>Alignment Name: String; Point Count: Integer; Block Type: String</comment>
+    <comment>Track or Alignment Name: String; Point Count: Integer; Block Type: String</comment>
   </data>
   <data name="TcFileReader_ToString" xml:space="preserve">
     <value>%s (%s Blöcke, %s Punkte, %s Fehler)</value>
@@ -1363,5 +1363,9 @@
   <data name="GeoIPoint_ParseITC_Conflict_Gauge" xml:space="preserve">
     <value>Punkt '%+20s': Die vorhandene Ist-Spurweite (sp=%.1f) unterscheidet sich von der in der iTrassen-Codierung angegebenen (u=%.1f)</value>
     <comment>Point ID: String; Actual Track Gauge: Double; Actual Track Gauge: Double</comment>
+  </data>
+  <data name="TrackGeometryInfo_NameOfTrackConfig" xml:space="preserve">
+    <value>Trassenkonfig:   %s</value>
+    <comment>Track Configuration Name: String</comment>
   </data>
 </root>
