@@ -201,7 +201,7 @@ Namespace Domain
             End Property
             
             ''' <summary> Gets the cant deficiency for this rails pair in [m]. Maybe <c>Double.NaN</c> </summary>
-             ''' <remarks>  </remarks>
+             ''' <remarks> This value will be calculated, if it isn't valid. </remarks>
             Public ReadOnly Property CantDeficiency() As Double
                 Get
                     If (Not IsCantDeficiencyValid) Then
@@ -240,8 +240,7 @@ Namespace Domain
              ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property RSHigher() As Point
                 Get
-                    Dim RetRS As Point = If((_Cant < 0), RSRight, RSLeft)
-                    Return RetRS
+                    Return If((_Cant < 0), RSRight, RSLeft)
                 End Get
             End Property
             
@@ -249,8 +248,7 @@ Namespace Domain
              ''' <remarks> This value can be set via <see cref="RailPair.Reconfigure"/>. </remarks>
             Public ReadOnly Property RSLower() As Point
                 Get
-                    Dim RetRS As Point = If((_Cant < 0), RSLeft, RSRight)
-                    Return RetRS
+                    Return If((_Cant < 0), RSLeft, RSRight)
                 End Get
             End Property
             
@@ -308,7 +306,23 @@ Namespace Domain
             ''' <summary> Re-configures this RailPair based on running surfaces. </summary>
              ''' <param name="RunningSurface1"> Coordinates of one RunningSurface in track system. </param>
              ''' <param name="RunningSurface2"> Coordinates of the other RunningSurface in track system. </param>
-             ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
+             ''' <remarks>
+             ''' <para>
+             ''' Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>.
+             ''' </para>
+             ''' <para>
+             ''' This method changes only essential geometry properties:
+             ''' <list type="bullet">
+             ''' <item><description> <see cref="Cant"/>     </description></item>
+             ''' <item><description> <see cref="CantBase"/> </description></item>
+             ''' <item><description> <see cref="RSLeft"/>   </description></item>
+             ''' <item><description> <see cref="RSRight"/>  </description></item>
+             ''' <item><description> <see cref="RSHigher"/> </description></item>
+             ''' <item><description> <see cref="RSLower"/>  </description></item>
+             ''' <item><description> <see cref="Radius"/>, if it is <c>Double.NaN</c> and cant isn't zero, to a value of +1 or -1. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
              ''' <exception cref="System.ArgumentException"> At least one coordinate of the points is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> RunningSurface1 and RunningSurface2 are equal. </exception>
             Public Sub Reconfigure(RunningSurface1 As Point, RunningSurface2 As Point)
@@ -344,7 +358,23 @@ Namespace Domain
              ''' <param name="CantBase"> CantBase in [m]. </param>
              ''' <exception cref="System.ArgumentException"> Cant is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> CantBase is <c>Double.NaN</c> or less than 0.001. </exception>
-             ''' <remarks> Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>. </remarks>
+             ''' <remarks>
+             ''' <para>
+             ''' Right and left running surface are determined automatically. Cant and cantbase will be calculated. Radius will be set to +/- 1, if it's still <c>Double.NaN</c>.
+             ''' </para>
+             ''' <para>
+             ''' This method changes only essential geometry properties:
+             ''' <list type="bullet">
+             ''' <item><description> <see cref="Cant"/>     </description></item>
+             ''' <item><description> <see cref="CantBase"/> </description></item>
+             ''' <item><description> <see cref="RSLeft"/>   </description></item>
+             ''' <item><description> <see cref="RSRight"/>  </description></item>
+             ''' <item><description> <see cref="RSHigher"/> </description></item>
+             ''' <item><description> <see cref="RSLower"/>  </description></item>
+             ''' <item><description> <see cref="Radius"/>, if it is <c>Double.NaN</c> and cant isn't zero, to a value of +1 or -1. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' </remarks>
             Public Sub Reconfigure(Cant As Double, CantBase As Double)
                 
                 If (Double.IsNaN(Cant))         Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant, "Cant")
@@ -383,13 +413,32 @@ Namespace Domain
             End Sub
             
             ''' <summary> Re-configures this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
-             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
-             ''' <remarks> If <paramref name="PointGeometry"/> has a speed, this value overrides <see cref="Speed"/> </remarks>
+             ''' <param name="PointGeometry">     The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
+             ''' <param name="IsFixedAtPlatform"> Determines that these rails are considered to be <see cref="RailFixing.Fixed"/>, if point is of kind <see cref="GeoPointKind.Platform"/>. </param>
+             ''' <remarks>
+             ''' <para>
+             ''' Besides the essential geometry properties (see <see cref="Reconfigure(Double, Double)"/>), this method changes also:
+             ''' <list type="bullet">
+             ''' <item><description> <see cref="Radius"/>         to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Ra"/>.    </description></item>
+             ''' <item><description> <see cref="VerticalRadius"/> to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.RaLGS"/>. </description></item>
+             ''' <item><description> <see cref="Speed"/>          to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Speed"/>, but only if the latter isn't <c>Double.NaN</c>. </description></item>
+             ''' <item><description> <see cref="Fixing"/>         to <see cref="RailFixing.Fixed"/> or <see cref="RailFixing.None"/>. </description></item>
+             ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="PointGeometry"/> hasn't a speed, <see cref="Speed"/> won't be changed. 
+             ''' </para>
+             ''' <para>
+             ''' If <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Kind"/> is <see cref="GeoPointKind.Platform"/>, 
+             ''' and <paramref name="IsFixedAtPlatform"/> is <see langword="true"/>, 
+             ''' then <see cref="Fixing"/> is set to <see cref="RailFixing.Fixed"/>, otherwise to <see cref="RailFixing.None"/>. 
+             ''' </para>
+             ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
              ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry"/><c>.Ueb</c>) is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry"/><c>.CantBase</c>) is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="PointGeometry"/><c>.Ra</c>) is <c>Double.NaN</c>, but Cant isn't Zero. </exception>
-            Public Sub Reconfigure(PointGeometry As GeoTcPoint)
+            Public Sub Reconfigure(PointGeometry As GeoTcPoint, IsFixedAtPlatform As Boolean)
                 
                 If (PointGeometry Is Nothing)              Then Throw New System.ArgumentNullException("PointGeometry")
                 If (Double.IsNaN(PointGeometry.Ueb))       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant)
@@ -397,7 +446,7 @@ Namespace Domain
                 
                 Me.Radius         = PointGeometry.Ra
                 Me.VerticalRadius = PointGeometry.RaLGS
-                Me.Fixing         = If(PointGeometry.Kind = GeoPointKind.Platform, RailFixing.Fixed, RailFixing.None)
+                Me.Fixing         = If((IsFixedAtPlatform AndAlso (PointGeometry.Kind = GeoPointKind.Platform)), RailFixing.Fixed, RailFixing.None)
                 
                 If (Not Double.IsNaN(PointGeometry.Speed)) Then
                     Me.Speed = PointGeometry.Speed
