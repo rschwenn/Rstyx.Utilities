@@ -71,7 +71,7 @@ Imports System.Runtime.InteropServices
          ''' <see cref="Rstyx.Utilities.Resources.Messages.Global_Label_BooleanTrue"/> and
          ''' <see cref="Rstyx.Utilities.Resources.Messages.Global_Label_BooleanFalse"/> (not case sensitive).
          ''' If <paramref name="Value"/> contains is only one character, it will be successfuly parsed 
-         ''' if it matches the first character of one of the resorce strings.
+         ''' if it matches the first character of one of the resource strings.
          ''' </remarks>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function TryParse(<out> ByRef Result As Boolean, Value As String) As Boolean
