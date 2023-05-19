@@ -781,7 +781,7 @@
     <value>einfach festgelegt</value>
   </data>
   <data name="Rstyx_Utilities_Domain_RailFixingRule_FixedAtPlatform" xml:space="preserve">
-    <value>einfach festgelegt (nur am Bahnsteig)</value>
+    <value>nur am Bahnsteig festgelegt</value>
   </data>
   <data name="Rstyx_Utilities_Domain_RailFixingRule_None" xml:space="preserve">
     <value>nicht festgelegt</value>

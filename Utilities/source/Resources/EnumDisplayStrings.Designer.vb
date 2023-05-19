@@ -1528,7 +1528,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die einfach festgelegt (nur am Bahnsteig) ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die nur am Bahnsteig festgelegt ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixingRule_FixedAtPlatform() As String
             Get
