@@ -43,5 +43,5 @@ Imports System.Windows.Markup
 ' übernehmen, indem Sie "*" eingeben:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("2.10.3.0")> 
-<Assembly: AssemblyFileVersion("2.10.3.0")> 
+<Assembly: AssemblyVersion("2.11.0.0")> 
+<Assembly: AssemblyFileVersion("2.11.0.0")> 

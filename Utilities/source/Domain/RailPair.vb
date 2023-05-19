@@ -429,8 +429,9 @@ Namespace Domain
                 RaiseRailsConfigChanged()
             End Sub
             
+            
             ''' <summary> Re-configures this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
-             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
+             ''' <param name="PointGeometry">  The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
              ''' <remarks>
              ''' <para>
              ''' Besides the essential geometry properties (see <see cref="Reconfigure(Double, Double)"/>), this method changes also:
@@ -438,8 +439,10 @@ Namespace Domain
              ''' <item><description> <see cref="Radius"/>         to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Ra"/>.    </description></item>
              ''' <item><description> <see cref="VerticalRadius"/> to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.RaLGS"/>. </description></item>
              ''' <item><description> <see cref="Speed"/>          to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Speed"/>, but only if the latter isn't <c>Double.NaN</c>. </description></item>
-             ''' <item><description> <see cref="Fixing"/>         won't be changed. </description></item>
              ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' <see cref="Fixing"/> won't be changed.
              ''' </para>
              ''' <para>
              ''' If <paramref name="PointGeometry"/> hasn't a speed, <see cref="Speed"/> won't be changed. 
@@ -450,47 +453,13 @@ Namespace Domain
              ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry"/><c>.CantBase</c>) is <c>Double.NaN</c>. </exception>
              ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="PointGeometry"/><c>.Ra</c>) is <c>Double.NaN</c>, but Cant isn't Zero. </exception>
             Public Sub Reconfigure(PointGeometry As GeoTcPoint)
-                Dim Fix As RailFixing = Me.Fixing
-                Me.Reconfigure(PointGeometry, RailFixingRule.None)
-                Me.Fixing = Fix
-            End Sub
-            
-            ''' <summary> Re-configures this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
-             ''' <param name="PointGeometry">  The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
-             ''' <param name="RailFixingRule"> The rule to determine <see cref="Fixing"/>. </param>
-             ''' <remarks>
-             ''' <para>
-             ''' Besides the essential geometry properties (see <see cref="Reconfigure(Double, Double)"/>), this method changes also:
-             ''' <list type="bullet">
-             ''' <item><description> <see cref="Radius"/>         to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Ra"/>.    </description></item>
-             ''' <item><description> <see cref="VerticalRadius"/> to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.RaLGS"/>. </description></item>
-             ''' <item><description> <see cref="Speed"/>          to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Speed"/>, but only if the latter isn't <c>Double.NaN</c>. </description></item>
-             ''' <item><description> <see cref="Fixing"/>         (see remarks). </description></item>
-             ''' </list>
-             ''' </para>
-             ''' <para>
-             ''' If <paramref name="PointGeometry"/> hasn't a speed, <see cref="Speed"/> won't be changed. 
-             ''' </para>
-             ''' <para>
-             ''' If <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Kind"/> is <see cref="GeoPointKind.Platform"/>, 
-             ''' and <paramref name="RailFixingRule"/> is <see cref="RailFixingRule.FixedAtPlatform"/>, 
-             ''' then <see cref="Fixing"/> is set to <see cref="RailFixing.Fixed"/>, 
-             ''' otherwise the <see cref="RailFixing"/> value is set that matches directly <see cref="RailFixingRule"/>. 
-             ''' </para>
-             ''' </remarks>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
-             ''' <exception cref="System.ArgumentException"> Cant     (<paramref name="PointGeometry"/><c>.Ueb</c>) is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> CantBase (<paramref name="PointGeometry"/><c>.CantBase</c>) is <c>Double.NaN</c>. </exception>
-             ''' <exception cref="System.ArgumentException"> Radius   (<paramref name="PointGeometry"/><c>.Ra</c>) is <c>Double.NaN</c>, but Cant isn't Zero. </exception>
-            Public Sub Reconfigure(PointGeometry As GeoTcPoint, RailFixingRule As RailFixingRule)
                 
-                If (PointGeometry Is Nothing)              Then Throw New System.ArgumentNullException("PointGeometry")
-                If (Double.IsNaN(PointGeometry.Ueb))       Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant)
-                If (Double.IsNaN(PointGeometry.CantBase))  Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase)
+                If (PointGeometry Is Nothing)             Then Throw New System.ArgumentNullException("PointGeometry")
+                If (Double.IsNaN(PointGeometry.Ueb))      Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCant)
+                If (Double.IsNaN(PointGeometry.CantBase)) Then Throw New System.ArgumentException(Rstyx.Utilities.Resources.Messages.RailPair_UnknownCantBase)
                 
                 Me.Radius         = PointGeometry.Ra
                 Me.VerticalRadius = PointGeometry.RaLGS
-                Me.Fixing         = RailPair.GetRailFixingFromRule(RailFixingRule, (PointGeometry.Kind = GeoPointKind.Platform))
                 
                 If (Not Double.IsNaN(PointGeometry.Speed)) Then
                     Me.Speed = PointGeometry.Speed
@@ -507,9 +476,8 @@ Namespace Domain
                 Me.Reconfigure(PointGeometry.Ueb * Sign(Me.Radius), PointGeometry.CantBase)
             End Sub
             
-            ''' <summary> Tries to re-configure this RailPair based on a <see cref="GeoTcPoint"/> via <see cref="Reconfigure(GeoTcPoint, RailFixingRule)"/>. </summary>
-             ''' <param name="PointGeometry">     The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
-             ''' <param name="RailFixingRule"> The rule to determine <see cref="Fixing"/>. </param>
+            ''' <summary> Tries to re-configure this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
+             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
              ''' <returns> <see langword="true"/>, if re-configuration has been successfull, otherwise <see langword="false"/>. </returns>
              ''' <remarks>
              ''' <para>
@@ -518,28 +486,24 @@ Namespace Domain
              ''' <item><description> <see cref="Radius"/>         to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Ra"/>.    </description></item>
              ''' <item><description> <see cref="VerticalRadius"/> to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.RaLGS"/>. </description></item>
              ''' <item><description> <see cref="Speed"/>          to <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Speed"/>, but only if the latter isn't <c>Double.NaN</c>. </description></item>
-             ''' <item><description> <see cref="Fixing"/>         (see remarks). </description></item>
              ''' </list>
+             ''' </para>
+             ''' <para>
+             ''' <see cref="Fixing"/> won't be changed.
              ''' </para>
              ''' <para>
              ''' If <paramref name="PointGeometry"/> hasn't a speed, <see cref="Speed"/> won't be changed. 
              ''' </para>
-             ''' <para>
-             ''' If <paramref name="PointGeometry"/>.<see cref="GeoTcPoint.Kind"/> is <see cref="GeoPointKind.Platform"/>, 
-             ''' and <paramref name="RailFixingRule"/> is <see cref="RailFixingRule.FixedAtPlatform"/>, 
-             ''' then <see cref="Fixing"/> is set to <see cref="RailFixing.Fixed"/>, 
-             ''' otherwise the <see cref="RailFixing"/> value is set that matches directly <see cref="RailFixingRule"/>. 
-             ''' </para>
              ''' </remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="PointGeometry"/> is <see langword="null"/>. </exception>
-            Public Function TryReconfigure(PointGeometry As GeoTcPoint, RailFixingRule As RailFixingRule) As Boolean
+            Public Function TryReconfigure(PointGeometry As GeoTcPoint) As Boolean
                 
                 If (PointGeometry Is Nothing) Then Throw New System.ArgumentNullException("PointGeometry")
                 
                 Dim RetValue As Boolean = IsFullPointGeometry(PointGeometry)
                 
                 If (RetValue) Then
-                    Me.Reconfigure(PointGeometry, RailFixingRule)
+                    Me.Reconfigure(PointGeometry)
                 End If
                 
                 Return RetValue
