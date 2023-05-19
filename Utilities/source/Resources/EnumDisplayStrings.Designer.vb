@@ -1492,7 +1492,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die festgelegt ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die einfach festgelegt ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixing_Fixed() As String
             Get
@@ -1515,6 +1515,42 @@ Namespace Resources
         Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixing_StrongFixed() As String
             Get
                 Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixing_StrongFixed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die einfach festgelegt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixingRule_Fixed() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixingRule_Fixed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die einfach festgelegt (nur am Bahnsteig) ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixingRule_FixedAtPlatform() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixingRule_FixedAtPlatform", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die nicht festgelegt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixingRule_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixingRule_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die stark festgelegt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_RailFixingRule_StrongFixed() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_RailFixingRule_StrongFixed", resourceCulture)
             End Get
         End Property
         

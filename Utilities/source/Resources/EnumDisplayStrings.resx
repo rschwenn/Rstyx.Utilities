@@ -777,4 +777,16 @@
   <data name="Rstyx_Utilities_Domain_GeoPointKind_RailTop2" xml:space="preserve">
     <value>Schiene 2</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_RailFixingRule_Fixed" xml:space="preserve">
+    <value>einfach festgelegt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailFixingRule_FixedAtPlatform" xml:space="preserve">
+    <value>einfach festgelegt (nur am Bahnsteig)</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailFixingRule_None" xml:space="preserve">
+    <value>nicht festgelegt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_RailFixingRule_StrongFixed" xml:space="preserve">
+    <value>stark festgelegt</value>
+  </data>
 </root>
