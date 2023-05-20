@@ -144,8 +144,10 @@ Namespace Domain
                     Return _Fixing
                 End Get
                 Set(value As RailFixing)
-                    _Fixing = value
-                    RaiseRailsConfigChanged()
+                    If (Not (value = _Fixing)) Then
+                        _Fixing = value
+                        RaiseRailsConfigChanged()
+                    End If
                 End Set
             End Property
             
@@ -155,8 +157,10 @@ Namespace Domain
                     Return _Status
                 End Get
                 Set(value As RailStatus)
-                    _Status = value
-                    RaiseRailsConfigChanged()
+                    If (Not (value = _Status)) Then
+                        _Status = value
+                        RaiseRailsConfigChanged()
+                    End If
                 End Set
             End Property
             
