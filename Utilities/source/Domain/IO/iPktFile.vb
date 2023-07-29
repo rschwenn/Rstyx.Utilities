@@ -227,13 +227,14 @@ Namespace Domain.IO
                         
                         ' Convert attributes into matching properties.
                         p.ConvertPropertyAttributes()
+                        p.SetKindFromKindText()
                         
-                        ' Info and Point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                        ' Info and Point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant) from Text and/or iTrassen-Codierung.
                         ParseResult = p.ParseInfoTextInput(Me.EditOptions)
                         If (ParseResult.HasConflict) Then
                             Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
                         End If
-                
+
                         ' Coord and height system.
                         Dim MixedSys As String = DataLine.ParseField(RecDef.CoordSys).Value
                         If (MixedSys.IsNotEmptyOrWhiteSpace()) Then

@@ -1498,8 +1498,10 @@ Namespace Domain.IO
 
                                     ' Convert attributes into matching properties.
                                     p.ConvertPropertyAttributes()
+                                    p.SetKindFromKindText()
+                                    IpktAux = p.AsGeoIPoint()  ' Get actual values for IpktAux.
                                     
-                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant).
+                                    ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant) from Text and/or iTrassen-Codierung.
                                     IpktAux.Info    = DataLine.ParseField(RecDef.Text).Value
                                     ParseResult     = IpktAux.ParseInfoTextInput(ParseOptions)
                                     If (ParseResult.HasConflict) Then

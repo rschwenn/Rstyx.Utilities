@@ -147,10 +147,10 @@ Namespace Domain.IO
 
                                     ' Convert attributes into matching properties.
                                     p.ConvertPropertyAttributes()
+                                    p.SetKindFromKindText()
                                     
                                     ' Smoothing.
                                     If (p.ObjectKey = "0") Then p.ObjectKey = String.Empty
-                                    p.SetKindFromKindText()
                                     If (p.Kind = GeoPointKind.None) Then p.SetKindFromMarkType()
                                     
                                     ' Editing.
