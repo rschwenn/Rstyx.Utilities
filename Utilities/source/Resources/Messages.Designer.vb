@@ -3026,11 +3026,11 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Achsname und DGM-Name sind unbekannt (mindestens einer der beiden muss bekannt sein). ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Name von Achse, KM-Linie und DGM sind unbekannt (mindestens einer der drei muss bekannt sein). ähnelt.
         '''</summary>
-        Public Shared ReadOnly Property TrackGeometryInfo_MissingNameOfAlignmentOrDTM() As String
+        Public Shared ReadOnly Property TrackGeometryInfo_MissingNameOfAlignOrKMAorDTM() As String
             Get
-                Return ResourceManager.GetString("TrackGeometryInfo_MissingNameOfAlignmentOrDTM", resourceCulture)
+                Return ResourceManager.GetString("TrackGeometryInfo_MissingNameOfAlignOrKMAorDTM", resourceCulture)
             End Get
         End Property
         

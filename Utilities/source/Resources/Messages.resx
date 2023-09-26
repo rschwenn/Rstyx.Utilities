@@ -345,8 +345,8 @@
   <data name="TcBlock_InvalidTrackRef_Fallback" xml:space="preserve">
     <value>Trassenbezug ist ungültig (zu wenig bekannte Werte).</value>
   </data>
-  <data name="TrackGeometryInfo_MissingNameOfAlignmentOrDTM" xml:space="preserve">
-    <value>Achsname und DGM-Name sind unbekannt (mindestens einer der beiden muss bekannt sein).</value>
+  <data name="TrackGeometryInfo_MissingNameOfAlignOrKMAorDTM" xml:space="preserve">
+    <value>Name von Achse, KM-Linie und DGM sind unbekannt (mindestens einer der drei muss bekannt sein).</value>
   </data>
   <data name="TcFileReader_InvalidTcBlock" xml:space="preserve">
     <value>Ungültiger Block mit Trassenkoordinaten (Zeilen %d bis %d):\n%s</value>

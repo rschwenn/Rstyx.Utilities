@@ -1502,8 +1502,9 @@ Namespace Domain.IO
                                     IpktAux = p.AsGeoIPoint()  ' Get actual values for IpktAux.
                                     
                                     ' Info and point kinds (maybe with related data: MarkTypeAB, MarkType, ActualCant) from Text and/or iTrassen-Codierung.
-                                    IpktAux.Info    = DataLine.ParseField(RecDef.Text).Value
-                                    ParseResult     = IpktAux.ParseInfoTextInput(ParseOptions)
+                                    IpktAux.Info = DataLine.ParseField(RecDef.Text).Value
+                                    If (IpktAux.Info.StartsWith(" ")) Then IpktAux.Info = IpktAux.Info.Substring(1)
+                                    ParseResult = IpktAux.ParseInfoTextInput(ParseOptions)
                                     If (ParseResult.HasConflict) Then
                                         Me.ParseErrors.Add(New ParseError(ParseErrorLevel.Warning, DataLine.SourceLineNo, 0, 0, ParseResult.Message, ParseResult.Hints, FilePath))
                                     End If

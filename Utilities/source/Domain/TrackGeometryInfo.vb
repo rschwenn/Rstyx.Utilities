@@ -2,7 +2,10 @@
 Namespace Domain
     
     ''' <summary> Info record that identifies a track geometry. </summary>
-    ''' <remarks> To be valid, the <see cref="TrackGeometryInfo.NameOfAlignment"/> or <see cref="TrackGeometryInfo.NameOfDTM"/> property must not be empty. </remarks>
+    ''' <remarks>
+    ''' To be valid, the <see cref="TrackGeometryInfo.NameOfAlignment"/> or <see cref="TrackGeometryInfo.NameOfKmAlignment"/> 
+    ''' or <see cref="TrackGeometryInfo.NameOfDTM"/> property must not be empty.
+    ''' </remarks>
     Public Class TrackGeometryInfo
         Inherits Cinch.ValidatingObject
         
@@ -10,7 +13,7 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.TrackGeometryInfo")
             
-            Private Shared MissingNameOfAlignmentOrDTMRule As Cinch.SimpleRule
+            Private Shared MissingNameOfAlignOrKMAorDTMRule As Cinch.SimpleRule
             
         #End Region
         
@@ -20,16 +23,17 @@ Namespace Domain
             Shared Sub New()
                 ' Create Validation Rules.
                 
-                MissingNameOfAlignmentOrDTMRule = New Cinch.SimpleRule("NameOfAlignmentOrDTM",
-                                                          Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_MissingNameOfAlignmentOrDTM,
-                                                          Function (oValidatingObject As Object) (DirectCast(oValidatingObject, TrackGeometryInfo).NameOfAlignment.IsEmptyOrWhiteSpace() AndAlso
-                                                                                                  DirectCast(oValidatingObject, TrackGeometryInfo).NameOfDTM.IsEmptyOrWhiteSpace() ))
+                MissingNameOfAlignOrKMAorDTMRule = New Cinch.SimpleRule("NameOfAlignOrKMAorDTM",
+                                                           Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_MissingNameOfAlignOrKMAorDTM,
+                                                           Function (oValidatingObject As Object) (DirectCast(oValidatingObject, TrackGeometryInfo).NameOfAlignment.IsEmptyOrWhiteSpace() AndAlso
+                                                                                                   DirectCast(oValidatingObject, TrackGeometryInfo).NameOfKmAlignment.IsEmptyOrWhiteSpace() AndAlso
+                                                                                                   DirectCast(oValidatingObject, TrackGeometryInfo).NameOfDTM.IsEmptyOrWhiteSpace() ))
                 '
             End Sub
             
             ''' <summary> Creates a new TrackGeometryInfo. </summary>
             Public Sub New()
-                Me.AddRule(MissingNameOfAlignmentOrDTMRule)
+                Me.AddRule(MissingNameOfAlignOrKMAorDTMRule)
             End Sub
             
         #End Region
