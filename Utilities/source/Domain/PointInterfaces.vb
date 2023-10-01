@@ -114,20 +114,20 @@ Namespace Domain
     ''' <summary> A cartesian coordinates triple with specified reference systems and precisions. </summary>
     Public Interface ICartesianCoordinates3D
         
-        ''' <summary> The easting coordinate. </summary>
+        ''' <summary> The easting coordinate in [m]. </summary>
         Property Y()            As Double
         
-        ''' <summary> The northing coordinate. </summary>
+        ''' <summary> The northing coordinate in [m]. </summary>
         Property X()            As Double
         
-        ''' <summary> The height coordinate. </summary>
+        ''' <summary> The height coordinate in [m]. </summary>
         Property Z()            As Double
         
         
-        ''' <summary> Mean error of position. </summary>
+        ''' <summary> Mean error of position in [m]. </summary>
         Property mp()           As Double
         
-        ''' <summary> Mean error of height. </summary>
+        ''' <summary> Mean error of height in [m]. </summary>
         Property mh()           As Double
         
         

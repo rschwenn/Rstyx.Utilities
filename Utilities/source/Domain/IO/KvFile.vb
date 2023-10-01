@@ -126,8 +126,8 @@ Namespace Domain.IO
                                     p.TrackPos.TrackNo   = DataLine.ParseField(RecDef.TrackNo).Value
                                     p.TrackPos.RailsCode = DataLine.ParseField(RecDef.RailsCode).Value
                                     p.HeightSys          = DataLine.ParseField(RecDef.HeightSys).Value
-                                    p.mp                 = DataLine.ParseField(RecDef.mp).Value
-                                    p.mh                 = DataLine.ParseField(RecDef.mh).Value
+                                    p.mp                 = DataLine.ParseField(RecDef.mp).Value / 1000
+                                    p.mh                 = DataLine.ParseField(RecDef.mh).Value / 1000
                                     p.MarkHints          = DataLine.ParseField(RecDef.MarkHints).Value  ' Stability Code
                                     p.MarkType           = DataLine.ParseField(RecDef.MarkType).Value
                                     p.sp                 = DataLine.ParseField(RecDef.sp).Value
@@ -282,8 +282,8 @@ Namespace Domain.IO
                                                       p.TrackPos.TrackNo,
                                                       p.TrackPos.RailsCode.TrimToMaxLength(1),
                                                       P.HeightSys.TrimToMaxLength(3),
-                                                      P.mp,
-                                                      P.mh, 
+                                                      P.mp * 1000,
+                                                      P.mh * 1000, 
                                                       P.MarkHints.TrimToMaxLength(1),
                                                       P.MarkType.TrimToMaxLength(3),
                                                       P.sp.TrimToMaxLength(1),

@@ -120,8 +120,8 @@ Namespace Domain.IO
                                 
                                 p.KindText           = FileEncoding.GetString(oBR.ReadBytes(4)).Left(vbNullChar).Trim()
                                 p.MarkType           = CStr(oBR.ReadByte)
-                                p.mp                 = CDbl(oBR.ReadInt16())
-                                p.mh                 = CDbl(oBR.ReadInt16())
+                                p.mp                 = CDbl(oBR.ReadInt16()) / 1000
+                                p.mh                 = CDbl(oBR.ReadInt16()) / 1000
                                 p.ObjectKey          = oBR.ReadInt32()
                                 p.MarkHints          = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
                                 p.HeightSys          = FileEncoding.GetString(oBR.ReadBytes(3)).Left(vbNullChar).Trim()
@@ -304,8 +304,8 @@ Namespace Domain.IO
                 p.MarkHints          = "1"
                 p.PositionPreInfo    = "V"c
                 p.TrackPos.RailsCode = "5"
-                p.mh                 = 3.0
-                p.mp                 = 3.0
+                p.mh                 = 0.003
+                p.mp                 = 0.003
                 p.sh                 = "R"c
                 p.sp                 = "R"c
                 
@@ -323,8 +323,8 @@ Namespace Domain.IO
                 Dim TrackNo     As String = Nothing
                 
                 Byte.TryParse(p.MarkType, MarkType)
-                If (Not Double.IsNaN(p.mp)) Then mp = CInt(p.mp)
-                If (Not Double.IsNaN(p.mh)) Then mh = CInt(p.mh)
+                If (Not Double.IsNaN(p.mp)) Then mp = CInt(p.mp * 1000)
+                If (Not Double.IsNaN(p.mh)) Then mh = CInt(p.mh * 1000)
                 Int32.TryParse(p.ObjectKey, ObjectKey)
                 If (p.TrackPos.TrackNo IsNot Nothing) Then TrackNo = CStr(p.TrackPos.TrackNo)
                 
