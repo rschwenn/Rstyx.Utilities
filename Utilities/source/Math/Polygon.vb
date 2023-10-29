@@ -86,7 +86,7 @@ Namespace Math
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
                 Dim MinDistance As Double  = Double.PositiveInfinity
-                Dim Distance    As Double  = Double.NaN
+                Dim Distance    As Double
                 Dim j           As Integer = Me.Vertices.Count - 1
                 
                 ' Perpendicular distance to polygon edge.
@@ -105,7 +105,6 @@ Namespace Math
                         If (Distance < MinDistance) Then
                             MinDistance = Distance
                         End If
-                        j = i
                     Next
                 'End If
                 
@@ -293,7 +292,7 @@ Namespace Math
                     For i As Integer = 0 To Me.Vertices.Count - 1
                         
                         If ((Not ((_Vertices(i).Y > Pt.Y) = (_Vertices(j).Y > Pt.Y))) AndAlso
-                            (Pt.X < (_Vertices(j).X - _Vertices(i).X) * (Pt.Y - _Vertices(i).Y) / (_Vertices(j).Y - _Vertices(i).Y) + _Vertices(i).X)
+                            (Pt.X < (((_Vertices(j).X - _Vertices(i).X) * (Pt.Y - _Vertices(i).Y) / (_Vertices(j).Y - _Vertices(i).Y)) + _Vertices(i).X))
                             ) Then
                             IsInside = (Not IsInside)
                         End If

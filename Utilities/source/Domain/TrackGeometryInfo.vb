@@ -13,7 +13,7 @@ Namespace Domain
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.TrackGeometryInfo")
             
-            Private Shared MissingNameOfAlignOrKMAorDTMRule As Cinch.SimpleRule
+            Private Shared ReadOnly MissingNameOfAlignOrKMAorDTMRule As Cinch.SimpleRule
             
         #End Region
         

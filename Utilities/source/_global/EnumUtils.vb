@@ -61,9 +61,9 @@ Imports Rstyx.Utilities.StringUtils
     Public Module EnumExtensions
         
         ''' <summary> For every (already in this session used) UI culture there is one StringDictionary cache. </summary>
-        Private DisplayStringCache  As New Dictionary(Of String, System.Collections.Specialized.StringDictionary)
+        Private ReadOnly DisplayStringCache     As New Dictionary(Of String, System.Collections.Specialized.StringDictionary)
         
-        Private ThisAssemblyResourceProviders  As IEnumerable(Of Type) = Nothing
+        Private ThisAssemblyResourceProviders   As IEnumerable(Of Type) = Nothing
         
         ''' <summary> Returns a localized display string for the given Enum value from resources. </summary>
          ''' <param name="Value"> The Enum value to display. </param>

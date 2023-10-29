@@ -7,7 +7,7 @@
         #Region "Private Fields"
             
             'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.ArrayUtils")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.ArrayUtils")
             
         #End Region
         
@@ -56,8 +56,8 @@
                   Dim CountParms2  As Integer
                   Dim EmbedCount() As Integer
                   Dim IsEmbedded   As Boolean
-                  Dim tmpArray()   As Object = New Object() {}
-                  Dim flatParms()  As Object = New Object() {}
+                  Dim tmpArray()   As Object ' = New Object() {}
+                  Dim flatParms()  As Object ' = New Object() {}
                   
                 'Try
                     ' Initialisierung
@@ -79,7 +79,7 @@
                         Else
                             EmbedCount(i) = 1
                         End If
-                        CountParms2 = CountParms2 + EmbedCount(i)
+                        CountParms2 += EmbedCount(i)
                     Next
                     
                     ' Ggf. das übernommene ParamArray in ein nicht verschachteltes Array wandeln
@@ -94,11 +94,11 @@
                                     tmpArray = CType(WrapArray(i), Object())
                                     For k = 0 To UBound(CType(tmpArray, System.Array))
                                       flatParms(j) = tmpArray(k)
-                                      j = j + 1
+                                      j += 1
                                     Next
                                 Else
                                     flatParms(j) = WrapArray(i)
-                                    j = j + 1
+                                    j += 1
                                 End If
                             End If
                         Next
@@ -158,7 +158,7 @@
                                           byVal Descending As Boolean, _
                                           byVal LowerIndex As Integer, _
                                           byVal UpperIndex As Integer)
-                Dim sec_Dim     As Long
+                'Dim sec_Dim     As Long
                 Dim i           As Integer
                 Dim k           As Integer
                 Dim idxM        As Integer
@@ -171,7 +171,7 @@
                     If ((LowerIndex < 0) or (UpperIndex < 0)) Then
                         Logger.LogDebug("QuickSort2d(): Sortieren unmöglich, da mindestens ein Index < 0!")
                     Else
-                        if (Key_Dim = 1) Then sec_Dim = 2 Else sec_Dim = 1
+                        'If (Key_Dim = 1) Then sec_Dim = 2 Else sec_Dim = 1
                         
                         idxM = CInt(System.Math.Truncate((LowerIndex + UpperIndex) / 2))
                         i    = LowerIndex
@@ -182,12 +182,12 @@
                         
                         Do
                             Do While IsLesser(ArrayValue(Matrix, Key_Dim, Key_Idx, i), Value_idxM, SortingType, Descending)
-                                i = i + 1
+                                i += 1
                                 'Schleifenausgang spätestens mit i = idxM + 1
                             Loop
                             
                             Do While IsLesser(Value_idxM, ArrayValue(Matrix, Key_Dim, Key_Idx, k), SortingType, Descending)
-                                k = k - 1
+                                k -= 1
                                 'Schleifenausgang spätestens mit k = idxM - 1
                             Loop
                             
@@ -205,8 +205,8 @@
                                     end if
                                 Next
                                 
-                                i = i + 1
-                                k = k - 1
+                                i += 1
+                                k -= 1
                             End If
                             
                         Loop Until (i > k)
@@ -231,7 +231,7 @@
              ''' <param name="Sek_Idx"> (0,1,.) No. of the other Index.                                   </param>
              ''' <returns> Value of a given matrix element. </returns>
             Private Shared Function ArrayValue(byRef Matrix As Object(,), byVal Key_Dim As Integer, byVal Key_Idx As Integer, byVal Sek_Idx As Integer) As Object
-                Dim RetValue  As Object = Nothing
+                Dim RetValue  As Object
                 
                 If (Key_Dim = 1) Then
                     RetValue = Matrix(Key_Idx, Sek_Idx)

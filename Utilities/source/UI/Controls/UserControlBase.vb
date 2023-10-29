@@ -40,10 +40,10 @@ Namespace UI.Controls
         
         #Region "Private Fields"
         
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.Controls.UserControlBase")
+            Private ReadOnly Logger     As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.Controls.UserControlBase")
             
-            Private _DisplayName As String = Nothing
-            Private _DisplayNameLong As String = Nothing
+            Private _DisplayName        As String = Nothing
+            Private _DisplayNameLong    As String = Nothing
             
             Private IsCompletelyLoaded  As Boolean = False
             

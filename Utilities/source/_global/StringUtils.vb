@@ -13,7 +13,7 @@ Imports Rstyx.Utilities.Math.MathUtils
         #Region "Private Fields"
             
             'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.StringUtils")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.StringUtils")
             
         #End Region
         
@@ -160,62 +160,62 @@ Imports Rstyx.Utilities.Math.MathUtils
                           OneChar = NextChar(FormatString)
                           Select Case OneChar
                             Case "a"c 'alert (bell)
-                                Ret = Ret & Chr(7)
+                                Ret &= Chr(7)
                             Case "b"c 'backspace
-                                Ret = Ret & vbBack
+                                Ret &= vbBack
                             Case "f"c 'formfeed
-                                Ret = Ret & vbFormFeed
+                                Ret &= vbFormFeed
                             Case "n"c 'newline (linefeed)
-                                Ret = Ret & vbNewLine
+                                Ret &= vbNewLine
                             Case "r"c 'carriage return
-                                Ret = Ret & vbCr
+                                Ret &= vbCr
                             Case "t"c 'horizontal tab
-                                Ret = Ret & vbTab
+                                Ret &= vbTab
                             Case "v"c 'vertical tab
-                                Ret = Ret & vbVerticalTab
+                                Ret &= vbVerticalTab
                             Case "0"c, "1"c, "2"c, "3"c, "4"c, "5"c, "6"c, "7"c, "8"c, "9"c   'octal character
                                 NumberBuffer = OneChar
                                 While ((InStr("01234567", FormatString.Left(1)) > 0) And (FormatString.Length > 0))
-                                    NumberBuffer = NumberBuffer & NextChar(FormatString)
+                                    NumberBuffer &= NextChar(FormatString)
                                 End While
-                                Ret = Ret & CStr(Oct2Dec(NumberBuffer))
+                                Ret &= CStr(Oct2Dec(NumberBuffer))
                             Case "x"c 'hexadecimal character
                                 NumberBuffer = ""
                                 While ((InStr("0123456789ABCDEFabcdef", FormatString.Left(1)) > 0) And (FormatString.Length > 0))
-                                    NumberBuffer = NumberBuffer & NextChar(FormatString)
+                                    NumberBuffer &= NextChar(FormatString)
                                 End While
-                                Ret = Ret & CStr(Hex2Dec(NumberBuffer))
+                                Ret &= CStr(Hex2Dec(NumberBuffer))
                             Case "\"c 'backslash
-                                Ret = Ret & "\"
+                                Ret &= "\"
                             Case "%"c 'percent
-                                Ret = Ret & "%"
+                                Ret &= "%"
                             Case Else 'unrecognised
-                                Ret = Ret & OneChar
+                                Ret &= OneChar
                                 Throw New System.FormatException(String.Format(Rstyx.Utilities.Resources.Messages.Sprintf_InvalidEscapeSequence, OneChar))
                           End Select
                         
                         Case "%"c
                           OneChar = NextChar(FormatString)
                           If OneChar = "%" Then
-                            Ret = Ret & "%"
+                            Ret &= "%"
                           Else
                             Flags = ""
                             Width = ""
                             Precision = ""
                             While (OneChar = "-" Or OneChar = "+" Or OneChar = "#" Or OneChar = " ")
-                              Flags = Flags & OneChar
+                              Flags &= OneChar
                               OneChar = NextChar(FormatString)
                             End While
                             'While IsNumeric(OneChar)
                             While (Char.IsNumber(OneChar))
-                              Width = Width & OneChar
+                              Width &= OneChar
                               OneChar = NextChar(FormatString)
                             End While
                             If OneChar = "." Then
                               OneChar = NextChar(FormatString)
                               'While IsNumeric(OneChar)
                               While (Char.IsNumber(OneChar))
-                                Precision = Precision & OneChar
+                                Precision &= OneChar
                                 OneChar = NextChar(FormatString)
                               End While
                             End If
@@ -246,7 +246,7 @@ Imports Rstyx.Utilities.Math.MathUtils
                                   
                                   Case "u"c 'unsigned decimal
                                     Value = CLng(ParmX)
-                                    If Value < 0 Then Value = Value + 65536
+                                    If Value < 0 Then Value += 65536
                                     AddStr = CStr(Value)
                                     If Precision <> "" Then
                                       If CDbl(Precision) > AddStr.Length Then
@@ -386,17 +386,17 @@ Imports Rstyx.Utilities.Math.MathUtils
                             If (Width <> "") Then
                               If cint(Width) > AddStr.Length Then
                                 If (InStr(Flags, "-") > 0) Then
-                                  AddStr = AddStr & Space(CInt(Width) - AddStr.Length)
+                                  AddStr &= Space(CInt(Width) - AddStr.Length)
                                 Else
                                   AddStr = Space(CInt(Width) - AddStr.Length) & AddStr
                                 End If
                               End If
                             End If
-                            ParamUpTo = ParamUpTo + 1
-                            Ret = Ret & AddStr
+                            ParamUpTo += 1
+                            Ret &= AddStr
                           End If
                         Case Else
-                          Ret = Ret & OneChar
+                          Ret &= OneChar
                       End Select
                     End While
                     
@@ -471,7 +471,7 @@ Imports Rstyx.Utilities.Math.MathUtils
             Dim RetValue As Boolean = False
             
             For Each TestString As String In TestStrings
-                If ((TestString IsNot Nothing) AndAlso (Value.Contains(TestString))) Then
+                If ((TestString IsNot Nothing) AndAlso Value.Contains(TestString)) Then
                     RetValue = True
                     Exit For
                 End If
@@ -491,14 +491,14 @@ Imports Rstyx.Utilities.Math.MathUtils
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Left(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False, Optional GetMaximumMatch As Boolean = False) As String
             If (Value IsNot Nothing) Then
-                Dim idx As Integer = 0
+                Dim idx As Integer
                 If (GetMaximumMatch) Then
                     idx = Value.LastIndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
                 Else
                     idx = Value.IndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
                 End If
                 If (idx >= 0) Then
-                    If (IncludeDelimiter) Then idx = idx + Delimiter.Length
+                    If (IncludeDelimiter) Then idx += Delimiter.Length
                     Value = Value.Substring(0, idx)
                 End If
             End If
@@ -517,14 +517,14 @@ Imports Rstyx.Utilities.Math.MathUtils
         <System.Runtime.CompilerServices.Extension()> 
         Public Function Right(ByVal Value As String, Delimiter As String, Optional IncludeDelimiter As Boolean = False, Optional GetMaximumMatch As Boolean = False) As String
             If (Value IsNot Nothing) Then
-                Dim idx As Integer = 0
+                Dim idx As Integer
                 If (GetMaximumMatch) Then
                     idx = Value.IndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
                 Else
                     idx = Value.LastIndexOf(Delimiter, comparisonType:=System.StringComparison.Ordinal)
                 End If
                 If (idx >= 0) Then
-                    If (Not IncludeDelimiter) Then idx = idx + Delimiter.Length
+                    If (Not IncludeDelimiter) Then idx += Delimiter.Length
                     Value = Value.Substring(idx)
                 End If
             End If
@@ -549,7 +549,7 @@ Imports Rstyx.Utilities.Math.MathUtils
                 Dim idx  As Integer = Value.IndexOf(LeftDelimiter, comparisonType:=System.StringComparison.Ordinal)
                 ' Cut left
                 If (idx >= 0) Then
-                    If (Not IncludeDelimiters) Then idx = idx + LeftDelimiter.Length
+                    If (Not IncludeDelimiters) Then idx += LeftDelimiter.Length
                     Value = Value.Substring(idx)
                 End If
                 ' Cut right

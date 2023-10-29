@@ -9,7 +9,7 @@ Namespace UI.Binding.PushBinding
     Public Class PushBindingCollection
         Inherits FreezableCollection(Of PushBinding)
         
-        Private m_TargetObject As FrameworkElement
+        Private ReadOnly m_TargetObject As FrameworkElement
         
         Public Sub New(target As FrameworkElement)
             m_TargetObject = target

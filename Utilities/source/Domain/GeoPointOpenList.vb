@@ -27,7 +27,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.GeoPointOpenList")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.GeoPointOpenList")
             
         #End Region
         

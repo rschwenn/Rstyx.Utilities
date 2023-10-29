@@ -86,37 +86,37 @@ Namespace IO.CSV
                 ''' <summary>
                 ''' Contains the buffer size.
                 ''' </summary>
-                Private _bufferSize As Integer
+                Private ReadOnly _bufferSize As Integer
                 
                 ''' <summary>
                 ''' Contains the comment character indicating that a line is commented out.
                 ''' </summary>
-                Private _comment As Char
+                Private ReadOnly _comment As Char
                 
                 ''' <summary>
                 ''' Contains the escape character letting insert quotation characters inside a quoted field.
                 ''' </summary>
-                Private _escape As Char
+                Private ReadOnly _escape As Char
                 
                 ''' <summary>
                 ''' Contains the delimiter character separating each field.
                 ''' </summary>
-                Private _delimiter As Char
+                Private ReadOnly _delimiter As Char
                 
                 ''' <summary>
                 ''' Contains the quotation character wrapping every field.
                 ''' </summary>
-                Private _quote As Char
+                Private ReadOnly _quote As Char
                 
                 ''' <summary>
                 ''' Determines which values should be trimmed.
                 ''' </summary>
-                Private _trimmingOptions As ValueTrimmingOptions
+                Private ReadOnly _trimmingOptions As ValueTrimmingOptions
                 
                 ''' <summary>
                 ''' Indicates if field names are located on the first non commented line.
                 ''' </summary>
-                Private _hasHeaders As Boolean
+                Private ReadOnly _hasHeaders As Boolean
                 
                 ''' <summary>
                 ''' Contains the default action to take when a parsing error has occured.
@@ -1498,7 +1498,7 @@ Namespace IO.CSV
             ''' <exception cref="T:System.ComponentModel.ObjectDisposedException">  The instance has been disposed of. </exception>
             Private Function SkipToNextLine(ByRef pos As Integer) As Boolean
                 ' ((pos = 0) == 0) is a little trick to reset position inline
-                While (((pos < _bufferLength) OrElse (ReadBuffer() AndAlso ((InlineAssignHelper(pos, 0)) = 0))) AndAlso (Not ParseNewLine(pos)))
+                While (((pos < _bufferLength) OrElse (ReadBuffer() AndAlso (InlineAssignHelper(pos, 0) = 0))) AndAlso (Not ParseNewLine(pos)))
                     pos += 1
                 End While
                 
@@ -1606,7 +1606,7 @@ Namespace IO.CSV
             ''' <summary>
             ''' Contains the stack when the object was allocated.
             ''' </summary>
-            Private _allocStack As System.Diagnostics.StackTrace
+            Private ReadOnly _allocStack As System.Diagnostics.StackTrace
             #End If
             
             ''' <summary>

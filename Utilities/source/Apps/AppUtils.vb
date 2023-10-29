@@ -40,7 +40,7 @@ Namespace Apps
             End Sub
             
             Private Shared Function InitializeStaticVariables() As Boolean
-                Logger.LogDebug("initializeStaticVariables(): Initialization of static variables starts ...")
+                Logger.LogDebug("InitializeStaticVariables(): Initialization of static variables starts ...")
 
                 _CurrentEditor = SupportedEditors.None
                 Try
@@ -309,7 +309,7 @@ Namespace Apps
                 End Get
                 Set(value As SupportedEditors)
                     SyncLock (SyncHandle)
-                        If ((value <> _CurrentEditor) AndAlso (value <> SupportedEditors.None) AndAlso ([Enum].IsDefined(GetType(SupportedEditors), value))) Then
+                        If ((value <> _CurrentEditor) AndAlso (value <> SupportedEditors.None) AndAlso [Enum].IsDefined(GetType(SupportedEditors), value)) Then
                             Logger.LogDebug(StringUtils.Sprintf("CurrentEditor [Set]: Aktueller Editor wird geändert zu '%s'.", value.ToDisplayString()))
                             _CurrentEditor = value
                             My.Settings.AppUtils_CurrentEditor = _CurrentEditor
@@ -478,67 +478,67 @@ Namespace Apps
              ''' <returns> The found application file path or String.Empty. </returns>
             Private Shared  Function GetAppPathCrimsonEditor() As String
                 
-                Dim CEditExe      As String = String.Empty
+                Dim CEditExe      As String
                 Dim Key_CEditExe  As String
                 Dim CEditDir      As String
                 Dim fi            As FileInfo
                 Dim Success       As Boolean = false
                 const AppName     As String = "cedt.exe"
-                Logger.LogDebug("getAppPathCrimsonEditor(): Programmdatei von Crimson Editor ermitteln.")
+                Logger.LogDebug("GetAppPathCrimsonEditor(): Programmdatei von Crimson Editor ermitteln.")
                 
                 ' If it could be uninstalled, maybe it could be found ...
                 Key_CEditExe = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Crimson Editor 3.72\DisplayIcon"
                 CEditExe = RegUtils.GetApplicationPath(Key_CEditExe)
                 if (CEditExe.IsEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getAppPathCrimsonEditor(): Crimson Editor nicht gefunden in Registry => suche nach Portable Version.")
+                    Logger.LogDebug("GetAppPathCrimsonEditor(): Crimson Editor nicht gefunden in Registry => suche nach Portable Version.")
                     Success = False
                 end if
                 
                 ' Search for portable version in 3 places.
-                if (not Success) Then
-                    Logger.LogDebug("getAppPathCrimsonEditor(): Crimson Editor nicht gefunden in Registry => suche nach Portable Version.")
+                if (Not Success) Then
+                    Logger.LogDebug("GetAppPathCrimsonEditor(): Crimson Editor nicht gefunden in Registry => suche nach Portable Version.")
                     CEditDir = "G:\Tools\Crimson Editor"
                     CEditExe  = CEditDir & "\" & AppName
                     if (File.Exists(CEditExe)) Then
                       Success = true
                     else
-                      Logger.LogDebug("getAppPathCrimsonEditor(): cedt.exe nicht gefunden im (hart kodierten) Verzeichnis '" & CEditDir & "'")
+                      Logger.LogDebug("GetAppPathCrimsonEditor(): cedt.exe nicht gefunden im (hart kodierten) Verzeichnis '" & CEditDir & "'")
                     end if
                 end if
                 
-                if (not Success) Then
+                if (Not Success) Then
                     CEditDir = Environment.GetEnvironmentVariable("PROGRAMFILES") & "\Crimson Editor"
                     CEditExe  = CEditDir & "\" & AppName
                     if (File.Exists(CEditExe)) Then
                       Success = true
                     else
-                      Logger.LogDebug("getAppPathCrimsonEditor(): cedt.exe nicht gefunden im (hart kodierten) Verzeichnis '" & CEditDir & "'")
+                      Logger.LogDebug("GetAppPathCrimsonEditor(): cedt.exe nicht gefunden im (hart kodierten) Verzeichnis '" & CEditDir & "'")
                     end if
                 end if
                 
-                if (not Success) Then
+                if (Not Success) Then
                     CEditDir = Environment.GetEnvironmentVariable("PROGRAMFILES") & "\Tools\Crimson Editor"
                     CEditExe  = CEditDir & "\" & AppName
                     if (File.Exists(CEditExe)) Then
                       Success = true
                     else
-                      Logger.LogDebug("getAppPathCrimsonEditor(): cedt.exe nicht gefunden im (hart kodierten) Verzeichnis '" & CEditDir & "'")
+                      Logger.LogDebug("GetAppPathCrimsonEditor(): cedt.exe nicht gefunden im (hart kodierten) Verzeichnis '" & CEditDir & "'")
                     end if
                 end if
                 
                 ' Search in %PATH%
-                if (not Success) Then
+                if (Not Success) Then
                     CEditExe = String.Empty
-                    Logger.LogDebug("getAppPathCrimsonEditor(): Programmdatei von Crimson Editor im Dateisystem suchen im %PATH%.")
+                    Logger.LogDebug("GetAppPathCrimsonEditor(): Programmdatei von Crimson Editor im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.FindFile(AppName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then CEditExe = fi.FullName
                 end if
                 
                 ' Result
                 if (CEditExe.IsEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getAppPathCrimsonEditor(): Programmdatei von Crimson Editor nicht gefunden.")
+                    Logger.LogDebug("GetAppPathCrimsonEditor(): Programmdatei von Crimson Editor nicht gefunden.")
                 Else 
-                    Logger.LogDebug(StringUtils.Sprintf("getAppPathCrimsonEditor(): Programmdatei von Crimson Editor gefunden: '%s'.", CEditExe))
+                    Logger.LogDebug(StringUtils.Sprintf("GetAppPathCrimsonEditor(): Programmdatei von Crimson Editor gefunden: '%s'.", CEditExe))
                 end if
                 
                 Return CEditExe
@@ -552,7 +552,7 @@ Namespace Apps
                 Dim Key_UEditExe  As String
                 Dim fi            As FileInfo
                 Const AppNames    As String = "UEdit*.exe;UltaEdit*.exe"
-                Logger.LogDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit ermitteln.")
+                Logger.LogDebug("GetAppPathUltraEdit(): Programmdatei von UltraEdit ermitteln.")
     
                 ' Check default paths of UltraEdit.
                 Dim DefaultFolder     As String = "\IDM Computer Solutions\UltraEdit"
@@ -560,7 +560,7 @@ Namespace Apps
                 DefaultFolders(0) = "%PROGRAMFILES%" & DefaultFolder
                 DefaultFolders(1) = "%PROGRAMFILES(X86)%" & DefaultFolder
                 DefaultFolders(2) = "%PROGRAMW6432%" & DefaultFolder
-                Logger.LogDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen in Standardpfaden.")
+                Logger.LogDebug("GetAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen in Standardpfaden.")
                 fi = IO.FileUtils.FindFile(AppNames, DefaultFolders.Join(";"c), ";", SearchOption.TopDirectoryOnly)
                 If (fi IsNot Nothing) Then UEditExe = fi.FullName
                 
@@ -583,16 +583,16 @@ Namespace Apps
                 
                 ' Search in %PATH%
                 If (UEditExe.IsEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
+                    Logger.LogDebug("GetAppPathUltraEdit(): Programmdatei von UltraEdit im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.FindFile(AppNames, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then UEditExe = fi.FullName
                 End if
                 
                 ' Result
                 If (UEditExe.IsEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getAppPathUltraEdit(): Programmdatei von UltraEdit nicht gefunden.")
+                    Logger.LogDebug("GetAppPathUltraEdit(): Programmdatei von UltraEdit nicht gefunden.")
                 Else 
-                    Logger.LogDebug(StringUtils.Sprintf("getAppPathUltraEdit(): Programmdatei von UltraEdit gefunden: '%s'.", UEditExe))
+                    Logger.LogDebug(StringUtils.Sprintf("GetAppPathUltraEdit(): Programmdatei von UltraEdit gefunden: '%s'.", UEditExe))
                 End if
                 
                 Return UEditExe
@@ -606,10 +606,10 @@ Namespace Apps
                 Dim fi            As FileInfo
                 Const AppNames    As String = "Javaw.exe"
                 Const Key_JavaExe As String = "HKEY_CLASSES_ROOT\jarfile\shell\open\command\"
-                Logger.LogDebug("getJavaEnvironment(): Programmdatei von Java ermitteln.")
+                Logger.LogDebug("GetJavaEnvironment(): Programmdatei von Java ermitteln.")
                 
                 ' Search in %JAVA_HOME%
-                Logger.LogDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen in %JAVA_HOME%.")
+                Logger.LogDebug("GetJavaEnvironment(): Programmdatei von Java im Dateisystem suchen in %JAVA_HOME%.")
                 _JAVA_HOME = Environment.GetEnvironmentVariable("JAVA_HOME")
                 If (_JAVA_HOME Is Nothing) Then
                     _JAVA_HOME = String.Empty
@@ -620,7 +620,7 @@ Namespace Apps
                 
                 ' Search Java in %JEDIT_HOME%\jre
                 If (JavaExe.IsEmptyOrWhiteSpace() AndAlso JEDIT_HOME.IsNotEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %JEDIT_HOME%\jre")
+                    Logger.LogDebug("GetJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %JEDIT_HOME%\jre")
                     _JAVA_HOME = JEDIT_HOME & "\jre"
                     fi = IO.FileUtils.FindFile(AppNames, _JAVA_HOME & "\bin", ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
@@ -633,14 +633,14 @@ Namespace Apps
                 
                 ' Search dafault Java in %PATH%
                 If (JavaExe.IsEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getJavaEnvironment(): Programmdatei der Java-Standardinstallation im Dateisystem suchen im %PATH%.")
+                    Logger.LogDebug("GetJavaEnvironment(): Programmdatei der Java-Standardinstallation im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.FindFile(AppNames, Environment.GetEnvironmentVariable("PATH"), ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 End if
                 
                 '' Search in %PROGRAMFILES%
                 'if (JavaExe.IsEmptyOrWhiteSpace()) Then
-                '    Logger.LogDebug("getJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %PROGRAMFILES%.")
+                '    Logger.LogDebug("GetJavaEnvironment(): Programmdatei von Java im Dateisystem suchen unter %PROGRAMFILES%.")
                 '    fi = IO.FileUtils.FindFile(AppNames, Environment.GetEnvironmentVariable("PROGRAMFILES"), ";", SearchOption.AllDirectories)
                 '    If (fi IsNot Nothing) Then JavaExe = fi.FullName
                 'end if
@@ -648,7 +648,7 @@ Namespace Apps
                 ' Result
                 If (JavaExe.IsEmptyOrWhiteSpace()) Then
                     _JAVA_HOME = String.Empty
-                    Logger.LogDebug("getJavaEnvironment(): Programmdatei von Java nicht gefunden.")
+                    Logger.LogDebug("GetJavaEnvironment(): Programmdatei von Java nicht gefunden.")
                 Else
                     _JAVA_HOME = IO.FileUtils.GetFilePart(JavaExe, IO.FileUtils.FilePart.Dir)
                     If (_JAVA_HOME.EndsWith("\bin", ignoreCase:=True, culture:= CultureInfo.InvariantCulture)) Then
@@ -656,8 +656,8 @@ Namespace Apps
                     ElseIf (_JAVA_HOME.EndsWith("\bin\", ignoreCase:=True, culture:= CultureInfo.InvariantCulture)) Then
                         _JAVA_HOME = _JAVA_HOME.Left(_JAVA_HOME.Length - 5)
                     End If
-                    Logger.LogDebug(StringUtils.Sprintf("getJavaEnvironment(): Programmdatei von Java gefunden: '%s'.", JavaExe))
-                    Logger.LogDebug(StringUtils.Sprintf("getJavaEnvironment(): _JAVA_HOME davon abgeleitet: '%s'.", _JAVA_HOME))
+                    Logger.LogDebug(StringUtils.Sprintf("GetJavaEnvironment(): Programmdatei von Java gefunden: '%s'.", JavaExe))
+                    Logger.LogDebug(StringUtils.Sprintf("GetJavaEnvironment(): _JAVA_HOME davon abgeleitet: '%s'.", _JAVA_HOME))
                 End if
                 
                 _AppPathJava = JavaExe
@@ -672,21 +672,21 @@ Namespace Apps
                 Dim fi            As FileInfo
                 Const JarName     As String = "jEdit.jar"
                 Dim Success       As Boolean = False
-                Logger.LogDebug("getJEditEnvironment(): Pfad\Dateiname von " & JarName & " ermitteln.")
+                Logger.LogDebug("GetJEditEnvironment(): Pfad\Dateiname von " & JarName & " ermitteln.")
                 
                 ' Search in %JEDIT_HOME%
                 _JEDIT_HOME = Environment.GetEnvironmentVariable("JEDIT_HOME")
                 If (_JEDIT_HOME Is Nothing) Then
                     _JEDIT_HOME = String.Empty
-                    Logger.LogDebug("getJEditEnvironment(): Umgebungsvariable %JEDIT_HOME% existiert nicht. => Suche weiter in Konfiguration")
+                    Logger.LogDebug("GetJEditEnvironment(): Umgebungsvariable %JEDIT_HOME% existiert nicht. => Suche weiter in Konfiguration")
                 Else
                     _JEDIT_HOME = _JEDIT_HOME.ReplaceWith("\\+$", "")
                     jEditJar = _JEDIT_HOME & "\" & JarName
                     If (File.Exists(jEditJar)) Then
                       Success = True
-                      Logger.LogDebug("getJEditEnvironment(): jEdit.jar gefunden im Verzeichnis der Umgebungsvariable %JEDIT_HOME%='" & _JEDIT_HOME & "'")
+                      Logger.LogDebug("GetJEditEnvironment(): jEdit.jar gefunden im Verzeichnis der Umgebungsvariable %JEDIT_HOME%='" & _JEDIT_HOME & "'")
                     Else
-                      Logger.LogDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %JEDIT_HOME%='" & _JEDIT_HOME & "'")
+                      Logger.LogDebug("GetJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %JEDIT_HOME%='" & _JEDIT_HOME & "'")
                     End If
                 End if
                 
@@ -697,7 +697,7 @@ Namespace Apps
                     If (File.Exists(jEditJar)) Then
                         Success = True
                     Else
-                        Logger.LogDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES%='" & jEditHome & "'")
+                        Logger.LogDebug("GetJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES%='" & jEditHome & "'")
                     End If
                 End if
                 
@@ -708,7 +708,7 @@ Namespace Apps
                     If (File.Exists(jEditJar)) Then
                         Success = True
                     Else
-                        Logger.LogDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES(X86)%='" & jEditHome & "'")
+                        Logger.LogDebug("GetJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMFILES(X86)%='" & jEditHome & "'")
                     End If
                 End if
                 
@@ -719,7 +719,7 @@ Namespace Apps
                     If (File.Exists(jEditJar)) Then
                         Success = True
                     Else
-                        Logger.LogDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMW6432%='" & jEditHome & "'")
+                        Logger.LogDebug("GetJEditEnvironment(): jEdit.jar nicht gefunden im Verzeichnis der Umgebungsvariable %PROGRAMW6432%='" & jEditHome & "'")
                     End If
                 End if
                 
@@ -730,13 +730,13 @@ Namespace Apps
                     If (File.Exists(jEditJar)) Then
                         Success = True
                     Else
-                        Logger.LogDebug("getJEditEnvironment(): jEdit.jar nicht gefunden im (hart kodierten) Verzeichnis '" & jEditHome & "'")
+                        Logger.LogDebug("GetJEditEnvironment(): jEdit.jar nicht gefunden im (hart kodierten) Verzeichnis '" & jEditHome & "'")
                     End If
                 End if
                 
                 ' Search in %PATH%
                 If (Not Success) Then
-                    Logger.LogDebug("getJEditEnvironment(): jEdit.jar im Dateisystem suchen im %PATH%.")
+                    Logger.LogDebug("GetJEditEnvironment(): jEdit.jar im Dateisystem suchen im %PATH%.")
                     fi = IO.FileUtils.FindFile(JarName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
                     If (fi IsNot Nothing) Then jEditJar = fi.FullName
                 End if
@@ -749,17 +749,17 @@ Namespace Apps
                 Else
                     _JEDIT_SETTINGS = _JEDIT_SETTINGS.ReplaceWith("\\+$", "")
                 End If
-                Logger.LogDebug("getJEditEnvironment(): Umgebungsvariable %JEDIT_SETTINGS%='" & _JEDIT_SETTINGS & "'")
+                Logger.LogDebug("GetJEditEnvironment(): Umgebungsvariable %JEDIT_SETTINGS%='" & _JEDIT_SETTINGS & "'")
                 
                 ' Result
                 If (Not Success) Then
                     _AppPathJEdit = String.Empty
                     _JEDIT_HOME   = String.Empty
-                    Logger.LogDebug("getJEditEnvironment(): Programmdatei von jEdit nicht gefunden.")
+                    Logger.LogDebug("GetJEditEnvironment(): Programmdatei von jEdit nicht gefunden.")
                 Else
                     _AppPathJEdit = jEditJar
                     _JEDIT_HOME   = IO.FileUtils.GetFilePart(jEditJar, IO.FileUtils.FilePart.Dir)
-                    Logger.LogDebug(StringUtils.Sprintf("getJEditEnvironment(): Programmdatei von jEdit gefunden: '%s'.", jEditJar))
+                    Logger.LogDebug(StringUtils.Sprintf("GetJEditEnvironment(): Programmdatei von jEdit gefunden: '%s'.", jEditJar))
                 End if
             End Sub
             
@@ -768,7 +768,7 @@ Namespace Apps
             Private Shared Function GetAvailableEditors() As Dictionary(Of SupportedEditors, EditorInfo)
                 Dim Arguments  As String
                 Dim Editors    As New Dictionary(Of SupportedEditors, EditorInfo)
-                Logger.LogDebug("getAvailableEditors(): Suche alle unterstützten Editoren...")
+                Logger.LogDebug("GetAvailableEditors(): Suche alle unterstützten Editoren...")
                 
                 ' UltraEdit.
                 If (AppPathUltraEdit.IsNotEmptyOrWhiteSpace()) Then
@@ -782,9 +782,9 @@ Namespace Apps
                 
                 ' jEdit.
                 If (AppPathJava.IsEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getAvailableEditors(): jEdit ist nicht verfügbar, weil Java nicht verfügbar ist.")
+                    Logger.LogDebug("GetAvailableEditors(): jEdit ist nicht verfügbar, weil Java nicht verfügbar ist.")
                 ElseIf (AppPathJEdit.IsEmptyOrWhiteSpace()) Then
-                    Logger.LogDebug("getAvailableEditors(): jEdit ist nicht verfügbar, weil jEdit.jar nicht gefunden wurde.")
+                    Logger.LogDebug("GetAvailableEditors(): jEdit ist nicht verfügbar, weil jEdit.jar nicht gefunden wurde.")
                 Else
                     ' Arguments: all for Java and basic for jEdit.
                     'Arguments = "-ms128m -mx1024m -Dawt.useSystemAAFontSettings=on -Dsun.java2d.noddraw=true -jar """ & AppPathJEdit & """ -reuseview -background "
@@ -793,7 +793,7 @@ Namespace Apps
                     ' Arguments: jEdit settings directory if needed.
                     if (JEDIT_SETTINGS.IsNotEmptyOrWhiteSpace()) Then
                         Arguments &= """-settings=" & JEDIT_SETTINGS & """ "
-                        Logger.LogDebug(StringUtils.Sprintf("getAvailableEditors(): Als jEdit-Einstellungsverzeichnis wird verwendet: '%s'.", JEDIT_SETTINGS))
+                        Logger.LogDebug(StringUtils.Sprintf("GetAvailableEditors(): Als jEdit-Einstellungsverzeichnis wird verwendet: '%s'.", JEDIT_SETTINGS))
                     End If
                     
                     Editors.Add(SupportedEditors.jEdit, New EditorInfo(SupportedEditors.jEdit.ToDisplayString(), AppPathJava, Arguments))
@@ -803,9 +803,9 @@ Namespace Apps
                 If (Editors.Count = 0) Then
                     Logger.LogWarning(Rstyx.Utilities.Resources.Messages.AppUtils_NoEditorAvailable)
                 Else
-                    Logger.LogDebug("getAvailableEditors(): Gefundene Editoren:")
+                    Logger.LogDebug("GetAvailableEditors(): Gefundene Editoren:")
                     For Each Editor As KeyValuePair(Of SupportedEditors, EditorInfo) In Editors
-                        Logger.LogDebug(StringUtils.Sprintf("getAvailableEditors(): - '%s'.", Editor.Value.DisplayName))
+                        Logger.LogDebug(StringUtils.Sprintf("GetAvailableEditors(): - '%s'.", Editor.Value.DisplayName))
                     Next
                 End If
                 

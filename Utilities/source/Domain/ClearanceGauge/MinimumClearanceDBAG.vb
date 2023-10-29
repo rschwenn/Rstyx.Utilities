@@ -23,7 +23,9 @@ Namespace Domain.ClearanceGauge
             Const HeightReserveTop  As Double = 0.050   ' Heihtening reserve at top.
             Const HeightReserveDown As Double = 0.010   ' Rails wearing and setting.
             
-            Private Shared MinBaseLine          As Polygon
+            Private Shared ReadOnly OHLCharacteristics  As Dictionary(Of ClearanceOptionalPart , OHLKeyData)
+            Private Shared ReadOnly MinBaseLine         As Polygon
+            
             Private Shared Table212i            As LinearTabFunction
             Private Shared Table212a            As LinearTabFunction
             Private Shared Table23aF0           As LinearTabFunction
@@ -35,13 +37,6 @@ Namespace Domain.ClearanceGauge
             Private Shared OHLTable22           As LinearTabFunction
             Private Shared Table23a             As Dictionary(Of RailFixing , LinearTabFunction)
             Private Shared Table23b             As Dictionary(Of RailFixing , LinearTabFunction)
-            Private Shared OHLCharacteristics   As Dictionary(Of ClearanceOptionalPart , OHLKeyData)
-            
-            Private Shared RHO                  As Double = 180 / PI
-            Private Shared T3i0                 As Double = Tan(0.2 / RHO)
-            Private Shared T3a0                 As Double = Tan(1.0 / RHO)
-            Private Shared T40                  As Double = Tan(1.0 / RHO) * 50 / 65
-            Private Shared T50                  As Double = Tan(1.0 / RHO) * 15 / 65
             
             Private IsMainOutlineValid          As Boolean = False
             Private IsOHLOutlineValid           As Boolean = False
@@ -543,9 +538,9 @@ Namespace Domain.ClearanceGauge
             Private Function InterpolPoint(P1 As MathPoint, P2 As MathPoint, X As Double) As MathPoint
                 
                 Dim Ratio As Double = (X - P1.X) / (P2.X - P1.X)
-                Dim Y     As Double = P1.Y + (Ratio * (P2.Y - P1.Y)) - MathPoint.Resolution / 10
-                
-                Return New MathPoint With {.X = X, .Y = Y}
+                Dim Y     As Double = P1.Y + (Ratio * (P2.Y - P1.Y)) - (MathPoint.Resolution / 10)
+
+            Return New MathPoint With {.X = X, .Y = Y}
             End Function
             
             ''' <summary> Calculates the accumulated delta according to EBO, appendix 3. </summary>
@@ -573,9 +568,9 @@ Namespace Domain.ClearanceGauge
              ''' <remarks></remarks>
             Private Function CalcOHL_Q(Point As MathPoint, PointHeightAboveHc As Double) As Double
                 
-                Dim RetValue As Double = 0.0
+                Dim RetValue As Double
                 
-                Dim oQ0 As Double = 0.0
+                Dim oQ0 As Double
                 If (Double.IsInfinity(Me.RailsConfig.Radius)) Then
                     oQ0 = If(Me.RailsConfig.IsPointInsideCant(Point), oQi0, oQa0)
                 Else
@@ -653,29 +648,6 @@ Namespace Domain.ClearanceGauge
                 Else
                     ' Tangent or outside of curve.
                     RetValue = Table23b(RailsConfig.Fixing).EvaluateFx(Point.Y)
-                End If
-                
-                Return RetValue
-            End Function
-            
-            ''' <summary> Calculates the delta according to EBO, appendix 2, Pt. 1.4, named "T" (Zufallsbedingte Verschiebung). </summary>
-             ''' <param name="Point">              A point in canted rails system. </param>
-             ''' <param name="IsPointAboveHc">     Determines whether or not the point is above hc (for performance). </param>
-             ''' <param name="PointHeightAboveHc"> The height of the point above hc (negative means under hc) (for performance). </param>
-             ''' <returns> The horizontal delta for <paramref name="Point"/><c>.X</c> </returns>
-             ''' <remarks></remarks>
-            Private Function Calc_T_OLD(Point As MathPoint, IsPointAboveHc As Boolean, PointHeightAboveHc As Double) As Double
-                
-                Dim RetValue As Double = 0.006
-                
-                If (IsPointAboveHc) Then
-                    Dim T2g As Double = Point.Y / 100
-                    Dim T2d As Double = PointHeightAboveHc * 0.004
-                    Dim T3  As Double = PointHeightAboveHc * If(Me.RailsConfig.IsPointInsideCurve(Point), T3i0, T3a0)
-                    Dim T4  As Double = PointHeightAboveHc * T40
-                    Dim T5  As Double = PointHeightAboveHc * T50
-                    
-                    RetValue = 1.2 * Sqrt( Pow(T2g + T2d, 2) + (T3 * T3) + (T4 * T4) + (T5 * T5) )
                 End If
                 
                 Return RetValue

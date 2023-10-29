@@ -63,10 +63,10 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.RailPair")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.RailPair")
             
-            Private Shared UnknownConfigurationRule As Cinch.SimpleRule
-            Private Shared SpeedToSmallRule         As Cinch.SimpleRule
+            Private Shared ReadOnly UnknownConfigurationRule As Cinch.SimpleRule
+            Private Shared ReadOnly SpeedToSmallRule         As Cinch.SimpleRule
             
             Private IsCantDeficiencyValid   As Boolean = False
             Private AbsRadius               As Double  = Double.NaN

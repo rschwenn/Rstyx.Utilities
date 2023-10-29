@@ -97,10 +97,7 @@ Imports System.IO
                 Catch ex As System.Exception
                     ' <exception cref="System.InvalidOperationException"> The OLEDB provider "Microsoft.Jet.OLEDB.4.0" isn't available. </exception>
                     ' Clean-up resources, then re-throw with remark message.
-                    If (DBconn IsNot Nothing) Then
-                        DBconn.Dispose()
-                        DBconn = Nothing
-                    End If
+                    DBconn?.Dispose()
                     Throw New RemarkException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_ConnectionToExcelWorkbookFailed, XlFilePath), ex)
                 End Try
             End Function

@@ -12,7 +12,7 @@ Namespace UI.Controls
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.Controls.FileChooser")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.Controls.FileChooser")
             
             ' Default dependency property values.
             Private Shared ChangesWorkingDirDefault     As Boolean = False
@@ -667,7 +667,7 @@ Namespace UI.Controls
             ''' <summary> Returns the ToolTip for the text box depending on current status. </summary>
             Private Shared Function GetTextBoxToolTip(FileChooserInstance As FileChooser) As String
                 
-                Dim ToolTip             As String  = String.Empty
+                Dim ToolTip             As String
                 Dim InputFileAbsolute   As String  = String.Empty
                 Dim OpenFile            As Boolean = (FileChooserInstance.FileMode = System.IO.FileMode.Open)
                 
@@ -686,7 +686,7 @@ Namespace UI.Controls
                         ToolTip = ToolTip & ": " & FileChooserInstance.FilePath
                     ElseIf (FileChooserInstance.InputFilePath.IsNotEmpty())
                         If (Not FileChooserInstance.IsValidFilePath) Then
-                            ToolTip = ToolTip & " ist kein gültiger Dateiname"
+                            ToolTip &= " ist kein gültiger Dateiname"
                         Else
                             ToolTip = ToolTip & " existiert nicht: " & InputFileAbsolute
                         End If
@@ -695,12 +695,12 @@ Namespace UI.Controls
                     ToolTip = "Zu schreibende Datei"
                     If (FileChooserInstance.FilePath.IsNotEmpty()) Then
                         If (Not FileChooserInstance.IsExistingFile) Then
-                            ToolTip = ToolTip & " existiert (noch) nicht"
+                            ToolTip &= " existiert (noch) nicht"
                         End If
                         ToolTip = ToolTip & ": " & FileChooserInstance.FilePath
                     ElseIf (Not FileChooserInstance.IsValidFilePath) Then
                         If (FileChooserInstance.InputFilePath.IsNotEmpty()) Then
-                            ToolTip = ToolTip & " ist kein gültiger Dateiname"
+                            ToolTip &= " ist kein gültiger Dateiname"
                         End If
                     End If
                 End If

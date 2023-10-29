@@ -162,9 +162,7 @@ Namespace UI.ViewModel
                                 Dim Command As System.Windows.Input.ICommand = CType(CommandProperty.GetValue(Me, Nothing), System.Windows.Input.ICommand)
                                 Dim CommandRaiseMethod As System.Reflection.MethodInfo = CommandProperty.PropertyType.GetMethod("RaiseCanExecuteChanged")
                                 
-                                If (CommandRaiseMethod IsNot Nothing) Then
-                                    CommandRaiseMethod.Invoke(Command, Nothing)
-                                End If
+                                CommandRaiseMethod?.Invoke(Command, Nothing)
                                 
                             Catch ex As Exception
                                 ' Gets here if CommandRaiseMethod is ambiguous.
@@ -423,7 +421,7 @@ Namespace UI.ViewModel
                 End Get
                 Set(value As String)
                     If (Not (value = _StatusTextDefault)) Then
-                        Dim forward As Boolean = ((Me.StatusText.IsEmptyOrWhiteSpace()) OrElse (Me.StatusText = _StatusTextDefault))
+                        Dim forward As Boolean = (Me.StatusText.IsEmptyOrWhiteSpace() OrElse (Me.StatusText = _StatusTextDefault))
                         _StatusTextDefault = value
                         If (forward) Then Me.StatusText = _StatusTextDefault
                     End if
@@ -461,7 +459,7 @@ Namespace UI.ViewModel
                 End Get
                 Set(value As String)
                     If (Not (value = _StatusTextToolTipDefault)) Then
-                        Dim forward As Boolean = ((Me.StatusTextToolTip.IsEmptyOrWhiteSpace()) OrElse (Me.StatusTextToolTip = _StatusTextToolTipDefault))
+                        Dim forward As Boolean = (Me.StatusTextToolTip.IsEmptyOrWhiteSpace() OrElse (Me.StatusTextToolTip = _StatusTextToolTipDefault))
                         _StatusTextToolTipDefault = value
                         If (forward) Then Me.StatusTextToolTip = _StatusTextToolTipDefault
                     End if

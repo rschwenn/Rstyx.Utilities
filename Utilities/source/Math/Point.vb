@@ -77,14 +77,14 @@ Namespace Math
                 
                 If (LineLength > (MathPoint.Resolution * 2) ) Then
 
-                    Dim FootPointPos    As Double = ( (Me.X - LineStart.X) * (LineEnd.X - LineStart.X)  +  (Me.Y - LineStart.Y) * (LineEnd.Y - LineStart.Y) ) / (LineLength * LineLength)
+                    Dim FootPointPos As Double = (((Me.X - LineStart.X) * (LineEnd.X - LineStart.X)) + ((Me.Y - LineStart.Y) * (LineEnd.Y - LineStart.Y))) / (LineLength * LineLength)
                     
                     If (FootPointPos.IsBetween(0 - MathPoint.Resolution, 1 + MathPoint.Resolution)) Then
                         
                         Dim FootPointX As Double = Interpol(LineStart.X, LineEnd.X, FootPointPos)
                         Dim FootPointY As Double = Interpol(LineStart.Y, LineEnd.Y, FootPointPos)
                         
-                        Distance = Sqrt( (FootPointX - Me.X) * (FootPointX - Me.X)  +  (FootPointY - Me.Y) * (FootPointY - Me.Y) )
+                        Distance = Sqrt(((FootPointX - Me.X) * (FootPointX - Me.X)) + ((FootPointY - Me.Y) * (FootPointY - Me.Y)))
                     End If
                 End If
                 
@@ -99,7 +99,7 @@ Namespace Math
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
-                Return Sqrt( (Me.Y - Pt.Y) * (Me.Y - Pt.Y)  +  (Me.X - Pt.X) * (Me.X - Pt.X)  +  (Me.Z - Pt.Z) * (Me.Z - Pt.Z) )
+                Return Sqrt(((Me.Y - Pt.Y) * (Me.Y - Pt.Y)) + ((Me.X - Pt.X) * (Me.X - Pt.X)) + ((Me.Z - Pt.Z) * (Me.Z - Pt.Z)))
             End Function
             
             ''' <summary> Calculates the distance to another point in XY plane. </summary>
@@ -110,7 +110,7 @@ Namespace Math
                 
                 If (Pt Is Nothing) Then Throw New System.ArgumentNullException("Pt")
                 
-                Return Sqrt( (Me.Y - Pt.Y) * (Me.Y - Pt.Y)  +  (Me.X - Pt.X) * (Me.X - Pt.X))
+                Return Sqrt(((Me.Y - Pt.Y) * (Me.Y - Pt.Y)) + ((Me.X - Pt.X) * (Me.X - Pt.X)))
             End Function
             
             ''' <summary> Checks this point for equality against a given point considering a given tolerance for each coordinate. </summary>
@@ -222,8 +222,8 @@ Namespace Math
         #Region "Private Methods"
             
             Private Shared Function Interpol(ValueA As Double, ValueB As Double, Ratio As Double) As Double
-                Return ValueA + (ValueB - ValueA) * Ratio
-            End Function
+                Return ValueA + ((ValueB - ValueA) * Ratio)
+        End Function
             
         #End Region
         

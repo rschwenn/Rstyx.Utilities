@@ -194,7 +194,7 @@ Namespace Math
                 Try
                     While (Not String.IsNullOrEmpty(Octal))
                         OneChar = Octal.Substring(0, 1)
-                        Dec = Dec * 8 + CInt(OneChar)
+                        Dec = (Dec * 8) + CInt(OneChar)
                         Octal = Octal.Substring(1)
                     End While
                 Catch ex As System.Exception

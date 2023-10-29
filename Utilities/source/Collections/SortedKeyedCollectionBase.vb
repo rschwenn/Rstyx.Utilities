@@ -30,7 +30,7 @@ Namespace Collections
         Implements System.Collections.Specialized.INotifyCollectionChanged
         Implements System.ComponentModel.INotifyPropertyChanged
         
-        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Collections.SortedKeyedCollectionBase")
+        Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Collections.SortedKeyedCollectionBase")
         
         Private _KeyComparer  As IComparer(Of TKey) = Nothing
         
@@ -81,7 +81,7 @@ Namespace Collections
                 ElseIf (Me.KeyComparer.Compare(NewItemKey, GetKeyForItem(Me.Item(Me.Count - 1))) > 0) Then
                     insertIndex = Me.Count
                 Else
-                    Dim PartitionMid   As Integer = 0
+                    Dim PartitionMid   As Integer
                     Dim PartitionBegin As Integer = 0
                     Dim PartitionEnd   As Integer = Me.Count - 1
                     

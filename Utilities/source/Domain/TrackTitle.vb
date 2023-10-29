@@ -9,7 +9,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.TrackTitle")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.TrackTitle")
             
         #End Region
         
@@ -91,7 +91,7 @@ Namespace Domain
                     Using oSR As New StreamReader(SourceFilePath, System.Text.Encoding.Default)
                         Do While (Not (oSR.EndOfStream Or TrackNoFound))
                             WorkLine = oSR.ReadLine()
-                            NR = NR + 1
+                            NR += 1
                             If (WorkLine.IsNotEmptyOrWhiteSpace()) Then
                                 FirstString = WorkLine.Trim().Left(4)
                                 If (CDbl(FirstString) = TrackNo) Then

@@ -96,8 +96,8 @@ Namespace Math
                             Dim xa  As Double = BasePoints(i).x
                             Dim Fxa As Double = BasePoints(i).Fx
                             
-                            RetValue = Fxa + (BasePoints(i + 1).Fx - Fxa)  *  (x - xa) / (BasePoints(i + 1).x - xa)
-                            Exit For
+                            RetValue = Fxa + ((BasePoints(i + 1).Fx - Fxa)  *  (x - xa) / (BasePoints(i + 1).x - xa))
+                        Exit For
                         End If
                     Next
                 End If

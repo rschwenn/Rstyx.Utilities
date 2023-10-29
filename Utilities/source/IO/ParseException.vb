@@ -14,7 +14,7 @@ Namespace IO
         
         #Region "Fields"
             
-            Private _ParseError As ParseError
+            Private ReadOnly _ParseError As ParseError
             
         #End Region
         

@@ -29,7 +29,7 @@ Namespace Collections
     Public Class AlphaNumericKmComparer
         Implements IComparer(Of String)
         
-        Private _IgnoreCase  As Boolean = True
+        Private ReadOnly _IgnoreCase  As Boolean = True
         
         #Region "Constructors"
             
@@ -215,7 +215,7 @@ Namespace Collections
                         'End If
                         
                         RetValue.HasKm      = True
-                        RetValue.KmValue    = SignTotal * (Abs(Kilometer) * 1000 + Meter)
+                        RetValue.KmValue    = SignTotal * ((Abs(Kilometer) * 1000) + Meter)
                         RetValue.StartIndex = oMatch.Index
                         RetValue.Length     = oMatch.Length
                     End If

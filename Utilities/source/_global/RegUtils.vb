@@ -7,7 +7,7 @@
         #Region "Private Fields"
             
             'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.RegUtils")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.RegUtils")
             
         #End Region
         
@@ -118,10 +118,10 @@
              ''' CAUTION: I.e. in case of basic numeric types a return value of "0" could mean both that this value has been read successfully or an error has been occured. 
              ''' </remarks>
             Public Shared Function GetValue(Of T)(ByVal ValuePathName As String) As T
-                Dim ValueO  As Object = Nothing
+                Dim ValueO  As Object
                 Dim ValueT  As T = Nothing
                 Try
-                    ValueO = getValue(ValuePathName)
+                    ValueO = GetValue(ValuePathName)
                     ValueT = CType(ValueO, T)
                 Catch ex As System.Exception
                     Logger.LogDebug("getValue(): Der Wert " & ValuePathName & " konnte nicht in den Typ " & GetType(T).ToString() & " konvertiert werden.")

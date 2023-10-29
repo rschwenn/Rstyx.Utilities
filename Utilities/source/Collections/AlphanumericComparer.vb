@@ -15,7 +15,7 @@ Namespace Collections
     Public Class AlphanumericComparer
         Implements IComparer(Of String)
         
-        Private _IgnoreCase  As Boolean = True
+        Private ReadOnly _IgnoreCase  As Boolean = True
         
         #Region "Constructors"
             

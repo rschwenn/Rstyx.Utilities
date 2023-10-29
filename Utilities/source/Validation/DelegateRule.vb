@@ -52,8 +52,8 @@ Namespace Validation
 		
 		#Region "Private Fields"
 		    
-		    Private _DefaultBrokenDescription As String = Nothing
-		    Private _CurentBrokenDescription  As String = Nothing
+		    Private ReadOnly _DefaultBrokenDescription  As String = Nothing
+		    Private _CurentBrokenDescription            As String = Nothing
 		    
 		#End Region
 		

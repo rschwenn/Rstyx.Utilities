@@ -34,7 +34,7 @@ Namespace Collections
         
         #Region "Private Fields"
             
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.IDCollection")
+            'Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.IDCollection")
             
         #End Region
         

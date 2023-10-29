@@ -38,27 +38,27 @@ Namespace IO.CSV
             ''' <summary>
             ''' Contains the message that describes the error.
             ''' </summary>
-            Private _message As String
+            Private ReadOnly _message As String
             
             ''' <summary>
             ''' Contains the raw data when the error occured.
             ''' </summary>
-            Private _rawData As String
+            Private ReadOnly _rawData As String
             
             ''' <summary>
             ''' Contains the current field index.
             ''' </summary>
-            Private _currentFieldIndex As Integer
+            Private ReadOnly _currentFieldIndex As Integer
             
             ''' <summary>
             ''' Contains the current record index.
             ''' </summary>
-            Private _currentRecordIndex As Long
+            Private ReadOnly _currentRecordIndex As Long
             
             ''' <summary>
             ''' Contains the current position in the raw data.
             ''' </summary>
-            Private _currentPosition As Integer
+            Private ReadOnly _currentPosition As Integer
             
         #End Region
         

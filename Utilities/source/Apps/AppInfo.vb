@@ -6,9 +6,9 @@ Namespace Apps
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Apps.AppInfo")
+            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Apps.AppInfo")
             
-            Private _Assembly           As System.Reflection.Assembly = Nothing
+            Private ReadOnly _Assembly  As System.Reflection.Assembly = Nothing
             Private _AssemblyName       As System.Reflection.AssemblyName = Nothing
             
             Private _Title              As String = Nothing

@@ -440,8 +440,8 @@ Namespace Domain
                         Dim SignM      As Integer = If(InStr(MiddleSign, "-") > 0, -1, 1)
                         Dim SignTotal  As Integer = If(((SignM = -1) Or (SignKm = -1)), -1, 1)
                         
-                        _Value    =  SignTotal * (Abs(Kilometer) * 1000 + Meter)
-                        _TDBValue = (SignTotal * (Abs(Kilometer) * 100000 + Meter)) + 100000000
+                        _Value    =  SignTotal * ((Abs(Kilometer) * 1000) + Meter)
+                        _TDBValue = (SignTotal * ((Abs(Kilometer) * 100000) + Meter)) + 100000000
                         
                         If (Meter >= 100) Then
                             _Status = KilometerStatus.SkipIncoming

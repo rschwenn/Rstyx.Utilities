@@ -14,7 +14,7 @@ Namespace UI.Binding.Converters
     Public Class CultureInfoConverter
         Implements IValueConverter
         
-        Private NativeName2CultureInfo  As New Dictionary(Of String, CultureInfo)
+        Private ReadOnly NativeName2CultureInfo  As New Dictionary(Of String, CultureInfo)
         
         Public Sub New()
         End Sub

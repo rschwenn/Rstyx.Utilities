@@ -618,7 +618,7 @@ Namespace Domain
                             If (oMatch.Groups(1).Success) Then
                                 Dim iTC_MarkTypeAB As String = oMatch.Groups(1).Value
                                 
-                                If ((Me.MarkTypeAB.IsNotEmptyOrWhiteSpace()) AndAlso (Me.MarkTypeAB <> iTC_MarkTypeAB)) Then
+                                If (Me.MarkTypeAB.IsNotEmptyOrWhiteSpace() AndAlso (Me.MarkTypeAB <> iTC_MarkTypeAB)) Then
                                     RetValue.HasConflict = True
                                     RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkTypeAB, Me.ID, Me.MarkTypeAB, iTC_MarkTypeAB)
                                     RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC

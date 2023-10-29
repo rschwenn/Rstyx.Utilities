@@ -216,9 +216,7 @@ Namespace UI.ViewModel
                                 End If
                                 
                                 ' Invoke the handler.
-                                If (Dispatcher IsNot Nothing) Then
-                                    Dispatcher.BeginInvoke(Handler, sender, e)
-                                End If
+                                Dispatcher?.BeginInvoke(Handler, sender, e)
                             End If
                         Next
                     Catch ex As System.Exception
@@ -447,9 +445,7 @@ Namespace UI.ViewModel
             ''' <summary> Requests cancellation of running task. </summary>
             Private Sub CancelTask()
                 Try
-                    If (CmdTaskCancelTokenSource IsNot Nothing) Then
-                        CmdTaskCancelTokenSource.Cancel()
-                    End If
+                    CmdTaskCancelTokenSource?.Cancel()
                 Catch ex As System.Exception
                     Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorCancellingTask)
                 End Try

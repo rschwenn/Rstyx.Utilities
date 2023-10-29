@@ -6,7 +6,7 @@ Namespace UI
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UIUtils")
+            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UIUtils")
             
             Private Shared ReadOnly SyncHandle As New Object()
             

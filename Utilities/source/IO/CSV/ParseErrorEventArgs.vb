@@ -33,7 +33,7 @@ Namespace IO.CSV
             ''' <summary>
             ''' Contains the error that occured.
             ''' </summary>
-            Private _error As MalformedCsvException
+            Private ReadOnly _error As MalformedCsvException
             
             ''' <summary>
             ''' Contains the action to take.

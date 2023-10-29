@@ -282,11 +282,11 @@ Namespace IO
                 Const DefaultString      As String               = ""
                 Const DefaultInteger     As Integer              = 0
                 Const DefaultLong        As Long                 = 0
-                Dim   DefaultNullInteger As Nullable(Of Integer) = Nothing
-                Dim   DefaultNullLong    As Nullable(Of Long)    = Nothing
                 Const DefaultDouble      As Double               = Double.NaN
                 Dim   DefaultKilometer   As Kilometer            = New Kilometer()
                 Dim   DefaultEnum        As TFieldValue          = Nothing
+                'Dim   DefaultNullInteger As Nullable(Of Integer) = Nothing
+                'Dim   DefaultNullLong    As Nullable(Of Long)    = Nothing
                 
                 ' Special Enum defaults.
                 If (TargetType.IsEnum) Then
@@ -548,7 +548,6 @@ Namespace IO
                         Case TypeKilometer
                             
                             Dim FieldKilometer  As Kilometer = New Kilometer()
-                            Dim AllowedStyles   As NumberStyles = NumberStyles.Float
                             
                             ' Remove asterisks.
                             If (OptionIgnoreLeadingAsterisks) Then
@@ -648,7 +647,7 @@ Namespace IO
                     
                     IsEmpty = False
                     
-                    If ((LineStartCommentToken IsNot Nothing) AndAlso (TextLine.StartsWith(LineStartCommentToken, System.StringComparison.Ordinal))) Then
+                    If ((LineStartCommentToken IsNot Nothing) AndAlso TextLine.StartsWith(LineStartCommentToken, System.StringComparison.Ordinal)) Then
                         ' TextLine starts with comment token.
                         IsCommentLine = True
                         
@@ -662,7 +661,7 @@ Namespace IO
                             'End If
                         End If
                         
-                    ElseIf ((LineEndCommentToken IsNot Nothing) AndAlso (TextLine.Contains(LineEndCommentToken))) Then
+                    ElseIf ((LineEndCommentToken IsNot Nothing) AndAlso TextLine.Contains(LineEndCommentToken)) Then
                         ' TextLine contains comment token.
                         Dim LocalData As String = TextLine.Left(LineEndCommentToken, IncludeDelimiter:=False)
                         Dim LocalComm As String = TextLine.Right(LineEndCommentToken, IncludeDelimiter:=False)

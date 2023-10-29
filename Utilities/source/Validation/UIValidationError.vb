@@ -7,10 +7,10 @@ Namespace Validation
     
     #Region "Declarations"
     
-        Private _DataItemName As String
-        Private _ErrorMessage As String
-        Private _PropertyName As String
-        Private _Label        As String
+        Private ReadOnly _DataItemName As String
+        Private ReadOnly _ErrorMessage As String
+        Private ReadOnly _PropertyName As String
+        Private ReadOnly _Label        As String
     
     #End Region
     

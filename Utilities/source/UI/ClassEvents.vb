@@ -10,9 +10,9 @@ Namespace UI
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.ClassEvents")
+            Private Shared ReadOnly Logger      As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.ClassEvents")
             
-            Private Shared ReadOnly SyncHandle As New Object()
+            Private Shared ReadOnly SyncHandle  As New Object()
             
         #End Region
         
