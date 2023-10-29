@@ -83,7 +83,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.Kilometer")
+            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.Kilometer")
             
         #End Region
         
@@ -161,7 +161,7 @@ Namespace Domain
                 If (KilometerString.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("KilometerString")
                 
                 If (Not TryParse(KilometerString)) Then
-                    Throw New System.ArgumentException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Kilometer_InvalidKilometerNotation, KilometerString), "KilometerString")
+                    Throw New System.ArgumentException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Kilometer_InvalidKilometerNotation, KilometerString), "KilometerString")
                 End If
             End Sub
             
@@ -293,8 +293,8 @@ Namespace Domain
                     End If
                     
                     ' Format without blanks.
-                    Part1 = StringUtils.sprintf("%.1f", HektoMeter / 10)
-                    Part2 = StringUtils.sprintf("%+." & Precision & "f", Meter)
+                    Part1 = StringUtils.Sprintf("%.1f", HektoMeter / 10)
+                    Part2 = StringUtils.Sprintf("%+." & Precision & "f", Meter)
                     
                     ' Insert blanks and maybe prefix for meters.
                     If (_Value >= 0) Then
@@ -341,7 +341,7 @@ Namespace Domain
 
                 If (RetValue.IsNotEmptyOrWhiteSpace()) Then
                     If ((Not Double.IsNaN(_SD)) AndAlso (_SD >= 0.0) ) Then
-                        RetValue += StringUtils.sprintf(" (±%." & CStr(Precision) & "f)", _SD)
+                        RetValue += StringUtils.Sprintf(" (±%." & CStr(Precision) & "f)", _SD)
                     End If
                 End If
 

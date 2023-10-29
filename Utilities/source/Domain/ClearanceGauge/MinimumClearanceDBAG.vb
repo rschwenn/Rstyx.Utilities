@@ -14,7 +14,7 @@ Namespace Domain.ClearanceGauge
         
         #Region "Private Fields"
             
-            'Private Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.ClearanceGauge.MinimumClearanceDBAG")
+            'Private Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.ClearanceGauge.MinimumClearanceDBAG")
             
             Const S0    As Double  = 0.005   ' Influence of track gauge widening / deviation. Corresponds to EBO appendix 2 table 2.1.1 (gauge = 1.445).
             Const hc    As Double  = 0.500   ' Wankpolhöhe.

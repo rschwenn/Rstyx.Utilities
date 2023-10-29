@@ -123,7 +123,7 @@ Namespace Math
         
         #Region "Private Fields"
             
-            'Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.GeoMath")
+            'Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.GeoMath")
             
         #End Region
         

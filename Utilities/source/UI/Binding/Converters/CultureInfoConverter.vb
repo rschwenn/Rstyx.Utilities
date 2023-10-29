@@ -52,7 +52,7 @@ Namespace UI.Binding.Converters
                     If (valueType.IsGenericType) Then
                         Dim retList As New List(Of String)
                         For Each ci As CultureInfo In DirectCast(value, List(Of CultureInfo))
-                            retList.add(CultureInfo2Name(ci))
+                            retList.Add(CultureInfo2Name(ci))
                         Next
                         ret = retList
                     Else

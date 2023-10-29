@@ -114,7 +114,7 @@ Namespace Collections
                 Try
                     RaiseEvent CollectionChanged(Me, New System.Collections.Specialized.NotifyCollectionChangedEventArgs(ChangeType))
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                 End Try
             End Sub
             
@@ -132,7 +132,7 @@ Namespace Collections
                 Try
                     RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                 End Try
             End Sub
             

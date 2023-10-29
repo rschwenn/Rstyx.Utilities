@@ -10,7 +10,7 @@ Namespace UI
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.ClassEvents")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.ClassEvents")
             
             Private Shared ReadOnly SyncHandle As New Object()
             
@@ -57,7 +57,7 @@ Namespace UI
 	                    CType(sender, TextBox).SelectAll()
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
 	        End Sub
             

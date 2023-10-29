@@ -15,8 +15,8 @@ Namespace IO
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Files.FileUtils")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Files.FileUtils")
             
         #End Region
         
@@ -44,17 +44,17 @@ Namespace IO
                                             ByVal DelimiterRegEx As String,
                                             SearchOptions  As System.IO.SearchOption
                                             ) As FileInfo
-                Logger.logDebug(StringUtils.sprintf("findFile(): FileFilter: '%s', Verzeichnisse: '%s'.", FileFilters, Folders))
+                Logger.LogDebug(StringUtils.Sprintf("findFile(): FileFilter: '%s', Verzeichnisse: '%s'.", FileFilters, Folders))
                 Dim foundFile   As FileInfo = Nothing
                 
                 Dim FoundFiles  As FileInfoCollection = findFiles(FileFilters, Folders, DelimiterRegEx, SearchOptions, OnlyOneFile:=True)
                 
                 ' Result
                 If (FoundFiles.Count < 1) Then
-                    Logger.logDebug("findFile(): keine Datei gefunden!")
+                    Logger.LogDebug("findFile(): keine Datei gefunden!")
                 Else
                     foundFile = FoundFiles(0)
-                    Logger.logDebug(StringUtils.sprintf("findFile(): Datei gefunden: '%s'.", foundFile.FullName))
+                    Logger.LogDebug(StringUtils.Sprintf("findFile(): Datei gefunden: '%s'.", foundFile.FullName))
                 End If
                 
                 Return foundFile
@@ -134,26 +134,26 @@ Namespace IO
                 Dim oStopwatch  As System.Diagnostics.Stopwatch = System.Diagnostics.Stopwatch.StartNew()
                 
                 ' Log Arguments
-                Logger.logDebug("\nfindFiles(): Start search with these settings:")
-                Logger.logDebug(StringUtils.sprintf("findFiles(): - Only one file:     %s", OnlyOneFile))
-                Logger.logDebug(StringUtils.sprintf("findFiles(): - Options:           %s", SearchOptions.ToString()))
+                Logger.LogDebug("\nfindFiles(): Start search with these settings:")
+                Logger.LogDebug(StringUtils.Sprintf("findFiles(): - Only one file:     %s", OnlyOneFile))
+                Logger.LogDebug(StringUtils.Sprintf("findFiles(): - Options:           %s", SearchOptions.ToString()))
                 
-                Logger.logDebug(StringUtils.sprintf("findFiles(): - FileFilters (%d):", FileFilters.Count))
+                Logger.LogDebug(StringUtils.Sprintf("findFiles(): - FileFilters (%d):", FileFilters.Count))
                 For Each FileFilter As String in FileFilters
-                    Logger.logDebug(StringUtils.sprintf("findFiles():   - FileFilter:      %s", FileFilter))
+                    Logger.LogDebug(StringUtils.Sprintf("findFiles():   - FileFilter:      %s", FileFilter))
                 Next
                 
-                Logger.logDebug(StringUtils.sprintf("findFiles(): - Folders (%d):", Folders.Count))
+                Logger.LogDebug(StringUtils.Sprintf("findFiles(): - Folders (%d):", Folders.Count))
                 For Each Folder As String in Folders
-                    Logger.logDebug(StringUtils.sprintf("findFiles():   - Folder:          %s", Folder))
+                    Logger.LogDebug(StringUtils.Sprintf("findFiles():   - Folder:          %s", Folder))
                 Next
-                Logger.logDebug("")
+                Logger.LogDebug("")
                 
                 ' Find Files.
                 findAddFiles(FoundFiles, FileFilters, Folders, SearchOptions, OnlyOneFile)
                 
                 oStopwatch.Stop()
-                Logger.logDebug(StringUtils.sprintf("\nfindFiles(): Found %d files (in %.3f sec.)\n", FoundFiles.Count, oStopwatch.ElapsedMilliseconds/1000))
+                Logger.LogDebug(StringUtils.Sprintf("\nfindFiles(): Found %d files (in %.3f sec.)\n", FoundFiles.Count, oStopwatch.ElapsedMilliseconds/1000))
                 
                 Return FoundFiles
             End Function
@@ -184,11 +184,11 @@ Namespace IO
                     FileFilter = FileFilter.Trim()
                     
                     If (FileFilter.IsEmptyOrWhiteSpace()) Then
-                        Logger.logDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFileFilter)
+                        Logger.LogDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFileFilter)
                     ElseIf (Not isValidFileNameFilter(FileFilter)) Then
-                        Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFileFilter, FileFilter))
+                        Logger.LogWarning(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFileFilter, FileFilter))
                     ElseIf (ConsolidatedFileFilters.Contains(FileFilter)) Then
-                        Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFileFilter, FileFilter))
+                        Logger.LogDebug(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFileFilter, FileFilter))
                     Else
                         ConsolidatedFileFilters.Add(FileFilter)
                     End If
@@ -202,20 +202,20 @@ Namespace IO
                     
                     If (Not Directory.Exists(FolderName)) Then
                         If (FolderName.IsEmptyOrWhiteSpace()) Then
-                            Logger.logDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFolderName)
+                            Logger.LogDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFolderName)
                         ElseIf (Not isValidFilePath(FolderName)) Then
-                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFolderName, FolderName))
+                            Logger.LogWarning(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFolderName, FolderName))
                         Else
-                            Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchFolderNotFound, FolderName, Directory.GetCurrentDirectory()))
+                            Logger.LogDebug(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchFolderNotFound, FolderName, Directory.GetCurrentDirectory()))
                         End If 
                     ElseIf (ConsolidatedFolders.Contains(FolderName)) Then
-                        Logger.logDebug(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFolderName, FolderName))
+                        Logger.LogDebug(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFolderName, FolderName))
                     Else
                         ConsolidatedFolders.Add(FolderName)
                     End If
                 Next
                 If (ConsolidatedFolders.Count < 1) Then
-                    Logger.logDebug(Rstyx.Utilities.Resources.Messages.FileUtils_NoExistentFolderName)
+                    Logger.LogDebug(Rstyx.Utilities.Resources.Messages.FileUtils_NoExistentFolderName)
                 End If
                 
                 ' Search each folder of given folder list.
@@ -225,7 +225,7 @@ Namespace IO
                     Dim SearchFinished  As Boolean = False
                     
                     Dim SearchDir As DirectoryInfo = New DirectoryInfo(FolderName)
-                    Logger.logDebug(StringUtils.sprintf("\nfindAddFiles(): Suche in Verzeichnis: '%s'.", Path.GetFullPath(FolderName)))
+                    Logger.LogDebug(StringUtils.Sprintf("\nfindAddFiles(): Suche in Verzeichnis: '%s'.", Path.GetFullPath(FolderName)))
                     
                     ' Search files of current folder.
                     For Each FileFilter As String in ConsolidatedFileFilters
@@ -236,7 +236,7 @@ Namespace IO
                             For Each fi As FileInfo in Files
                                 If (Not FoundFiles.Contains(fi)) Then
                                     FoundFiles.Add(fi)
-                                    Logger.logDebug(StringUtils.sprintf("findAddFiles(): %6d. Datei gefunden:   '%s'", FoundFiles.Count, FoundFiles(FoundFiles.Count - 1).FullName))
+                                    Logger.LogDebug(StringUtils.Sprintf("findAddFiles(): %6d. Datei gefunden:   '%s'", FoundFiles.Count, FoundFiles(FoundFiles.Count - 1).FullName))
                                     If (OnlyOneFile) Then
                                         SearchFinished = True
                                         Exit For
@@ -245,13 +245,13 @@ Namespace IO
                             Next
                             
                         Catch ex as System.Security.SecurityException
-                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): SecurityException at processing files of %s.", FolderName))
+                            Logger.LogDebug(StringUtils.Sprintf("findAddFiles(): SecurityException at processing files of %s.", FolderName))
                             
                         Catch ex as System.UnauthorizedAccessException
-                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): UnauthorizedAccessException at processing files of %s.", FolderName))
+                            Logger.LogDebug(StringUtils.Sprintf("findAddFiles(): UnauthorizedAccessException at processing files of %s.", FolderName))
                             
                         Catch ex as System.Exception
-                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorProcessingFolder, FolderName))
+                            Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorProcessingFolder, FolderName))
                         End Try
                         
                         If (SearchFinished) Then Exit For
@@ -274,13 +274,13 @@ Namespace IO
                             End If 
                             
                         Catch ex as System.Security.SecurityException
-                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): SecurityException at processing subfolders of %s.", FolderName))
+                            Logger.LogDebug(StringUtils.Sprintf("findAddFiles(): SecurityException at processing subfolders of %s.", FolderName))
                             
                         Catch ex as System.UnauthorizedAccessException
-                            Logger.logDebug(StringUtils.sprintf("findAddFiles(): UnauthorizedAccessException at processing subfolders of %s.", FolderName))
+                            Logger.LogDebug(StringUtils.Sprintf("findAddFiles(): UnauthorizedAccessException at processing subfolders of %s.", FolderName))
                             
                         Catch ex as System.Exception
-                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorProcessingSubFolders, FolderName))
+                            Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorProcessingSubFolders, FolderName))
                         End Try
                     End If
                         
@@ -337,8 +337,8 @@ Namespace IO
                     
                     givenFilename = givenFilename.Replace("""", "")
                     
-                    Logger.logDebug(StringUtils.sprintf("getFilePart(): gesuchter Namensteil: %s.", desiredFilePart.ToDisplayString()))
-                    Logger.logDebug(StringUtils.sprintf("getFilePart(): gegeben : %s.", givenFilename))
+                    Logger.LogDebug(StringUtils.Sprintf("getFilePart(): gesuchter Namensteil: %s.", desiredFilePart.ToDisplayString()))
+                    Logger.LogDebug(StringUtils.Sprintf("getFilePart(): gegeben : %s.", givenFilename))
                     
                     If (givenFilename.IsNotEmptyOrWhiteSpace()) Then
                         
@@ -361,8 +361,8 @@ Namespace IO
                         
                         If (BaseName.Length > (ProjectLength + ClassLength)) Then
                             ProjectLength = BaseName.Length - ClassLength
-                            ProjectName   = BaseName.left(ProjectLength)
-                            DgnClass      = BaseName.right(ClassLength)
+                            ProjectName   = BaseName.Left(ProjectLength)
+                            DgnClass      = BaseName.Right(ClassLength)
                         End If
                       
                       'Debug-Message
@@ -375,7 +375,7 @@ Namespace IO
                               "getFilePart(): Extension    = " & Extension     & vbNewLine & _
                               "getFilePart(): ProjectName  = " & ProjectName   & vbNewLine & _
                               "getFilePart(): DgnClass     = " & DgnClass
-                        'Logger.logDebug(msg)
+                        'Logger.LogDebug(msg)
                       
                       'Ergebnis zusammenstellen
                         Select Case desiredFilePart
@@ -391,21 +391,21 @@ Namespace IO
                             Case FilePart.Dir_Proj:      extractedFilePart = ParentFolder & Path.DirectorySeparatorChar & ProjectName
                             Case Else
                                 extractedFilePart = ""
-                                Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_InvalidFilepartEnumValue, desiredFilePart.ToDisplayString()))
+                                Logger.LogError(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_InvalidFilepartEnumValue, desiredFilePart.ToDisplayString()))
                         End Select
                         
                     End If
                 Catch ex As System.NotSupportedException
-                    Logger.logDebug("getFilePart(): Der gegebene Pfad ist ungültig")
+                    Logger.LogDebug("getFilePart(): Der gegebene Pfad ist ungültig")
                     
                 Catch ex As System.ArgumentException
-                    Logger.logDebug("getFilePart(): Der gegebene Pfad ist ungültig")
+                    Logger.LogDebug("getFilePart(): Der gegebene Pfad ist ungültig")
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 
-                Logger.logDebug(StringUtils.sprintf("getFilePart(): Ergebnis: %s.", extractedFilePart))
+                Logger.LogDebug(StringUtils.Sprintf("getFilePart(): Ergebnis: %s.", extractedFilePart))
                 
                 Return extractedFilePart
             End Function
@@ -503,7 +503,7 @@ Namespace IO
                 
                 ' Throw exception if not successful.
                 If (Not isValidFileName(FileName)) Then
-                    Throw New System.FormatException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFileName, FileName))
+                    Throw New System.FormatException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFileName, FileName))
                 End If
                 
                 Return FileName
@@ -543,14 +543,14 @@ Namespace IO
                     Next
                     ' Re-throw if not successful.
                     If (Not isValidFilePath(FilePath)) Then
-                        Throw New System.FormatException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
+                        Throw New System.FormatException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
                     End If
                     
                 'Catch e As System.UnauthorizedAccessException
                     ' Access denied
                     
                 Catch e As System.IO.PathTooLongException
-                    Throw New System.IO.PathTooLongException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_PathTooLong, FilePath), e)
+                    Throw New System.IO.PathTooLongException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_PathTooLong, FilePath), e)
                     
                 Catch e As System.NotSupportedException
                     ' FilePath contains a colon (:) outside drive letter
@@ -562,7 +562,7 @@ Namespace IO
                     End If
                     ' Re-throw if not successful.
                     If (Not isValidFilePath(FilePath)) Then
-                        Throw New System.FormatException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
+                        Throw New System.FormatException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
                     End If
                 End Try
                 

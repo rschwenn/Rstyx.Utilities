@@ -10,7 +10,7 @@ Imports System.IO
         
         #Region "Private Fields"
             
-            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.DBUtils")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.DBUtils")
             
         #End Region
         
@@ -59,7 +59,7 @@ Imports System.IO
              ''' </remarks>
             Public Shared Function ConnectToExcelWorkbook(byVal XlFilePath As String) As OleDbConnection
                 
-                Logger.logDebug(StringUtils.sprintf("connectToExcelWorkbook(): Try to establish DB conection to Excel workbook '%s'.", XlFilePath))
+                Logger.LogDebug(StringUtils.Sprintf("connectToExcelWorkbook(): Try to establish DB conection to Excel workbook '%s'.", XlFilePath))
                 
                 If (Not File.Exists(XlFilePath)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.DBUtils_ExcelWorkbookNotFound, XlFilePath)
                 
@@ -82,13 +82,13 @@ Imports System.IO
                     DBconn.Open()
                     
                     ' Debug.
-                    Logger.logDebug(StringUtils.sprintf("connectToExcelWorkbook(): Established DB conection status = '%s'.", DBconn.State.ToString()))
+                    Logger.LogDebug(StringUtils.Sprintf("connectToExcelWorkbook(): Established DB conection status = '%s'.", DBconn.State.ToString()))
                     
                     If (DBconn.State = ConnectionState.Open) Then
                         Dim TableInfo As DataTable = DBconn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, New Object() {Nothing, Nothing, Nothing, "TABLE"})
-                        Logger.logDebug(StringUtils.sprintf("%d Tables found:", TableInfo.Rows.Count))
+                        Logger.LogDebug(StringUtils.Sprintf("%d Tables found:", TableInfo.Rows.Count))
                         For Each Row As DataRow In TableInfo.Rows
-                            Logger.logDebug(StringUtils.sprintf("- %s", Row("TABLE_NAME")))
+                            Logger.LogDebug(StringUtils.Sprintf("- %s", Row("TABLE_NAME")))
                         Next
                     End if
                     
@@ -101,7 +101,7 @@ Imports System.IO
                         DBconn.Dispose()
                         DBconn = Nothing
                     End If
-                    Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_ConnectionToExcelWorkbookFailed, XlFilePath), ex)
+                    Throw New RemarkException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_ConnectionToExcelWorkbookFailed, XlFilePath), ex)
                 End Try
             End Function
             
@@ -119,7 +119,7 @@ Imports System.IO
                 Try
                     TableName  = TableName.ReplaceWith("^\[", "").ReplaceWith("\$?\]?$", "")
                     TableName &= "$"
-                    Logger.logDebug(StringUtils.sprintf("getExcelSheet(): Try to get table '%s' from Excel workbook '%s'.", TableName, XlFilePath))
+                    Logger.LogDebug(StringUtils.Sprintf("getExcelSheet(): Try to get table '%s' from Excel workbook '%s'.", TableName, XlFilePath))
                     
                     Using XLconn As OleDbConnection = ConnectToExcelWorkbook(XlFilePath)
                         Return XLconn.GetTable(TableName)
@@ -127,7 +127,7 @@ Imports System.IO
                     
                 Catch ex As System.Exception
                     ' <exception cref="System.InvalidOperationException"> The OLEDB provider "Microsoft.Jet.OLEDB.4.0" isn't available. </exception>
-                    Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_OpenExcelWorksheetFailed, TableName, XlFilePath), ex)
+                    Throw New RemarkException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_OpenExcelWorksheetFailed, TableName, XlFilePath), ex)
                 End Try
             End Function
             
@@ -153,13 +153,13 @@ Imports System.IO
                 Dim success             As Boolean
                 
                 ' Jet/Excel setting: Check all lines in order to determine a column's data type.
-                success = (RegUtils.getValue(ValuePathName) IsNot Nothing)
+                success = (RegUtils.GetValue(ValuePathName) IsNot Nothing)
                 If (success) Then
-                    success = (RegUtils.getValue(Of Integer)(ValuePathName) = TypeGuessRows)
+                    success = (RegUtils.GetValue(Of Integer)(ValuePathName) = TypeGuessRows)
                 End If
                 
                 If (Not success) Then
-                    Microsoft.Win32.Registry.SetValue(RegUtils.getKeyPathName(ValuePathName), RegUtils.getValueName(ValuePathName), TypeGuessRows, Microsoft.Win32.RegistryValueKind.DWord)
+                    Microsoft.Win32.Registry.SetValue(RegUtils.GetKeyPathName(ValuePathName), RegUtils.GetValueName(ValuePathName), TypeGuessRows, Microsoft.Win32.RegistryValueKind.DWord)
                 End If
             End Sub
             
@@ -172,7 +172,7 @@ Imports System.IO
         
         #Region "Private Fields"
             
-            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.DBExtensions")
+            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.DBExtensions")
             
         #End Region
         
@@ -190,11 +190,11 @@ Imports System.IO
                 If (Table Is Nothing) Then Throw New System.ArgumentNullException("Table")
                 If (FieldName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FieldName")
                 
-                Logger.logDebug(StringUtils.sprintf("containsField(): Checks presence of field '%s' in table '%s'.", FieldName, Table.TableName))
+                Logger.LogDebug(StringUtils.Sprintf("containsField(): Checks presence of field '%s' in table '%s'.", FieldName, Table.TableName))
                 
                 Dim success  As Boolean = Table.Columns.Contains(FieldName)
                 
-                Logger.logDebug(StringUtils.sprintf("containsField(): Found field '%s' in table '%s'.", FieldName, Table.TableName))
+                Logger.LogDebug(StringUtils.Sprintf("containsField(): Found field '%s' in table '%s'.", FieldName, Table.TableName))
                 
                 Return success
             End Function
@@ -212,7 +212,7 @@ Imports System.IO
                 If (FieldName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("FieldName")
                 
                 If (Not Table.ContainsField(FieldName)) Then
-                    Throw New RemarkException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_FieldNotFoundInTable, FieldName, Table.TableName))
+                    Throw New RemarkException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.DBUtils_FieldNotFoundInTable, FieldName, Table.TableName))
                 End If
             End Sub
             
@@ -233,7 +233,7 @@ Imports System.IO
                 If (DBConn Is Nothing) Then Throw New System.ArgumentNullException("DBConn")
                 If (TableName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TableName")
                 
-                Logger.logDebug(StringUtils.sprintf("getTable(): Try to get table '%s' from OleDbConnection.", TableName))
+                Logger.LogDebug(StringUtils.Sprintf("getTable(): Try to get table '%s' from OleDbConnection.", TableName))
                 
                 Using DBcmd As OleDbCommand = New OleDbCommand(TableName, DBconn)
                     DBcmd.CommandType = CommandType.TableDirect
@@ -241,7 +241,7 @@ Imports System.IO
                         Dim Table As New DataTable()
                         Table.Load(DBreader)
                         Table.TableName = TableName
-                        Logger.logDebug(StringUtils.sprintf("getTable(): Successfully got table '%s' from OleDbConnection.", TableName))
+                        Logger.LogDebug(StringUtils.Sprintf("getTable(): Successfully got table '%s' from OleDbConnection.", TableName))
                         Return Table
                     End Using
                 End Using
@@ -260,14 +260,14 @@ Imports System.IO
                 If (DBConn Is Nothing) Then Throw New System.ArgumentNullException("DBConn")
                 If (SQL.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("SQL")
                 
-                Logger.logDebug(StringUtils.sprintf("query(): Try to query SQL '%s'.", SQL))
+                Logger.LogDebug(StringUtils.Sprintf("query(): Try to query SQL '%s'.", SQL))
                 
                 Using DBcmd As OleDbCommand = New OleDbCommand(SQL, DBconn)
                     DBcmd.CommandType = CommandType.Text
                     Using DBreader As OleDbDataReader = DBcmd.ExecuteReader()
                         Dim Table As New DataTable()
                         Table.Load(DBreader)
-                        Logger.logDebug(StringUtils.sprintf("query(): Successfully executed SQL query '%s'.", SQL))
+                        Logger.LogDebug(StringUtils.Sprintf("query(): Successfully executed SQL query '%s'.", SQL))
                         Return Table
                     End Using
                 End Using

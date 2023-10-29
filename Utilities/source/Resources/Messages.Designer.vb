@@ -2522,7 +2522,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die     Macros.message(view, &quot;\\nDie Fehlerliste zeigt %d Zeilen.\\n\\nWeitere %d Zeilen werden nicht angezeigt, damit jEdit bedienbar bleibt.\\n\\n&quot;); ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die     Macros.Message(view, &quot;\\nDie Fehlerliste zeigt %d Zeilen.\\n\\nWeitere %d Zeilen werden nicht angezeigt, damit jEdit bedienbar bleibt.\\n\\n&quot;); ähnelt.
         '''</summary>
         Public Shared ReadOnly Property ParseErrorCollection_LimitItemsInJEdit() As String
             Get

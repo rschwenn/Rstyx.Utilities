@@ -30,7 +30,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseError")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.IO.ParseError")
             
         #End Region
         
@@ -227,9 +227,9 @@ Namespace IO
                 Dim RetValue As String
                 
                 If (Me.HasSource) Then
-                    RetValue = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.ParseError_ErrorLevelInLineNo, Me.Level.ToDisplayString(), Me.LineNo, Me.Message.Replace(Environment.NewLine, "  " & Environment.NewLine))
+                    RetValue = StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.ParseError_ErrorLevelInLineNo, Me.Level.ToDisplayString(), Me.LineNo, Me.Message.Replace(Environment.NewLine, "  " & Environment.NewLine))
                 Else
-                    RetValue = StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.ParseError_ErrorLevelWithoutLineNo, Me.Level.ToDisplayString(), Me.Message.Replace(Environment.NewLine, "  " & Environment.NewLine))
+                    RetValue = StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.ParseError_ErrorLevelWithoutLineNo, Me.Level.ToDisplayString(), Me.Message.Replace(Environment.NewLine, "  " & Environment.NewLine))
                 End If
                 
                 Return RetValue

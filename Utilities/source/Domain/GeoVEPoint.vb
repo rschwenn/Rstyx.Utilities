@@ -18,7 +18,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoVEPoint")
+            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.GeoVEPoint")
             
         #End Region
         

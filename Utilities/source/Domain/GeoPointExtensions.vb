@@ -6,7 +6,7 @@ Namespace Domain
     ''' <summary> Extension methods for <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
     Public Module GeoPointExtensions
         
-        'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPointExtensions")
+        'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.GeoPointExtensions")
 
         ''' <summary> Creates a <see cref="GeoPointList"/> based on any <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
          ''' <param name="SourcePointList"> The source point list. </param>

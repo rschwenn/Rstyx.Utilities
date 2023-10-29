@@ -6,8 +6,8 @@
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.ArrayUtils")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.ArrayUtils")
             
         #End Region
         
@@ -106,7 +106,7 @@
                     tmpArray = flatParms
                     
                 'Catch ex As System.Exception
-                '    Logger.logError(ex, "getFlatArray(): unbekannter Fehler")
+                '    Logger.LogError(ex, "getFlatArray(): unbekannter Fehler")
                 '    tmpArray = WrapArray
                 'End Try
                 
@@ -127,11 +127,11 @@
                     If (Key_Dim = 1) Then sec_Dim = 2 Else sec_Dim = 1
                     Dim LowerIndex  As Integer = lbound(Matrix, sec_Dim)
                     Dim UpperIndex  As Integer = ubound(Matrix, sec_Dim)
-                    Logger.logDebug(StringUtils.sprintf("SortArray2d(): Initialisierung QuickSort2d(Matrix,%s,%s,%s,%s,%s,%s", Key_Dim, Key_Idx, SortingType.ToDisplayString(), Descending, LowerIndex, UpperIndex))
+                    Logger.LogDebug(StringUtils.Sprintf("SortArray2d(): Initialisierung QuickSort2d(Matrix,%s,%s,%s,%s,%s,%s", Key_Dim, Key_Idx, SortingType.ToDisplayString(), Descending, LowerIndex, UpperIndex))
                     QuickSort2d(Matrix, Key_Dim, Key_Idx, SortingType, Descending, LowerIndex, UpperIndex)
                     
                 'Catch ex As System.Exception
-                '    Logger.logError(ex, "SortArray2d(): unbekannter Fehler")
+                '    Logger.LogError(ex, "SortArray2d(): unbekannter Fehler")
                 'End Try
             End Sub
             
@@ -167,9 +167,9 @@
                 Dim temp        As Object
                 
                 'Try
-                    'Logger.logDebug("QuickSort2d(): Starte QuickSort2d(Matrix," & Key_Dim & "," & Key_Idx & "," & SortingType & "," & Descending & "," & LowerIndex & "," & UpperIndex & ")") 
+                    'Logger.LogDebug("QuickSort2d(): Starte QuickSort2d(Matrix," & Key_Dim & "," & Key_Idx & "," & SortingType & "," & Descending & "," & LowerIndex & "," & UpperIndex & ")") 
                     If ((LowerIndex < 0) or (UpperIndex < 0)) Then
-                        Logger.logDebug("QuickSort2d(): Sortieren unmöglich, da mindestens ein Index < 0!")
+                        Logger.LogDebug("QuickSort2d(): Sortieren unmöglich, da mindestens ein Index < 0!")
                     Else
                         if (Key_Dim = 1) Then sec_Dim = 2 Else sec_Dim = 1
                         
@@ -216,7 +216,7 @@
                     End If
                     
                 'Catch ex As System.Exception
-                '    Logger.logError(ex, "QuickSort2d(): unbekannter Fehler")
+                '    Logger.LogError(ex, "QuickSort2d(): unbekannter Fehler")
                 'End Try
             End Sub
             

@@ -6,8 +6,8 @@
    '     
    '     #Region "Private Fields"
    '         
-   '         'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
-   '         Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.SysUtils")
+   '         'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
+   '         Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.SysUtils")
    '         
    '     #End Region
    '     
@@ -48,16 +48,16 @@
    '         '        success   = (TestValue isNot Nothing)
    '         '        
    '         '    Catch ex as System.ArgumentException
-   '         '        Logger.logError("RegValueExists(): ungültiger Stammschlüsselname in ValuePathName " & KeyName)
+   '         '        Logger.LogError("RegValueExists(): ungültiger Stammschlüsselname in ValuePathName " & KeyName)
    '         '        
    '         '    Catch ex as System.IO.IOException
-   '         '        Logger.logError("RegValueExists(): Der RegistryKey " & KeyName & " wurde zum Löschen markiert.")
+   '         '        Logger.LogError("RegValueExists(): Der RegistryKey " & KeyName & " wurde zum Löschen markiert.")
    '         '        
    '         '    Catch ex as System.Security.SecurityException
-   '         '        Logger.logDebug("RegValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyName & " zu lesen.")
+   '         '        Logger.LogDebug("RegValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyName & " zu lesen.")
    '         '        
    '         '    Catch ex as System.Exception
-   '         '        Logger.logError("RegValueExists(): unbekannter Fehler")
+   '         '        Logger.LogError("RegValueExists(): unbekannter Fehler")
    '         '    End Try
    '         '    
    '         '    Return success
@@ -83,16 +83,16 @@
    '         '        success   = ((TestValue isNot Nothing) and (TestValue <> UniqValue))
    '         '        
    '         '    Catch ex as System.ArgumentException
-   '         '        Logger.logError("RegValueExists(): ungültiger Stammschlüsselname in ValuePathName " & ValuePathName)
+   '         '        Logger.LogError("RegValueExists(): ungültiger Stammschlüsselname in ValuePathName " & ValuePathName)
    '         '        
    '         '    Catch ex as System.IO.IOException
-   '         '        Logger.logError("RegValueExists(): Der RegistryKey " & KeyName & " wurde zum Löschen markiert.")
+   '         '        Logger.LogError("RegValueExists(): Der RegistryKey " & KeyName & " wurde zum Löschen markiert.")
    '         '        
    '         '    Catch ex as System.Security.SecurityException
-   '         '        Logger.logDebug("RegValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyName & " zu lesen.")
+   '         '        Logger.LogDebug("RegValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyName & " zu lesen.")
    '         '        
    '         '    Catch ex as System.Exception
-   '         '        Logger.logError("RegValueExists(): unbekannter Fehler")
+   '         '        Logger.LogError("RegValueExists(): unbekannter Fehler")
    '         '    End Try
    '         '    
    '         '    Return success

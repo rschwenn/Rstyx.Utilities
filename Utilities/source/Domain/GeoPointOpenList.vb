@@ -27,7 +27,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPointOpenList")
+            Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.GeoPointOpenList")
             
         #End Region
         
@@ -35,7 +35,7 @@ Namespace Domain
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
-                Logger.logDebug("New(): GeoPointOpenList instantiated")
+                Logger.LogDebug("New(): GeoPointOpenList instantiated")
             End Sub
             
             ''' <summary> Creates a new GeoPointOpenList and inititializes it's items from any given <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
@@ -171,7 +171,7 @@ Namespace Domain
                     Dim ChangeCount As Long = 0
                     
                     If (IDChangeTab.Count < 1) then
-                        Logger.logWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyIDChangeTab)
+                        Logger.LogWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyIDChangeTab)
                     Else
                         For i As Integer = 0 To Me.Count
                             
@@ -182,7 +182,7 @@ Namespace Domain
                                 ChangeCount += 1
                             End If
                         Next
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDSuccess, ChangeCount))
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDSuccess, ChangeCount))
                     End If
                 Catch ex As InvalidIDException
                     Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDInvalidID, SourcePoint.ID, ex.Message))

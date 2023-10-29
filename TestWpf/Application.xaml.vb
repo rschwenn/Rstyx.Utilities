@@ -5,7 +5,7 @@ Class Application
     ' Ereignisse auf Anwendungsebene wie Startup, Exit und DispatcherUnhandledException
     ' können in dieser Datei verarbeitet werden.
     
-    Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.Application")
+    Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.TestWpf.Application")
     
     ''' <summary> Saves the application settings (MainWindow geometry) </summary>
     ''' <param name="sender"> ignored </param>
@@ -23,7 +23,7 @@ Class Application
     ''' <param name="e">      Event arguments </param>
     Private Sub Application_DispatcherUnhandledException(ByVal sender As Object, ByVal e As System.Windows.Threading.DispatcherUnhandledExceptionEventArgs)
         Try
-            Logger.logError(e.Exception, Rstyx.Utilities.Resources.Messages.Global_DispatcherUnhandledException)
+            Logger.LogError(e.Exception, Rstyx.Utilities.Resources.Messages.Global_DispatcherUnhandledException)
             e.Handled = True
         Catch ex As System.Exception
             System.Diagnostics.Debug.Fail("Application_DispatcherUnhandledException() failed!")

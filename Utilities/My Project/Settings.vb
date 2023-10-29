@@ -8,11 +8,11 @@ Namespace My
     ' Das SettingsSaving-Ereignis wird ausgelöst, bevor die Einstellungswerte gespeichert werden.
     Partial Friend NotInheritable Class MySettings
         
-        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
+        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
         
         Private Sub MySettings_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles Me.PropertyChanged
             If (My.Settings.Library_AutoSaveSettings) Then
-                Logger.logDebug(StringUtils.sprintf("PropertyChanged(): Benutzereinstellungen werden gespeichert, da '%s' geändert wurde.", e.PropertyName))
+                Logger.LogDebug(StringUtils.Sprintf("PropertyChanged(): Benutzereinstellungen werden gespeichert, da '%s' geändert wurde.", e.PropertyName))
                 My.Settings.Save()
             End If
         End Sub

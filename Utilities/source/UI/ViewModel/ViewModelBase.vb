@@ -137,8 +137,8 @@ Namespace UI.ViewModel
                     Try
                         Cinch.ApplicationHelper.DoEvents()
                     Catch ex As System.Exception
-                        Logger.logDebug(ex.ToString())
-                        Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                        Logger.LogDebug(ex.ToString())
+                        Logger.LogDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
                     End Try
                 End If
             End Sub
@@ -173,7 +173,7 @@ Namespace UI.ViewModel
                             End Try
                         Next
                     Catch ex As System.Exception
-                        Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                        Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                     End Try
                 End Sub
                 
@@ -197,7 +197,7 @@ Namespace UI.ViewModel
                                 _CloseViewCommand = New DelegateUICommand(AddressOf Me.CloseView, Decoration)
                             End If
                         Catch ex As System.Exception
-                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                            Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                         End Try
                         
                         Return _CloseViewCommand
@@ -209,7 +209,7 @@ Namespace UI.ViewModel
                     Try
                         MyBase.RaiseCloseRequest(Nothing)
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                     End Try
                 End Sub
                 
@@ -233,7 +233,7 @@ Namespace UI.ViewModel
                                 _ShowHelpFileCommand = New DelegateUICommand(AddressOf Me.ShowHelpFile, Decoration)
                             End If
                         Catch ex As System.Exception
-                            Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                            Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                         End Try
                         
                         Return _ShowHelpFileCommand
@@ -241,9 +241,9 @@ Namespace UI.ViewModel
                 End Property
                 
                 ''' <summary> Shows the help file if overridden in a derived class. </summary>
-                ''' <remarks> i.e.:  Rstyx.Microstation.Utilities.FileUtils.showHelpFile(HelpFileName) </remarks>
+                ''' <remarks> i.e.:  Rstyx.Microstation.Utilities.FileUtils.ShowHelpFile(HelpFileName) </remarks>
                 Protected Overridable Sub ShowHelpFile()
-                    Logger.logError(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_NotImplemented, Me.GetType().FullName & "/showHelpFile"))
+                    Logger.LogError(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_NotImplemented, Me.GetType().FullName & "/showHelpFile"))
                 End Sub
                 
             #End Region
@@ -527,10 +527,10 @@ Namespace UI.ViewModel
                 
                 Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
                 If (TargetProperty Is Nothing) Then
-                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                    Throw New System.MissingMemberException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
                 End If
                 If (Not TargetProperty.CanWrite) Then
-                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                    Throw New System.MemberAccessException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
                 End If
                 
                 ' Look up the list values for the desired property value.
@@ -579,10 +579,10 @@ Namespace UI.ViewModel
                 
                 Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
                 If (TargetProperty Is Nothing) Then
-                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                    Throw New System.MissingMemberException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
                 End If
                 If (Not TargetProperty.CanWrite) Then
-                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                    Throw New System.MemberAccessException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
                 End If
                 
                 ' Look up the keys for the desired property value.
@@ -631,10 +631,10 @@ Namespace UI.ViewModel
                 
                 Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
                 If (TargetProperty Is Nothing) Then
-                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                    Throw New System.MissingMemberException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
                 End If
                 If (Not TargetProperty.CanWrite) Then
-                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                    Throw New System.MemberAccessException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
                 End If
                 
                 ' Look up the dictionary keys for the desired property value.
@@ -679,15 +679,15 @@ Namespace UI.ViewModel
                 
                 Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
                 If (TargetProperty Is Nothing) Then
-                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                    Throw New System.MissingMemberException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
                 End If
                 If (Not TargetProperty.CanWrite) Then
-                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                    Throw New System.MemberAccessException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
                 End If
                 
                 ' Look up for the display string and get the corresponding property value
                 Dim NewPropertyValue  As TProperty = Nothing
-                Dim success           As Boolean   = SupportedValues.findKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
+                Dim success           As Boolean   = SupportedValues.FindKeyByValue(NewDesiredDisplayValue, NewPropertyValue)
                 
                 If (success) Then
                     Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
@@ -728,15 +728,15 @@ Namespace UI.ViewModel
                 
                 Dim TargetProperty As System.Reflection.PropertyInfo = Me.GetType().GetProperty(PropertyName, GetType(TProperty))
                 If (TargetProperty Is Nothing) Then
-                    Throw New System.MissingMemberException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
+                    Throw New System.MissingMemberException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyNotFound, PropertyName))
                 End If
                 If (Not TargetProperty.CanWrite) Then
-                    Throw New System.MemberAccessException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
+                    Throw New System.MemberAccessException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_PropertyIsReadOnly, PropertyName))
                 End If
                 
                 ' Look up for the string and get the corresponding property value
                 Dim NewPropertyValue  As TProperty = Nothing
-                Dim success           As Boolean   = SupportedValues.findItemByString(NewDesiredToStringValue, NewPropertyValue)
+                Dim success           As Boolean   = SupportedValues.FindItemByString(NewDesiredToStringValue, NewPropertyValue)
                 
                 If (success) Then
                     Dim OldPropertyValue As TProperty = CType(TargetProperty.GetValue(Me, Nothing), TProperty)
@@ -895,11 +895,11 @@ Namespace UI.ViewModel
                         Try
                             MyBase.NotifyPropertyChanged(ClassPropertyName)
                         Catch ex As System.Exception
-                            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                            Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                         End Try
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             

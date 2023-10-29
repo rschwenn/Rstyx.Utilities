@@ -16,7 +16,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KfFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.IO.KfFile")
             
             Private Const RecordLength      As Integer = 102
             Private Const GhostPointID      As Double  = 1E+40
@@ -27,7 +27,7 @@ Namespace Domain.IO
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
-                Logger.logDebug("New(): KfFile instantiated")
+                Logger.LogDebug("New(): KfFile instantiated")
             End Sub
             
             ''' <summary> Creates a new instance with a given file path. </summary>
@@ -76,8 +76,8 @@ Namespace Domain.IO
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
                     Try 
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, Me.FilePath))
-                        Logger.logInfo(Me.GetPointEditOptionsLogText())
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadStart, Me.FilePath))
+                        Logger.LogInfo(Me.GetPointEditOptionsLogText())
                         If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                         
                         Dim UniqueID            As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
@@ -181,14 +181,14 @@ Namespace Domain.IO
                         If (Me.ParseErrors.HasErrors) Then
                             Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                         Else
-                            If (GhostPointIDCount > 0)   Then Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_GhostPoints, GhostPointIDCount))
-                            If (InvalidPointIDCount > 0) Then Logger.logDebug(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_InvalidPointIDs, InvalidPointIDCount))
-                            If (PointCount = 0)          Then Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
+                            If (GhostPointIDCount > 0)   Then Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_GhostPoints, GhostPointIDCount))
+                            If (InvalidPointIDCount > 0) Then Logger.LogDebug(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_InvalidPointIDs, InvalidPointIDCount))
+                            If (PointCount = 0)          Then Logger.LogWarning(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                         End If
                         
                         
-                        'Logger.logDebug(PointList.ToString())
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadSuccess, PointCount, FilePath))
+                        'Logger.LogDebug(PointList.ToString())
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_LoadSuccess, PointCount, FilePath))
                         
                     Catch ex As ParseException
                         Throw
@@ -222,8 +222,8 @@ Namespace Domain.IO
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Dim PointCount As Integer = 0
                 Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, Me.FilePath))
-                    Logger.logInfo(Me.GetPointOutputOptionsLogText)
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreStart, Me.FilePath))
+                    Logger.LogInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Me.Reset(Nothing)
@@ -272,7 +272,7 @@ Namespace Domain.IO
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, Me.FilePath))
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KfFile_StoreSuccess, PointCount, Me.FilePath))
                 End Try
             End Sub
             

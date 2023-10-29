@@ -8,7 +8,7 @@ Imports Rstyx.Utilities
 
 Class MainWindow 
     
-    Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf")
+    Private Shared Logger   As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.TestWpf")
 
     Private ViewModel       As MainViewModel = Nothing
     
@@ -18,7 +18,7 @@ Class MainWindow
             ViewModel = New MainViewModel()
             Me.DataContext = ViewModel
             '
-            'Logger.logInfo("MainWindow_Activated")
+            'Logger.LogInfo("MainWindow_Activated")
             'FileChoser1.InputFilePath = "debug.lo"
             'FileChoser1.ChangesWorkingDir = True 
             '
@@ -32,13 +32,13 @@ Class MainWindow
     
     Private Sub Button1_Click(sender As System.Object , e As System.Windows.RoutedEventArgs) Handles Button1.Click
         Try
-            'ViewModel.test()
+            'ViewModel.Test()
             
             'TestToggle.IsChecked = (Not TestToggle.IsChecked)
             
             'FileChoser2.InputFilePath = "per code festgelegt"
         Catch ex As System.Exception
-            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+            Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
         End Try
     End Sub
     

@@ -15,7 +15,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataTextLine")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.IO.DataTextLine")
             
             Private _FieldDelimiter As Char = " "c
             Private _Words          As Collection(Of DataFieldSource) = Nothing

@@ -11,7 +11,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.TrackGeometryInfo")
+            'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.TrackGeometryInfo")
             
             Private Shared MissingNameOfAlignOrKMAorDTMRule As Cinch.SimpleRule
             
@@ -109,18 +109,18 @@ Namespace Domain
                     RetValue = MyBase.ToString()
                 Else
                     ' At least one name is not empty.
-                    If (Me.CoordSys.IsNotEmptyOrWhiteSpace())             Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_CoordSys            , Me.CoordSys))
-                    If (Me.HeightSys.IsNotEmptyOrWhiteSpace())            Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_HeightSys           , Me.HeightSys))
-                    If (Me.NameOfTrackConfig.IsNotEmptyOrWhiteSpace())    Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfTrackConfig   , Me.NameOfTrackConfig))
-                    If (Me.NameOfAlignment.IsNotEmptyOrWhiteSpace())      Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfAlignment     , Me.NameOfAlignment))
-                    If (Me.NameOfKmAlignment.IsNotEmptyOrWhiteSpace())    Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfKmAlignment   , Me.NameOfKmAlignment))
-                    If (Me.NameOfGradientLine.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfGradientLine  , Me.NameOfGradientLine))
-                    If (Me.NameOfCantLine.IsNotEmptyOrWhiteSpace())       Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfCantLine      , Me.NameOfCantLine))
-                    If (Me.NameOfRoadSections.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRoadSections  , Me.NameOfRoadSections))
-                    If (Me.NameOfTunnelSections.IsNotEmptyOrWhiteSpace()) Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfTunnelSections, Me.NameOfTunnelSections))
-                    If (Me.NameOfRailSections.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRaillSections , Me.NameOfRailSections))
-                    If (Me.NameOfSectionPoints.IsNotEmptyOrWhiteSpace())  Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfSectionPoints , Me.NameOfSectionPoints))
-                    If (Me.NameOfDTM.IsNotEmptyOrWhiteSpace())            Then List.AppendLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfDTM           , Me.NameOfDTM))
+                    If (Me.CoordSys.IsNotEmptyOrWhiteSpace())             Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_CoordSys            , Me.CoordSys))
+                    If (Me.HeightSys.IsNotEmptyOrWhiteSpace())            Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_HeightSys           , Me.HeightSys))
+                    If (Me.NameOfTrackConfig.IsNotEmptyOrWhiteSpace())    Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfTrackConfig   , Me.NameOfTrackConfig))
+                    If (Me.NameOfAlignment.IsNotEmptyOrWhiteSpace())      Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfAlignment     , Me.NameOfAlignment))
+                    If (Me.NameOfKmAlignment.IsNotEmptyOrWhiteSpace())    Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfKmAlignment   , Me.NameOfKmAlignment))
+                    If (Me.NameOfGradientLine.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfGradientLine  , Me.NameOfGradientLine))
+                    If (Me.NameOfCantLine.IsNotEmptyOrWhiteSpace())       Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfCantLine      , Me.NameOfCantLine))
+                    If (Me.NameOfRoadSections.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRoadSections  , Me.NameOfRoadSections))
+                    If (Me.NameOfTunnelSections.IsNotEmptyOrWhiteSpace()) Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfTunnelSections, Me.NameOfTunnelSections))
+                    If (Me.NameOfRailSections.IsNotEmptyOrWhiteSpace())   Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfRaillSections , Me.NameOfRailSections))
+                    If (Me.NameOfSectionPoints.IsNotEmptyOrWhiteSpace())  Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfSectionPoints , Me.NameOfSectionPoints))
+                    If (Me.NameOfDTM.IsNotEmptyOrWhiteSpace())            Then List.AppendLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackGeometryInfo_NameOfDTM           , Me.NameOfDTM))
                     
                     RetValue = List.ToString()
                     If (RetValue.EndsWith(vbNewLine)) Then

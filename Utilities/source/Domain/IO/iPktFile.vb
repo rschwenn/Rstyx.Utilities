@@ -21,7 +21,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.iPktFile")
+            Private Shared ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.IO.iPktFile")
             
             Private Shared ReadOnly CooPrecisionDefault As Integer =  5
             Private Shared ReadOnly CooPrecisionBLh     As Integer = 10
@@ -73,7 +73,7 @@ Namespace Domain.IO
                 Me.FileFormatProperties.Add("Y"               , 0)
                 Me.FileFormatProperties.Add("Z"               , 0)
                 
-                Logger.logDebug("New(): iPktFile instantiated")
+                Logger.LogDebug("New(): iPktFile instantiated")
             End Sub
             
             ''' <summary> Creates a new instance with a given file path. </summary>
@@ -111,8 +111,8 @@ Namespace Domain.IO
                 Get
                     Dim PointCount  As Integer = 0
                     Try
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, Me.FilePath))
-                        Logger.logInfo(Me.GetPointEditOptionsLogText())
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadStart, Me.FilePath))
+                        Logger.LogInfo(Me.GetPointEditOptionsLogText())
 
                         For Each p As IGeoPoint In Me.DataLineStream.AsParallel().Select(AddressOf ParseTextLine) _
                                                                                  .Where(Function(Point) ((Point IsNot Nothing) AndAlso Point.ID.IsNotEmptyOrWhiteSpace()))
@@ -122,13 +122,13 @@ Namespace Domain.IO
                         
                         ' Throw exception if parsing errors has been collected.
                         If (Me.ParseErrors.HasErrors) Then
-                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                         ElseIf (PointCount = 0) Then
-                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, Me.FilePath))
+                            Logger.LogWarning(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, Me.FilePath))
                         End If
                         
-                        'Logger.logDebug(PointList.ToString())
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointCount, Me.FilePath))
+                        'Logger.LogDebug(PointList.ToString())
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadSuccess, PointCount, Me.FilePath))
                         
 
                     Catch ex As AggregateException
@@ -273,7 +273,7 @@ Namespace Domain.IO
                             p = Nothing
                         Else
                             If (Me.ParseErrors.AddIfNoError(oError)) Then
-                                Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                             End If
                         End If
                         
@@ -283,7 +283,7 @@ Namespace Domain.IO
                             p = Nothing
                         Else
                             If (Me.ParseErrors.AddIfNoError(ex.ParseError)) Then
-                                Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                             End If
                         End If
                     End Try
@@ -318,8 +318,8 @@ Namespace Domain.IO
 
                 Dim PointCount As Integer = 0
                 Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, Me.FilePath))
-                    Logger.logInfo(Me.GetPointOutputOptionsLogText)
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreStart, Me.FilePath))
+                    Logger.LogInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Dim PointFmt    As String  = "%1s%0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%-6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
@@ -410,7 +410,7 @@ Namespace Domain.IO
                                         Me.ParseErrors.Add(oError)
                                     Else
                                         If (Me.ParseErrors.AddIfNoError(oError)) Then
-                                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                                            Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                                         End If
                                     End If
                                 End Try
@@ -438,10 +438,10 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                        Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreSuccess, PointCount, Me.FilePath))
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_StoreSuccess, PointCount, Me.FilePath))
                     
                 Catch ex As AggregateException
                     ' Any exception from parallel processing (PointList.AsParallel...) is wrapped in an AggregateException.

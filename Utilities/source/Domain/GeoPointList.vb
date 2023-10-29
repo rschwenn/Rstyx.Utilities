@@ -40,7 +40,7 @@ Namespace Domain
                 ' Inits a new SortedKeyedCollection: 1. ignoring case when checking for key equality, 2. sorting keys alphanumeric.
                 'MyBase.New(System.StringComparer.InvariantCultureIgnoreCase)
                 MyBase.KeyComparer = New Rstyx.Utilities.Collections.AlphanumericComparer(IgnoreCase:=True)
-                Logger.logDebug("New(): GeoPointList instantiated")
+                Logger.LogDebug("New(): GeoPointList instantiated")
             End Sub
             
             ''' <summary> Creates a new GeoPointList and inititializes it's items from a <see cref="IEnumerable(Of IGeoPoint)"/>. </summary>
@@ -225,7 +225,7 @@ Namespace Domain
                     If (IsStatusReporting) Then StatusIndicator.ProgressTickRangeCount = Me.Count
                     
                     If (IDChangeTab.Count < 1) then
-                        Logger.logWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyIDChangeTab)
+                        Logger.LogWarning(Rstyx.Utilities.Resources.Messages.GeoPointList_EmptyIDChangeTab)
                         If (IsStatusReporting) Then StatusIndicator.ProgressTick()
                     Else
                         For Each SourcePoint In Me
@@ -263,7 +263,7 @@ Namespace Domain
                                 StatusIndicator.StatusText = sprintf(Rstyx.Utilities.Resources.Messages.IDCollection_ChangeIDStatus, ChangeCount)
                             End If
                         Next
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDSuccess, ChangeCount))
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDSuccess, ChangeCount))
                     End If
                 Catch ex As InvalidIDException
                     Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_ChangeIDInvalidID, SourcePoint.ID, ex.Message))

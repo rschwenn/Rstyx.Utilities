@@ -51,7 +51,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.TCFileReader")
+            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.TCFileReader")
             
             Private ReadOnly SourceBlocks               As New Collection(Of TcSourceBlockInfo)
             Private ReadOnly VermEsnRecordDefinitions   As New Dictionary(Of String, TcRecordDefinitionVermEsn)  ' Key = GetKeyForRecordDefinition(TcBlockType)
@@ -154,8 +154,8 @@ Namespace Domain.IO
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Overrides Sub Load()
                 Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadStart, Me.FilePath))
-                    Logger.logInfo(Me.GetPointEditOptionsLogText())
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadStart, Me.FilePath))
+                    Logger.LogInfo(Me.GetPointEditOptionsLogText())
                     
                     Dim DataLine        As DataTextLine
                     Dim kvp             As KeyValuePair(Of String, String)
@@ -165,7 +165,7 @@ Namespace Domain.IO
                     
                     MyBase.Load()
                     
-                    Logger.logDebug(" Looking for block beginnings...")
+                    Logger.LogDebug(" Looking for block beginnings...")
                     ' Read file. Find and store source block beginnings (still without EndIndex, Version and Format).
                     For i As Integer = 0 To Me.DataLineBuffer.Count - 1
                         
@@ -184,7 +184,7 @@ Namespace Domain.IO
                                         SourceBlock.StartIndex = FindStartOfBlock(Me.DataLineBuffer, i)
                                         SourceBlocks.Add(SourceBlock)
                                         BlockCount += 1
-                                        Logger.logDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
+                                        Logger.LogDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
                                     End If
                                 End If
                             End If
@@ -196,7 +196,7 @@ Namespace Domain.IO
                                 SourceBlock.StartIndex = FindStartOfBlock(Me.DataLineBuffer, i)
                                 SourceBlocks.Add(SourceBlock)
                                 BlockCount += 1
-                                Logger.logDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
+                                Logger.LogDebug(sprintf("  Found %d. block: from %s, start index=%d, indicated at index=%d", BlockCount, SourceBlock.BlockType.Program.ToDisplayString(), SourceBlock.StartIndex, i))
                             End If
                         End If
                     Next
@@ -210,7 +210,7 @@ Namespace Domain.IO
                         End If
                     Next
                     
-                    Logger.logDebug(" Looking for file header...")
+                    Logger.LogDebug(" Looking for file header...")
                     ' Find and store file header lines (all comment lines from file start until the first non comment line or block start).
                     Dim MaxIndexToLook As Integer = If((SourceBlocks.Count > 0), SourceBlocks(0).StartIndex - 1, Me.DataLineBuffer.Count - 1)
                     For i As Integer = 0 To MaxIndexToLook
@@ -221,7 +221,7 @@ Namespace Domain.IO
                         End If
                     Next
                     
-                    Logger.logDebug(" Read blocks...")
+                    Logger.LogDebug(" Read blocks...")
                     ' Read every block with all it's data and, if successfull, store it to Me.Blocks.
                     For i As Integer = 0 To SourceBlocks.Count - 1
                         
@@ -237,17 +237,17 @@ Namespace Domain.IO
                         End Select
                     Next
                     
-                    Logger.logDebug(Me.ToReport(OnlySummary:=False))
+                    Logger.LogDebug(Me.ToReport(OnlySummary:=False))
                     
                     ' Throw exception if parsing errors has occurred.
                     If (Me.ParseErrors.HasErrors) Then
                         Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     ElseIf (Me.TotalPointCount = 0) Then
-                        Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_NoPoints, Me.FilePath))
+                        Logger.LogWarning(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_NoPoints, Me.FilePath))
                     End If
                     
-                    'Logger.logDebug(Me.ToReport(OnlySummary:=False))
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadSuccess, Me.TotalPointCount, Me.FilePath))
+                    'Logger.LogDebug(Me.ToReport(OnlySummary:=False))
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadSuccess, Me.TotalPointCount, Me.FilePath))
                     
                     Me.DataLineBuffer.Clear()
                     
@@ -413,7 +413,7 @@ Namespace Domain.IO
                 
                 #Region "Private Fields"
                     
-                    'Private Shared Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Microstation.AddIn.MetaData.TextFieldDefinition")
+                    'Private Shared Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Microstation.AddIn.MetaData.TextFieldDefinition")
                     
                     Private Shared ReadOnly MissingProgramRule      As Cinch.SimpleRule
                     Private Shared ReadOnly MissingVersionRule      As Cinch.SimpleRule
@@ -725,14 +725,14 @@ Namespace Domain.IO
                         Dim IndentTrackRef As Integer = Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef.IndexOf("%s")
                         
                         If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
-                            List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Comment, Me.Comment.indent(IndentComment, IncludeFirstline:=False, PrependNewlineIfMultiline:=False)))
+                            List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Comment, Me.Comment.Indent(IndentComment, IncludeFirstline:=False, PrependNewlineIfMultiline:=False)))
                         End If
                         List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Type, Me.BlockType.ToString()))
                         List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Source, Me.Source.ToString()))
                         If (Not OnlySummary) Then
-                            List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef, Me.TrackRef.ToString().indent(IndentTrackRef, IncludeFirstline:=True, PrependNewlineIfMultiline:=True)))
+                            List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef, Me.TrackRef.ToString().Indent(IndentTrackRef, IncludeFirstline:=True, PrependNewlineIfMultiline:=True)))
                         Else
-                            List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef, Me.TrackRef.ToString().indent(IndentTrackRef, IncludeFirstline:=False, PrependNewlineIfMultiline:=False)))
+                            List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_TrackRef, Me.TrackRef.ToString().Indent(IndentTrackRef, IncludeFirstline:=False, PrependNewlineIfMultiline:=False)))
                         End If
                         List.AppendLine(sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToReport_Points, Me.Points.Count))
                         
@@ -751,7 +751,7 @@ Namespace Domain.IO
                      ''' <exception cref="Rstyx.Utilities.IO.ParseException"> Invalid block attribute name. </exception>
                     Public Sub ParseCommentForAttributes()
                         If (Me.Comment.IsNotEmptyOrWhiteSpace()) Then
-                            Dim CommentLines() As String = Me.Comment.splitLines()
+                            Dim CommentLines() As String = Me.Comment.SplitLines()
                             For i As Integer = 0 To CommentLines.Length - 1
                                 Dim ip As New GeoIPoint()
                                 ip.SourcePath   = Me.Source.FilePath
@@ -1179,7 +1179,7 @@ Namespace Domain.IO
                 If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 
-                Logger.logDebug(sprintf(" Reading Verm.esn TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
+                Logger.LogDebug(sprintf(" Reading Verm.esn TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
                 
                 Dim Block            As New TcBlock()
                 Dim UniqueID         As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
@@ -1345,7 +1345,7 @@ Namespace Domain.IO
                 If (DataLines Is Nothing) Then Throw New System.ArgumentNullException("DataLines")
                 If (SourceBlock Is Nothing) Then Throw New System.ArgumentNullException("SourceBlock")
                 
-                Logger.logDebug(sprintf(" Reading iGeo/iTrassePC TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
+                Logger.LogDebug(sprintf(" Reading iGeo/iTrassePC TC output block (start index = %d, end index = %d)", SourceBlock.StartIndex, SourceBlock.EndIndex))
                 
                 Dim Block            As New TcBlock()
                 Dim UniqueID         As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
@@ -1642,7 +1642,7 @@ Namespace Domain.IO
                 Block.Source.StartLineNo = DataLines(SourceBlock.StartIndex).SourceLineNo
                 Block.Source.EndLineNo   = DataLines(SourceBlock.EndIndex).SourceLineNo
                 
-                Logger.logDebug(" Find meta data of Verm.esn TC output block:")
+                Logger.LogDebug(" Find meta data of Verm.esn TC output block:")
                 
                 Do
                     DataLine = DataLines(i)
@@ -1654,7 +1654,7 @@ Namespace Domain.IO
                         End If
                     Else
                         
-                        FullLine = DataLine.getFullLine()
+                        FullLine = DataLine.GetFullLine()
                         
                         If (Not FullLine.IsMatchingTo("^ ?[0-9]")) Then
                             ' Header line.
@@ -1756,10 +1756,10 @@ Namespace Domain.IO
                 Block.Points.Header.Add(Block.Comment)
                 Block.ParseCommentForAttributes()
                 
-                Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
-                Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
-                Logger.logDebug(sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
-                If (SourceBlock.HasData) Then Logger.logDebug(sprintf("  First Data Line      : %d", DataLines(SourceBlock.DataStartIndex).SourceLineNo))
+                Logger.LogDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
+                Logger.LogDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
+                Logger.LogDebug(sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
+                If (SourceBlock.HasData) Then Logger.LogDebug(sprintf("  First Data Line      : %d", DataLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
             ''' <summary> Finds meta data of a block of iGeo/iTrassePC output (A0, A1), especially block type and geometry reference info and first data line. </summary>
@@ -1793,7 +1793,7 @@ Namespace Domain.IO
                 Block.Source.StartLineNo = DataLines(SourceBlock.StartIndex).SourceLineNo
                 Block.Source.EndLineNo   = DataLines(SourceBlock.EndIndex).SourceLineNo
                 
-                Logger.logDebug(" Find meta data of iGeo TC output block:")
+                Logger.LogDebug(" Find meta data of iGeo TC output block:")
                 
                 Do
                     DataLine = DataLines(i)
@@ -1857,11 +1857,11 @@ Namespace Domain.IO
                 ' Set record definition. Only now, because for A0 the format and field names are required.
                 SourceBlock.RecordDefinition = GetIGeoRecordDefinition(Block.BlockType)
                 
-                Logger.logDebug(sprintf("  Name of Track Config : %s", Block.TrackRef.NameOfTrackConfig))
-                Logger.logDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
-                Logger.logDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
-                Logger.logDebug(sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
-                If (SourceBlock.HasData) Then Logger.logDebug(sprintf("  First Data Line      : %d", DataLines(SourceBlock.DataStartIndex).SourceLineNo))
+                Logger.LogDebug(sprintf("  Name of Track Config : %s", Block.TrackRef.NameOfTrackConfig))
+                Logger.LogDebug(sprintf("  Name of Alignment    : %s", Block.TrackRef.NameOfAlignment))
+                Logger.LogDebug(sprintf("  Name of Km-Alignment : %s", Block.TrackRef.NameOfKmAlignment))
+                Logger.LogDebug(sprintf("  Name of Gradient Line: %s", Block.TrackRef.NameOfGradientLine))
+                If (SourceBlock.HasData) Then Logger.LogDebug(sprintf("  First Data Line      : %d", DataLines(SourceBlock.DataStartIndex).SourceLineNo))
             End Sub
             
             ''' <summary> Sets the definitions for Verm.esn source records. </summary>

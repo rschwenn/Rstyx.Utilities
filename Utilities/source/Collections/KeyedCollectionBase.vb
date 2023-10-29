@@ -22,7 +22,7 @@ Namespace Collections
         Inherits   KeyedCollection(Of TKey, TItem)
         Implements System.Collections.Specialized.INotifyCollectionChanged
         
-        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Collections.KeyedCollectionBase")
+        Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Collections.KeyedCollectionBase")
         
         ''' <summary>  Initializes the KeyedCollection with a default <see cref="System.Collections.Generic.IEqualityComparer(Of TKey)"/>. </summary>
         Protected Sub New()
@@ -57,7 +57,7 @@ Namespace Collections
                 Try
                     RaiseEvent CollectionChanged(Me, New System.Collections.Specialized.NotifyCollectionChangedEventArgs(ChangeType))
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             

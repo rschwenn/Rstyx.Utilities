@@ -41,14 +41,14 @@ Imports Rstyx.Utilities.StringUtils
 Public Class MainViewModel
     Inherits Rstyx.Utilities.UI.ViewModel.ViewModelBase
     
-    Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.TestWpf.MainViewModel")
+    Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.TestWpf.MainViewModel")
     
     
     #Region "Initializing and Finalizing"
         
         ''' <summary> Creates a new instance and sets display names. </summary>
         Public Sub New()
-            Logger.logDebug("New(): Init MainViewModel ...")
+            Logger.LogDebug("New(): Init MainViewModel ...")
         End Sub
         
         '' <summary> Disposes WpfPanel. </summary>
@@ -106,7 +106,7 @@ Public Class MainViewModel
                         '_TestTaskAsyncCommand = New AsyncDelegateUICommand(CmdInfo, CancelCallback:=Nothing, SupportsCancellation:=False, runAsync:=True, ThreadAptState:=Threading.ApartmentState.STA)
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 
                 Return _TestTaskAsyncCommand
@@ -127,7 +127,7 @@ Public Class MainViewModel
             'Dim Task1 As Task = Task.Factory.StartNew(AddressOf test_1)
             
             Dim TestEnum2 As ArrayUtils.SortType = 2 'ArrayUtils.SortType.Numeric
-            Logger.logInfo(sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
+            Logger.LogInfo(sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
             
         End Sub
         
@@ -154,7 +154,7 @@ Public Class MainViewModel
             'Files.Add("X:\Quellen\DotNet\VisualBasic\Rstyx.Microstation\BatchplotAddin\Test\Batchplot-Bug_6\Lichtraumprofil  Km 5.5 + 27.93, Gleis 5501-re, Krbw Str 5544, Stütze 4.pdf")
             
             For Each FilePath As String In Files.OrderBy(Function(ByVal PathName) PathName, New AlphanumericKmComparer(IgnoreCase:=True))
-                Logger.logInfo(FilePath)
+                Logger.LogInfo(FilePath)
             Next
             
             #If DEBUG Then
@@ -315,7 +315,7 @@ Public Class MainViewModel
          '  Dim Workbook   = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Standortdaten.xlsx"
          '  Dim Exceptions = New List(Of Exception)()
          '  
-         '  Logger.logInfo("TestExcelToEnumerator:")
+         '  Logger.LogInfo("TestExcelToEnumerator:")
          '  
          '  Using oFS As FileStream = File.OpenRead(Workbook)
          '      
@@ -332,7 +332,7 @@ Public Class MainViewModel
          '      'Dim Sites As IEnumerable(Of SiteRecord) = oFS.ExcelToEnumerable(Of SiteRecord)(Options)
          '      
          '      For Each Site As SiteRecord In oFS.ExcelToEnumerable(Of SiteRecord)(Options)
-         '          Logger.logInfo(sprintf("Zeile=%2d, aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site.SourceExcelRow, Site.active, Site.Standort_ID, Site.PLZ, Site.Ort))
+         '          Logger.LogInfo(sprintf("Zeile=%2d, aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site.SourceExcelRow, Site.active, Site.Standort_ID, Site.PLZ, Site.Ort))
          '      Next
          '      
          '  End Using
@@ -340,9 +340,9 @@ Public Class MainViewModel
          '  For Each ex As Exception In Exceptions
          '      If (TypeOf ex Is ExcelToEnumerableCellException) Then
          '          Dim ex2 As ExcelToEnumerableCellException = DirectCast(ex, ExcelToEnumerableCellException)
-         '          Logger.logInfo(sprintf("Fehler:  Zeile %2d, Feld=%s:  %s", ex2.RowNumber, ex2.PropertyPath, ex2.Message))
+         '          Logger.LogInfo(sprintf("Fehler:  Zeile %2d, Feld=%s:  %s", ex2.RowNumber, ex2.PropertyPath, ex2.Message))
          '      Else 
-         '          Logger.logInfo(sprintf("Fehler:  %s", ex.Message))
+         '          Logger.LogInfo(sprintf("Fehler:  %s", ex.Message))
          '      End If
          '  Next
          '  
@@ -360,7 +360,7 @@ Public Class MainViewModel
             If (TableName.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TableName")
             If (Not File.Exists(XlFilePath)) Then Throw New System.IO.FileNotFoundException(Rstyx.Utilities.Resources.Messages.DBUtils_ExcelWorkbookNotFound, XlFilePath)
             Try
-                Logger.logDebug(sprintf("getExcelSheet(): Try to get table '%s' from Excel workbook '%s'.", TableName, XlFilePath))
+                Logger.LogDebug(sprintf("getExcelSheet(): Try to get table '%s' from Excel workbook '%s'.", TableName, XlFilePath))
                 
                 Using oFS As FileStream = File.OpenRead(XlFilePath)
                     
@@ -389,11 +389,11 @@ Public Class MainViewModel
             Dim TableName  = "Standorte"
             Dim Workbook   = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Standortdaten.xlsx"
             
-            Logger.logInfo("TestExcelDataReader:")
+            Logger.LogInfo("TestExcelDataReader:")
             Dim Sheet As DataTable = GetExcelSheet(TableName, Workbook)
             
             For Each Site As DataRow In Sheet.Rows
-                Logger.logInfo(sprintf("aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site("aktiv"), Site("Standort_ID"), Site("PLZ"), Site("Ort")))
+                Logger.LogInfo(sprintf("aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site("aktiv"), Site("Standort_ID"), Site("PLZ"), Site("Ort")))
             Next
             
             'Using oFS As FileStream = File.OpenRead(Workbook)
@@ -409,11 +409,11 @@ Public Class MainViewModel
             '    Dim Sheets   As DataSet = XlReader.AsDataSet(DataSetConfig)
             '    
             '    If (Not Sheets.Tables.Contains(TableName)) Then
-            '        Logger.logInfo("Tabelle xxx existiert nicht!")
+            '        Logger.LogInfo("Tabelle xxx existiert nicht!")
             '    Else
             '        Sheet = Sheets.Tables(TableName)
             '        For Each Site As DataRow In Sheet.Rows
-            '            Logger.logInfo(sprintf("aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site("aktiv"), Site("Standort_ID"), Site("PLZ"), Site("Ort")))
+            '            Logger.LogInfo(sprintf("aktiv=%s,  ID=%s, PLZ=%s, Ort=%s", Site("aktiv"), Site("Standort_ID"), Site("PLZ"), Site("Ort")))
             '        Next
             '    End If
             'End Using
@@ -422,7 +422,7 @@ Public Class MainViewModel
         
         Public Shared Sub StartProcessTest()
             
-            Logger.logInfo("StartProcessTest startet ..")
+            Logger.LogInfo("StartProcessTest startet ..")
             'Dim Batch As String = "G:\Bat\Querprf.bat"
             Dim Batch As String = "X:\Quellen\Wscripts\Querprf\Querprf.bat"
             Dim ipkt  As String = "X:\Quellen\Wscripts\Querprf\Bf_Memmingen_QP_5400.ipkt"
@@ -434,15 +434,15 @@ Public Class MainViewModel
             StartInfo.UseShellExecute = False
             StartInfo.WorkingDirectory = "X:\Quellen\Wscripts\Querprf"
             
-            'Logger.logDebug(StringUtils.sprintf("startEditor(): Auszuführende Datei: '%s'.", StartInfo.FileName))
-            'Logger.logDebug(StringUtils.sprintf("startEditor(): Argumente: '%s'.", StartInfo.Arguments))
-            'Logger.logDebug(StringUtils.sprintf("startEditor(): %s wird gestartet.", TargetEditor.ToDisplayString()))
+            'Logger.LogDebug(StringUtils.Sprintf("startEditor(): Auszuführende Datei: '%s'.", StartInfo.FileName))
+            'Logger.LogDebug(StringUtils.Sprintf("startEditor(): Argumente: '%s'.", StartInfo.Arguments))
+            'Logger.LogDebug(StringUtils.Sprintf("startEditor(): %s wird gestartet.", TargetEditor.ToDisplayString()))
 
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture
             
             Using Proc As System.Diagnostics.Process = System.Diagnostics.Process.Start(StartInfo)
             End Using
-            Logger.logInfo("StartProcessTest Ende.")
+            Logger.LogInfo("StartProcessTest Ende.")
         End Sub
         
 
@@ -515,7 +515,7 @@ Public Class MainViewModel
             'Dim TcReader As TcFileReader
             
             'Try
-                Logger.logInfo("")
+                Logger.LogInfo("")
 
                 Dim d1 As Double = 1 / Double.PositiveInfinity
                 Dim d2 As Double = 1 / Double.NegativeInfinity
@@ -524,11 +524,11 @@ Public Class MainViewModel
                 Dim Str1 As String = "5"
                 'Dim Str2 As String = " "
                 'Dim result As Integer = Str1.CompareTo(Str2)
-                'Logger.logInfo(sprintf(" '%s' CompareTo '%s' = %d\n", Str1, Str2, result))
+                'Logger.LogInfo(sprintf(" '%s' CompareTo '%s' = %d\n", Str1, Str2, result))
                 '
                 'Dim Zahl1 As Double = Double.NaN
                 'Dim Zahl2 As Double = Double.NaN
-                'Logger.logInfo(sprintf(" '%.3f' = '%.3f' => %s\n", Zahl1, Zahl2, Zahl1.EqualsTolerance(Zahl2, 0.1)))
+                'Logger.LogInfo(sprintf(" '%.3f' = '%.3f' => %s\n", Zahl1, Zahl2, Zahl1.EqualsTolerance(Zahl2, 0.1)))
                 '
                 'Dim Km3 As New Kilometer()
                 'Km3 = "1.2 + 345.678"
@@ -539,12 +539,12 @@ Public Class MainViewModel
                 'Dim KilometerAttributes As AttributeCollection = TypeDescriptor.GetAttributes(Km1)
                 'Dim myAttribute As TypeConverterAttribute = CType(KilometerAttributes(GetType(TypeConverterAttribute)), TypeConverterAttribute)
                 'Logger.LogInfo("Type Conveter für 'Kilometer' ist: " & myAttribute.ConverterTypeName)
-                'Logger.logInfo("")
+                'Logger.LogInfo("")
                 '
                 'Dim Bool1 As Boolean = False
                 'Dim Bool2 As Boolean = False
                 'Dim Bool3 As Boolean = (Bool1 = Bool2)
-                'Logger.logInfo(sprintf(" '%s' = '%s' => %s\n", Bool1, Bool2, Bool3))
+                'Logger.LogInfo(sprintf(" '%s' = '%s' => %s\n", Bool1, Bool2, Bool3))
                 '
                 '
                 'Dim InputFile As GeoPointFile = New IpktFile() With {.EditOptions = GeoPointEditOptions.None}
@@ -583,62 +583,62 @@ Public Class MainViewModel
                 'If (Matches.Count > 0) Then
                 '    TestString2 = TestString.Left(Matches(0).Index) & TestString.Substring(Matches(0).Index + 1)
                 'End If
-                'Logger.logInfo(sprintf("  '%s' => '%s'", TestString, TestString2))
+                'Logger.LogInfo(sprintf("  '%s' => '%s'", TestString, TestString2))
                 
                 'Dim SourcePoint As New GeoIPoint ()
                 'SourcePoint.ParseTextForKindCodes(Me.Textbox)
-                'Logger.logInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", SourcePoint.Kind.ToDisplayString(), SourcePoint.MarkTypeAB, SourcePoint.MarkType, SourcePoint.ActualCant * 1000, SourcePoint.Info))
+                'Logger.LogInfo(sprintf("  Punktart = %s,  VArtAB = %s,  VArt = %s,  u = %3.0f    Info = '%s'", SourcePoint.Kind.ToDisplayString(), SourcePoint.MarkTypeAB, SourcePoint.MarkType, SourcePoint.ActualCant * 1000, SourcePoint.Info))
                 'SourcePoint.Info    = Me.Textbox
                 'SourcePoint.Comment = " HB 22.33"
                 'SourcePoint.ParseInfoForKindHints(TryComment:=False)
-                'Logger.logInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, SourcePoint.Kind.ToDisplayString(), SourcePoint.ActualCant * 1000, SourcePoint.Info))
+                'Logger.LogInfo(sprintf("  Info = '%s'  =>   Punktart = %s   u = %3.0f   Info neu = '%s'    ", Me.Textbox, SourcePoint.Kind.ToDisplayString(), SourcePoint.ActualCant * 1000, SourcePoint.Info))
                 
                 'Dim Km1 As Kilometer = New Kilometer("-0.1 - 212.13")
                 'Dim Km2 As Kilometer = New Kilometer("-0.1 - 12.13")
                 'Dim Km3 As Kilometer = New Kilometer("*12.3456")
                 'Dim Km4 As Kilometer = New Kilometer("123.4567*")
                 'Dim Km5 As Kilometer = New Kilometer("0.1 + 12.13")
-                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km1.ToKilometerNotation(2), Km1.TDBValue))
-                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km2.ToKilometerNotation(2), Km2.TDBValue))
-                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km3.ToKilometerNotation(2), Km3.TDBValue))
-                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
-                'Logger.logInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
+                'Logger.LogInfo(sprintf("Km %+18s  TDB = %9.2f", Km1.ToKilometerNotation(2), Km1.TDBValue))
+                'Logger.LogInfo(sprintf("Km %+18s  TDB = %9.2f", Km2.ToKilometerNotation(2), Km2.TDBValue))
+                'Logger.LogInfo(sprintf("Km %+18s  TDB = %9.2f", Km3.ToKilometerNotation(2), Km3.TDBValue))
+                'Logger.LogInfo(sprintf("Km %+18s  TDB = %9.2f", Km4.ToKilometerNotation(2), Km4.TDBValue))
+                'Logger.LogInfo(sprintf("Km %+18s  TDB = %9.2f", Km5.ToKilometerNotation(2), Km5.TDBValue))
                 
-                'Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
+                'Logger.LogInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
                 'Dim d1 As Double = Double.NaN
                 'd1.TryParse("+Unendlich")
-                'Logger.logInfo(sprintf("%+5.3f", d1))
+                'Logger.LogInfo(sprintf("%+5.3f", d1))
                 '
                 'Dim d2 As Double = Double.NegativeInfinity
                 'Dim d3 As Double = Double.PositiveInfinity
-                'Logger.logInfo(d2.ToString())
-                'Logger.logInfo(d3.ToString())
-                'Logger.logInfo(sprintf("%+5.3f", d2))
-                ''Logger.logInfo(sprintf("%+5.3f", d3))
+                'Logger.LogInfo(d2.ToString())
+                'Logger.LogInfo(d3.ToString())
+                'Logger.LogInfo(sprintf("%+5.3f", d2))
+                ''Logger.LogInfo(sprintf("%+5.3f", d3))
                 '
                 'Dim NegInf As String = "" & ChrW(&H221E)
                 '
-                'Logger.logInfo("")
+                'Logger.LogInfo("")
                 '
                 'System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture.Clone()
                 'System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.PositiveInfinitySymbol = ChrW(&H221E)
                 'System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NegativeInfinitySymbol = "-" & ChrW(&H221E)
                 '
                 ''System.Threading.Thread.CurrentThread.CurrentCulture = New System.Globalization.CultureInfo("de")
-                'Logger.logInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
+                'Logger.LogInfo(sprintf("CurrentCulture = %s", System.Globalization.CultureInfo.CurrentCulture.Name))
                 '
                 'd1 = Double.NaN
                 'd1.TryParse("+Unendlich")
-                'Logger.logInfo(sprintf("%+5.3f", d1))
+                'Logger.LogInfo(sprintf("%+5.3f", d1))
                 '
                 'd2 = Double.NegativeInfinity
                 'd3 = Double.PositiveInfinity
-                'Logger.logInfo(d2.ToString())
-                'Logger.logInfo(d3.ToString())
-                'Logger.logInfo(sprintf("%+5.3f", d2))
+                'Logger.LogInfo(d2.ToString())
+                'Logger.LogInfo(d3.ToString())
+                'Logger.LogInfo(sprintf("%+5.3f", d2))
                 '
                 'd1.TryParse(NegInf)
-                'Logger.logInfo(sprintf(" %s => %+5.3f", NegInf, d1))
+                'Logger.LogInfo(sprintf(" %s => %+5.3f", NegInf, d1))
                 
                 'Dim int1 As Integer = 1
                 'Dim int2 As Nullable(Of Integer) = 2
@@ -678,9 +678,9 @@ Public Class MainViewModel
                 'Try
                 '    TC.Load()
                 'Catch ex As Exception
-                '    Logger.logError(ex, "Crash...")
+                '    Logger.LogError(ex, "Crash...")
                 'Finally
-                '    'Logger.logInfo(TC.ToReport(OnlySummary:=False))
+                '    'Logger.LogInfo(TC.ToReport(OnlySummary:=False))
                 'End Try
                 ' 'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
                 'Dim pts As New GeoPointOpenList(KV.PointStream, KV)
@@ -696,27 +696,27 @@ Public Class MainViewModel
                 
                 
                 'Dim dtUTC As DateTime = DateTime.UtcNow
-                'Logger.logInfo(dtUTC.ToLongDateString())
-                'Logger.logInfo(dtUTC.ToShortDateString())
-                'Logger.logInfo(dtUTC.ToLongTimeString())
-                'Logger.logInfo(dtUTC.ToShortTimeString())
+                'Logger.LogInfo(dtUTC.ToLongDateString())
+                'Logger.LogInfo(dtUTC.ToShortDateString())
+                'Logger.LogInfo(dtUTC.ToLongTimeString())
+                'Logger.LogInfo(dtUTC.ToShortTimeString())
                 'Dim dtLocal As DateTime = dtUTC.ToLocalTime()
-                'Logger.logInfo(dtLocal.ToShortTimeString())
-                'Logger.logInfo("")
+                'Logger.LogInfo(dtLocal.ToShortTimeString())
+                'Logger.LogInfo("")
                 '
                 ''Dim RefTime As DateTime = DateTime.Parse("01.01.1970 0:00")
                 'Dim RefTime As DateTime = DateTime.SpecifyKind(DateTime.Parse("01.01.1970 0:00"), DateTimeKind.Utc)
                 'Dim ts As TimeSpan = dtUTC.Subtract(RefTime)
                 'Dim sec As Integer = CInt(ts.TotalSeconds)
                 'Dim NewTime As DateTime = RefTime.AddSeconds(sec)
-                'Logger.logInfo(RefTime.ToString())
-                'Logger.logInfo(RefTime.ToLocalTime().ToString())
-                'Logger.logInfo("")
+                'Logger.LogInfo(RefTime.ToString())
+                'Logger.LogInfo(RefTime.ToLocalTime().ToString())
+                'Logger.LogInfo("")
                 '
-                'Logger.logInfo(ts.TotalSeconds.ToString())
+                'Logger.LogInfo(ts.TotalSeconds.ToString())
                 '
-                ''Logger.logInfo(StringUtils.sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
-                ''Logger.logInfo(StringUtils.sprintf("Nothing: '%6.3f'", Nothing))
+                ''Logger.LogInfo(StringUtils.Sprintf("3 Stellen: '%3s'", "123456789".TrimToMaxLength(3)))
+                ''Logger.LogInfo(StringUtils.Sprintf("Nothing: '%6.3f'", Nothing))
                 '
                 ' 'Dim TestText1 As String = "25082013"
                 ' Dim TestDate As DateTime
@@ -725,12 +725,12 @@ Public Class MainViewModel
                 ' ''Dim success As Boolean = DateTime.TryParse(TestText1, TestDate)
                 ' 'Dim success As Boolean = DateTime.TryParseExact(TestText1, "ddMMyyyy", Nothing, Globalization.DateTimeStyles.None, TestDate)
                 ' Dim success As Boolean = DateTime.TryParseExact(TestText1, "s", Nothing, Globalization.DateTimeStyles.None, TestDate)
-                ' Logger.logInfo(TestDate.ToShortDateString())
-                ' Logger.logInfo(TestDate.ToString("s"))
+                ' Logger.LogInfo(TestDate.ToShortDateString())
+                ' Logger.LogInfo(TestDate.ToString("s"))
                 '
                 'Dim TestDouble As Double = 33
                 'Double.TryParse(Nothing , TestDouble)
-                'Logger.logInfo(StringUtils.sprintf("Double = %.3f", TestDouble))
+                'Logger.LogInfo(StringUtils.Sprintf("Double = %.3f", TestDouble))
                 '
                 'Dim p1 As New GeoTcPoint()
                 'p1.Q    = -4.000
@@ -742,10 +742,10 @@ Public Class MainViewModel
                 'p2.HSOK =  5.000
                 'p2.Ueb  =  -0.150
                 'p2.Ra   =  -1
-                'p1.transformHorizontalToCanted()
-                'p2.transformHorizontalToCanted()
-                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p1.Q, p1.HSOK, p1.Ueb * sign(p1.Ra), p1.QG, p1.HG))
-                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p2.Q, p2.HSOK, p2.Ueb * sign(p2.Ra), p2.QG, p2.HG))
+                'p1.TransformHorizontalToCanted()
+                'p2.TransformHorizontalToCanted()
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p1.Q, p1.HSOK, p1.Ueb * sign(p1.Ra), p1.QG, p1.HG))
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p2.Q, p2.HSOK, p2.Ueb * sign(p2.Ra), p2.QG, p2.HG))
                 '
                 'Dim p3 As New GeoTcPoint()
                 'p3.QG   = p1.QG
@@ -757,48 +757,48 @@ Public Class MainViewModel
                 'p4.HG   = p2.HG
                 'p4.Ueb  = -0.150
                 'p4.Ra   = -1
-                'p3.transformCantedToHorizontal()
-                'p4.transformCantedToHorizontal()
-                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb * sign(p3.Ra), p3.QG, p3.HG))
-                'Logger.logInfo(StringUtils.sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb * sign(p4.Ra), p4.QG, p4.HG))
+                'p3.TransformCantedToHorizontal()
+                'p4.TransformCantedToHorizontal()
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb * sign(p3.Ra), p3.QG, p3.HG))
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb * sign(p4.Ra), p4.QG, p4.HG))
                 '
                 'Dim dou As Double = 24430.0 'Double.NaN
                 'Dim i16 As Int16 = 0
                 'If (Not Double.IsNaN(dou)) Then i16 = CInt(dou)
-                'Logger.logInfo(i16)
+                'Logger.LogInfo(i16)
                 
                 'Dim d1  As Double = 1.2301
                 'Dim d2  As Double = 1.23
                 'Dim eps As Double = 0.000099999999999
-                'Logger.logInfo(StringUtils.sprintf("%.4f = %.4f (eps=%.4f): %s", d1, d2, eps, d1.EqualsAlmost(d2, eps)))
+                'Logger.LogInfo(StringUtils.Sprintf("%.4f = %.4f (eps=%.4f): %s", d1, d2, eps, d1.EqualsAlmost(d2, eps)))
                 
                 'Dim Km As Kilometer = New Kilometer(Me.Textbox)
-                'Logger.logInfo(StringUtils.sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
+                'Logger.LogInfo(StringUtils.Sprintf("Km = %8.3f  (Status=%s)  =>  %s", Km.Value, Km.Status.ToDisplayString(), Km.ToKilometerNotation(3)))
                 
-                'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
-                'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
-                'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFileName(Me.Textbox)))
-                'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFileNameSpelling(Me.Textbox)))
+                'Logger.LogInfo(StringUtils.Sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.IsValidFilePath(Me.Textbox)))
+                'Logger.LogInfo(StringUtils.Sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.ValidateFilePathSpelling(Me.Textbox)))
+                'Logger.LogInfo(StringUtils.Sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.IsValidFileName(Me.Textbox)))
+                'Logger.LogInfo(StringUtils.Sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.ValidateFileNameSpelling(Me.Textbox)))
                 
                 'Dim Path As String = "T:\Debug.log"
                 'Dim fdk As New IO.DataTextFileReader(LineStartCommentToken:="*", LineEndCommentToken:="|", SeparateHeader:=True)
                 'fdk.Load(Me.FilePath1)
-                'Logger.logInfo(StringUtils.sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
+                'Logger.LogInfo(StringUtils.Sprintf("Zeilen gelesen = %d", fdk.TotalLinesCount))
                 
                 'Dim li  As TrackTitle = TrackTitle.GetDBAGTrackTitle(6265)
                 
                 'TcReader = New TcFileReader()
                 'TcReader.Load(Me.FilePath1)
-                'Logger.logInfo(TcReader.ToReport(OnlySummary:=True))
-                'Logger.logInfo(TcReader.ToString())
+                'Logger.LogInfo(TcReader.ToReport(OnlySummary:=True))
+                'Logger.LogInfo(TcReader.ToString())
                 
                 'Dim Info As String = Me.Textbox
-                'Dim Cant As Double = GeoMath.parseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
-                'Logger.logInfo(StringUtils.sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
+                'Dim Cant As Double = GeoMath.ParseCant(Info, strict:=False, absolute:=False, editPointInfo:=True)
+                'Logger.LogInfo(StringUtils.Sprintf("Überhöhung = %.0f  (Info = '%s')", Cant, Info))
                  
                 'Dim li  As GeoMath.DBAGTrackInfo
-                'li = GeoMath.getDBAGTrackTitle(6265)
-                'Logger.logInfo(li.ShortTitle)
+                'li = GeoMath.GetDBAGTrackTitle(6265)
+                'Logger.LogInfo(li.ShortTitle)
                 'Exit Sub
                 
                 'Dim Zahl        As DataField(Of Double) = Nothing
@@ -820,13 +820,13 @@ Public Class MainViewModel
                 ''
                 'If (SplitLine.HasData) Then
                 '    If (SplitLine.TryParseField(FieldDefD, Zahl)) Then
-                '        Logger.logInfo(StringUtils.sprintf("Feld '%s' = %.3f", Zahl.Definition.Caption, Zahl.Value))
+                '        Logger.LogInfo(StringUtils.Sprintf("Feld '%s' = %.3f", Zahl.Definition.Caption, Zahl.Value))
                 '    Else
                 '        Errors.Add(Zahl.ParseError)
                 '    End If
                 '    
                 '    If (SplitLine.TryParseField(FieldDefS, Text)) Then
-                '        Logger.logInfo(StringUtils.sprintf("Feld '%s' = %s", Text.Definition.Caption, Text.Value))
+                '        Logger.LogInfo(StringUtils.Sprintf("Feld '%s' = %s", Text.Definition.Caption, Text.Value))
                 '    Else
                 '        Errors.Add(Text.ParseError)
                 '    End If
@@ -834,20 +834,20 @@ Public Class MainViewModel
                 '    Errors.ToLoggingConsole()
                 'End If
                 
-                'Apps.AppUtils.startEditor(5, "")
-                'Logger.logInfo(Rstyx.Utilities.IO.FileUtils.FilePart.Dir.ToDisplayString())
-                'Logger.logInfo(EnumExtensions.ToDisplayString(Rstyx.Utilities.IO.FileUtils.FilePart.Dir))
+                'Apps.AppUtils.StartEditor(5, "")
+                'Logger.LogInfo(Rstyx.Utilities.IO.FileUtils.FilePart.Dir.ToDisplayString())
+                'Logger.LogInfo(EnumExtensions.ToDisplayString(Rstyx.Utilities.IO.FileUtils.FilePart.Dir))
                 
-                'Me.showHelpFile()
+                'Me.ShowHelpFile()
                 
                 'Dim success As Boolean = TrySetProperty("Textbo", "teschtttt", New String() {"hh", "teschtttyy"})
                 
                 'Throw New InvalidDataException("+++++++++++++++++++++++++++")
                 
-                'Dim fic As IO.FileInfoCollection = IO.FileUtils.findFile("*.bsh", "G:\Tools\jEdit_51\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
-                'Dim fi As FileInfo = IO.FileUtils.findFile("*.bsh", ";;G:\Tools\jEdit_51\macros\Aktive_Datei;G:\Tools\jEdit_51\macros\Aktive_Datei", ";", Nothing)
-                'Logger.logInfo(fi.FullName)
-                'Logger.logInfo(Me.FilePath1)
+                'Dim fic As IO.FileInfoCollection = IO.FileUtils.FindFile("*.bsh", "G:\Tools\jEdit_51\macros\Aktive_Datei", Nothing, SearchOption.TopDirectoryOnly)
+                'Dim fi As FileInfo = IO.FileUtils.FindFile("*.bsh", ";;G:\Tools\jEdit_51\macros\Aktive_Datei;G:\Tools\jEdit_51\macros\Aktive_Datei", ";", Nothing)
+                'Logger.LogInfo(fi.FullName)
+                'Logger.LogInfo(Me.FilePath1)
                 
                 'Dim Field = "Symbol_Scale_Width"
                 'Dim TableName = "Points$"
@@ -867,46 +867,46 @@ Public Class MainViewModel
                 ''CSB.Provider   = "Microsoft.ACE.OLEDB.12.0"
                 ''CSB.Add("Extended Properties", "Excel 12.0 Xml;ReadOnly=True")
                 ''DBconn = New OleDbConnection(CSB.ConnectionString)
-                ''Logger.logInfo(StringUtils.sprintf("ConnectionString = '%s'", CSB.ConnectionString))
+                ''Logger.LogInfo(StringUtils.Sprintf("ConnectionString = '%s'", CSB.ConnectionString))
                 ''DBconn.Open()
                 ''DBconn.Close()
                 '
                 'Dim TableName = "Standorte$"
                 'Dim Workbook  = "C:\ProgramData\intermetric\sync_Ressourcen\MicroStation\Workspace\standards\I_Tabellen\Standortdaten.xlsx"
                 ' Dim Workbook  = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx"
-                ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx")
-                ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.connectToExcelWorkbook(Me.FilePath1)
-                ' Using Table As System.Data.DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                ' 'Using Table As System.Data.DataTable = DBconn.getTable(TableName)
-                '     ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
-                '     'Dim Table As DataTable = XLconn.getTable(TableName)
-                '     'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
-                '     'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+                ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.ConnectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xlsx")
+                ' 'Using XLconn As System.Data.OleDb.OleDbConnection = DBUtils.ConnectToExcelWorkbook(Me.FilePath1)
+                ' Using Table As System.Data.DataTable = DBUtils.GetExcelSheet(TableName, Workbook)
+                ' 'Using Table As System.Data.DataTable = DBconn.GetTable(TableName)
+                '     ''Dim Table As DataTable = DBUtils.GetOleDBTable(TableName, XLconn)
+                '     'Dim Table As DataTable = XLconn.GetTable(TableName)
+                '     'Logger.LogInfo(StringUtils.Sprintf("Feld '%s' existiert = %s", Field, DBconn.TableContainsField(TableName, Field)))
+                '     'Logger.LogInfo(StringUtils.Sprintf("Feld '%s' existiert = %s", Field, Table.ContainsField(Field)))
                 '     
                 '     'Dim SQL = "SELECT * FROM " & TableName
-                '     'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+                '     'Dim Table As DataTable = DBUtils.QueryOLEDB(SQL, XLconn)
                 '     'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
                 '     
-                '     'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-                '     'Dim yes = Table.containsField(Field)
-                '     'Logger.logInfo(StringUtils.sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.containsField(Field)))
+                '     'Dim Table As DataTable = DBUtils.GetExcelSheet(TableName, Workbook)
+                '     'Dim yes = Table.ContainsField(Field)
+                '     'Logger.LogInfo(StringUtils.Sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.ContainsField(Field)))
                 '     '
                 '     For Each row As System.Data.DataRow In Table.AsEnumerable()
-                '         Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+                '         Logger.LogInfo(StringUtils.Sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
                 '     Next 
                 ' End Using
                 
                 'UI.ClassEvents.SelectAllOnTextBoxGotFocus = (Not UI.ClassEvents.SelectAllOnTextBoxGotFocus)
-                'Logger.logInfo(StringUtils.sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.isValidFilePath(Me.Textbox)))
-                'Logger.logInfo(StringUtils.sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.validateFilePathSpelling(Me.Textbox)))
+                'Logger.LogInfo(StringUtils.Sprintf("gültig     = %s", Rstyx.Utilities.IO.FileUtils.IsValidFilePath(Me.Textbox)))
+                'Logger.LogInfo(StringUtils.Sprintf("korrigiert = %s", Rstyx.Utilities.IO.FileUtils.ValidateFilePathSpelling(Me.Textbox)))
                 
             'Catch ex As ParseException
-            '    'Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
+            '    'Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_LoadFailed, TcReader.FilePath))
             '    'TcReader.ParseErrors.ShowInJEdit()
-            '    Logger.logError(ex, "==> Fehler...")
+            '    Logger.LogError(ex, "==> Fehler...")
             '    
             'Catch ex As System.Exception
-            '    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+            '    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
             '    'Throw New RemarkException("test_1(): Unerwarteter Fehler.", ex)
             'End Try
         End Sub
@@ -923,7 +923,7 @@ Public Class MainViewModel
                 'Throw New RemarkException("AAAAAAAAAAA")
                 RetValue = True
             Catch ex As System.Exception
-                Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
             End Try
             Return RetValue
         End Function
@@ -935,41 +935,41 @@ Public Class MainViewModel
             ''Dim bool As Boolean
             '
             Dim TestEnum As Cinch.CustomDialogIcons = Cinch.CustomDialogIcons.Question
-            Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum.ToString(), TestEnum.ToDisplayString()))
+            Logger.LogInfo(StringUtils.Sprintf("Enum Value=%s:  Display=%s", TestEnum.ToString(), TestEnum.ToDisplayString()))
             Me.StatusText = TestEnum.ToDisplayString()
             
             System.Threading.Thread.Sleep(3000)
             
             Dim TestEnum2 As ArrayUtils.SortType = ArrayUtils.SortType.Numeric
-            Logger.logInfo(StringUtils.sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
+            Logger.LogInfo(StringUtils.Sprintf("Enum Value=%s:  Display=%s", TestEnum2.ToString(), TestEnum2.ToDisplayString()))
             Me.StatusText = TestEnum2.ToDisplayString()
             
             's = "klop-123.4+8y9u=+987#äö"
             'd = 123456789.789
             'sa = s.Split("\s+")
             
-            'Logger.logInfo(GeoMath.Hex2Dec("2fde"))
-            'd = GeoMath.getKilometer(a)
+            'Logger.LogInfo(GeoMath.Hex2Dec("2fde"))
+            'd = GeoMath.GetKilometer(a)
             
-            'GeoMath.getCantFromPointinfo(s, d, False )
+            'GeoMath.GetCantFromPointinfo(s, d, False )
             Dim li  As TrackTitle = TrackTitle.GetDBAGTrackTitle(6265)
-            Logger.logInfo(li.ShortTitle)
-            'Logger.logInfo(Strings.FileSpec2RegExp("X:\Quellen\DotNet\VisualBasic\_Backup\Rstyx.Utilities_2012-??-14.*"))
+            Logger.LogInfo(li.ShortTitle)
+            'Logger.LogInfo(Strings.FileSpec2RegExp("X:\Quellen\DotNet\VisualBasic\_Backup\Rstyx.Utilities_2012-??-14.*"))
             
-            'Logger.logInfo(s.left("y"c))
-            'Logger.logInfo("\sc\rf\\\#\\\".removeTrailingBackslashes())
-            'Logger.logInfo("\sc\rf\\\#\\\".TrimEnd("\"))
-            'Logger.logInfo(Strings.getFilePart("D:\daten\Test_QP\qp_ueb.dgn", Strings.FilePart.Dir_Proj   ))
-            'Logger.logInfo(System.IO.File.Exists("D:\daten\Test_QP\"))
+            'Logger.LogInfo(s.Left("y"c))
+            'Logger.LogInfo("\sc\rf\\\#\\\".RemoveTrailingBackslashes())
+            'Logger.LogInfo("\sc\rf\\\#\\\".TrimEnd("\"))
+            'Logger.LogInfo(Strings.GetFilePart("D:\daten\Test_QP\qp_ueb.dgn", Strings.FilePart.Dir_Proj   ))
+            'Logger.LogInfo(System.IO.File.Exists("D:\daten\Test_QP\"))
             
             'dim keyName      as string = "HKEY_CURRENT_USER\Software\VB and VBA Program Settings\Microstation\frmBatchPlot\"
             ''dim valueName    as string = "Dialog_Left"
             'dim valueName    as string = "test"
             'dim valueString  as string = "1234"
             'dim valueObj     as Object = "123456"
-            'Logger.logInfo(RegUtils.ValueExists(key))
-            'Logger.logInfo(RegUtils.getValue(Of String)(keyName & valueName))
-            'Logger.logInfo("Pfad = '" & RegUtils.getApplicationPath("HKEY_CLASSES_ROOT\i_M5_file\shell\i_zzHilfe\ShellCommand\") & "'")
+            'Logger.LogInfo(RegUtils.ValueExists(key))
+            'Logger.LogInfo(RegUtils.GetValue(Of String)(keyName & valueName))
+            'Logger.LogInfo("Pfad = '" & RegUtils.GetApplicationPath("HKEY_CLASSES_ROOT\i_M5_file\shell\i_zzHilfe\ShellCommand\") & "'")
             
             
             '
@@ -979,35 +979,35 @@ Public Class MainViewModel
             'Dim File     As String = " *"
             'Dim File     As String = "cedt.exe"
             'Dim File     As String = "uedit*.exe;ultaedit*.exe"
-            ''Logger.logInfo(Folders.IndexOfAny(System.IO.Path.GetInvalidPathChars()))
+            ''Logger.LogInfo(Folders.IndexOfAny(System.IO.Path.GetInvalidPathChars()))
             ''
-            'Dim found  As System.Collections.ObjectModel.Collection(Of System.IO.fileinfo) = IO.FileUtils.findFiles(File, Folders, ";", IO.SearchOption.AllDirectories)
+            'Dim found  As System.Collections.ObjectModel.Collection(Of System.IO.fileinfo) = IO.FileUtils.FindFiles(File, Folders, ";", IO.SearchOption.AllDirectories)
             '
             'If (found.IsNotNull) Then 
             '    For Each fi In found 
-            '        Logger.logInfo(fi.FullName)
+            '        Logger.LogInfo(fi.FullName)
             '    Next
-            '    Logger.logInfo(found.Count)
+            '    Logger.LogInfo(found.Count)
             'End If
-            'Logger.logInfo(StringUtils.sprintf(" %d Dateien gefunden", found.Count))
+            'Logger.LogInfo(StringUtils.Sprintf(" %d Dateien gefunden", found.Count))
             
-            'Logger.logInfo(Environment.GetEnvironmentVariable("jedit_home"))
-            'Logger.logInfo(AppUtils.AppPathJava)
+            'Logger.LogInfo(Environment.GetEnvironmentVariable("jedit_home"))
+            'Logger.LogInfo(AppUtils.AppPathJava)
             
-            'AppUtils.startEditor(AppUtils.SupportedEditors.jEdit , """T:\_test\12 3 Ö .tx t"" +line:44,11")
-            'Logger.logInfo(AppUtils.startFile("T:\_test\12 3 Ö .txt"))
-            'AppUtils.startEditor(AppUtils.SupportedEditors.UltraEdit  , """T:\_test\12 3 Ö .txt"" +line:44,11")
+            'AppUtils.StartEditor(AppUtils.SupportedEditors.jEdit , """T:\_test\12 3 Ö .tx t"" +line:44,11")
+            'Logger.LogInfo(AppUtils.StartFile("T:\_test\12 3 Ö .txt"))
+            'AppUtils.StartEditor(AppUtils.SupportedEditors.UltraEdit  , """T:\_test\12 3 Ö .txt"" +line:44,11")
             
             'AppUtils.CurrentEditor = AppUtils.SupportedEditors.CrimsonEditor   
-            'AppUtils.startEditor(AppUtils.CurrentEditor, """T:\_test\12 3 Ö .txt""")
+            'AppUtils.StartEditor(AppUtils.CurrentEditor, """T:\_test\12 3 Ö .txt""")
             
             'Dim IconDictionary  As ResourceDictionary = UI.Resources.UIResources.Icons
             '
-            'Logger.logInfo("Microsoft.VisualBasic.FileIO.FileSystem.CurrentDirectory = " & Microsoft.VisualBasic.FileIO.FileSystem.CurrentDirectory)
-            'Logger.logInfo("System.Environment.CurrentDirectory = " & System.Environment.CurrentDirectory())
-            'Logger.logInfo("System.IO.Directory.GetCurrentDirectory() = " & System.IO.Directory.GetCurrentDirectory())
+            'Logger.LogInfo("Microsoft.VisualBasic.FileIO.FileSystem.CurrentDirectory = " & Microsoft.VisualBasic.FileIO.FileSystem.CurrentDirectory)
+            'Logger.LogInfo("System.Environment.CurrentDirectory = " & System.Environment.CurrentDirectory())
+            'Logger.LogInfo("System.IO.Directory.GetCurrentDirectory() = " & System.IO.Directory.GetCurrentDirectory())
             '
-            'Logger.logInfo("EditorCombo2.ActualHeight = " & EditorCombo2.ActualHeight)
+            'Logger.LogInfo("EditorCombo2.ActualHeight = " & EditorCombo2.ActualHeight)
             '
             'FileChoser1.InputFilePath = "rrrrrrrrrr"
             
@@ -1022,22 +1022,22 @@ Public Class MainViewModel
             'Dim Workbook = "R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls"
             'Dim Workbook  = "C:\ProgramData\intermetric\sync_Ressourcen\MicroStation\Workspace\standards\I_Tabellen\Standortdaten.xlsx"
             '
-            'Dim XLconn As OleDbConnection = DBUtils.connectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
-            ''Dim Table As DataTable = DBUtils.getOleDBTable(TableName, XLconn)
-            'Dim Table As DataTable = XLconn.getTable(TableName)
-            'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, XLconn.TableContainsField(TableName, Field)))
-            'Logger.logInfo(StringUtils.sprintf("Feld '%s' existiert = %s", Field, Table.containsField(Field)))
+            'Dim XLconn As OleDbConnection = DBUtils.ConnectToExcelWorkbook("R:\Microstation\Workspace\Standards\I_Tabellen\Standortdaten.xls")
+            ''Dim Table As DataTable = DBUtils.GetOleDBTable(TableName, XLconn)
+            'Dim Table As DataTable = XLconn.GetTable(TableName)
+            'Logger.LogInfo(StringUtils.Sprintf("Feld '%s' existiert = %s", Field, XLconn.TableContainsField(TableName, Field)))
+            'Logger.LogInfo(StringUtils.Sprintf("Feld '%s' existiert = %s", Field, Table.ContainsField(Field)))
             
             'Dim SQL = "SELECT * FROM " & TableName
-            'Dim Table As DataTable = DBUtils.queryOLEDB(SQL, XLconn)
+            'Dim Table As DataTable = DBUtils.QueryOLEDB(SQL, XLconn)
             'Dim Query = From site In Table.AsEnumerable() Where site.Field(Of String)("UserDomain") = "dummy"
             
-            'Dim Table As DataTable = DBUtils.getExcelSheet(TableName, Workbook)
-            'Dim yes = DBExtensions.containsField(Table, Field)
-            'Dim yes = Table.containsField(Field)
+            'Dim Table As DataTable = DBUtils.GetExcelSheet(TableName, Workbook)
+            'Dim yes = DBExtensions.ContainsField(Table, Field)
+            'Dim yes = Table.ContainsField(Field)
             
             'For Each row As DataRow In Table.AsEnumerable()
-            '    Logger.logInfo(StringUtils.sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+            '    Logger.LogInfo(StringUtils.Sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
             'Next 
             
             'TestPanel.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity))

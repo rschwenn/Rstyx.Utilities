@@ -6,7 +6,7 @@ Namespace Apps
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Apps.AppInfo")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Apps.AppInfo")
             
             Private _Assembly           As System.Reflection.Assembly = Nothing
             Private _AssemblyName       As System.Reflection.AssemblyName = Nothing
@@ -76,7 +76,7 @@ Namespace Apps
                     _Version = _AssemblyName.Version
                     
                 'Catch ex As System.Exception
-                '    Logger.logError(ex, "initAppInfo(): Fehler beim Bestimmen der Anwendungsinformationen.")
+                '    Logger.LogError(ex, "initAppInfo(): Fehler beim Bestimmen der Anwendungsinformationen.")
                 'End Try
             End Sub
             

@@ -19,7 +19,7 @@ Namespace PDF
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.PDF")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.PDF")
             
         #End Region
         
@@ -68,7 +68,7 @@ Namespace PDF
                         Using InputPdfFile As File = New File(FilePath)
                             
                             Dim InputPdfDoc  As Document = InputPdfFile.Document
-                            Dim FileName As String = Rstyx.Utilities.IO.FileUtils.getFilePart(FilePath, FileUtils.FilePart.Base)
+                            Dim FileName As String = Rstyx.Utilities.IO.FileUtils.GetFilePart(FilePath, FileUtils.FilePart.Base)
                             
                             ' Iterate pages.
                             For idx As Integer = 0 To InputPdfDoc.Pages.Count - 1
@@ -93,8 +93,8 @@ Namespace PDF
                 If (OutputPDFDoc.Pages.Count < 1) Then Throw New ArgumentException(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_JoinFailedNoFiles, OutputPath))
                 
                 ' Compress file.
-                'org.pdfclown.tools.Optimizer.removeOrphanedObjects(OutputPdfFile)
-                'OutputPDF.Configuration.setXRefMode(Document.ConfigurationImpl.XRefModeEnum.Compressed)
+                'org.pdfclown.tools.Optimizer.RemoveOrphanedObjects(OutputPdfFile)
+                'OutputPDF.Configuration.SetXRefMode(Document.ConfigurationImpl.XRefModeEnum.Compressed)
                 
                 ' Save joined PDF as file.
                 OutputPdfFile.Save(OutputPath, SerializationModeEnum.Standard)
@@ -106,7 +106,7 @@ Namespace PDF
                             Try
                                 System.IO.File.Delete(FilePath)
                             Catch ex As Exception
-                                Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_FailedDeletePDF, FilePath))
+                                Logger.LogWarning(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_FailedDeletePDF, FilePath))
                             End Try
                         End If
                     Next
@@ -147,7 +147,7 @@ Namespace PDF
             '         ' Open the document to import pages from it.
             '         Try
             '             Dim InputPDF As PdfDocument = PdfReader.Open(FilePath, PdfDocumentOpenMode.Import)
-            '             Dim FileName As String      = Rstyx.Utilities.IO.FileUtils.getFilePart(FilePath, FileUtils.FilePart.Base)
+            '             Dim FileName As String      = Rstyx.Utilities.IO.FileUtils.GetFilePart(FilePath, FileUtils.FilePart.Base)
             '             
             '             ' Iterate pages.
             '             For idx As Integer = 0 To InputPDF.PageCount - 1
@@ -176,7 +176,7 @@ Namespace PDF
             '                 Try
             '                     System.IO.File.Delete(FilePath)
             '                 Catch ex As Exception
-            '                     Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_FailedDeletePDF, FilePath))
+            '                     Logger.LogWarning(sprintf(Rstyx.Utilities.Resources.Messages.PdfUtils_FailedDeletePDF, FilePath))
             '                 End Try
             '             End If
             '         Next

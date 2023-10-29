@@ -372,7 +372,7 @@ Namespace IO.CSV
                 Try
                     RaiseEvent ParseError(Me, e)
                 Catch ex As System.Exception
-                    'Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    'Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             

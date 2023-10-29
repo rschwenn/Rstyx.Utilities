@@ -6,8 +6,8 @@
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.RegUtils")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.RegUtils")
             
         #End Region
         
@@ -34,16 +34,16 @@
                     success = (TestValue IsNot Nothing)
                     
                 Catch ex as System.ArgumentException
-                    Logger.logError(ex, "KeyExists(): ungültiger Stammschlüsselname in ValuePathName " & KeyPathName)
+                    Logger.LogError(ex, "KeyExists(): ungültiger Stammschlüsselname in ValuePathName " & KeyPathName)
                     
                 Catch ex as System.IO.IOException
-                    Logger.logError(ex, "KeyExists(): Der RegistryKey " & KeyPathName & " wurde zum Löschen markiert.")
+                    Logger.LogError(ex, "KeyExists(): Der RegistryKey " & KeyPathName & " wurde zum Löschen markiert.")
                     
                 Catch ex as System.Security.SecurityException
-                    Logger.logError("KeyExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
+                    Logger.LogError("KeyExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
                     
                 Catch ex as System.Exception
-                    Logger.logError(ex, "KeyExists(): unbekannter Fehler")
+                    Logger.LogError(ex, "KeyExists(): unbekannter Fehler")
                 End Try
                 
                 Return success
@@ -69,16 +69,16 @@
                     success = ((TestValue isNot Nothing) AndAlso (not TestValue.ToString().Equals(UniqValue)))
                     
                 Catch ex as System.ArgumentException
-                    Logger.logError(ex, "ValueExists(): ungültiger Stammschlüsselname in ValuePathName " & ValuePathName)
+                    Logger.LogError(ex, "ValueExists(): ungültiger Stammschlüsselname in ValuePathName " & ValuePathName)
                     
                 Catch ex as System.IO.IOException
-                    Logger.logError(ex, "ValueExists(): Der RegistryKey " & KeyPathName & " wurde zum Löschen markiert.")
+                    Logger.LogError(ex, "ValueExists(): Der RegistryKey " & KeyPathName & " wurde zum Löschen markiert.")
                     
                 Catch ex as System.Security.SecurityException
-                    Logger.logError("ValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
+                    Logger.LogError("ValueExists(): Es fehlt die Berechtigung, um aus dem Registrierungsschlüssel " & KeyPathName & " zu lesen.")
                     
                 Catch ex as System.Exception
-                    Logger.logError(ex, "ValueExists(): unbekannter Fehler")
+                    Logger.LogError(ex, "ValueExists(): unbekannter Fehler")
                 End Try
                 
                 Return success
@@ -104,7 +104,7 @@
                 Try
                     Value = CStr(getValue(ValuePathName))
                 Catch ex As System.Exception
-                    Logger.logDebug("getStringValue(): Der Wert " & ValuePathName & " konnte nicht in einen String konvertiert werden.")
+                    Logger.LogDebug("getStringValue(): Der Wert " & ValuePathName & " konnte nicht in einen String konvertiert werden.")
                 End Try 
                 Return Value
             End Function
@@ -124,7 +124,7 @@
                     ValueO = getValue(ValuePathName)
                     ValueT = CType(ValueO, T)
                 Catch ex As System.Exception
-                    Logger.logDebug("getValue(): Der Wert " & ValuePathName & " konnte nicht in den Typ " & GetType(T).ToString() & " konvertiert werden.")
+                    Logger.LogDebug("getValue(): Der Wert " & ValuePathName & " konnte nicht in den Typ " & GetType(T).ToString() & " konvertiert werden.")
                 End Try 
                 Return ValueT
             End Function
@@ -140,7 +140,7 @@
                     Microsoft.Win32.Registry.SetValue(getKeyPathName(ValuePathName), getValueName(ValuePathName), Value, ValueKind)
                     success = True
                 Catch ex As System.Exception
-                    Logger.logError(ex, "setValue(): Fehler beim Schreiben des Wertes " & ValuePathName & ".")
+                    Logger.LogError(ex, "setValue(): Fehler beim Schreiben des Wertes " & ValuePathName & ".")
                 End Try 
                 Return success
             End Function
@@ -182,12 +182,12 @@
              '''  </remarks>
             Public Shared Function GetApplicationPath(ByVal ValuePathName As String) As String
                 Dim AppPath  As String = Nothing
-                Logger.logDebug("getApplicationPath(): Pfad\Name einer Programmdatei ermitteln aus RegistryValue '" & ValuePathName & "'.")
+                Logger.LogDebug("getApplicationPath(): Pfad\Name einer Programmdatei ermitteln aus RegistryValue '" & ValuePathName & "'.")
                 
                 if (ValueExists(ValuePathName)) then
                     AppPath = getStringValue(ValuePathName)
                     If (AppPath.IsNotNull) Then
-                        Logger.logDebug(StringUtils.sprintf("getApplicationPath(): Inhalt des RegistryValue: '%s'", AppPath))
+                        Logger.LogDebug(StringUtils.Sprintf("getApplicationPath(): Inhalt des RegistryValue: '%s'", AppPath))
                         AppPath = AppPath.Trim()
                         ' extract Path:
                         if (AppPath.Left(1) = """") then
@@ -199,12 +199,12 @@
                         end if
                     end if
                 end if
-                Logger.logDebug("getApplicationPath(): Ermittelter Pfad\Name lautet: '" & AppPath & "'")
+                Logger.LogDebug("getApplicationPath(): Ermittelter Pfad\Name lautet: '" & AppPath & "'")
                 
                 if (System.IO.File.Exists(AppPath)) then
-                    Logger.logDebug("getApplicationPath(): OK - '" & AppPath & "' existiert.")
+                    Logger.LogDebug("getApplicationPath(): OK - '" & AppPath & "' existiert.")
                 else
-                    Logger.logDebug("getApplicationPath(): Datei '" & AppPath & "' existiert nicht!")
+                    Logger.LogDebug("getApplicationPath(): Datei '" & AppPath & "' existiert nicht!")
                     AppPath = String.Empty
                 end if
                 

@@ -26,7 +26,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.DataFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.IO.DataFile")
             
             ''' <summary> Indicates whether or not <see cref="DataFile.FilePath"/> has changed since last reading. </summary>
             Protected IsFilePathChanged As Boolean = False
@@ -37,14 +37,14 @@ Namespace IO
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
-                Logger.logDebug("New(): DataFile instantiated")
+                Logger.LogDebug("New(): DataFile instantiated")
             End Sub
             
             ''' <summary> Creates a new instance with a given file path. </summary>
              ''' <param name="FilePath"> The file path of the data file to be read or write. May be <see langword="null"/>. </param>
             Public Sub New(FilePath As String)
                 Me.FilePath = FilePath
-                Logger.logDebug("New(): DataFile instantiated for file: " & FilePath)
+                Logger.LogDebug("New(): DataFile instantiated for file: " & FilePath)
             End Sub
             
         #End Region

@@ -63,7 +63,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.RailPair")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.RailPair")
             
             Private Shared UnknownConfigurationRule As Cinch.SimpleRule
             Private Shared SpeedToSmallRule         As Cinch.SimpleRule
@@ -309,7 +309,7 @@ Namespace Domain
                     Try
                         RailsConfigChangedWeakEvent.Raise(sender, e)
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                     End Try
                 End RaiseEvent
                 
@@ -629,7 +629,7 @@ Namespace Domain
                 If (Not Me.IsConfigured) Then 
                     RetValue = MyBase.ToString()
                 Else
-                    RetValue = Rstyx.Utilities.StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.RailPair_ToString, Me.Cant * 1000, Me.CantBase)
+                    RetValue = Rstyx.Utilities.StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.RailPair_ToString, Me.Cant * 1000, Me.CantBase)
                 End If
                 Return RetValue
             End Function

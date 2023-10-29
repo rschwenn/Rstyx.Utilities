@@ -12,7 +12,7 @@ Namespace UI.Controls
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.Controls.FileChooser")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.Controls.FileChooser")
             
             ' Default dependency property values.
             Private Shared ChangesWorkingDirDefault     As Boolean = False
@@ -54,7 +54,7 @@ Namespace UI.Controls
                         FileWatcher = Nothing
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             
@@ -78,9 +78,9 @@ Namespace UI.Controls
                     Try
                         Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
                         FileChooserInstance.RaiseFilePathChanged()
-                        'Logger.logInfo(StringUtils.sprintf("OnFilePathChanged(): FilePath changed to: '%s'", e.NewValue))
+                        'Logger.LogInfo(StringUtils.Sprintf("OnFilePathChanged(): FilePath changed to: '%s'", e.NewValue))
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                     End Try
                 End Sub
                 
@@ -115,9 +115,9 @@ Namespace UI.Controls
                 
                 Private Shared Sub OnIsExistingFileChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
                     Try
-                        'Logger.logInfo(BooleanUtils.sprintf("OnIsExistingFileChanged(): IsExistingFile changed to: '%s'", e.NewValue))
+                        'Logger.LogInfo(BooleanUtils.Sprintf("OnIsExistingFileChanged(): IsExistingFile changed to: '%s'", e.NewValue))
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                     End Try
                 End Sub
                 
@@ -144,9 +144,9 @@ Namespace UI.Controls
                 
                 Private Shared Sub OnIsValidFilePathChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
                     Try
-                        'Logger.logInfo(BooleanUtils.sprintf("OnIsValidFilePathChanged(): IsValidFilePath changed to: '%s'", e.NewValue))
+                        'Logger.LogInfo(BooleanUtils.Sprintf("OnIsValidFilePathChanged(): IsValidFilePath changed to: '%s'", e.NewValue))
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                     End Try
                 End Sub
                 
@@ -342,7 +342,7 @@ Namespace UI.Controls
                     Try
                         'OnClrPropertyChanged("FileFilterIndex")
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                     End Try
                 End Sub
                 
@@ -373,7 +373,7 @@ Namespace UI.Controls
                         Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
                         FileChooserInstance.SetValue(TextBoxToolTipPropertyKey, getTextBoxToolTip(FileChooserInstance))
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                     End Try
                 End Sub
                 
@@ -407,7 +407,7 @@ Namespace UI.Controls
                         'FileChooserInstance.FilePathTextBox.Text = CType(e.NewValue, String)
                         FileChooserInstance.FilePathTextBox.SetCurrentValue(System.Windows.Controls.TextBox.TextProperty, CType(e.NewValue, String))
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                     End Try
                 End Sub
                 ''' <summary> Sets or gets the content of the file path text field. </summary>
@@ -488,7 +488,7 @@ Namespace UI.Controls
                     Try
                         FilePathChangedWeakEvent.Raise(sender, e)
                     Catch ex As System.Exception
-                        Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                        Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                     End Try
                 End RaiseEvent
                 
@@ -508,7 +508,7 @@ Namespace UI.Controls
                 Try
                     OnInputFilePathChanged()
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             
@@ -527,7 +527,7 @@ Namespace UI.Controls
                     
                     ' Init and show dialog.
                     If (OpenFile) Then
-                        Logger.logDebug("getFilePathFromDialog(): Initialize OpenFileDialog.")
+                        Logger.LogDebug("getFilePathFromDialog(): Initialize OpenFileDialog.")
                         Dim DialogResult        As Nullable(Of Boolean)
                         Dim Dialog              As Microsoft.Win32.OpenFileDialog = New Microsoft.Win32.OpenFileDialog()
                         
@@ -539,7 +539,7 @@ Namespace UI.Controls
                         Dialog.RestoreDirectory = True
                         Dialog.ValidateNames    = True
                         
-                        DialogResult = Dialog.ShowDialog(UIUtils.getMainWindow())
+                        DialogResult = Dialog.ShowDialog(UIUtils.GetMainWindow())
                         
                         If (DialogResult.HasValue AndAlso DialogResult.Value) Then
                             Aborted = False
@@ -548,7 +548,7 @@ Namespace UI.Controls
                             SetCurrentValue(FileFilterIndexProperty, Dialog.FilterIndex)
                         End if
                     Else
-                        Logger.logDebug("getFilePathFromDialog(): Initialize SaveFileDialog.")
+                        Logger.LogDebug("getFilePathFromDialog(): Initialize SaveFileDialog.")
                         Dim DialogResult        As Nullable(Of Boolean)
                         Dim Dialog              As Microsoft.Win32.SaveFileDialog = New Microsoft.Win32.SaveFileDialog()
                         
@@ -561,7 +561,7 @@ Namespace UI.Controls
                         Dialog.ValidateNames    = True
                         Dialog.OverwritePrompt  = True
                         
-                        DialogResult = Dialog.ShowDialog(UIUtils.getMainWindow())
+                        DialogResult = Dialog.ShowDialog(UIUtils.GetMainWindow())
                         
                         If (DialogResult.HasValue AndAlso DialogResult.Value) Then
                             Aborted = False
@@ -573,12 +573,12 @@ Namespace UI.Controls
                     
                     ' Log result.
                     If (Aborted) Then
-                        Logger.logDebug("getFilePathFromDialog(): FileDialog aborted.")
+                        Logger.LogDebug("getFilePathFromDialog(): FileDialog aborted.")
                     Else 
-                        Logger.logDebug(StringUtils.sprintf("getFilePathFromDialog(): Choosen file: '%s'", ChoosenFile))
+                        Logger.LogDebug(StringUtils.Sprintf("getFilePathFromDialog(): Choosen file: '%s'", ChoosenFile))
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             
@@ -587,7 +587,7 @@ Namespace UI.Controls
                 Try
                     Apps.AppUtils.StartEditor(Apps.AppUtils.CurrentEditor, """" & Me.FilePath & """")
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             
@@ -598,7 +598,7 @@ Namespace UI.Controls
                         FilePathTextBox.Focus()
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             
@@ -616,7 +616,7 @@ Namespace UI.Controls
                 
                 ' If text box isn't empty, try to get a directory.
                 If (FileChooserInstance.InputFilePath.IsNotEmptyOrWhiteSpace()) Then
-                    InitialDirectory = FileUtils.getFilePart(FileChooserInstance.InputFilePath, FileUtils.FilePart.Dir, False)
+                    InitialDirectory = FileUtils.GetFilePart(FileChooserInstance.InputFilePath, FileUtils.FilePart.Dir, False)
                     
                     If (InitialDirectory.IsNotEmptyOrWhiteSpace() AndAlso DirectoryMustExist) Then
                         If (Not Directory.Exists(InitialDirectory)) Then
@@ -754,7 +754,7 @@ Namespace UI.Controls
                         If (InputFileAbsolute.IsEmpty()) Then
                             ' File is somehow invalid: Remove invalid characters.
                             Try
-                                InputFileAbsolute = FileUtils.getFilePart(FileUtils.validateFilePathSpelling(InputFilePathTrimmed, String.Empty), FileUtils.FilePart.Dir_Base_Ext)
+                                InputFileAbsolute = FileUtils.GetFilePart(FileUtils.ValidateFilePathSpelling(InputFilePathTrimmed, String.Empty), FileUtils.FilePart.Dir_Base_Ext)
                             Catch ex as exception
                             End Try
                         End If
@@ -787,7 +787,7 @@ Namespace UI.Controls
                     If (Directory.Exists(NewCurrentDirectory)) Then
                         If (Not (System.Environment.CurrentDirectory = NewCurrentDirectory)) Then 
                             System.Environment.CurrentDirectory = NewCurrentDirectory
-                            Logger.logDebug(StringUtils.sprintf("OnInputFilePathChanged(): CurrentDirectory changed to: '%s'", System.Environment.CurrentDirectory))
+                            Logger.LogDebug(StringUtils.Sprintf("OnInputFilePathChanged(): CurrentDirectory changed to: '%s'", System.Environment.CurrentDirectory))
                         End If
                     End If
                 End If
@@ -841,7 +841,7 @@ Namespace UI.Controls
                     OnInputFilePathChanged()
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             

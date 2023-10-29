@@ -30,7 +30,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.GeoPointFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.IO.GeoPointFile")
             
         #End Region
         
@@ -56,7 +56,7 @@ Namespace Domain.IO
             
             ''' <summary> Creates a new instance. </summary>
             Public Sub New()
-                Logger.logDebug("New(): GeoPointFile instantiated")
+                Logger.LogDebug("New(): GeoPointFile instantiated")
             End Sub
             
         #End Region

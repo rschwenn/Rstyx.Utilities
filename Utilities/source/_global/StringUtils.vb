@@ -12,8 +12,8 @@ Imports Rstyx.Utilities.Math.MathUtils
         
         #Region "Private Fields"
             
-            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.StringUtils")
+            'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.StringUtils")
             
         #End Region
         
@@ -149,7 +149,7 @@ Imports Rstyx.Utilities.Math.MathUtils
                     Else
                         VParms = Parms
                     End If
-                    FlatParms = ArrayUtils.getFlatArray(VParms)
+                    FlatParms = ArrayUtils.GetFlatArray(VParms)
                     ParamUpTo = LBound(FlatParms)
                     
                     While (Not String.IsNullOrEmpty(FormatString))
@@ -405,7 +405,7 @@ Imports Rstyx.Utilities.Math.MathUtils
                         Throw
                     Else
                         Ret = String.Empty
-                        Logger.logError(ex, String.Format(Rstyx.Utilities.Resources.Messages.Sprintf_UnexpectedError, FormatSave))
+                        Logger.LogError(ex, String.Format(Rstyx.Utilities.Resources.Messages.Sprintf_UnexpectedError, FormatSave))
                     End If
                 End Try
                 
@@ -599,7 +599,7 @@ Imports Rstyx.Utilities.Math.MathUtils
         <System.Runtime.CompilerServices.Extension()> 
         Public Function SplitLines(Value As String, IgnoreEmptyLines As Boolean) As String()
             If (Not IgnoreEmptyLines) Then
-                Return Value.splitLines()
+                Return Value.SplitLines()
             Else
                 Dim Array1() As String = Value.Split({vbCrLf, vbLf, vbCr}, System.StringSplitOptions.None)
                 Dim NonEmptyLines As List(Of String) = New List(Of String)

@@ -40,7 +40,7 @@ Namespace UI.Controls
         
         #Region "Private Fields"
         
-            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.Controls.UserControlBase")
+            Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.Controls.UserControlBase")
             
             Private _DisplayName As String = Nothing
             Private _DisplayNameLong As String = Nothing
@@ -71,7 +71,7 @@ Namespace UI.Controls
                         Me.AddHandler(System.Windows.Controls.Validation.ErrorEvent, ErrorEventRoutedEventHandler, True)
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
             End Sub
             
@@ -87,7 +87,7 @@ Namespace UI.Controls
                         ErrorEventRoutedEventHandler = Nothing
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
             End Sub
             
@@ -160,11 +160,11 @@ Namespace UI.Controls
                         Try
                             Me.OnClrPropertyChanged(ClassPropertyName)
                         Catch ex As System.Exception
-                            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                            Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                         End Try
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                 End Try
             End Sub
             
@@ -182,7 +182,7 @@ Namespace UI.Controls
                 Try
                     RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                 End Try
             End Sub
             

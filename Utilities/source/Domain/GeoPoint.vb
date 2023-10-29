@@ -161,7 +161,7 @@ Namespace Domain
         
         #Region "Protected Fields"
             
-            Protected Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.GeoPoint")
+            Protected Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.GeoPoint")
             
             ''' <summary> Patterns for recognizing actual cant from info text. </summary>
             Protected Shared ReadOnly InfoCantPatterns  As Dictionary(Of String, String)

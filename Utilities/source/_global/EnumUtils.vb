@@ -18,8 +18,8 @@ Imports Rstyx.Utilities.StringUtils
         
         '#Region "Private Fields"
         '    
-        '    'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger(MyClass.GetType.FullName)
-        '    Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.EnumUtils")
+        '    'Private Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger(MyClass.GetType.FullName)
+        '    Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.EnumUtils")
         '    
         '#End Region
         '
@@ -152,7 +152,7 @@ Imports Rstyx.Utilities.StringUtils
                 RetValue = DisplayStringCache.Item(CultureName).Item(ShortResourceKey)
                 
             Catch ex as System.Exception
-                'Logger.logError(ex, StringUtils.sprintf("ToDisplayString(): Fehler bei Suche nach DisplayString .", FolderName))
+                'Logger.LogError(ex, StringUtils.Sprintf("ToDisplayString(): Fehler bei Suche nach DisplayString .", FolderName))
                 System.Diagnostics.Trace.WriteLine(ex)
             End Try
             Return RetValue

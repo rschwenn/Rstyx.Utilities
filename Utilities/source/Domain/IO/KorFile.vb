@@ -15,7 +15,7 @@ Namespace Domain.IO
         
         #Region "Private Fields"
             
-            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.IO.KorFile")
+            Private Shared ReadOnly Logger  As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.IO.KorFile")
             
         #End Region
         
@@ -33,7 +33,7 @@ Namespace Domain.IO
                 
                 'Me.HeaderDiscardLines.Add("@Kommentar=")
                 
-                Logger.logDebug("New(): KorFile instantiated")
+                Logger.LogDebug("New(): KorFile instantiated")
             End Sub
             
             ''' <summary> Creates a new instance with a given file path. </summary>
@@ -62,8 +62,8 @@ Namespace Domain.IO
             Public ReadOnly Overrides Iterator Property PointStream() As IEnumerable(Of IGeoPoint)
                 Get
                     Try 
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadStart, Me.FilePath))
-                        Logger.logInfo(Me.GetPointEditOptionsLogText())
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadStart, Me.FilePath))
+                        Logger.LogInfo(Me.GetPointEditOptionsLogText())
                         
                         Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                         Dim RecDef      As New RecordDefinition()
@@ -111,13 +111,13 @@ Namespace Domain.IO
                                 Catch ex As InvalidIDException
                                     Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, FilePath))
                                     If (Not Me.CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                        Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                     End If
                                     
                                 Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                                     Me.ParseErrors.Add(ex.ParseError)
                                     If (Not Me.CollectParseErrors) Then
-                                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                                        Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                                     End If
                                 End Try
                             End If
@@ -125,13 +125,13 @@ Namespace Domain.IO
                         
                         ' Throw exception if parsing errors has been collected.
                         If (Me.ParseErrors.HasErrors) Then
-                            Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                         ElseIf (PointCount = 0) Then
-                            Logger.logWarning(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
+                            Logger.LogWarning(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointList_NoPoints, FilePath))
                         End If
                         
-                        'Logger.logDebug(PointList.ToString())
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadSuccess, PointCount, FilePath))
+                        'Logger.LogDebug(PointList.ToString())
+                        Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_LoadSuccess, PointCount, FilePath))
                         
                     Catch ex As ParseException
                         Throw
@@ -166,8 +166,8 @@ Namespace Domain.IO
             Public Overrides Sub Store(PointList As IEnumerable(Of IGeoPoint), MetaData As IHeader)
                 Dim PointCount  As Integer = 0
                 Try
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreStart, Me.FilePath))
-                    Logger.logInfo(Me.GetPointOutputOptionsLogText)
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreStart, Me.FilePath))
+                    Logger.LogInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
                     Dim PointFmt    As String = "%+20s%1s%14.4f %14.4f %14.4f     %-29s %-s"
@@ -224,13 +224,13 @@ Namespace Domain.IO
                             Catch ex As InvalidIDException
                                 Me.ParseErrors.Add(New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath))
                                 If (Not Me.CollectParseErrors) Then
-                                    Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                                    Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                                 End If
                                 
                             'Catch ex As ParseException When (ex.ParseError IsNot Nothing)
                             '    Me.ParseErrors.Add(ex.ParseError)
                             '    If (Not Me.CollectParseErrors) Then
-                            '        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
+                            '        Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, FilePath))
                             '    End If
                             End Try
                         Next
@@ -238,7 +238,7 @@ Namespace Domain.IO
                     
                     ' Throw exception if parsing errors has been collected.
                     If (Me.ParseErrors.HasErrors) Then
-                        Throw New ParseException(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
+                        Throw New ParseException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
                     End If
                     
                 Catch ex As ParseException
@@ -249,7 +249,7 @@ Namespace Domain.IO
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
                     
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreSuccess, PointCount, Me.FilePath))
+                    Logger.LogInfo(sprintf(Rstyx.Utilities.Resources.Messages.KorFile_StoreSuccess, PointCount, Me.FilePath))
                 End Try
             End Sub
             

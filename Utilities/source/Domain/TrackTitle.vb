@@ -9,7 +9,7 @@ Namespace Domain
         
         #Region "Private Fields"
             
-            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.Domain.TrackTitle")
+            Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Domain.TrackTitle")
             
         #End Region
         
@@ -79,8 +79,8 @@ Namespace Domain
                 
               ' Process SourceFilePath
                 If (Not File.Exists(SourceFilePath)) Then
-                    Logger.logError(StringUtils.sprintf("getDBAGTrackTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.TrackTitle_DBAGTracksFile, Environment.ExpandEnvironmentVariables(My.Settings.TrackTitle_DBAGTracksFile)))
-                    Logger.logError(StringUtils.sprintf("getDBAGTrackTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.TrackTitle_DBAGTrackFileFallback, Environment.ExpandEnvironmentVariables(My.Settings.TrackTitle_DBAGTrackFileFallback)))
+                    Logger.LogError(StringUtils.Sprintf("getDBAGTrackTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.TrackTitle_DBAGTracksFile, Environment.ExpandEnvironmentVariables(My.Settings.TrackTitle_DBAGTracksFile)))
+                    Logger.LogError(StringUtils.Sprintf("getDBAGTrackTitle(): Streckenliste nicht gefunden: '%s' ('%s')!", My.Settings.TrackTitle_DBAGTrackFileFallback, Environment.ExpandEnvironmentVariables(My.Settings.TrackTitle_DBAGTrackFileFallback)))
                     
                     oTrackTitle.LongTitle  = "Streckenliste '" & SourceFilePath & "' nicht gefunden!"
                     oTrackTitle.ShortTitle = oTrackTitle.LongTitle
@@ -134,7 +134,7 @@ Namespace Domain
                 
              ''' <inheritdoc/>
             Public Overrides Function ToString() As String
-                Return Rstyx.Utilities.StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.TrackTitle_ToString, Me.Number)
+                Return Rstyx.Utilities.StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.TrackTitle_ToString, Me.Number)
             End Function
             
         #End Region

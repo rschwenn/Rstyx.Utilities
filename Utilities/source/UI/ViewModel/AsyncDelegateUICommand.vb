@@ -37,7 +37,7 @@ Namespace UI.ViewModel
         
         #Region "Private Fields"
             
-            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
+            Private ReadOnly Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.UI.ViewModel.AsyncDelegateUICommand")
             
             Protected ReadOnly DeferredDoEventsAction   As Rstyx.Utilities.DeferredAction = New Rstyx.Utilities.DeferredAction(AddressOf Me.DoEvents, System.Windows.Threading.Dispatcher.CurrentDispatcher)
             Protected ReadOnly DoEventsDelay            As System.TimeSpan = System.TimeSpan.FromMilliseconds(250)
@@ -222,7 +222,7 @@ Namespace UI.ViewModel
                             End If
                         Next
                     Catch ex As System.Exception
-                        Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorInCalledCanExecuteChangedHandler, Me.TargetCommandInfo.Decoration.Caption))
+                        Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorInCalledCanExecuteChangedHandler, Me.TargetCommandInfo.Decoration.Caption))
                     End Try
                 End RaiseEvent
             End Event
@@ -237,8 +237,8 @@ Namespace UI.ViewModel
                         'Cinch.ApplicationHelper.DoEvents()
                         DeferredDoEventsAction.Defer(DoEventsDelay)
                     Catch ex As System.Exception
-                        Logger.logDebug(ex.ToString())
-                        Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                        Logger.LogDebug(ex.ToString())
+                        Logger.LogDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
                     End Try
                 End If
             End Sub
@@ -255,7 +255,7 @@ Namespace UI.ViewModel
                         RetValue = TargetCommandInfo.CanExecutePredicate.Invoke(Nothing)
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 Return RetValue
             End Function
@@ -314,7 +314,7 @@ Namespace UI.ViewModel
                                 Try
                                     TargetCommandInfo.ExecuteAction.Invoke(CmdTaskCancelToken)
                                 Catch ex As System.Exception
-                                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_SyncExecuteFailed, Me.TargetCommandInfo.Decoration.Caption))
+                                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_SyncExecuteFailed, Me.TargetCommandInfo.Decoration.Caption))
                                 Finally
                                     FinishTask(Nothing)
                                 End Try
@@ -325,7 +325,7 @@ Namespace UI.ViewModel
                     RaiseCanExecuteChanged()
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
             End Sub
             
@@ -343,7 +343,7 @@ Namespace UI.ViewModel
                 Try
                     RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromCalledEventHandler)
                 End Try
             End Sub
             
@@ -407,7 +407,7 @@ Namespace UI.ViewModel
                     CmdInfo.Decoration          = Decoration
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorCreatingCancelCommand)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorCreatingCancelCommand)
                 End Try
                 Return CmdInfo
             End Function
@@ -439,7 +439,7 @@ Namespace UI.ViewModel
                     End If
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 Return RetValue
             End Function
@@ -451,7 +451,7 @@ Namespace UI.ViewModel
                         CmdTaskCancelTokenSource.Cancel()
                     End If
                 Catch ex As System.Exception
-                    Logger.logError(ex, Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorCancellingTask)
+                    Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_ErrorCancellingTask)
                 End Try
             End Sub
             
@@ -491,12 +491,12 @@ Namespace UI.ViewModel
                             'FinishedTask.Exception.Handle(Function(x)
                             '                                   Return True
                             '                              End Function)
-                            Logger.logError(FinishedTask.Exception.Flatten(), StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_AsyncExecuteFailed, Me.TargetCommandInfo.Decoration.Caption))
+                            Logger.LogError(FinishedTask.Exception.Flatten(), StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_AsyncExecuteFailed, Me.TargetCommandInfo.Decoration.Caption))
                         End If
                     End If
                     
                 Catch ex As System.Exception
-                    Logger.logError(ex, StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_TaskFinishingFailed, Me.TargetCommandInfo.Decoration.Caption))
+                    Logger.LogError(ex, StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.AsyncDelegateUICommand_TaskFinishingFailed, Me.TargetCommandInfo.Decoration.Caption))
                 End Try
             End Sub
             
@@ -505,8 +505,8 @@ Namespace UI.ViewModel
                 Try
                     Cinch.ApplicationHelper.DoEvents()
                 Catch ex As System.Exception
-                    Logger.logDebug(ex.ToString())
-                    Logger.logDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
+                    Logger.LogDebug(ex.ToString())
+                    Logger.LogDebug(Rstyx.Utilities.Resources.Messages.Global_DoEventsFailed)
                 End Try
             End Sub
             

@@ -19,7 +19,7 @@ Namespace IO
         
         #Region "Private Fields"
             
-            Private ReadOnly Logger         As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.getLogger("Rstyx.Utilities.IO.ParseErrorCollection")
+            Private ReadOnly Logger         As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.IO.ParseErrorCollection")
             
             Protected ReadOnly SyncHandle   As New Object()
 
@@ -287,9 +287,9 @@ Namespace IO
                 SyncLock (SyncHandle)
                     For i As Integer = 0 to Me.Count - 1
                         If (Me.Item(i).Level = ParseErrorLevel.Error) Then
-                            Logger.logError(Me.Item(i).ToString())
+                            Logger.LogError(Me.Item(i).ToString())
                         Else
-                            Logger.logWarning(Me.Item(i).ToString())
+                            Logger.LogWarning(Me.Item(i).ToString())
                         End If
                     Next
                 End SyncLock
@@ -328,7 +328,7 @@ Namespace IO
                             Apps.AppUtils.StartEditor(Apps.AppUtils.SupportedEditors.jEdit, "-run=""" & BshPath & """")
                             
                         Catch ex As Exception
-                            Logger.logError(ex, Rstyx.Utilities.Resources.Messages.ParseErrorCollection_ErrorShowInJEdit)
+                            Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.ParseErrorCollection_ErrorShowInJEdit)
                         End Try
                     End If
                 End SyncLock
@@ -364,15 +364,15 @@ Namespace IO
                     oBsh.WriteLine("  ")
                     oBsh.WriteLine("  void run() {")
                     oBsh.WriteLine("    // get a valid view at jedit's startup")
-                    oBsh.WriteLine("    view = jEdit.getLastView();")
+                    oBsh.WriteLine("    view = jEdit.GetLastView();")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // clear list of errors via the action, that also can be invoked by keyed-in")
                     oBsh.WriteLine("    // in the actionbar or by clicking the appropriate button.")
-                    oBsh.WriteLine("    jEdit.getAction(""error-list-clear"").invoke(view);")
+                    oBsh.WriteLine("    jEdit.GetAction(""error-list-clear"").Invoke(view);")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // Create and register DefaultErrorSource")
                     oBsh.WriteLine("    DefaultErrorSource errsrc = new DefaultErrorSource(""Rstyx.Utilities.IO.ParseErrorCollection.ToJeditBeanshell"");")
-                    oBsh.WriteLine("    ErrorSource.registerErrorSource(errsrc);")
+                    oBsh.WriteLine("    ErrorSource.RegisterErrorSource(errsrc);")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // *********************************************************************************************")
@@ -386,32 +386,32 @@ Namespace IO
                             ' Error details.
                             Level      = If(oErr.Level = ParseErrorLevel.Error, "ErrorSource.ERROR", "ErrorSource.WARNING")
                             SourcePath = String2Java(If(oErr.FilePath IsNot Nothing, oErr.FilePath, Me.FilePath))
-                            Msg        = oErr.Message.splitLines()
+                            Msg        = oErr.Message.SplitLines()
                             
                             ' Create new error with main message.
-                            SourceText = StringUtils.sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s  [Zeile %d]"");",
+                            SourceText = StringUtils.Sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s  [Zeile %d]"");",
                                          Level, SourcePath, oErr.LineNo - 1, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)), oErr.LineNo)
                             oBsh.WriteLine(SourceText)
                             
                             ' Extra message lines.
                             For k As Integer = 1 To Msg.Length - 1
-                                oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
+                                oBsh.WriteLine(StringUtils.Sprintf("    err.AddExtraMessage(""%s"");", String2Java(Msg(k))))
                             Next
                             If (oErr.Hints IsNot Nothing) Then
                                 Msg = oErr.Hints.Split("\r?\n")
                                 For k As Integer = 0 To Msg.Length - 1
-                                    oBsh.WriteLine(StringUtils.sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
+                                    oBsh.WriteLine(StringUtils.Sprintf("    err.AddExtraMessage(""%s"");", String2Java(Msg(k))))
                                 Next
                             End If
                             
                             ' Commit newly created error to list.
-                            oBsh.WriteLine("    errsrc.addError(err);" & Environment.NewLine)
+                            oBsh.WriteLine("    errsrc.AddError(err);" & Environment.NewLine)
                         End If
                     Next
 
                     ' Message if item count has been limited.
                     If (LimitItems) Then
-                        oBsh.WriteLine(StringUtils.sprintf(Rstyx.Utilities.Resources.Messages.ParseErrorCollection_LimitItemsInJEdit, LimitNorm, Me.Count - LimitNorm))
+                        oBsh.WriteLine(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.ParseErrorCollection_LimitItemsInJEdit, LimitNorm, Me.Count - LimitNorm))
                     End If
                     
                     ' Footer.
@@ -419,13 +419,13 @@ Namespace IO
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // Do not unregister - so the errors stay deleteable by the errorlist plugin itself (see above)")
-                    oBsh.WriteLine("    // ErrorSource.unregisterErrorSource(errsrc);")
+                    oBsh.WriteLine("    // ErrorSource.UnregisterErrorSource(errsrc);")
                     oBsh.WriteLine("    errsrc = null;")
                     oBsh.WriteLine("  }")
                     oBsh.WriteLine("  ")
                     oBsh.WriteLine("  // manage startup/nonstartup script")
-                    oBsh.WriteLine("  if (jEdit.getLastView() == null) {")
-                    oBsh.WriteLine("    VFSManager.runInAWTThread(this);")
+                    oBsh.WriteLine("  if (jEdit.GetLastView() == null) {")
+                    oBsh.WriteLine("    VFSManager.RunInAWTThread(this);")
                     oBsh.WriteLine("  } else {")
                     oBsh.WriteLine("    run();")
                     oBsh.WriteLine("  }")
