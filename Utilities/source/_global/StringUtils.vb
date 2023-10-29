@@ -31,7 +31,7 @@ Imports Rstyx.Utilities.Math.MathUtils
              ''' <param name="FormatString"> A String like "test: %s  %11.3f" </param>
              ''' <param name="Parms">        Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
              ''' <returns>                   The <paramref name="FormatString"/> with expanded variables, or an empty string if an error occurs. </returns>
-            Public Shared Function sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
+            Public Shared Function Sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
                 Return sprintf(False, FormatString, Parms)
             End Function
             
@@ -120,7 +120,7 @@ Imports Rstyx.Utilities.Math.MathUtils
               ''' SPrintF("%s", Chr(Num)) = SPrintF("%c", Num)
               ''' </para>
              ''' </remarks>
-            Public Shared Function sprintf(ByVal ThrowOnError As Boolean, ByVal FormatString As String, ParamArray Parms() As Object) As String
+            Public Shared Function Sprintf(ByVal ThrowOnError As Boolean, ByVal FormatString As String, ParamArray Parms() As Object) As String
                 
                 Dim Ret           As String = String.Empty
                 Dim FormatSave    As String = FormatString
@@ -584,7 +584,7 @@ Imports Rstyx.Utilities.Math.MathUtils
          ''' <returns>            A String array containing all lines of <paramref name="Value"/>. </returns>
          ''' <remarks>            If the trimmed input string is empty, the returned array will contain one empty line. </remarks>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function splitLines(Value As String) As String()
+        Public Function SplitLines(Value As String) As String()
             Return Value.Split({vbCrLf, vbLf, vbCr}, System.StringSplitOptions.None)
         End Function
         
@@ -597,7 +597,7 @@ Imports Rstyx.Utilities.Math.MathUtils
          ''' BUT: If <paramref name="IgnoreEmptyLines"/> is <see langword="true"/> the returned array may be of length zero!
          ''' </remarks>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function splitLines(Value As String, IgnoreEmptyLines As Boolean) As String()
+        Public Function SplitLines(Value As String, IgnoreEmptyLines As Boolean) As String()
             If (Not IgnoreEmptyLines) Then
                 Return Value.splitLines()
             Else
@@ -617,7 +617,7 @@ Imports Rstyx.Utilities.Math.MathUtils
          ''' <returns>            A String array containing all data words. </returns>
          ''' <remarks>            If the trimmed input string is empty, the returned array will be of zero length. </remarks>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function splitWords(Value As String) As String()
+        Public Function SplitWords(Value As String) As String()
             Return Value.Trim().Split("\s+")
         End Function
         
@@ -629,7 +629,7 @@ Imports Rstyx.Utilities.Math.MathUtils
          ''' <returns>                                A String with indented lines. </returns>
          ''' <remarks> </remarks>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function indent(Value As String, Width As Integer, IncludeFirstline As Boolean, PrependNewlineIfMultiline As Boolean) As String
+        Public Function Indent(Value As String, Width As Integer, IncludeFirstline As Boolean, PrependNewlineIfMultiline As Boolean) As String
             Dim RetValue As String = Value
             Dim Prepend  As String = " ".Repeat(Width)
             

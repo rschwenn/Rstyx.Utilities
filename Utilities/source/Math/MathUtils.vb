@@ -155,7 +155,7 @@ Namespace Math
             ''' <summary> Normalization of an angle given in [Rad]. </summary>
              ''' <param name="Radiant"> Angle in [Rad] </param>
              ''' <returns> Angle in [Rad] between -PI and +PI </returns>
-            Public Shared Function normalizeRadiant(ByVal Radiant As Double) As Double
+            Public Shared Function NormalizeRadiant(ByVal Radiant As Double) As Double
                 Dim TwoPI As Double = 2 * System.Math.PI
                 Dim Angle As Double = Radiant
                 If (Not Double.IsNaN(Angle)) Then
@@ -172,7 +172,7 @@ Namespace Math
             ''' <summary> Normalization of an angle given in [Gon]. </summary>
              ''' <param name="Gon"> Angle in [Gon] </param>
              ''' <returns> Angle in [Gon] between 0 and 400 </returns>
-            Public Shared Function normalizeGon(ByVal Gon As Double) As Double
+            Public Shared Function NormalizeGon(ByVal Gon As Double) As Double
                 Dim Angle As Double = Gon
                 If (Not Double.IsNaN(Angle)) Then
                     Do While (Angle < 0)

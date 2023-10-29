@@ -235,7 +235,7 @@ Namespace UI.Controls
             ''' <summary> If a debugger is attached, the changed value of the dependency property is logged to the trace listeners. </summary>
             ''' <param name="d"> The DependencyObject. </param>
             ''' <param name="e"> The event args. </param>
-            Protected Shared Sub debugChangedDP(d As System.Windows.DependencyObject, e As System.Windows.DependencyPropertyChangedEventArgs)
+            Protected Shared Sub DebugChangedDP(d As System.Windows.DependencyObject, e As System.Windows.DependencyPropertyChangedEventArgs)
                 If (System.Diagnostics.Debugger.IsAttached) Then
                     
                     Dim NewValueString As String = "Null"

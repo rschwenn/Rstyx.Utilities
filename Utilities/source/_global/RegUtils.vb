@@ -87,7 +87,7 @@
             ''' <summary> Failure tolerant reading: Returns the value of the given ValuePathName if possible, otherwise Nothing.  </summary>
              ''' <param name="ValuePathName"> A registry value name with full path. If it ends with a backslash, the default value is meant. </param>
              ''' <returns> The value of the given ValuePathName if possible, otherwise Nothing. </returns>
-            Public Shared Function getValue(ByVal ValuePathName As String) As Object
+            Public Shared Function GetValue(ByVal ValuePathName As String) As Object
                 Dim Value  As Object = Nothing
                 If (ValueExists(ValuePathName)) Then
                     Value = Microsoft.Win32.Registry.GetValue(getKeyPathName(ValuePathName), getValueName(ValuePathName), Nothing)
@@ -99,7 +99,7 @@
              ''' <param name="ValuePathName"> A registry value name with full path. If it ends with a backslash, the default value is meant. </param>
              ''' <returns> The value of the given ValuePathName if possible, otherwise Nothing. </returns>
              ''' <remarks> This is only a short hand for using "getValue(Of String)(ValuePathName)". </remarks>
-            Public Shared Function getStringValue(ByVal ValuePathName As String) As String
+            Public Shared Function GetStringValue(ByVal ValuePathName As String) As String
                 Dim Value  As String = Nothing
                 Try
                     Value = CStr(getValue(ValuePathName))
@@ -117,7 +117,7 @@
              ''' If any error occurs while retrieving or converting the vaue, then the initial value of the given Type is returned. 
              ''' CAUTION: I.e. in case of basic numeric types a return value of "0" could mean both that this value has been read successfully or an error has been occured. 
              ''' </remarks>
-            Public Shared Function getValue(Of T)(ByVal ValuePathName As String) As T
+            Public Shared Function GetValue(Of T)(ByVal ValuePathName As String) As T
                 Dim ValueO  As Object = Nothing
                 Dim ValueT  As T = Nothing
                 Try
@@ -134,7 +134,7 @@
              ''' <param name="Value"> The value to write into the registry. </param>
              ''' <param name="ValueKind"> The kind of value to set. </param>
              ''' <returns> True, if the value has been set successfully, otherwise false. </returns>
-            Public Shared Function setValue(ByVal ValuePathName As String, byVal Value As Object, ValueKind As Microsoft.Win32.RegistryValueKind) As Boolean
+            Public Shared Function SetValue(ByVal ValuePathName As String, byVal Value As Object, ValueKind As Microsoft.Win32.RegistryValueKind) As Boolean
                 Dim success  As Boolean = false
                 Try
                     Microsoft.Win32.Registry.SetValue(getKeyPathName(ValuePathName), getValueName(ValuePathName), Value, ValueKind)
@@ -149,7 +149,7 @@
              ''' <param name="ValuePathName"> A registry value name with full path. If it ends with a backslash, the default value is meant. </param>
              ''' <param name="Value"> The string value to write into the registry. </param>
              ''' <returns> True, if the value has been set successfully, otherwise false. </returns>
-            Public Shared Function setValue(ByVal ValuePathName As String, byVal Value As String) As Boolean
+            Public Shared Function SetValue(ByVal ValuePathName As String, byVal Value As String) As Boolean
                 Return setValue(ValuePathName, Value,Microsoft.Win32.RegistryValueKind.String)
             End Function
             
@@ -157,7 +157,7 @@
              ''' <param name="ValuePathName"> A registry value name with full path, that begins with a valid registry root name. </param>
              ''' <returns> The name of the value, which is the part beyond the last backslash. If empty, then it's the default value. </returns>
              ''' <remarks> If ValuePathName ends with a backslash, then an empty string is returned, which indicates the default value. </remarks>
-            Public Shared Function getValueName(ByVal ValuePathName As String) As String
+            Public Shared Function GetValueName(ByVal ValuePathName As String) As String
                 Return ValuePathName.Right("\")
             End function
             
@@ -165,7 +165,7 @@
              ''' <param name="ValuePathName"> A registry value name with full path, that begins with a valid registry root name. </param>
              ''' <returns> The path name of the key, which is the part until the last backslash (including backslash). </returns>
              ''' <remarks> If ValuePathName ends with a backslash, then the whole ValuePathName is returned. </remarks>
-            Public Shared Function getKeyPathName(ByVal ValuePathName As String) As String
+            Public Shared Function GetKeyPathName(ByVal ValuePathName As String) As String
                 Return ValuePathName.Left(ValuePathName.Length - getValueName(ValuePathName).Length)
             End function
             
@@ -180,7 +180,7 @@
              '''  If read value doesn't starts with a double quote, the string until the first space is recognized as path.
              ''' </para>
              '''  </remarks>
-            Public Shared Function getApplicationPath(ByVal ValuePathName As String) As String
+            Public Shared Function GetApplicationPath(ByVal ValuePathName As String) As String
                 Dim AppPath  As String = Nothing
                 Logger.logDebug("getApplicationPath(): Pfad\Name einer Programmdatei ermitteln aus RegistryValue '" & ValuePathName & "'.")
                 

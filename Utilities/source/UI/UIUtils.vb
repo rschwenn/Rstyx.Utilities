@@ -28,7 +28,7 @@ Namespace UI
             ''' <summary> Creates a BitmapImage from a file path </summary>
              ''' <param name="path"> File path, i.e. for a project resource: "/ProjectName;component/Resources/save.png"</param>
              ''' <returns> The BitmapImage generated from the given file. </returns>
-            Public Shared Function getImageFromPath(path As String) As System.Windows.Media.Imaging.BitmapImage
+            Public Shared Function GetImageFromPath(path As String) As System.Windows.Media.Imaging.BitmapImage
                 SyncLock (SyncHandle)
                     Dim bi As New System.Windows.Media.Imaging.BitmapImage()
                     bi.BeginInit()
@@ -41,7 +41,7 @@ Namespace UI
             
             ''' <summary> Returns the current WFP application's main window. Returns "Nothing", if it's not a standalone WPF application. </summary>
              ''' <returns> The current WFP application's main window, or Null. </returns>
-            Public Shared Function getMainWindow() As System.Windows.Window
+            Public Shared Function GetMainWindow() As System.Windows.Window
                 SyncLock (SyncHandle)
                     Dim AppMainWindow As System.Windows.Window = Nothing
                     Dim AppType       As String = String.Empty

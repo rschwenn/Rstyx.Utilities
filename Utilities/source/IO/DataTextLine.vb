@@ -120,7 +120,7 @@ Namespace IO
             
             ''' <summary> Re-creates the full (almost original) line. </summary>
              ''' <returns> The full (almost original) line. </returns>
-            Public Function getFullLine() As String
+            Public Function GetFullLine() As String
                 Dim RetValue As String = String.Empty
                 
                 If (Not Me.IsEmpty) Then
@@ -627,7 +627,7 @@ Namespace IO
              ''' <param name="HasComment">            [Out] See matching public field. </param>
              ''' <param name="IsCommentLine">         [Out] See matching public field. </param>
              ''' <param name="IsEmpty">               [Out] See matching public field. </param>
-            Private Sub parseLine(TextLine As String,
+            Private Sub ParseLine(TextLine As String,
                                   LineStartCommentToken As String,
                                   LineEndCommentToken As String,
                                   ByRef Comment As String,
@@ -691,7 +691,7 @@ Namespace IO
             ''' <summary> Splits <see cref="DataTextLine.Data"/> into words separated by <see cref="DataTextLine.FieldDelimiter"/>. </summary>
              ''' <returns> The words as <see cref="DataFieldSource"/>'s. </returns>
              ''' <remarks></remarks>
-            Private Function getWords() As Collection(Of DataFieldSource)
+            Private Function GetWords() As Collection(Of DataFieldSource)
                 
                 Dim RetValue As New Collection(Of DataFieldSource)
                 

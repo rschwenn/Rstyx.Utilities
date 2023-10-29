@@ -58,7 +58,7 @@ Namespace Apps
         #Region "Private members"
             
             ''' <summary> Collects all information. </summary>
-            Private Sub initAppInfo()
+            Private Sub InitAppInfo()
                 'Try
                     ' Preliminaries
                     _AssemblyName = New System.Reflection.AssemblyName(_Assembly.FullName)

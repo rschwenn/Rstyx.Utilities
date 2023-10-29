@@ -42,7 +42,7 @@
              ''' If an error occures, the input Array is returned. 
              ''' </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="WrapArray"/> is <see langword="null"/> or empty. </exception>
-            Public Shared Function getFlatArray(byRef WrapArray As Object()) As Object()
+            Public Shared Function GetFlatArray(byRef WrapArray As Object()) As Object()
                 
                 If (WrapArray Is Nothing) Then Throw New System.ArgumentNullException("WrapArray")
                 

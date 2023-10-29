@@ -122,7 +122,7 @@ Public Class MainViewModel
     
     #Region "Methods"
         
-        Public Sub test()
+        Public Sub Test()
             
             'Dim Task1 As Task = Task.Factory.StartNew(AddressOf test_1)
             
@@ -911,7 +911,7 @@ Public Class MainViewModel
             'End Try
         End Sub
         
-        Protected Overrides Sub showHelpFile()
+        Protected Overrides Sub ShowHelpFile()
             Throw New InvalidDataException("showHelpFile()  +++++++++++++++++++++++++++")
         End Sub
         
@@ -928,7 +928,7 @@ Public Class MainViewModel
             Return RetValue
         End Function
         
-        Public Sub test_0()
+        Public Sub Test_0()
             'Dim s As String
             'Dim sa() As String
             'Dim d As Nullable(Of Double)

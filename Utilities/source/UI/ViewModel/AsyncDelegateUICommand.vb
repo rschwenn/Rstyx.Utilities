@@ -460,7 +460,7 @@ Namespace UI.ViewModel
         #Region "Private Members"
             
             ' ''' <summary> Finish completed task (change decoration and busy status). </summary>
-            ' Private Sub finishTaskInCurrentThread(FinishedTask As Task)
+            ' Private Sub FinishTaskInCurrentThread(FinishedTask As Task)
             '     #If DEBUG Then
             '         If (System.Windows.Application.Current IsNot Nothing) Then Debug.Print("AsyncDelegateUICommand \ finishTaskInCurrentThread: WPF UI thread ID  = " & System.Windows.Application.Current.Dispatcher.Thread.ManagedThreadId.ToString())
             '         Debug.Print("AsyncDelegateUICommand \ finishTaskInCurrentThread: Current thread ID = " & Dispatcher.CurrentDispatcher.Thread.ManagedThreadId.ToString())

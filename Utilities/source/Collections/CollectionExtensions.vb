@@ -17,7 +17,7 @@ Namespace Collections
          ''' <remarks>                 For value types of TKey, the result is ambigious if the default value of TKey is returned (May be a real occurence or not)! </remarks>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="dictionary"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function findKeyByValue(Of TKey, TValue)(ByVal dictionary As IDictionary(Of TKey, TValue), Value As TValue, ByRef FoundKey As TKey) As Boolean
+        Public Function FindKeyByValue(Of TKey, TValue)(ByVal dictionary As IDictionary(Of TKey, TValue), Value As TValue, ByRef FoundKey As TKey) As Boolean
             FoundKey = getKeyByValue(dictionary, Value)
             Dim DefaultKey As TKey = Nothing
             Return (Not Object.Equals(FoundKey, DefaultKey))
@@ -32,7 +32,7 @@ Namespace Collections
          ''' <remarks>                 For value types of TKey, the result is ambigious if the default value of TKey is returned (May be a real occurence or not)! </remarks>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="dictionary"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function getKeyByValue(Of TKey, TValue)(ByVal dictionary As IDictionary(Of TKey, TValue), Value As TValue) As TKey
+        Public Function GetKeyByValue(Of TKey, TValue)(ByVal dictionary As IDictionary(Of TKey, TValue), Value As TValue) As TKey
             
             If (dictionary Is Nothing) Then Throw New System.ArgumentNullException("dictionary")
             
@@ -58,7 +58,7 @@ Namespace Collections
          ''' <exception cref="System.ArgumentNullException"> <paramref name="collection"/> is <see langword="null"/>. </exception>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="ItemToString"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function findItemByString(Of TItem)(ByVal collection As ICollection(Of TItem), ItemToString As String, ByRef FoundItem As TItem) As Boolean
+        Public Function FindItemByString(Of TItem)(ByVal collection As ICollection(Of TItem), ItemToString As String, ByRef FoundItem As TItem) As Boolean
             FoundItem = getItemByString(collection, ItemToString)
             Dim DefaultItem As TItem = Nothing
             Return (Not Object.Equals(FoundItem, DefaultItem))
@@ -73,7 +73,7 @@ Namespace Collections
          ''' <exception cref="System.ArgumentNullException"> <paramref name="collection"/> is <see langword="null"/>. </exception>
          ''' <exception cref="System.ArgumentNullException"> <paramref name="ItemToString"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
-        Public Function getItemByString(Of TItem)(ByVal collection As ICollection(Of TItem), ItemToString As String) As TItem
+        Public Function GetItemByString(Of TItem)(ByVal collection As ICollection(Of TItem), ItemToString As String) As TItem
             
             If (collection Is Nothing) Then Throw New System.ArgumentNullException("collection")
             If (ItemToString Is Nothing) Then Throw New System.ArgumentNullException("ItemToString")

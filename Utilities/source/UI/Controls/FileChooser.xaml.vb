@@ -513,7 +513,7 @@ Namespace UI.Controls
             End Sub
             
             ''' <summary> Shows a file dialog and writes the choosen file path into the file path text box. Current directory won't be changed. </summary>
-            Private Sub getFilePathFromDialog() Handles FileDialogButton.Click
+            Private Sub GetFilePathFromDialog() Handles FileDialogButton.Click
                 Try
                     Dim Aborted            As Boolean = True
                     Dim ChoosenFile        As String  = String.Empty
@@ -607,7 +607,7 @@ Namespace UI.Controls
         #Region "Private Members"
             
             ''' <summary> Gets the actual initial directory for this FileChooser depending on current status. </summary>
-            Private Shared Function getInitialDirectory(FileChooserInstance As FileChooser, ForDialog As Boolean) As String
+            Private Shared Function GetInitialDirectory(FileChooserInstance As FileChooser, ForDialog As Boolean) As String
                 
                 Dim isRelativeDefault   As Boolean = False
                 Dim InitialDirectory    As String  = String.Empty
@@ -665,7 +665,7 @@ Namespace UI.Controls
             End Function
             
             ''' <summary> Returns the ToolTip for the text box depending on current status. </summary>
-            Private Shared Function getTextBoxToolTip(FileChooserInstance As FileChooser) As String
+            Private Shared Function GetTextBoxToolTip(FileChooserInstance As FileChooser) As String
                 
                 Dim ToolTip             As String  = String.Empty
                 Dim InputFileAbsolute   As String  = String.Empty
@@ -795,7 +795,7 @@ Namespace UI.Controls
             End Sub
             
             ''' <summary> Initializes and/or updates the file watcher to watch the actual file. </summary>
-            Private Sub updateFileWatcher()
+            Private Sub UpdateFileWatcher()
                 ' Create the watcher.
                 If (FileWatcher Is Nothing) Then
                     

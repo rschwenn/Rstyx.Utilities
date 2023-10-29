@@ -37,7 +37,7 @@ Imports Rstyx.Utilities.StringUtils
         '     ''' <param name="FormatString"> A String like "test: %s  %11.3f" </param>
         '     ''' <param name="Parms"> Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
         '     ''' <returns> The FormatString with expanded variables. </returns>
-        '    Public Shared Function sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
+        '    Public Shared Function Sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
         '        Return sprintf(False, FormatString, Parms)
         '    End Function
         '    
