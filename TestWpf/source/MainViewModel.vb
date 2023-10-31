@@ -106,7 +106,7 @@ Public Class MainViewModel
                         '_TestTaskAsyncCommand = New AsyncDelegateUICommand(CmdInfo, CancelCallback:=Nothing, SupportsCancellation:=False, runAsync:=True, ThreadAptState:=Threading.ApartmentState.STA)
                     End If
                 Catch ex As System.Exception
-                    Logger.LogError(ex, sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                    Logger.LogError(ex, Sprintf(Rstyx.Utilities.Resources.Messages.Global_ErrorCreatingCommandIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                 End Try
                 
                 Return _TestTaskAsyncCommand
@@ -652,7 +652,7 @@ Public Class MainViewModel
                 'Dim test3 As Boolean = (TestType2.Name = "Nullable`1")
                 'Dim test4 As Boolean = (TestType2 Is GetType(Nullable(Of Integer)))
                 '
-                'Dim text As String = sprintf("%5.3f%5.3f", "1", int3)
+                'Dim text As String = Sprintf("%5.3f%5.3f", "1", int3)
                 ''Dim text As String = CStr(Nothing)
                 ''int2 = int3 '.GetValueOrDefault()
                 
@@ -660,7 +660,7 @@ Public Class MainViewModel
                 'Dim KV As New KvFile("D:\Daten\koo\Test-KV.kv")
                 
                 ''Dim KF As New KfFile(Me.FilePath1)
-                ''Dim iP As New iPktFile(Me.FilePath1)
+                ''Dim iP As New IPktFile(Me.FilePath1)
                 'Dim TC As New TcFileReader(Me.FilePath1)
                 ''TC.FilePath = "T:\_test\zaun_li_IstGleis.txt"
                 ''TC.FilePath = "X:\Quellen\Awk\Bahn\SOLLIST\2018-06-22_Bf_Ungerhausen_MVk_GL3.A0"
@@ -685,7 +685,7 @@ Public Class MainViewModel
                 ' 'Dim pts As New GeoPointOpenList(iP.PointStream, iP)
                 'Dim pts As New GeoPointOpenList(KV.PointStream, KV)
                 ' 
-                'Dim iP2 As New iPktFile("D:\Daten\koo\Test-KV_out.ipkt")
+                'Dim iP2 As New IPktFile("D:\Daten\koo\Test-KV_out.ipkt")
                 'iP2.Store(pts)
                 
                 'Dim KV2 As New KvFile("X:\Quellen\DotNet\VisualBasic\Rstyx.Apps\VEedit\Test\Test_out.kv")
@@ -744,8 +744,8 @@ Public Class MainViewModel
                 'p2.Ra   =  -1
                 'p1.TransformHorizontalToCanted()
                 'p2.TransformHorizontalToCanted()
-                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p1.Q, p1.HSOK, p1.Ueb * sign(p1.Ra), p1.QG, p1.HG))
-                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p2.Q, p2.HSOK, p2.Ueb * sign(p2.Ra), p2.QG, p2.HG))
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p1.Q, p1.HSOK, p1.Ueb * Sign(p1.Ra), p1.QG, p1.HG))
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p2.Q, p2.HSOK, p2.Ueb * Sign(p2.Ra), p2.QG, p2.HG))
                 '
                 'Dim p3 As New GeoTcPoint()
                 'p3.QG   = p1.QG
@@ -759,8 +759,8 @@ Public Class MainViewModel
                 'p4.Ra   = -1
                 'p3.TransformCantedToHorizontal()
                 'p4.TransformCantedToHorizontal()
-                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb * sign(p3.Ra), p3.QG, p3.HG))
-                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb * sign(p4.Ra), p4.QG, p4.HG))
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p3.Q, p3.HSOK, p3.Ueb * Sign(p3.Ra), p3.QG, p3.HG))
+                'Logger.LogInfo(StringUtils.Sprintf("Q=%.3f  HSOK=%.3f  (u=%.3f)  QG=%.3f  HG=%.3f", p4.Q, p4.HSOK, p4.Ueb * Sign(p4.Ra), p4.QG, p4.HG))
                 '
                 'Dim dou As Double = 24430.0 'Double.NaN
                 'Dim i16 As Int16 = 0
@@ -892,7 +892,7 @@ Public Class MainViewModel
                 '     'Logger.LogInfo(StringUtils.Sprintf("Existiert Feld '%s' in Tabelle '%s' = %s", Field, Table.TableName, Table.ContainsField(Field)))
                 '     '
                 '     For Each row As System.Data.DataRow In Table.AsEnumerable()
-                '         Logger.LogInfo(StringUtils.Sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+                '         Logger.LogInfo(StringUtils.Sprintf("Standort '%s' = UserDomain '%s'", Row("Standort_ID"), Row("UserDomain")))
                 '     Next 
                 ' End Using
                 
@@ -930,7 +930,7 @@ Public Class MainViewModel
         
         Public Sub Test_0()
             'Dim s As String
-            'Dim sa() As String
+            'Dim Sa() As String
             'Dim d As Nullable(Of Double)
             ''Dim bool As Boolean
             '
@@ -1011,11 +1011,11 @@ Public Class MainViewModel
             '
             'FileChoser1.InputFilePath = "rrrrrrrrrr"
             
-            'Dim bytes() As Byte = {111, 112, 113, 00, 00, 00}
+            'Dim Bytes() As Byte = {111, 112, 113, 00, 00, 00}
             
             ' Statt ByteArray2String() - Nullwerte am Ende des Arrays sind egal...
             'Dim text As String  = System.Text.Encoding.Default.GetString(bytes)
-            'Dim bytes() As Byte = System.Text.Encoding.Default.GetBytes("str")
+            'Dim Bytes() As Byte = System.Text.Encoding.Default.GetBytes("str")
             
             'Dim Field = "UserDomain"
             'Dim TableName = "Standorte$"
@@ -1037,7 +1037,7 @@ Public Class MainViewModel
             'Dim yes = Table.ContainsField(Field)
             
             'For Each row As DataRow In Table.AsEnumerable()
-            '    Logger.LogInfo(StringUtils.Sprintf("Standort '%s' = UserDomain '%s'", row("Standort_ID"), row("UserDomain")))
+            '    Logger.LogInfo(StringUtils.Sprintf("Standort '%s' = UserDomain '%s'", Row("Standort_ID"), Row("UserDomain")))
             'Next 
             
             'TestPanel.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity))

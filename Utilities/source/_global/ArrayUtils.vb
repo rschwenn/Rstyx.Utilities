@@ -56,8 +56,8 @@
                   Dim CountParms2  As Integer
                   Dim EmbedCount() As Integer
                   Dim IsEmbedded   As Boolean
-                  Dim tmpArray()   As Object ' = New Object() {}
-                  Dim flatParms()  As Object ' = New Object() {}
+                  Dim TmpArray()   As Object ' = New Object() {}
+                  Dim FlatParms()  As Object ' = New Object() {}
                   
                 'Try
                     ' Initialisierung
@@ -86,18 +86,18 @@
                     If (Not IsEmbedded) Then
                         flatParms = WrapArray
                     Else
-                        ReDim flatParms(CountParms2 - 1)
+                        ReDim FlatParms(CountParms2 - 1)
                         j = 0
                         For i = 0 To ub1
                             If (EmbedCount(i) > 0) Then
                                 If (IsArray(WrapArray(i))) Then
                                     tmpArray = CType(WrapArray(i), Object())
                                     For k = 0 To UBound(CType(tmpArray, System.Array))
-                                      flatParms(j) = tmpArray(k)
+                                      FlatParms(j) = TmpArray(k)
                                       j += 1
                                     Next
                                 Else
-                                    flatParms(j) = WrapArray(i)
+                                    FlatParms(j) = WrapArray(i)
                                     j += 1
                                 End If
                             End If
@@ -125,8 +125,8 @@
                 
                 'Try
                     If (Key_Dim = 1) Then sec_Dim = 2 Else sec_Dim = 1
-                    Dim LowerIndex  As Integer = lbound(Matrix, sec_Dim)
-                    Dim UpperIndex  As Integer = ubound(Matrix, sec_Dim)
+                    Dim LowerIndex  As Integer = Lbound(Matrix, sec_Dim)
+                    Dim UpperIndex  As Integer = Ubound(Matrix, sec_Dim)
                     Logger.LogDebug(StringUtils.Sprintf("SortArray2d(): Initialisierung QuickSort2d(Matrix,%s,%s,%s,%s,%s,%s", Key_Dim, Key_Idx, SortingType.ToDisplayString(), Descending, LowerIndex, UpperIndex))
                     QuickSort2d(Matrix, Key_Dim, Key_Idx, SortingType, Descending, LowerIndex, UpperIndex)
                     
@@ -193,7 +193,7 @@
                             
                             If (i <= k) Then
                                 'Arraywerte der Indizes i und k tauschen.
-                                For idxColumn = lbound(Matrix, Key_Dim) To ubound(Matrix, Key_Dim)
+                                For idxColumn = Lbound(Matrix, Key_Dim) To Ubound(Matrix, Key_Dim)
                                     if (Key_Dim = 1) Then
                                         temp = Matrix(idxColumn, k)
                                         Matrix(idxColumn, k) = Matrix(idxColumn, i)
@@ -267,19 +267,19 @@
                 Else
                     If (SortingType = SortType.Numeric) Then
                         'Wenn numerisch nicht möglich, dann Alphanumerisch => Texte werden ans Ende sortiert.
-                        if (not (isNumeric(Value1) and isNumeric(Value2))) Then SortingType = SortType.Alphanumeric
+                        if (not (isNumeric(Value1) and IsNumeric(Value2))) Then SortingType = SortType.Alphanumeric
                     End if
                     
                     Select Case SortingType
                       
                       Case SortType.Numeric
-                          Dim DblValue1 As Double = cDbl(Value1)
-                          Dim DblValue2 As Double = cDbl(Value2)
+                          Dim DblValue1 As Double = CDbl(Value1)
+                          Dim DblValue2 As Double = CDbl(Value2)
                           if (not Reverse) Then CompareResult = (DblValue1 < DblValue2) Else CompareResult = (DblValue2 < DblValue1)
                           
                       Case Else  ' Alphanumeric
-                          Dim String1 As String = cStr(Value1)
-                          Dim String2 As String = cStr(Value2)
+                          Dim String1 As String = CStr(Value1)
+                          Dim String2 As String = CStr(Value2)
                           if (strComp(String1, String2, vbTextCompare) * intRev = -1) Then CompareResult = true
                     End Select
                 End if

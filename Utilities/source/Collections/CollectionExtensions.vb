@@ -18,7 +18,7 @@ Namespace Collections
          ''' <exception cref="System.ArgumentNullException"> <paramref name="dictionary"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function FindKeyByValue(Of TKey, TValue)(ByVal dictionary As IDictionary(Of TKey, TValue), Value As TValue, ByRef FoundKey As TKey) As Boolean
-            FoundKey = getKeyByValue(dictionary, Value)
+            FoundKey = GetKeyByValue(dictionary, Value)
             Dim DefaultKey As TKey = Nothing
             Return (Not Object.Equals(FoundKey, DefaultKey))
         End Function
@@ -59,7 +59,7 @@ Namespace Collections
          ''' <exception cref="System.ArgumentNullException"> <paramref name="ItemToString"/> is <see langword="null"/>. </exception>
         <System.Runtime.CompilerServices.Extension()> 
         Public Function FindItemByString(Of TItem)(ByVal collection As ICollection(Of TItem), ItemToString As String, ByRef FoundItem As TItem) As Boolean
-            FoundItem = getItemByString(collection, ItemToString)
+            FoundItem = GetItemByString(collection, ItemToString)
             Dim DefaultItem As TItem = Nothing
             Return (Not Object.Equals(FoundItem, DefaultItem))
         End Function

@@ -66,7 +66,7 @@ Namespace Domain
                 Dim FirstString      As String = String.Empty
                 Dim WorkLine         As String = String.Empty
                 Dim FromTo()         As String
-                Dim tmp()            As String
+                Dim Tmp()            As String
                 Dim NR               As Long    = 0
                 Dim TrackNoFound     As Boolean = false
                 Dim oTrackTitle      As New TrackTitle() With {.Number = TrackNo}
@@ -115,12 +115,12 @@ Namespace Domain
                         ' Short Track title
                         FromTo = oTrackTitle.LongTitle.Split(" - ")
                         tmp    = FromTo(0).Split(",")
-                        LineTextShort = tmp(0)
+                        LineTextShort = Tmp(0)
                         
                         If (ubound(FromTo) > 0) Then
-                            For i As Integer = 1 to ubound(FromTo)
+                            For i As Integer = 1 to Ubound(FromTo)
                                 tmp = FromTo(i).Split(",")
-                                LineTextShort = LineTextShort & " - " & tmp(0)
+                                LineTextShort = LineTextShort & " - " & Tmp(0)
                             Next
                         End If
                         oTrackTitle.ShortTitle = LineTextShort

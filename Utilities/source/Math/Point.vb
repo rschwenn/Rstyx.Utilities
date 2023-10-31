@@ -158,7 +158,7 @@ Namespace Math
             
             ''' <inheritdoc/>
             Public Overrides Function ToString() As String
-                Return sprintf("%13.4f, %13.4f, %13.4f", Me.X, Me.Y, Me.Z)
+                Return Sprintf("%13.4f, %13.4f, %13.4f", Me.X, Me.Y, Me.Z)
             End Function
             
         #End Region

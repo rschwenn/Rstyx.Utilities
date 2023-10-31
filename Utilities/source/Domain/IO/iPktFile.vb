@@ -215,8 +215,8 @@ Namespace Domain.IO
                                 Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
                                                                            DataLine.SourceLineNo,
                                                                            FieldTime,
-                                                                           sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
-                                                                           sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
+                                                                           Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
+                                                                           Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
                                                                            FilePath))
                             End If
                         End If
@@ -355,7 +355,7 @@ Namespace Domain.IO
                                     ' Object key: Add leading zero's if integer.
                                     Dim KeyText As String = p.ObjectKey
                                     Dim KeyInt  As Integer
-                                    If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = sprintf("%6.6d", KeyInt)
+                                    If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = Sprintf("%6.6d", KeyInt)
                                     
                                     ' Format for coordinates.
                                     If (p.CoordType.Trim() = "BLh") Then
@@ -378,7 +378,7 @@ Namespace Domain.IO
                                     Dim StatusHints As Char = If(p.StatusHints = GeoPointStatusHints.None, " "c, "*"c)
                                     
                                     ' Create line.
-                                    FileTextLine = sprintf(PointFmt,
+                                    FileTextLine = Sprintf(PointFmt,
                                                            StatusHints,
                                                            PointCount + 1,
                                                            p.CalcCode.TrimToMaxLength(2),
@@ -388,10 +388,10 @@ Namespace Domain.IO
                                                            p.GraficsEcc,
                                                            p.ID,
                                                            p.CoordType.TrimToMaxLength(3),
-                                                           sprintf(CoordFmt, p.Y),
-                                                           sprintf(CoordFmt, p.X),
-                                                           sprintf(CoordFmt, p.Z),
-                                                           sprintf("%19s", TimeStamp),
+                                                           Sprintf(CoordFmt, p.Y),
+                                                           Sprintf(CoordFmt, p.X),
+                                                           Sprintf(CoordFmt, p.Z),
+                                                           Sprintf("%19s", TimeStamp),
                                                            p.CoordSys.TrimToMaxLength(6),
                                                            p.Flags.TrimToMaxLength(4),
                                                            p.wp, p.wh,

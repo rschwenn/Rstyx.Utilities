@@ -332,7 +332,7 @@ Namespace Domain.IO
             ''' <summary> Creates a summary of file contents. </summary>
              ''' <returns> Summary of all blocks of this TcFileReader.</returns>
             Public Overrides Function ToString() As String
-                Return sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToString, Me.FilePath, Me.Blocks.Count, Me.TotalPointCount, Me.ParseErrors.Count)
+                Return Sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_ToString, Me.FilePath, Me.Blocks.Count, Me.TotalPointCount, Me.ParseErrors.Count)
             End Function
             
         #End Region
@@ -475,10 +475,10 @@ Namespace Domain.IO
                                                                       Select Case BlockType.Program
                                                                           
                                                                           Case TcBlockProgram.VermEsn
-                                                                              BrokenMessage = sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.THW.ToDisplayString(), TcBlockFormat.D3.ToDisplayString())
+                                                                              BrokenMessage = Sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.THW.ToDisplayString(), TcBlockFormat.D3.ToDisplayString())
                                                                               
                                                                           Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
-                                                                              BrokenMessage = sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.A0.ToDisplayString(), TcBlockFormat.A1.ToDisplayString())
+                                                                              BrokenMessage = Sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_MissingFormat, BlockType.Program.ToDisplayString(), TcBlockFormat.A0.ToDisplayString(), TcBlockFormat.A1.ToDisplayString())
                                                                       End Select
                                                                  End If
                                                                  
@@ -516,7 +516,7 @@ Namespace Domain.IO
                                                                                       'o.k.
                                                                                   Case Else
                                                                                       IsValidRule = False
-                                                                                      BrokenMessage = sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format.ToDisplayString(), BlockType.Program.ToDisplayString())
+                                                                                      BrokenMessage = Sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format.ToDisplayString(), BlockType.Program.ToDisplayString())
                                                                               End Select
                                                                               
                                                                           Case TcBlockProgram.iGeo, TcBlockProgram.iTrassePC
@@ -525,7 +525,7 @@ Namespace Domain.IO
                                                                                       'o.k.
                                                                                   Case Else
                                                                                       IsValidRule = False
-                                                                                      BrokenMessage = sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format.ToDisplayString(), BlockType.Program.ToDisplayString())
+                                                                                      BrokenMessage = Sprintf(Rstyx.Utilities.Resources.Messages.TcBlockType_FormatMismatch, BlockType.Format.ToDisplayString(), BlockType.Program.ToDisplayString())
                                                                               End Select
                                                                       End Select
                                                                   End If
@@ -768,7 +768,7 @@ Namespace Domain.IO
                                                                                 LineNo,
                                                                                 0,
                                                                                 0,
-                                                                                sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Repeated, AttCount, AttName),
+                                                                                Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Repeated, AttCount, AttName),
                                                                                 If(LineNo > 0, ip.SourcePath, Nothing)))
                                     End If
                                 Next
@@ -784,7 +784,7 @@ Namespace Domain.IO
                     
                     ''' <inheritdoc/>
                     Public Overrides Function ToString() As String
-                        Return sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString, Me.TrackRef.NameOfTrackOrAlignment, Me.Points.Count, Me.BlockType.ToString())
+                        Return Sprintf(Rstyx.Utilities.Resources.Messages.TcBlock_ToString, Me.TrackRef.NameOfTrackOrAlignment, Me.Points.Count, Me.BlockType.ToString())
                     End Function
                     
                 #End Region
@@ -808,7 +808,7 @@ Namespace Domain.IO
                     
                 ''' <inheritdoc/>
                 Public Overrides Function ToString() As String
-                    Return sprintf(Rstyx.Utilities.Resources.Messages.DataBlockFileSourceInfo_ToString, Me.FilePath, Me.StartLineNo, Me.EndLineNo)
+                    Return Sprintf(Rstyx.Utilities.Resources.Messages.DataBlockFileSourceInfo_ToString, Me.FilePath, Me.StartLineNo, Me.EndLineNo)
                 End Function
                 
             End Class
@@ -1199,7 +1199,7 @@ Namespace Domain.IO
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
-                    Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
+                    Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, Sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
                         
@@ -1255,7 +1255,7 @@ Namespace Domain.IO
                                     VEPoint.ID = FieldID.Value  ' Verify ID format.
                                     p.ID       = VEPoint.ID
                                     If ((Block.BlockType.SubFormat = TcBlockSubFormat.TwoLine) AndAlso (Not (p.ID = ID2))) Then
-                                        Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing, Me.FilePath))
+                                        Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, Sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_IDMismatch, p.ID, ID2), Nothing, Me.FilePath))
                                     End If
                                     
                                     ' Track values.
@@ -1319,7 +1319,7 @@ Namespace Domain.IO
                     
                     ' Warning for empty block.
                     If (Block.Points.Count = 0) Then
-                        Me.ParseErrors.AddWarning(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_EmptyTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo))
+                        Me.ParseErrors.AddWarning(Block.Source.StartLineNo, 0, 0, Sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_EmptyTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo))
                     End If
                 End If
                 
@@ -1365,7 +1365,7 @@ Namespace Domain.IO
                 
                 ' Read points.
                 If (Not Block.IsValid) Then
-                    Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
+                    Me.ParseErrors.AddError(Block.Source.StartLineNo, 0, 0, Sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_InvalidTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo, Block.Error))
                 Else
                     If (SourceBlock.HasData) Then
                         Dim RecDef       As TcRecordDefinitionIGeo = DirectCast(SourceBlock.RecordDefinition, TcRecordDefinitionIGeo)
@@ -1606,7 +1606,7 @@ Namespace Domain.IO
                     
                     ' Warning for empty block.
                     If (Block.Points.Count = 0) Then
-                        Me.ParseErrors.AddWarning(Block.Source.StartLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_EmptyTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo))
+                        Me.ParseErrors.AddWarning(Block.Source.StartLineNo, 0, 0, Sprintf(Rstyx.Utilities.Resources.Messages.TcFileReader_EmptyTcBlock, Block.Source.StartLineNo, Block.Source.EndLineNo))
                     End If
                 End If
                 

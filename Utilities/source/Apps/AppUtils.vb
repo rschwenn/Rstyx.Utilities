@@ -303,7 +303,7 @@ Namespace Apps
             Public Shared Property CurrentEditor() As SupportedEditors
                 Get
                     SyncLock (SyncHandle)
-                        ' _CurrentEditor is initialized by initCurrentEditor().
+                        ' _CurrentEditor is initialized by InitCurrentEditor().
                         Return _CurrentEditor
                     End SyncLock
                 End Get

@@ -502,7 +502,7 @@ Namespace Domain
                                 If (Not Me.Attributes.ContainsKey(AttributeName)) Then
                                     Dim AttributeValue As String
                                     If (TypeOf PropertyValue Is Kilometer) Then
-                                        AttributeValue = sprintf("%s", DirectCast(PropertyValue, Kilometer).ToKilometerNotation(6, " "))
+                                        AttributeValue = Sprintf("%s", DirectCast(PropertyValue, Kilometer).ToKilometerNotation(6, " "))
                                     Else
                                         AttributeValue = PropertyValue.ToString()
                                     End If
@@ -650,19 +650,19 @@ Namespace Domain
             
             ''' <inheritdoc/>
             Public Property mp()            As Double = Double.NaN   Implements ICartesianCoordinates3D.mp
-            
+                            
             ''' <inheritdoc/>
             Public Property mh()            As Double = Double.NaN   Implements ICartesianCoordinates3D.mh
-            
+                            
             ''' <inheritdoc/>
             Public Property wp()            As Double = Double.NaN   Implements ICartesianCoordinates3D.wp
-            
+                            
             ''' <inheritdoc/>
             Public Property wh()            As Double = Double.NaN   Implements ICartesianCoordinates3D.wh
-            
+                            
             ''' <inheritdoc/>
             Public Property sp()            As String = String.Empty Implements ICartesianCoordinates3D.sp
-            
+                            
             ''' <inheritdoc/>
             Public Property sh()            As String = String.Empty Implements ICartesianCoordinates3D.sh
             
@@ -764,12 +764,12 @@ Namespace Domain
                             End If
                             Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
                                                                     Me.SourceLineNo, StartCol, EndCol,
-                                                                    sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPosition, PointID),
+                                                                    Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPosition, PointID),
                                                                     Nothing,
                                                                     Me.SourcePath
                                                                    ))
                         Else
-                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPosition, PointID)))
+                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingPosition, PointID)))
                         End If
                     End If
                 End If
@@ -780,7 +780,7 @@ Namespace Domain
                         Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
                                                                    Me.SourceLineNo,
                                                                    FieldZ,
-                                                                   sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingHeight, PointID),
+                                                                   Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingHeight, PointID),
                                                                    Nothing,
                                                                    Me.SourcePath
                                                                   ))
@@ -802,11 +802,11 @@ Namespace Domain
                         If (Double.IsNaN(tp.QG) OrElse Double.IsNaN(tp.HG)) Then
                             Missing = True
                             If (Double.IsNaN(tp.HSOK)) Then
-                                Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK)
+                                Hints = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK)
                             ElseIf (Double.IsNaN(tp.Ueb)) Then
-                                Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb)
+                                Hints = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb)
                             ElseIf (Double.IsNaN(tp.Ra)) Then
-                                Hints = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ra)
+                                Hints = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingField, Rstyx.Utilities.Resources.Messages.Domain_Label_Ra)
                             ElseIf (tp.Ra.EqualsTolerance(0, 0.001)) Then
                                 Hints = Rstyx.Utilities.Resources.Messages.GeoPointConstraints_Hint_MissingCantSign
                             End If
@@ -817,12 +817,12 @@ Namespace Domain
                         If (Me.SourceLineNo > 0) Then
                             Throw New ParseException(New ParseError(ParseErrorLevel.[Error],
                                                                     Me.SourceLineNo, 0, 0,
-                                                                    sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingCantedRailsSystem, PointID),
+                                                                    Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingCantedRailsSystem, PointID),
                                                                     Hints,
                                                                     Me.SourcePath
                                                                    ))
                         Else
-                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingCantedRailsSystem, PointID)))
+                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_MissingCantedRailsSystem, PointID)))
                         End If
                     End If
                 End If
@@ -852,11 +852,11 @@ Namespace Domain
                 ' Add actual rails cant.
                 If (Options.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant)) Then
                     If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Double.IsNaN(Me.ActualCantAbs)) ) Then
-                        RetText = sprintf("u=%-3.0f ueb=%-3.0f %-s", Me.ActualCant * 1000, Me.ActualCantAbs * 1000 * -1, Me.Info)
+                        RetText = Sprintf("u=%-3.0f ueb=%-3.0f %-s", Me.ActualCant * 1000, Me.ActualCantAbs * 1000 * -1, Me.Info)
                     ElseIf (Not Double.IsNaN(Me.ActualCant)) Then
-                        RetText = sprintf("u=%-3.0f %-s", Me.ActualCant * 1000, Me.Info)
+                        RetText = Sprintf("u=%-3.0f %-s", Me.ActualCant * 1000, Me.Info)
                     ElseIf (Not Double.IsNaN(Me.ActualCantAbs)) Then
-                        RetText = sprintf("ueb=%-3.0f %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
+                        RetText = Sprintf("ueb=%-3.0f %-s", Me.ActualCantAbs * 1000 * -1, Me.Info)
                     End If
                 End If
                 
@@ -874,7 +874,7 @@ Namespace Domain
                         Next
                     End If
                     If (AddKindText) Then
-                        RetText = sprintf("%-4s %-s", Me.GetKindTextSmart(), Me.Info)
+                        RetText = Sprintf("%-4s %-s", Me.GetKindTextSmart(), Me.Info)
                     End If
                 End If
                 
@@ -1212,7 +1212,7 @@ Namespace Domain
             Public Function GetListMarkType2Kind() As String
                 Dim RetValue As String = Rstyx.Utilities.Resources.Messages.GeoPoint_MarkKindListHeader
                 For Each kvp As KeyValuePair(Of String, GeoPointKind) in MarkType2Kind
-                    RetValue &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_MarkKindListRow, kvp.Key, kvp.Value.ToDisplayString())
+                    RetValue &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPoint_MarkKindListRow, kvp.Key, kvp.Value.ToDisplayString())
                 Next
                 Return RetValue
             End Function

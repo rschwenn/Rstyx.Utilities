@@ -32,7 +32,7 @@ Namespace Apps
                 
                 _Assembly = Assembly
                 
-                initAppInfo()
+                InitAppInfo()
             End Sub
             
         #End Region

@@ -38,7 +38,7 @@ Imports Rstyx.Utilities.StringUtils
         '     ''' <param name="Parms"> Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
         '     ''' <returns> The FormatString with expanded variables. </returns>
         '    Public Shared Function Sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
-        '        Return sprintf(False, FormatString, Parms)
+        '        Return Sprintf(False, FormatString, Parms)
         '    End Function
         '    
         '#End Region

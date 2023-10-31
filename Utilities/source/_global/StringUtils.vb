@@ -32,7 +32,7 @@ Imports Rstyx.Utilities.Math.MathUtils
              ''' <param name="Parms">        Parameter list or Array (Nested 1d-Arrays as single parameters are supported). </param>
              ''' <returns>                   The <paramref name="FormatString"/> with expanded variables, or an empty string if an error occurs. </returns>
             Public Shared Function Sprintf(ByVal FormatString As String, ParamArray Parms() As Object) As String
-                Return sprintf(False, FormatString, Parms)
+                Return Sprintf(False, FormatString, Parms)
             End Function
             
             ''' <summary> String formatting like in C or awk (does not support %e, %E, %g, %G). </summary>
@@ -384,7 +384,7 @@ Imports Rstyx.Utilities.Math.MathUtils
                             End If
                             
                             If (Width <> "") Then
-                              If cint(Width) > AddStr.Length Then
+                              If Cint(Width) > AddStr.Length Then
                                 If (InStr(Flags, "-") > 0) Then
                                   AddStr &= Space(CInt(Width) - AddStr.Length)
                                 Else

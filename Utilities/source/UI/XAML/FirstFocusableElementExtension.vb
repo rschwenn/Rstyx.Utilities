@@ -138,7 +138,7 @@
 '        Private Shared Function EnumerateVisualTree(Of T As DependencyObject)(start As T, eval As Predicate(Of T)) As IEnumerable(Of T)
 '            For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(start) - 1
 '                Dim child = TryCast(VisualTreeHelper.GetChild(start, i), T)
-'                If child IsNot Nothing AndAlso (eval IsNot Nothing AndAlso eval(child)) Then
+'                If child IsNot Nothing AndAlso (eval IsNot Nothing AndAlso Eval(child)) Then
 '                    yield Return child
 '                    For Each childOfChild As var In EnumerateVisualTree(child, eval)
 '                        yield Return childOfChild

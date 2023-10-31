@@ -189,7 +189,7 @@ Namespace Domain
                         Select Case AttName
                             Case Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText : Me.Attributes(AttName) = AttString.PadRight(4)
                             Case Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo  : Me.Attributes(AttName) = AttString.PadLeft(4)
-                            Case Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm  : Me.Attributes(AttName) = sprintf("%+15s", New Kilometer(AttString).ToKilometerNotation(4, " "))
+                            Case Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm  : Me.Attributes(AttName) = Sprintf("%+15s", New Kilometer(AttString).ToKilometerNotation(4, " "))
                         End Select
                     Next
 
@@ -285,9 +285,9 @@ Namespace Domain
                             
                             ' Verify Attribute Name.
                             If (AttName.IsEmptyOrWhiteSpace()) Then
-                                ErrMsg = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Empty, AttCount)
+                                ErrMsg = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Empty, AttCount)
                             ElseIf (Me.Attributes.ContainsKey(AttName)) Then
-                                ErrMsg = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Repeated, AttCount, AttName)
+                                ErrMsg = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseFreeData_AttName_Repeated, AttCount, AttName)
                             End If
                             If (ErrMsg IsNot Nothing) Then
                                 Dim LineNo As Integer = If(Me.SourceLineNo < 0, 0, Me.SourceLineNo)
@@ -421,11 +421,11 @@ Namespace Domain
                             If (IsNanActualCant AndAlso IsNanActualCantAbs AndAlso IsNanActualGauge) Then
                                 IpktText &= "-i"
                             Else
-                                If (Not IsNanActualCantAbs) Then IpktText &= sprintf("-iueb=%-5.1f", Me.ActualCantAbs * 1000 * -1).Replace(".0", String.Empty)
-                                If (Not IsNanActualCant)    Then IpktText &= sprintf("-iu=%-5.1f"  , Me.ActualCant    * 1000).Replace(".0", String.Empty)
+                                If (Not IsNanActualCantAbs) Then IpktText &= Sprintf("-iueb=%-5.1f", Me.ActualCantAbs * 1000 * -1).Replace(".0", String.Empty)
+                                If (Not IsNanActualCant)    Then IpktText &= Sprintf("-iu=%-5.1f"  , Me.ActualCant    * 1000).Replace(".0", String.Empty)
                             End If
 
-                            If (Not IsNanActualGauge) Then IpktText &= sprintf("-sp=%-6.1f", Me.ActualTrackGauge * 1000).Replace(".0", String.Empty)
+                            If (Not IsNanActualGauge) Then IpktText &= Sprintf("-sp=%-6.1f", Me.ActualTrackGauge * 1000).Replace(".0", String.Empty)
 
                     End Select
                 End If
@@ -560,7 +560,7 @@ Namespace Domain
                             If (IsKindConflict) Then
                                 
                                 RetValue.HasConflict = True
-                                RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Kind, Me.ID, Me.Kind.ToDisplayString(), iTC_Kind.ToDisplayString())
+                                RetValue.Message     = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Kind, Me.ID, Me.Kind.ToDisplayString(), iTC_Kind.ToDisplayString())
                                 RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                 Select Case Me.Kind
                                     Case GeoPointKind.FixPoint1D, GeoPointKind.FixPoint2D, GeoPointKind.FixPoint3D
@@ -576,7 +576,7 @@ Namespace Domain
                                 If (iTC_MarkType.IsNotEmptyOrWhiteSpace()) Then
                                     If (Me.MarkType.IsNotEmptyOrWhiteSpace() AndAlso (Me.MarkType <> iTC_MarkType)) Then
                                         RetValue.HasConflict = True
-                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkType, Me.ID, Me.MarkType, iTC_MarkType)
+                                        RetValue.Message     = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkType, Me.ID, Me.MarkType, iTC_MarkType)
                                         RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                     Else
                                         Me.MarkType = iTC_MarkType
@@ -586,7 +586,7 @@ Namespace Domain
                                 If (Not Double.IsNaN(iTC_ActualCantAbs)) Then
                                     If ((Not Double.IsNaN(Me.ActualCantAbs)) AndAlso (Not Me.ActualCantAbs.EqualsTolerance(iTC_ActualCantAbs, 0.0006))) Then
                                         RetValue.HasConflict = True
-                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_CantAbs, Me.ID, -1 * Me.ActualCantAbs, -1 * iTC_ActualCantAbs)
+                                        RetValue.Message     = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_CantAbs, Me.ID, -1 * Me.ActualCantAbs, -1 * iTC_ActualCantAbs)
                                         RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                     Else
                                         Me.ActualCantAbs = iTC_ActualCantAbs
@@ -596,7 +596,7 @@ Namespace Domain
                                 If (Not Double.IsNaN(iTC_ActualCant)) Then
                                     If ((Not Double.IsNaN(Me.ActualCant)) AndAlso (Not Me.ActualCant.EqualsTolerance(iTC_ActualCant, 0.0006))) Then
                                         RetValue.HasConflict = True
-                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Cant, Me.ID, Me.ActualCant, iTC_ActualCant)
+                                        RetValue.Message     = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Cant, Me.ID, Me.ActualCant, iTC_ActualCant)
                                         RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                     Else
                                         Me.ActualCant = iTC_ActualCant
@@ -606,7 +606,7 @@ Namespace Domain
                                 If (Not Double.IsNaN(iTC_ActualGauge)) Then
                                     If ((Not Double.IsNaN(Me.ActualTrackGauge)) AndAlso (Not Me.ActualTrackGauge.EqualsTolerance(iTC_ActualGauge, 0.0006))) Then
                                         RetValue.HasConflict = True
-                                        RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Gauge, Me.ID, Me.ActualTrackGauge, iTC_ActualGauge)
+                                        RetValue.Message     = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_Gauge, Me.ID, Me.ActualTrackGauge, iTC_ActualGauge)
                                         RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                     Else
                                         Me.ActualTrackGauge = iTC_ActualGauge
@@ -620,7 +620,7 @@ Namespace Domain
                                 
                                 If (Me.MarkTypeAB.IsNotEmptyOrWhiteSpace() AndAlso (Me.MarkTypeAB <> iTC_MarkTypeAB)) Then
                                     RetValue.HasConflict = True
-                                    RetValue.Message     = sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkTypeAB, Me.ID, Me.MarkTypeAB, iTC_MarkTypeAB)
+                                    RetValue.Message     = Sprintf(Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_MarkTypeAB, Me.ID, Me.MarkTypeAB, iTC_MarkTypeAB)
                                     RetValue.Hints       = Rstyx.Utilities.Resources.Messages.GeoIPoint_ParseITC_Conflict_RejectITC
                                 Else 
                                     Me.MarkTypeAB = iTC_MarkTypeAB
@@ -729,7 +729,7 @@ Namespace Domain
             
             ''' <summary> Returns a very basic output of the point. </summary>
             Public Overrides Function ToString() As String
-                Return sprintf(" %+20s %15.5f%15.5f%15.4f  %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
+                Return Sprintf(" %+20s %15.5f%15.5f%15.4f  %s", Me.ID, Me.Y, Me.X, Me.Z, Me.Info)
             End Function
             
         #End Region

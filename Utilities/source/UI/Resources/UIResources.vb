@@ -79,7 +79,7 @@ Namespace UI.Resources
                                 Next
                                 _IconRectangles = tmp_IconRectangles.OrderBy(Of String)(Function(ByVal de2) de2.Key)
                             Catch ex As Exception 
-                                Logger.LogError(ex, sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
+                                Logger.LogError(ex, Sprintf(Rstyx.Utilities.Resources.Messages.Global_UnexpectedErrorIn, System.Reflection.MethodBase.GetCurrentMethod().Name))
                             End Try 
                         End If
                         Return _IconRectangles

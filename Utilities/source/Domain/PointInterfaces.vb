@@ -126,23 +126,23 @@ Namespace Domain
         
         ''' <summary> Mean error of position in [m]. </summary>
         Property mp()           As Double
-        
+                 
         ''' <summary> Mean error of height in [m]. </summary>
         Property mh()           As Double
-        
-        
+                 
+                 
         ''' <summary> Weight of position. </summary>
         Property wp()           As Double
-        
+                 
         ''' <summary> Weight of height. </summary>
         Property wh()           As Double
         
         
         ''' <summary> Status of position. </summary>
-        Property sp             As String
+        Property sp()           As String
         
         ''' <summary> Status of height. </summary>
-        Property sh             As String
+        Property sh()           As String
         
         
         ''' <summary> Specifies the reference system of easting and northing coordinates. </summary>

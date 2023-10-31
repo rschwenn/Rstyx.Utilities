@@ -557,7 +557,7 @@ Namespace IO.CSV
                     Dim fieldHeaders As String() = New String(_fieldHeaders.Length - 1) {}
                     
                     For i As Integer = 0 To fieldHeaders.Length - 1
-                        fieldHeaders(i) = _fieldHeaders(i)
+                        FieldHeaders(i) = _fieldHeaders(i)
                     Next
                     
                     Return fieldHeaders
@@ -759,9 +759,9 @@ Namespace IO.CSV
                 
                 For i As Integer = 0 To _fieldCount - 1
                     If (_parseErrorFlag) Then
-                        array(index + i) = Nothing
+                        Array(index + i) = Nothing
                     Else
-                        array(index + i) = Me(i)
+                        Array(index + i) = Me(i)
                     End If
                 Next
             End Sub
@@ -933,7 +933,7 @@ Namespace IO.CSV
             ''' </summary>
             ''' <param name="field">The field index.</param>
             ''' <param name="initializing">Indicates if the reader is currently initializing.</param>
-            ''' <param name="discardValue">Indicates if the value(s) are discarded.</param>
+            ''' <param name="discardValue">Indicates if the Value(s) are discarded.</param>
             ''' <returns>
             ''' The field at the specified index. 
             ''' A <see langword="null"/> indicates that an error occured or that the last field has been reached during initialization.

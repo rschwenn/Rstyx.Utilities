@@ -173,7 +173,7 @@ Namespace Domain
             ''' <summary> Gets a decimal string representation from this point's ID. </summary>
              ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is still <see langword="null"/>. </returns>
             Public Function FormatID() As String
-                Return If(Me.ID.IsEmptyOrWhiteSpace(), String.Empty, sprintf("%." & CStr(MaxIDLength - 2) & "f", CDbl(Me.ID) / PointNoFactor))
+                Return If(Me.ID.IsEmptyOrWhiteSpace(), String.Empty, Sprintf("%." & CStr(MaxIDLength - 2) & "f", CDbl(Me.ID) / PointNoFactor))
             End Function
             
             
@@ -217,7 +217,7 @@ Namespace Domain
                 If (Not Me.IsValidID(TargetID)) Then
                     Throw New InvalidIDException(sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDOutOfIntRange, TargetID.ToString(), MinIntegerID, MaxIntegerID))
                 End If
-                _ID = sprintf("%.0f", TargetID * PointNoFactor)
+                _ID = Sprintf("%.0f", TargetID * PointNoFactor)
             End Sub
             
         #End Region
@@ -322,7 +322,7 @@ Namespace Domain
                 ' Verify given ID.
                 If ((Not success) OrElse Double.IsNaN(DoubleID)) Then
                     success = False
-                    Message = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDNotNumeric, RetValue)
+                    Message = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDNotNumeric, RetValue)
                 Else
                     Dim MinDoubleID As Double  = MinIntegerID
                     Dim MaxDoubleID As Double  = MaxIntegerID
@@ -331,13 +331,13 @@ Namespace Domain
                     
                     If ((DoubleID < MinDoubleID) OrElse (DoubleID > MaxDoubleID)) Then
                         success = False
-                        Message = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDOutOfIntRange, RetValue, MinIntegerID, MaxIntegerID)
+                        Message = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointConstraints_IDOutOfIntRange, RetValue, MinIntegerID, MaxIntegerID)
                     End If
                 End If
                 If (Not success) Then Throw New InvalidIDException(Message)
                 
                 ' Format validated ID.
-                RetValue = sprintf("%.0f", DoubleID)
+                RetValue = Sprintf("%.0f", DoubleID)
                 
                 Return RetValue
             End Function
@@ -391,7 +391,7 @@ Namespace Domain
                 
                 Dim KvFmt As String = "%+7s %15.5f%15.5f%10.4f %12.4f  %-13s %-13s %-4s %4d %1s  %3s %5.0f %5.0f  %1s %+3s  %1s%1s  %-8s %7s"
                 
-                Return sprintf(KvFmt, Me.ID, Me.Y, Me.X, Me.Z, Me.TrackPos.Kilometer.Value, Me.Info.TrimToMaxLength(13), Me.HeightInfo.TrimToMaxLength(13),
+                Return Sprintf(KvFmt, Me.ID, Me.Y, Me.X, Me.Z, Me.TrackPos.Kilometer.Value, Me.Info.TrimToMaxLength(13), Me.HeightInfo.TrimToMaxLength(13),
                                Me.GetKindTextSmart().TrimToMaxLength(4), Me.TrackPos.TrackNo, Me.TrackPos.RailsCode.TrimToMaxLength(1), Me.HeightSys.TrimToMaxLength(3), 
                                Me.mp * 1000, Me.mh * 1000, Me.MarkHints.TrimToMaxLength(1), Me.MarkType.TrimToMaxLength(3), Me.sp.TrimToMaxLength(1), Me.sh.TrimToMaxLength(1),
                                Me.Job.TrimToMaxLength(8), Me.ObjectKey.TrimToMaxLength(7))

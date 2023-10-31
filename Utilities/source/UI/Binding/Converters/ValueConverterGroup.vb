@@ -29,7 +29,7 @@ Namespace UI.Binding.Converters
         #Region "Private Fields"
             
             Private ReadOnly m_converters     As ObservableCollection(Of IValueConverter) = New ObservableCollection(Of IValueConverter)()
-            Private ReadOnly cachedAttributes As Dictionary(Of IValueConverter, ValueConversionAttribute) = New Dictionary(Of IValueConverter, ValueConversionAttribute)()
+            Private ReadOnly CachedAttributes As Dictionary(Of IValueConverter, ValueConversionAttribute) = New Dictionary(Of IValueConverter, ValueConversionAttribute)()
             
         #End Region
         
@@ -117,7 +117,7 @@ Namespace UI.Binding.Converters
                 End If
                 
                 If (nextConverter IsNot Nothing) Then
-                    Dim conversionAttribute As ValueConversionAttribute = cachedAttributes(nextConverter)
+                    Dim conversionAttribute As ValueConversionAttribute = CachedAttributes(nextConverter)
                     
                     ' If the Convert method is going to be called, we need to use the SourceType of the next 
                     ' converter in the list.  If ConvertBack is called, use the TargetType.

@@ -39,7 +39,7 @@ Namespace IO
                 Me.LineStartCommentToken = LineStartCommentToken
                 Me.LineEndCommentToken   = LineEndCommentToken
                 
-                parseLine(TextLine, LineStartCommentToken, LineEndCommentToken, 
+                ParseLine(TextLine, LineStartCommentToken, LineEndCommentToken, 
                           Me.Comment, Me.Data,
                           Me.HasData, Me.HasComment,
                           Me.IsCommentLine, Me.IsEmpty
@@ -109,7 +109,7 @@ Namespace IO
              ''' <remarks> The collection will be created lazy at the time this property is accessed. </remarks>
             Public ReadOnly Property Words() As Collection(Of DataFieldSource)
                 Get
-                    If (_Words Is Nothing) Then _Words = getWords()
+                    If (_Words Is Nothing) Then _Words = GetWords()
                     Return _Words
                 End Get
             End Property
@@ -360,7 +360,7 @@ Namespace IO
                     If (FieldDef.ColumnOrWord > Me.Words.Count) Then
                         If (Not OptionNotRequired) Then
                             success = False
-                            oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
+                            oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
                         End If
                     Else
                         FieldSource = Me.Words(FieldDef.ColumnOrWord - 1)
@@ -375,7 +375,7 @@ Namespace IO
                         If (Not FieldHasValue) Then
                             If (Not OptionNotRequired) Then
                                 success = False
-                                oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldSource.Column, FieldSource.Column + FieldSource.Length, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
+                                oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldSource.Column, FieldSource.Column + FieldSource.Length, Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingWord, FieldDef.Caption, FieldDef.ColumnOrWord), Nothing)
                             End If
                         End If
                     End If
@@ -385,7 +385,7 @@ Namespace IO
                     If (Not (FieldDef.ColumnOrWord < Me.Data.Length)) Then
                         If (Not OptionNotRequired) Then
                             success = False
-                            oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord, FieldDef.Length), Nothing)
+                            oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, 0, 0, Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord, FieldDef.Length), Nothing)
                         End If
                     Else
                         ' Ensure field length doesn't exceeds Me.Data.
@@ -412,7 +412,7 @@ Namespace IO
                         If (Not FieldHasValue) Then
                             If (Not OptionNotRequired) Then
                                 success = False
-                                oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord + 1, FieldDef.Length), Nothing)
+                                oParseError = New ParseError(ParseErrorLevel.[Error], Me.SourceLineNo, FieldDef.ColumnOrWord, FieldDef.ColumnOrWord + Length, Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_MissingField, FieldDef.Caption, FieldDef.ColumnOrWord + 1, FieldDef.Length), Nothing)
                             End If
                         End If
                     End If
@@ -458,7 +458,7 @@ Namespace IO
                                                              Me.SourceLineNo,
                                                              FieldSource.Column,
                                                              FieldSource.Column + FieldSource.Length,
-                                                             sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotInteger, FieldDef.Caption, Integer.MinValue, Integer.MaxValue, FieldSource.Value),
+                                                             Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotInteger, FieldDef.Caption, Integer.MinValue, Integer.MaxValue, FieldSource.Value),
                                                              Nothing
                                                             )
                             Else
@@ -490,7 +490,7 @@ Namespace IO
                                                              Me.SourceLineNo,
                                                              FieldSource.Column,
                                                              FieldSource.Column + FieldSource.Length,
-                                                             sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotLong, FieldDef.Caption, Long.MinValue, Long.MaxValue, FieldSource.Value),
+                                                             Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotLong, FieldDef.Caption, Long.MinValue, Long.MaxValue, FieldSource.Value),
                                                              Nothing
                                                             )
                             Else
@@ -531,7 +531,7 @@ Namespace IO
                                                              Me.SourceLineNo,
                                                              FieldSource.Column,
                                                              FieldSource.Column + FieldSource.Length,
-                                                             sprintf(MessageFmt, FieldDef.Caption, FieldSource.Value),
+                                                             Sprintf(MessageFmt, FieldDef.Caption, FieldSource.Value),
                                                              Nothing
                                                             )
                             Else
@@ -562,7 +562,7 @@ Namespace IO
                                                              Me.SourceLineNo,
                                                              FieldSource.Column,
                                                              FieldSource.Column + FieldSource.Length,
-                                                             sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer, FieldDef.Caption, FieldSource.Value),
+                                                             Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotKilometer, FieldDef.Caption, FieldSource.Value),
                                                              Nothing
                                                             )
                             Else
@@ -595,8 +595,8 @@ Namespace IO
                                                                  Me.SourceLineNo,
                                                                  FieldSource.Column,
                                                                  FieldSource.Column + FieldSource.Length,
-                                                                 sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotEnumMember, FieldDef.Caption, FieldSource.Value),
-                                                                 sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_ValidValues, ValidValues),
+                                                                 Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_InvalidFieldNotEnumMember, FieldDef.Caption, FieldSource.Value),
+                                                                 Sprintf(Rstyx.Utilities.Resources.Messages.DataTextLine_ValidValues, ValidValues),
                                                                  Nothing
                                                                 )
                                 End Try

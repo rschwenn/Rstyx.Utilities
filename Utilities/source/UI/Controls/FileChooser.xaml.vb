@@ -39,7 +39,7 @@ Namespace UI.Controls
             
             Public Sub New
                 InitializeComponent()
-                'SetValue(TextBoxToolTipPropertyKey, getTextBoxToolTip(Me))
+                'SetValue(TextBoxToolTipPropertyKey, GetTextBoxToolTip(Me))
             End Sub
             
             ''' <summary> Unregister event handlers. </summary>
@@ -371,7 +371,7 @@ Namespace UI.Controls
                 Private Shared Sub OnFileModeChanged(d As DependencyObject, e As DependencyPropertyChangedEventArgs)
                     Try
                         Dim FileChooserInstance As FileChooser = CType(d, FileChooser)
-                        FileChooserInstance.SetValue(TextBoxToolTipPropertyKey, getTextBoxToolTip(FileChooserInstance))
+                        FileChooserInstance.SetValue(TextBoxToolTipPropertyKey, GetTextBoxToolTip(FileChooserInstance))
                     Catch ex As System.Exception
                         Logger.LogError(ex, Rstyx.Utilities.Resources.Messages.Global_ErrorFromInsideEventHandler)
                     End Try
@@ -533,7 +533,7 @@ Namespace UI.Controls
                         
                         Dialog.Title            = Me.FileDialogTitle
                         Dialog.FileName         = InitialFileName
-                        Dialog.InitialDirectory = getInitialDirectory(Me, ForDialog:=True)
+                        Dialog.InitialDirectory = GetInitialDirectory(Me, ForDialog:=True)
                         Dialog.Filter           = Me.FileFilter
                         Dialog.FilterIndex      = Me.FileFilterIndex
                         Dialog.RestoreDirectory = True
@@ -554,7 +554,7 @@ Namespace UI.Controls
                         
                         Dialog.Title            = Me.FileDialogTitle
                         Dialog.FileName         = InitialFileName
-                        Dialog.InitialDirectory = getInitialDirectory(Me, ForDialog:=True)
+                        Dialog.InitialDirectory = GetInitialDirectory(Me, ForDialog:=True)
                         Dialog.Filter           = Me.FileFilter
                         Dialog.FilterIndex      = Me.FileFilterIndex
                         Dialog.RestoreDirectory = True
@@ -776,10 +776,10 @@ Namespace UI.Controls
                 SetValue(IsValidFilePathPropertyKey, isValidFileName)
                 SetValue(IsExistingFilePropertyKey, FileExists)
                 SetValue(FilePathPropertyKey, FileName)
-                SetValue(TextBoxToolTipPropertyKey, getTextBoxToolTip(Me))
+                SetValue(TextBoxToolTipPropertyKey, GetTextBoxToolTip(Me))
                 
                 ' Update the file system watcher.
-                updateFileWatcher()
+                UpdateFileWatcher()
                 
                 ' Current directory
                 If (Me.ChangesWorkingDir AndAlso isValidFileName) Then

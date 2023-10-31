@@ -164,19 +164,19 @@ Namespace Domain.IO
             ''' <summary> Gets a log entry, that documents <see cref="GeoPointFile.EditOptions"/>. </summary>
             Protected Function GetPointEditOptionsLogText() As String
                 Dim LogText As String
-                LogText  = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_1, Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC).ToDisplayString())
-                LogText &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant).ToDisplayString())
-                LogText &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_3, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind).ToDisplayString())
-                LogText &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_4, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCommentToo).ToDisplayString())
+                LogText  = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_1, Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC).ToDisplayString())
+                LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant).ToDisplayString())
+                LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_3, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind).ToDisplayString())
+                LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_4, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCommentToo).ToDisplayString())
                 Return LogText
             End Function
             
             ''' <summary> Gets a log entry, that documents <see cref="GeoPointFile.OutputOptions"/>. </summary>
             Protected Function GetPointOutputOptionsLogText() As String
                 Dim LogText As String
-                LogText  = sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_1, Me.OutputOptions.HasFlag(GeoPointOutputOptions.Create_iTC).ToDisplayString())
-                LogText &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_2, Me.OutputOptions.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant).ToDisplayString())
-                LogText &= sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_3, Me.OutputOptions.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind).ToDisplayString())
+                LogText  = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_1, Me.OutputOptions.HasFlag(GeoPointOutputOptions.Create_iTC).ToDisplayString())
+                LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_2, Me.OutputOptions.HasFlag(GeoPointOutputOptions.CreateInfoWithActualCant).ToDisplayString())
+                LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_OutputOptions_3, Me.OutputOptions.HasFlag(GeoPointOutputOptions.CreateInfoWithPointKind).ToDisplayString())
                 Return LogText
             End Function
             

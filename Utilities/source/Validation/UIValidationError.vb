@@ -20,7 +20,7 @@ Namespace Validation
          ''' <param name="DataItemName"> Name of the class that hosts the bound property. </param>
          ''' <param name="PropertyName"> Name of bound property, caused the validation error on updating. </param>
          ''' <param name="Label">        An optional label for displaying to the user instead of the property name. </param>
-         ''' <param name="ErrorMessage"> The error message(s). </param>
+         ''' <param name="ErrorMessage"> The error Message(s). </param>
         Public Sub New(ByVal DataItemName As String, ByVal PropertyName As String, ByVal Label As String, ByVal ErrorMessage As String)
             _DataItemName = DataItemName
             _PropertyName = PropertyName
@@ -39,7 +39,7 @@ Namespace Validation
             End Get
         End Property
     
-        ''' <summary> The error message(s). </summary>
+        ''' <summary> The error Message(s). </summary>
         Public ReadOnly Property ErrorMessage() As String
             Get
                 Return _ErrorMessage

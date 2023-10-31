@@ -47,7 +47,7 @@ Namespace IO
                 Logger.LogDebug(StringUtils.Sprintf("findFile(): FileFilter: '%s', Verzeichnisse: '%s'.", FileFilters, Folders))
                 Dim foundFile   As FileInfo = Nothing
                 
-                Dim FoundFiles  As FileInfoCollection = findFiles(FileFilters, Folders, DelimiterRegEx, SearchOptions, OnlyOneFile:=True)
+                Dim FoundFiles  As FileInfoCollection = FindFiles(FileFilters, Folders, DelimiterRegEx, SearchOptions, OnlyOneFile:=True)
                 
                 ' Result
                 If (FoundFiles.Count < 1) Then
@@ -82,7 +82,7 @@ Namespace IO
                 
                 If (DelimiterRegEx.IsEmpty()) Then DelimiterRegEx = ";"
                 
-                Return findFiles(FileFilters.Split(DelimiterRegEx), Folders.Split(DelimiterRegEx), SearchOptions, OnlyOneFile)
+                Return FindFiles(FileFilters.Split(DelimiterRegEx), Folders.Split(DelimiterRegEx), SearchOptions, OnlyOneFile)
             End Function
             
             ''' <summary> Searches for files in a list of directories, matching a list of file filters. </summary>
@@ -109,7 +109,7 @@ Namespace IO
                     StringFolders.Add(di.FullName)
                 Next
                 
-                Return findFiles(FileFilters, StringFolders, SearchOptions, OnlyOneFile)
+                Return FindFiles(FileFilters, StringFolders, SearchOptions, OnlyOneFile)
             End Function
             
             ''' <summary> Searches for files in a list of directories, matching a list of file filters. </summary>
@@ -150,7 +150,7 @@ Namespace IO
                 Logger.LogDebug("")
                 
                 ' Find Files.
-                findAddFiles(FoundFiles, FileFilters, Folders, SearchOptions, OnlyOneFile)
+                FindAddFiles(FoundFiles, FileFilters, Folders, SearchOptions, OnlyOneFile)
                 
                 oStopwatch.Stop()
                 Logger.LogDebug(StringUtils.Sprintf("\nfindFiles(): Found %d files (in %.3f sec.)\n", FoundFiles.Count, oStopwatch.ElapsedMilliseconds/1000))
@@ -158,7 +158,7 @@ Namespace IO
                 Return FoundFiles
             End Function
             
-            ''' <summary> Backend of findFiles(): Searches for files in a list of directories, matching a list of file filters. </summary>
+            ''' <summary> Backend of FindFiles(): Searches for files in a list of directories, matching a list of file filters. </summary>
              ''' <param name="FoundFiles">    [Output] The Collection to add the found files to. If <see langword="null"/> it will be created. </param>
              ''' <param name="FileFilters">   File filters without path (wildcards allowed). </param>
              ''' <param name="Folders">       Folders that should be searched. Absolute or relative (but not "..\" or ".\"). Embedded Environment variables (quoted by "%") are expanded. </param>
@@ -185,7 +185,7 @@ Namespace IO
                     
                     If (FileFilter.IsEmptyOrWhiteSpace()) Then
                         Logger.LogDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFileFilter)
-                    ElseIf (Not isValidFileNameFilter(FileFilter)) Then
+                    ElseIf (Not IsValidFileNameFilter(FileFilter)) Then
                         Logger.LogWarning(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFileFilter, FileFilter))
                     ElseIf (ConsolidatedFileFilters.Contains(FileFilter)) Then
                         Logger.LogDebug(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresRepeatedFileFilter, FileFilter))
@@ -203,7 +203,7 @@ Namespace IO
                     If (Not Directory.Exists(FolderName)) Then
                         If (FolderName.IsEmptyOrWhiteSpace()) Then
                             Logger.LogDebug(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresEmptyFolderName)
-                        ElseIf (Not isValidFilePath(FolderName)) Then
+                        ElseIf (Not IsValidFilePath(FolderName)) Then
                             Logger.LogWarning(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchIgnoresInvalidFolderName, FolderName))
                         Else
                             Logger.LogDebug(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_SearchFolderNotFound, FolderName, Directory.GetCurrentDirectory()))
@@ -270,7 +270,7 @@ Namespace IO
                                     StringSubFolders.Add(di.FullName)
                                 Next
                                 
-                                findAddFiles(FoundFiles, ConsolidatedFileFilters, StringSubFolders, SearchOptions, OnlyOneFile)
+                                FindAddFiles(FoundFiles, ConsolidatedFileFilters, StringSubFolders, SearchOptions, OnlyOneFile)
                             End If 
                             
                         Catch ex as System.Security.SecurityException
@@ -502,7 +502,7 @@ Namespace IO
                 End If
                 
                 ' Throw exception if not successful.
-                If (Not isValidFileName(FileName)) Then
+                If (Not IsValidFileName(FileName)) Then
                     Throw New System.FormatException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFileName, FileName))
                 End If
                 
@@ -542,7 +542,7 @@ Namespace IO
                         End If
                     Next
                     ' Re-throw if not successful.
-                    If (Not isValidFilePath(FilePath)) Then
+                    If (Not IsValidFilePath(FilePath)) Then
                         Throw New System.FormatException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
                     End If
                     
@@ -561,7 +561,7 @@ Namespace IO
                         FilePath = Root & FilePath.Right(Root, False).Replace(":", ReplaceString)
                     End If
                     ' Re-throw if not successful.
-                    If (Not isValidFilePath(FilePath)) Then
+                    If (Not IsValidFilePath(FilePath)) Then
                         Throw New System.FormatException(StringUtils.Sprintf(Rstyx.Utilities.Resources.Messages.FileUtils_ErrorValidatingInvalidFilePath, FilePath), e)
                     End If
                 End Try

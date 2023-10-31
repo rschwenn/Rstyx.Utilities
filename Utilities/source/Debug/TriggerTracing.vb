@@ -138,7 +138,7 @@ Public NotInheritable Class TriggerTracing
         Private Class TriggerTraceListener
             Inherits TraceListener
             
-            Public Overrides Sub TraceEvent(eventCache As TraceEventCache, source As String, eventType As TraceEventType, id As Integer, format As String, ParamArray args As Object())
+            Public Overrides Sub TraceEvent(eventCache As TraceEventCache, source As String, eventType As TraceEventType, id As Integer, format As String, ParamArray Args As Object())
                 MyBase.TraceEvent(eventCache, source, eventType, id, format, args)
                 
                 If format.StartsWith("Storyboard has begun;") Then
@@ -148,7 +148,7 @@ Public NotInheritable Class TriggerTracing
                         ' entered or exited
                         
                         ' the element being acted upon
-                        Dim targetElement As Object = args(5)
+                        Dim targetElement As Object = Args(5)
                         
                         ' the namescope of the element being acted upon
                         Dim namescope As INameScope = DirectCast(args(7), INameScope)

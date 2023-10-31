@@ -61,8 +61,8 @@
                 Const UniqValue As String = "@mns4u6e8le9k6fe3rkjui548@"
                 
                 Dim success     As Boolean = false
-                Dim ValueName   As String = getValueName(ValuePathName)
-                Dim KeyPathName As String = getKeyPathName(ValuePathName)
+                Dim ValueName   As String = GetValueName(ValuePathName)
+                Dim KeyPathName As String = GetKeyPathName(ValuePathName)
                 
                 Try
                     Dim TestValue As Object = Microsoft.Win32.Registry.GetValue(KeyPathName, ValueName, UniqValue)
@@ -90,7 +90,7 @@
             Public Shared Function GetValue(ByVal ValuePathName As String) As Object
                 Dim Value  As Object = Nothing
                 If (ValueExists(ValuePathName)) Then
-                    Value = Microsoft.Win32.Registry.GetValue(getKeyPathName(ValuePathName), getValueName(ValuePathName), Nothing)
+                    Value = Microsoft.Win32.Registry.GetValue(getKeyPathName(ValuePathName), GetValueName(ValuePathName), Nothing)
                 End If
                 Return Value
             End Function
@@ -137,7 +137,7 @@
             Public Shared Function SetValue(ByVal ValuePathName As String, byVal Value As Object, ValueKind As Microsoft.Win32.RegistryValueKind) As Boolean
                 Dim success  As Boolean = false
                 Try
-                    Microsoft.Win32.Registry.SetValue(getKeyPathName(ValuePathName), getValueName(ValuePathName), Value, ValueKind)
+                    Microsoft.Win32.Registry.SetValue(getKeyPathName(ValuePathName), GetValueName(ValuePathName), Value, ValueKind)
                     success = True
                 Catch ex As System.Exception
                     Logger.LogError(ex, "setValue(): Fehler beim Schreiben des Wertes " & ValuePathName & ".")
@@ -150,7 +150,7 @@
              ''' <param name="Value"> The string value to write into the registry. </param>
              ''' <returns> True, if the value has been set successfully, otherwise false. </returns>
             Public Shared Function SetValue(ByVal ValuePathName As String, byVal Value As String) As Boolean
-                Return setValue(ValuePathName, Value,Microsoft.Win32.RegistryValueKind.String)
+                Return SetValue(ValuePathName, Value,Microsoft.Win32.RegistryValueKind.String)
             End Function
             
             ''' <summary> Gets the value name part from a full ValuePathName. </summary>
@@ -166,7 +166,7 @@
              ''' <returns> The path name of the key, which is the part until the last backslash (including backslash). </returns>
              ''' <remarks> If ValuePathName ends with a backslash, then the whole ValuePathName is returned. </remarks>
             Public Shared Function GetKeyPathName(ByVal ValuePathName As String) As String
-                Return ValuePathName.Left(ValuePathName.Length - getValueName(ValuePathName).Length)
+                Return ValuePathName.Left(ValuePathName.Length - GetValueName(ValuePathName).Length)
             End function
             
             ''' <summary> Extracts a path of an existing application from a registry string value. </summary>
@@ -185,7 +185,7 @@
                 Logger.LogDebug("getApplicationPath(): Pfad\Name einer Programmdatei ermitteln aus RegistryValue '" & ValuePathName & "'.")
                 
                 if (ValueExists(ValuePathName)) then
-                    AppPath = getStringValue(ValuePathName)
+                    AppPath = GetStringValue(ValuePathName)
                     If (AppPath.IsNotNull) Then
                         Logger.LogDebug(StringUtils.Sprintf("getApplicationPath(): Inhalt des RegistryValue: '%s'", AppPath))
                         AppPath = AppPath.Trim()
