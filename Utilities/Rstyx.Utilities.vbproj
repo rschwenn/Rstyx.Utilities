@@ -316,9 +316,9 @@
     <Resource Include="source\UI\Resources\ThemePatchGeneral.xaml">
       <SubType>Designer</SubType>
     </Resource>
-    <Resource Include="source\UI\Resources\IconResources.xaml">
+    <Page Include="source\UI\Resources\IconResources.xaml">
       <SubType>Designer</SubType>
-    </Resource>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
