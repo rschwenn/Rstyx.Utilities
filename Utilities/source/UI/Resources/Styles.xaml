@@ -4,7 +4,7 @@ Style pool.
     
     - Shouldn't be used as shared resource because of interferences, when a single instance of i.e. "ProgressBar" is tried to use in more than one view.
       - Example for shared merge:  <ResourceDictionary Source="/Rstyx.Utilities;component/source/UI/Resources/Styles.xaml" />)
-      - Example for direct acces of shared resource (without the need of merging a ResourceDictionary):
+      - Example for direct access of shared resource (without the need of merging a ResourceDictionary):
         <ProgressBar Style="{Binding Path=[ProgressBarDefault], Source={x:Static RstyxControls:UIResources.Styles}}" />
 -->
 <ResourceDictionary
