@@ -105,29 +105,31 @@ Namespace Domain.IO
                                 
                                 Dim PointNo As Double = oBR.ReadDouble()
                                 
-                                p.Y                  = GetDoubleFromVEDouble(oBR.ReadDouble())
-                                p.X                  = GetDoubleFromVEDouble(oBR.ReadDouble())
-                                p.Z                  = GetDoubleFromVEDouble(oBR.ReadDouble())
-                                p.TrackPos.Kilometer = New Kilometer(GetDoubleFromVEDouble(oBR.ReadDouble()))
+                                p.SourcePath          = Me.FilePath
+
+                                p.Y                   = GetDoubleFromVEDouble(oBR.ReadDouble())
+                                p.X                   = GetDoubleFromVEDouble(oBR.ReadDouble())
+                                p.Z                   = GetDoubleFromVEDouble(oBR.ReadDouble())
+                                p.TrackPos.Kilometer  = New Kilometer(GetDoubleFromVEDouble(oBR.ReadDouble()))
                                 
-                                p.PositionPreInfo    = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
-                                p.Info               = FileEncoding.GetString(oBR.ReadBytes(13)).Left(vbNullChar).Trim()
-                                p.PositionPostInfo   = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
+                                p.PositionPreInfo     = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
+                                p.Info                = FileEncoding.GetString(oBR.ReadBytes(13)).Left(vbNullChar).Trim()
+                                p.PositionPostInfo    = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
                                 
-                                p.HeightPreInfo      = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
-                                p.HeightInfo         = FileEncoding.GetString(oBR.ReadBytes(13)).Left(vbNullChar).Trim()
-                                p.HeightPostInfo     = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
+                                p.HeightPreInfo       = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
+                                p.HeightInfo          = FileEncoding.GetString(oBR.ReadBytes(13)).Left(vbNullChar).Trim()
+                                p.HeightPostInfo      = CChar(FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar))
                                 
-                                p.KindText           = FileEncoding.GetString(oBR.ReadBytes(4)).Left(vbNullChar).Trim()
-                                p.MarkType           = CStr(oBR.ReadByte)
-                                p.mp                 = CDbl(oBR.ReadInt16()) / 1000
-                                p.mh                 = CDbl(oBR.ReadInt16()) / 1000
-                                p.ObjectKey          = oBR.ReadInt32()
-                                p.MarkHints          = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
-                                p.HeightSys          = FileEncoding.GetString(oBR.ReadBytes(3)).Left(vbNullChar).Trim()
-                                p.Job                = FileEncoding.GetString(oBR.ReadBytes(8)).Left(vbNullChar).Trim()
-                                p.sp                 = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
-                                p.sh                 = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
+                                p.KindText            = FileEncoding.GetString(oBR.ReadBytes(4)).Left(vbNullChar).Trim()
+                                p.MarkType            = CStr(oBR.ReadByte)
+                                p.mp                  = CDbl(oBR.ReadInt16()) / 1000
+                                p.mh                  = CDbl(oBR.ReadInt16()) / 1000
+                                p.ObjectKey           = oBR.ReadInt32()
+                                p.MarkHints           = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
+                                p.HeightSys           = FileEncoding.GetString(oBR.ReadBytes(3)).Left(vbNullChar).Trim()
+                                p.Job                 = FileEncoding.GetString(oBR.ReadBytes(8)).Left(vbNullChar).Trim()
+                                p.sp                  = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
+                                p.sh                  = FileEncoding.GetString(oBR.ReadBytes(1)).Left(vbNullChar).Trim()
                                 
                                 Dim TrackNo As String = FileEncoding.GetString(oBR.ReadBytes(4)).Left(vbNullChar).Trim()
                                 p.TrackPos.TrackNo.TryParse(TrackNo)
