@@ -8,11 +8,11 @@ Namespace Apps
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Apps.AppInfo")
             
-            Private ReadOnly _Assembly  As System.Reflection.Assembly = Nothing
-            Private _AssemblyName       As System.Reflection.AssemblyName = Nothing
+            Protected ReadOnly _Assembly  As System.Reflection.Assembly = Nothing
+            Protected _AssemblyName       As System.Reflection.AssemblyName = Nothing
             
-            Private _Title              As String = Nothing
-            Private _Version            As System.Version = Nothing
+            Protected _Title              As String = Nothing
+            Protected _Version            As System.Version = Nothing
             
         #End Region
         
@@ -64,11 +64,14 @@ Namespace Apps
                     _AssemblyName = New System.Reflection.AssemblyName(_Assembly.FullName)
                     
                     ' Assembly title
-                    Dim Attributes As Object() = _Assembly.GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)
-                    If (Attributes.Length > 0) Then
-                        _Title = CType(Attributes(0), System.Reflection.AssemblyTitleAttribute).Title
+                    _Title = _AssemblyName.Name
+                    If (_Title.IsEmptyOrWhiteSpace()) Then
+                        Dim Attributes As Object() = _Assembly.GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)
+                        If (Attributes.Length > 0) Then
+                            _Title = CType(Attributes(0), System.Reflection.AssemblyTitleAttribute).Title
+                        End If
                     End If
-                    If (String.IsNullOrWhiteSpace(_Title)) Then
+                    If (_Title.IsEmptyOrWhiteSpace()) Then
                         _Title = System.IO.Path.GetFileNameWithoutExtension(_Assembly.Location)
                     End If
                     
@@ -79,6 +82,15 @@ Namespace Apps
                 '    Logger.LogError(ex, "initAppInfo(): Fehler beim Bestimmen der Anwendungsinformationen.")
                 'End Try
             End Sub
+            
+        #End Region
+        
+        #Region "Overrides"
+            
+            ''' <summary> Returns title and version as concatenated string. </summary>
+            Public Overrides Function ToString() As String
+                Return Me.Title & " " & Me.Version.ToString()
+            End Function
             
         #End Region
         
