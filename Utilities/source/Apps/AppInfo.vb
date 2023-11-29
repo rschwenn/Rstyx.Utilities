@@ -1,82 +1,66 @@
-﻿
+﻿Imports System.Reflection
+
 Namespace Apps
     
-    ''' <summary> Provides easy access to info about the current or a given application. </summary>
+    ''' <summary> Provides easy access to info about an application. </summary>
     Public Class AppInfo
         
         #Region "Private Fields"
             
             'Private Shared Logger As Rstyx.LoggingConsole.Logger = Rstyx.LoggingConsole.LogBox.GetLogger("Rstyx.Utilities.Apps.AppInfo")
             
-            Protected ReadOnly _Assembly  As System.Reflection.Assembly = Nothing
-            Protected _AssemblyName       As System.Reflection.AssemblyName = Nothing
-            
-            Protected _Title              As String = Nothing
-            Protected _Version            As System.Version = Nothing
-            
         #End Region
         
         #Region "Constuctor"
             
-            ''' <summary> Creates a new AppInfo for the calling assembly. </summary>
+            ''' <summary> Creates a new empty AppInfo. </summary>
             Public Sub New()
-                Me.New(System.Reflection.Assembly.GetCallingAssembly())
+                'Me.New(System.Reflection.TargetAssembly.GetCallingAssembly())
             End Sub
             
             ''' <summary> Creates a new AppInfo for a given assembly. </summary>
-             ''' <param name="Assembly"> The assembly of interest. </param>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="Assembly"/> is <see langword="null"/>. </exception>
-            Public Sub New(Assembly As System.Reflection.Assembly)
-                
-                If (Assembly Is Nothing) Then Throw New System.ArgumentNullException("Assembly")
-                
-                _Assembly = Assembly
-                
-                InitAppInfo()
+             ''' <param name="TargetAssembly"> The assembly of interest. May be <see langword="null"/>. </param>
+            Public Sub New(TargetAssembly As Assembly)
+                TryParseAssembly(TargetAssembly)
             End Sub
             
         #End Region
         
-        #Region "ReadOnly Properties"
+        #Region "Properties"
             
-            ''' <summary> Returns the assembly title if set, otherwise the assembly name. </summary>
-            Public ReadOnly Property Title() As String
-                Get
-                    Return _Title
-                End Get
-            End Property
+            ''' <summary>The assembly's title. </summary>
+            Public Property Title() As String = Nothing
             
-            ''' <summary> Returns the assembly's version object. </summary>
-            Public ReadOnly Property Version() As System.Version
-                Get
-                    Return _Version
-                End Get
-            End Property
+            ''' <summary> The assembly's version object. </summary>
+            Public Property Version() As New System.Version
             
         #End Region
         
-        #Region "Private members"
+        #Region "Members"
             
-            ''' <summary> Collects all information. </summary>
-            Private Sub InitAppInfo()
+            ''' <summary> Parses information from an assembly into this AppInfo. </summary>
+             ''' <param name="TargetAssembly"> The assembly of interest. May be <see langword="null"/>. </param>
+            Public Sub TryParseAssembly(TargetAssembly As Assembly)
                 'Try
-                    ' Preliminaries
-                    _AssemblyName = New System.Reflection.AssemblyName(_Assembly.FullName)
+                If (TargetAssembly IsNot Nothing ) Then
                     
-                    ' Assembly title
-                    _Title = _AssemblyName.Name
-                    If (_Title.IsEmptyOrWhiteSpace()) Then
-                        Dim Attributes As Object() = _Assembly.GetCustomAttributes(GetType(System.Reflection.AssemblyTitleAttribute), False)
+                    Dim TargetAssemblyName As AssemblyName = New AssemblyName(TargetAssembly.FullName)
+                    
+                    ' TargetAssembly title
+                    Title = TargetAssemblyName.Name
+                    If (Title.IsEmptyOrWhiteSpace()) Then
+                        Dim Attributes As Object() = TargetAssembly.GetCustomAttributes(GetType(AssemblyTitleAttribute), False)
                         If (Attributes.Length > 0) Then
-                            _Title = CType(Attributes(0), System.Reflection.AssemblyTitleAttribute).Title
+                            Title = CType(Attributes(0), AssemblyTitleAttribute).Title
                         End If
                     End If
-                    If (_Title.IsEmptyOrWhiteSpace()) Then
-                        _Title = System.IO.Path.GetFileNameWithoutExtension(_Assembly.Location)
+                    If (Title.IsEmptyOrWhiteSpace()) Then
+                        Title = System.IO.Path.GetFileNameWithoutExtension(TargetAssembly.Location)
                     End If
                     
-                    ' Assembly version
-                    _Version = _AssemblyName.Version
+                    ' TargetAssembly version
+                    Version = TargetAssemblyName.Version
+                End If
                     
                 'Catch ex As System.Exception
                 '    Logger.LogError(ex, "initAppInfo(): Fehler beim Bestimmen der Anwendungsinformationen.")
