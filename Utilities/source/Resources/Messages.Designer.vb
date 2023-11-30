@@ -2063,7 +2063,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die 123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890.... ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ähnelt.
         '''</summary>
         Public Shared ReadOnly Property iPktFile_Label_DefaultHeader1() As String
             Get
@@ -2072,7 +2072,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die &lt;LfNr&gt;+BC+&lt;-OS-&gt;+GC+&lt;GDim&gt;+&lt;GExz&gt;+&lt;---Punktnummer----&gt;+&lt;K&gt;+&lt;-RechtsWert-&gt;+&lt;--HochWert--&gt;+&lt;----Höhe----&gt;+&lt;---Zeitstempel---&gt;+&lt;-KS-&gt;+&lt;--&gt;+&lt;GL&gt;+&lt;GH&gt;+&lt;---------Text----------&gt;+AT+&lt;-------Attribut--------&gt;+AT+&lt;-------Attribut--------&gt;+freie Daten... ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die 123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890.... ähnelt.
         '''</summary>
         Public Shared ReadOnly Property iPktFile_Label_DefaultHeader2() As String
             Get
@@ -2081,11 +2081,20 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die ---------+------+--+------+------+--------------------+---+--------------+--------------+--------------+-------------------+------+----+----+----+-------------------------+--+-------------------------+--+-------------------------+--------------- ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die &lt;LfNr&gt;+BC+&lt;-OS-&gt;+GC+&lt;GDim&gt;+&lt;GExz&gt;+&lt;---Punktnummer----&gt;+&lt;K&gt;+&lt;-RechtsWert-&gt;+&lt;--HochWert--&gt;+&lt;----Höhe----&gt;+&lt;---Zeitstempel---&gt;+&lt;-KS-&gt;+&lt;--&gt;+&lt;GL&gt;+&lt;GH&gt;+&lt;---------Text----------&gt;+AT+&lt;-------Attribut--------&gt;+AT+&lt;-------Attribut--------&gt;+freie Daten... ähnelt.
         '''</summary>
         Public Shared ReadOnly Property iPktFile_Label_DefaultHeader3() As String
             Get
                 Return ResourceManager.GetString("iPktFile_Label_DefaultHeader3", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die ------+--+------+--+------+------+--------------------+---+--------------+--------------+--------------+-------------------+------+----+----+----+-------------------------+--+-------------------------+--+-------------------------+--------------- ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property iPktFile_Label_DefaultHeader4() As String
+            Get
+                Return ResourceManager.GetString("iPktFile_Label_DefaultHeader4", resourceCulture)
             End Get
         End Property
         

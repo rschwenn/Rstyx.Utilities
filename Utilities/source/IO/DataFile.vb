@@ -179,18 +179,16 @@ Namespace IO
                     Using oSR As New System.IO.StreamReader(Me.FilePath, Me.FileEncoding, Me.DetectEncodingFromByteOrderMarks, Me.BufferSize)
                         
                         Dim LineCount       As Long = 0
-                        Dim CurrentLine     As String
-                        Dim DataLine        As DataTextLine
                         Dim CheckHeaderLine As Boolean = Me.SeparateHeader
                         Dim IsHeaderLine    As Boolean = False
                         
                         ' Read file.
                         Do While (Not oSR.EndOfStream)
                             
-                            CurrentLine = oSR.ReadLine()
+                            Dim CurrentLine As String = oSR.ReadLine()
                             
                             LineCount += 1
-                            DataLine = New DataTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
+                            Dim DataLine As DataTextLine = New DataTextLine(CurrentLine, Me.LineStartCommentToken, Me.LineEndCommentToken)
                             DataLine.SourceLineNo = LineCount
                             DataLine.SourcePath   = Me.FilePath
                             
@@ -198,7 +196,8 @@ Namespace IO
                             If (CheckHeaderLine) Then
                                 If (DataLine.IsCommentLine) Then
                                     IsHeaderLine = True
-                                    If ((Not Me.DefaultHeader.Contains(DataLine.Comment)) AndAlso (Not Me.HeaderDiscardLines.Contains(DataLine.Comment))) Then
+                                    Dim TrimmedComment As String = DataLine.Comment.TrimEnd()
+                                    If ((Not Me.DefaultHeader.Contains(TrimmedComment)) AndAlso (Not Me.HeaderDiscardLines.Contains(TrimmedComment))) Then
                                         Me.Header.Add(DataLine.Comment)
                                     End If
                                 Else

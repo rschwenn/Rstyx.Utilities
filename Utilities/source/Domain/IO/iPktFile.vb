@@ -41,8 +41,12 @@ Namespace Domain.IO
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader1)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader2)
                 Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader3)
+                Me.DefaultHeader.Add(Rstyx.Utilities.Resources.Messages.iPktFile_Label_DefaultHeader4)
                 
+                ' Special header lines, that shouldn't be saved and written.
                 Me.HeaderDiscardLines.Add(" @Kommentar=")
+                Me.HeaderDiscardLines.Add("---------+------+--+------+------+--------------------+---+--------------+--------------+--------------+-------------------+------+----+----+----+-------------------------+--+-------------------------+--+-------------------------+---------------")
+                Me.HeaderDiscardLines.Add("(LfNr)+BC+(-OS-)+GC+(GDim)+(GExz)+(---Punktnummer----)+(K)+(-RechtsWert-)+(--HochWert--)+(----Höhe----)+(---Zeitstempel---)+(-KS-)+(--)+(GL)+(GH)+(---------Text----------)+AT+(-------Attribut--------)+AT+(-------Attribut--------)+freie Daten...")
 
                 Me.FileFormatProperties.Add("ActualCant"      , 0)   
                 Me.FileFormatProperties.Add("ActualCantAbs"   , 0)
@@ -417,7 +421,7 @@ Namespace Domain.IO
                                 Return FileTextLine 
                             End Function
                             ).Where(Function(Text As String) (Text IsNot Nothing))
-
+                            
                             ' Write Header.
                             If (Not HeaderDone) Then
                                 SyncLock (SyncHandle)
@@ -430,7 +434,7 @@ Namespace Domain.IO
                                     HeaderDone = True
                                 End SyncLock
                             End If
-
+                            
                             ' Write line.
                             oSW.WriteLine(TextLine)
                         Next
