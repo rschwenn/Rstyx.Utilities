@@ -360,19 +360,19 @@ Namespace IO
                     oBsh.WriteLine("// :mode=beanshell:")
                     oBsh.WriteLine("import errorlist.*;")
                     oBsh.WriteLine("")
-                    oBsh.WriteLine("void AddErrorToList() {")
+                    oBsh.WriteLine("void addErrorToList() {")
                     oBsh.WriteLine("  ")
-                    oBsh.WriteLine("  void Run() {")
+                    oBsh.WriteLine("  void run() {")
                     oBsh.WriteLine("    // get a valid view at jedit's startup")
-                    oBsh.WriteLine("    view = jEdit.GetLastView();")
+                    oBsh.WriteLine("    view = jEdit.getLastView();")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // clear list of errors via the action, that also can be invoked by keyed-in")
                     oBsh.WriteLine("    // in the actionbar or by clicking the appropriate button.")
-                    oBsh.WriteLine("    jEdit.GetAction(""error-list-clear"").Invoke(view);")
+                    oBsh.WriteLine("    jEdit.getAction(""error-list-clear"").invoke(view);")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // Create and register DefaultErrorSource")
                     oBsh.WriteLine("    DefaultErrorSource errsrc = new DefaultErrorSource(""Rstyx.Utilities.IO.ParseErrorCollection.ToJeditBeanshell"");")
-                    oBsh.WriteLine("    ErrorSource.RegisterErrorSource(errsrc);")
+                    oBsh.WriteLine("    ErrorSource.registerErrorSource(errsrc);")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // *********************************************************************************************")
@@ -395,17 +395,17 @@ Namespace IO
                             
                             ' Extra message lines.
                             For k As Integer = 1 To Msg.Length - 1
-                                oBsh.WriteLine(StringUtils.Sprintf("    err.AddExtraMessage(""%s"");", String2Java(Msg(k))))
+                                oBsh.WriteLine(StringUtils.Sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                             Next
                             If (oErr.Hints IsNot Nothing) Then
                                 Msg = oErr.Hints.Split("\r?\n")
                                 For k As Integer = 0 To Msg.Length - 1
-                                    oBsh.WriteLine(StringUtils.Sprintf("    err.AddExtraMessage(""%s"");", String2Java(Msg(k))))
+                                    oBsh.WriteLine(StringUtils.Sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                                 Next
                             End If
                             
                             ' Commit newly created error to list.
-                            oBsh.WriteLine("    errsrc.AddError(err);" & Environment.NewLine)
+                            oBsh.WriteLine("    errsrc.addError(err);" & Environment.NewLine)
                         End If
                     Next
 
@@ -419,15 +419,15 @@ Namespace IO
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    ")
                     oBsh.WriteLine("    // Do not unregister - so the errors stay deleteable by the errorlist plugin itself (see above)")
-                    oBsh.WriteLine("    // ErrorSource.UnregisterErrorSource(errsrc);")
+                    oBsh.WriteLine("    // ErrorSource.unregisterErrorSource(errsrc);")
                     oBsh.WriteLine("    errsrc = null;")
                     oBsh.WriteLine("  }")
                     oBsh.WriteLine("  ")
                     oBsh.WriteLine("  // manage startup/nonstartup script")
-                    oBsh.WriteLine("  if (jEdit.GetLastView() == null) {")
-                    oBsh.WriteLine("    VFSManager.RunInAWTThread(this);")
+                    oBsh.WriteLine("  if (jEdit.getLastView() == null) {")
+                    oBsh.WriteLine("    VFSManager.runInAWTThread(this);")
                     oBsh.WriteLine("  } else {")
-                    oBsh.WriteLine("    Run();")
+                    oBsh.WriteLine("    run();")
                     oBsh.WriteLine("  }")
                     oBsh.WriteLine("}")
                     oBsh.WriteLine("")
