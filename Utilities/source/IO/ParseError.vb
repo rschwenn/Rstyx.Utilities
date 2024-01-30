@@ -81,7 +81,7 @@ Namespace IO
              ''' <param name="FilePath">    Full path of the source file. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1 (only if <paramref name="FilePath"/> is <see langword="null"/>). </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than Zero. If Zero, <see cref="HasSource"/> will be <see langword="false"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is not greater than <paramref name="StartColumn"/>. </exception>
             Public Sub New(Level       As ParseErrorLevel,
@@ -104,7 +104,7 @@ Namespace IO
              ''' <param name="FilePath">    Full path of the source file. May be <see langword="null"/>. </param>
              ''' <remarks></remarks>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="Message"/> is <see langword="null"/> or empty or whitespace only. </exception>
-             ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than 1 (only if <paramref name="FilePath"/> is <see langword="null"/>). </exception>
+             ''' <exception cref="System.ArgumentException"> <paramref name="LineNo"/> is less than Zero. If Zero, <see cref="HasSource"/> will be <see langword="false"/>. </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="StartColumn"/> or <paramref name="EndColumn"/> is less than Zero (only if <paramref name="FilePath"/> is <see langword="null"/>). </exception>
              ''' <exception cref="System.ArgumentException"> <paramref name="EndColumn"/> is less than <paramref name="StartColumn"/> (only if <paramref name="FilePath"/> is <see langword="null"/>). </exception>
             Public Sub New(Level       As ParseErrorLevel,
@@ -115,11 +115,11 @@ Namespace IO
                            Hints       As String,
                            FilePath    As String
                           )
-                If ((LineNo < 1) AndAlso (FilePath IsNot Nothing)) Then Throw New System.ArgumentException("LineNo")
-                If (Message.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("Message")
-                If (StartColumn < 0)         Then Throw New System.ArgumentException("StartColumn")
-                If (EndColumn < 0)           Then Throw New System.ArgumentException("EndColumn")
-                If (EndColumn < StartColumn) Then Throw New System.ArgumentException("EndColumn")
+                If (LineNo < 0)                     Then Throw New System.ArgumentException("LineNo")
+                If (Message.IsEmptyOrWhiteSpace())  Then Throw New System.ArgumentNullException("Message")
+                If (StartColumn < 0)                Then Throw New System.ArgumentException("StartColumn")
+                If (EndColumn < 0)                  Then Throw New System.ArgumentException("EndColumn")
+                If (EndColumn < StartColumn)        Then Throw New System.ArgumentException("EndColumn")
                 
                 ' There are situations where LineNo=0 is valid, but this isn't a real source.
                 If (LineNo > 0) Then
@@ -156,7 +156,7 @@ Namespace IO
             ''' <summary> Determines if source information (line, columns) is available. </summary>
             Public ReadOnly HasSource       As Boolean
             
-            ''' <summary> The line number in the source file, starting at 1. </summary>
+            ''' <summary> The line number in the source file, starting at 1. If Zero, <see cref="HasSource"/> will be <see langword="false"/>. </summary>
             Public ReadOnly LineNo          As Long
             
             ''' <summary> The zero-based colulmn number in the source line determining the start of faulty string. </summary>
