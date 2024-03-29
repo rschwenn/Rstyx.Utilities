@@ -326,7 +326,7 @@ Namespace Domain.IO
                     Logger.LogInfo(Me.GetPointOutputOptionsLogText)
                     If (Me.FilePath.IsEmptyOrWhiteSpace()) Then Throw New System.InvalidOperationException(Rstyx.Utilities.Resources.Messages.DataFile_MissingFilePath)
                     
-                    Dim PointFmt    As String  = "%1s%0.6d|%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%-6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"
+                    Dim PointFmt    As String  = "%1s      |%+2s|%+6s|%+2s|%6.3f|%6.3f|%+20s|%+3s|%+14s|%+14s|%+14s|%19s|%-6s|%+4s|%4.1f|%4.1f|%-25s|%2s|%-25s|%2s|%-25s|%s"  ' w/o point count.
                     Dim CoordFmt    As String  = "%14.5f"
                     Dim UniqueID    As Boolean = (Constraints.HasFlag(GeoPointConstraints.UniqueID) OrElse Constraints.HasFlag(GeoPointConstraints.UniqueIDPerBlock))
                     Dim HeaderDone  As Boolean = False
@@ -384,7 +384,6 @@ Namespace Domain.IO
                                     ' Create line.
                                     FileTextLine = Sprintf(PointFmt,
                                                            StatusHints,
-                                                           PointCount + 1,
                                                            p.CalcCode.TrimToMaxLength(2),
                                                            KeyText.TrimToMaxLength(6),
                                                            p.GraficsCode.TrimToMaxLength(2),
@@ -406,7 +405,6 @@ Namespace Domain.IO
                                                            p.AttValue2.TrimToMaxLength(25),
                                                            p.CreateFreeDataText()
                                                           )
-                                    Interlocked.Increment(PointCount)
                                     
                                 Catch ex As InvalidIDException
                                     Dim oError As New ParseError(ParseErrorLevel.[Error], SourcePoint.SourceLineNo, 0, 0, ex.Message, SourcePoint.SourcePath)
@@ -435,8 +433,11 @@ Namespace Domain.IO
                                 End SyncLock
                             End If
                             
+                            ' Increment PointCount only now to avoid random numbers in output.
+                            Interlocked.Increment(PointCount)
+                            
                             ' Write line.
-                            oSW.WriteLine(TextLine)
+                            oSW.WriteLine(TextLine.Substring(0,1) & Sprintf("%0.6d", PointCount) & TextLine.Substring(7))
                         Next
                     End Using
                     
