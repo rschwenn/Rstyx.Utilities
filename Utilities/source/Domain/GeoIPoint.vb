@@ -190,6 +190,8 @@ Namespace Domain
                             Case Rstyx.Utilities.Resources.Messages.Domain_AttName_KindText : Me.Attributes(AttName) = AttString.PadRight(4)
                             Case Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackNo  : Me.Attributes(AttName) = AttString.PadLeft(4)
                             Case Rstyx.Utilities.Resources.Messages.Domain_AttName_TrackKm  : Me.Attributes(AttName) = Sprintf("%+15s", New Kilometer(AttString).ToKilometerNotation(4, " "))
+                            Case Rstyx.Utilities.Resources.Messages.Domain_AttName_mh       : If (IsNumeric(AttString)) Then Me.Attributes(AttName) = Sprintf("%.3f", Cdbl(AttString))
+                            Case Rstyx.Utilities.Resources.Messages.Domain_AttName_mp       : If (IsNumeric(AttString)) Then Me.Attributes(AttName) = Sprintf("%.3f", Cdbl(AttString))
                         End Select
                     Next
 
