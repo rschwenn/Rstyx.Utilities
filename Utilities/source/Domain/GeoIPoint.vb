@@ -99,7 +99,7 @@ Namespace Domain
                 
                 iTC_Pattern &= ")?"               ' End attributes
                 
-                iTC_Pattern &= " *((#) ?(.*))?"   ' Comment
+                iTC_Pattern &= " *((#|x) ?(.*))?" ' Comment
                 iTC_Pattern &= "$"
             End Sub
             
@@ -463,7 +463,7 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' <para>
-             ''' 
+             ''' Behind the above codes there may be an info text, preceeded by a single "#" or "x".
              ''' </para>
              ''' <para>
              ''' This method may set the following properties:
