@@ -154,15 +154,15 @@ Namespace Math
             
             ''' <summary> Normalization of an angle given in [Rad]. </summary>
              ''' <param name="Radiant"> Angle in [Rad] </param>
-             ''' <returns> Angle in [Rad] between -PI and +PI </returns>
+             ''' <returns> Angle in [Rad] between 0 and +2*PI </returns>
             Public Shared Function NormalizeRadiant(ByVal Radiant As Double) As Double
                 Dim TwoPI As Double = 2 * System.Math.PI
                 Dim Angle As Double = Radiant
                 If (Not Double.IsNaN(Angle)) Then
-                    Do While (Angle < -System.Math.PI)
+                    Do While (Angle < 0)
                         Angle += TwoPI
                     Loop
-                    Do While (Angle > System.Math.PI)
+                    Do While (Angle > TwoPI)
                         Angle -= TwoPI
                     Loop
                 End If

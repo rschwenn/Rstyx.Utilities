@@ -1261,11 +1261,12 @@ Namespace Domain.IO
                                     ' Track values.
                                     p.Q    = DataLine.ParseField(RecDef.Q).Value
                                     p.Ra   = DataLine.ParseField(RecDef.Ra).Value
-                                    p.Ri   = DataLine.ParseField(RecDef.Ri).Value / RHO
                                     p.Ueb  = DataLine.ParseField(RecDef.Ueb).Value / 1000
                                     p.ZSOK = DataLine.ParseField(RecDef.ZSOK).Value
                                     p.HSOK = DataLine.ParseField(RecDef.HSOK).Value * (-1)
                                     p.QKm  = DataLine.ParseField(RecDef.QKm).Value
+                                    p.Ri   = DataLine.ParseField(RecDef.Ri).Value / RHO
+                                    p.Ri   = Math.MathUtils.NormalizeRadiant(p.Ri)
                                     
                                     If (Not Double.IsNaN(p.QKm)) Then
                                         p.Km = DataLine.ParseField(RecDef.Km).Value
@@ -1422,8 +1423,9 @@ Namespace Domain.IO
                                     p.Heb     = DataLine.ParseField(RecDef.Heb).Value
                                     
                                     p.G       = DataLine.ParseField(RecDef.G).Value
-                                    p.Ri      = DataLine.ParseField(RecDef.Ri).Value
                                     p.Ra      = DataLine.ParseField(RecDef.Ra).Value
+                                    p.Ri      = DataLine.ParseField(RecDef.Ri).Value
+                                    p.Ri      = Math.MathUtils.NormalizeRadiant(p.Ri)
                                     
                                     p.V       = DataLine.ParseField(RecDef.V).Value
                                     p.R       = DataLine.ParseField(RecDef.R).Value
