@@ -1518,12 +1518,12 @@ Namespace Domain.IO
                                     
                                     ' Justify Cant and Resolve Ambiguities.
                                     ' TODO: Check tolerances and infinities.
-                                    Dim NoRadius As Boolean = (Double.IsNaN(p.Ra) OrElse p.Ra.EqualsTolerance(0, 0.001))
-                                    If (p.Ueb.EqualsTolerance(0, 0.001) AndAlso NoRadius) Then
+                                    Dim NoRadius As Boolean = (Double.IsNaN(p.Ra) OrElse p.Ra.EqualsTolerance(0, RailPair.RadiusInfinitySnap))
+                                    If (p.Ueb.EqualsTolerance(0, RailPair.CantZeroSnap) AndAlso NoRadius) Then
                                         ' Ignore minimal cant if radius is unknown or zero.
                                         p.Ueb = 0.0
                                     End If
-                                    If (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, 0.001))) Then
+                                    If (Not (Double.IsNaN(p.Ueb) OrElse p.Ueb.EqualsTolerance(0, RailPair.CantZeroSnap))) Then
                                         If (NoRadius) Then
                                             ' Ensure that sign of cant is determinable by setting a special radius.
                                             Dim CantSign As Double = UebL - UebR
