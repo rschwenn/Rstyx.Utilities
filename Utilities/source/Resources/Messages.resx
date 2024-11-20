@@ -1372,4 +1372,24 @@
     <value>123456+12+123456+12+12.456+12.456+12345678901234567890+123+12345678.01234+12345678.01234+12345678.01234+1234567890123456789+123456+1234+12.4+12.4+1234567890123456789012345+12+1234567890123456789012345+12+1234567890123456789012345+1234567890....</value>
     <comment>Default Header Line #2 for iPkt file</comment>
   </data>
+  <data name="DbbFileReader_InvalidRecordType" xml:space="preserve">
+    <value>Ungültige Satzart: %d.</value>
+    <comment>Found record type: Integer</comment>
+  </data>
+  <data name="DbbFileReader_ValidRecordTypes" xml:space="preserve">
+    <value>Unterstützte Satzarten sind: %s.</value>
+    <comment>Supported record types: String</comment>
+  </data>
+  <data name="DbbNodeInfo_ToString" xml:space="preserve">
+    <value>Knoten '%s' (Typ=%d):  %s</value>
+    <comment>Name: String, Type: Integer, Description: String</comment>
+  </data>
+  <data name="DbbNodeAtTrack_ToString" xml:space="preserve">
+    <value>Knoten '%s' auf Gleis %s@%s:  %s</value>
+    <comment>FullName: String, RailsName: String, RailsCode: String, Kilometer: String</comment>
+  </data>
+  <data name="DbbEdgeAtTrack_ToString" xml:space="preserve">
+    <value>Kante von A-Knoten '%s' nach E-Knoten '%s' auf Gleis %s@%s:  %s</value>
+    <comment>A-Node FullName: String, B-Node FullName: String, RailsName: String, RailsCode: String</comment>
+  </data>
 </root>

@@ -308,6 +308,51 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Kante von A-Knoten &apos;%s&apos; nach E-Knoten &apos;%s&apos; auf Gleis %s@%s:  %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbEdgeAtTrack_ToString() As String
+            Get
+                Return ResourceManager.GetString("DbbEdgeAtTrack_ToString", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Ungültige Satzart: %d. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_InvalidRecordType() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_InvalidRecordType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unterstützte Satzarten sind: %s. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_ValidRecordTypes() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_ValidRecordTypes", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Knoten &apos;%s&apos; auf Gleis %s@%s:  %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbNodeAtTrack_ToString() As String
+            Get
+                Return ResourceManager.GetString("DbbNodeAtTrack_ToString", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Knoten &apos;%s&apos; (Typ=%d):  %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbNodeInfo_ToString() As String
+            Get
+                Return ResourceManager.GetString("DbbNodeInfo_ToString", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Datenbank-Verbindung zur Excel-Arbeitsmappe &apos;%s&apos; konnte nicht hergestelt werden. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DBUtils_ConnectionToExcelWorkbookFailed() As String

@@ -128,6 +128,7 @@
     <Compile Include="source\Domain\GeoPointExtensions.vb" />
     <Compile Include="source\Domain\GeoPointList.vb" />
     <Compile Include="source\Domain\GeoPointOpenList.vb" />
+    <Compile Include="source\Domain\IO\DbbFileReader.vb" />
     <Compile Include="source\Domain\IO\GeoPointFile.vb" />
     <Compile Include="source\Domain\GeoTcPoint.vb" />
     <Compile Include="source\Domain\GeoVEPoint.vb" />
