@@ -326,6 +326,78 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese Topologie-Knoten und -Kanten aus DBB-Datei &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopology() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopology", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der Topologie aus DBB-Datei &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopologyFailed() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopologyFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es ist ein Fehler aufgetreten beim Analysieren der DBB-Datei &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopologyParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopologyParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Lese Koordinatensysteme aus DBB-Datei &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_SurveyData() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_SurveyData", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der Koordinatensysteme aus DBB-Datei &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_SurveyDataFailed() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_SurveyDataFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Keine Koordinatensysteme in DBB gefunden! ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_SurveyDataNoCoordSystems() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_SurveyDataNoCoordSystems", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Es ist ein Fehler aufgetreten beim Analysieren der DBB-Datei &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_SurveyDataParsingFailed() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_SurveyDataParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Aktuelles Koordinatensystem gesetzt auf &apos;%s&apos;. Diese Systeme wurden gefunden: %s. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_SurveyDataSuccess() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_SurveyDataSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unterstützte Satzarten sind: %s. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_ValidRecordTypes() As String

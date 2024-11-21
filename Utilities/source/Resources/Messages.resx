@@ -1392,4 +1392,35 @@
     <value>Kante von A-Knoten '%s' nach E-Knoten '%s' auf Gleis %s@%s:  %s</value>
     <comment>A-Node FullName: String, B-Node FullName: String, RailsName: String, RailsCode: String</comment>
   </data>
+  <data name="DbbFileReader_SurveyData" xml:space="preserve">
+    <value>Lese Koordinatensysteme aus DBB-Datei '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="DbbFileReader_SurveyDataFailed" xml:space="preserve">
+    <value>Unerwarteter Fehler beim Lesen der Koordinatensysteme aus DBB-Datei '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="DbbFileReader_SurveyDataNoCoordSystems" xml:space="preserve">
+    <value>Keine Koordinatensysteme in DBB gefunden!</value>
+  </data>
+  <data name="DbbFileReader_SurveyDataSuccess" xml:space="preserve">
+    <value>Aktuelles Koordinatensystem gesetzt auf '%s'. Diese Systeme wurden gefunden: %s.</value>
+    <comment>CoordSys: String; CoordSys List: String</comment>
+  </data>
+  <data name="DbbFileReader_SurveyDataParsingFailed" xml:space="preserve">
+    <value>Es ist ein Fehler aufgetreten beim Analysieren der DBB-Datei '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="DbbFileReader_LoadTopology" xml:space="preserve">
+    <value>Lese Topologie-Knoten und -Kanten aus DBB-Datei '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="DbbFileReader_LoadTopologyParsingFailed" xml:space="preserve">
+    <value>Es ist ein Fehler aufgetreten beim Analysieren der DBB-Datei '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="DbbFileReader_LoadTopologyFailed" xml:space="preserve">
+    <value>Unerwarteter Fehler beim Lesen der Topologie aus DBB-Datei '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
 </root>

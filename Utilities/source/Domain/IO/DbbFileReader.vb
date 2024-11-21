@@ -105,132 +105,121 @@ Namespace Domain.IO
         #Region "I/O Operations"
             
             ''' <summary> Surveys the DBB file for available coordinate systems. </summary>
-            ''' <remarks>
-            ''' Fills <see cref="CoordSystems"/> and sets <see cref="CoordSys"/> to the first found system.
-            ''' </remarks>
+             ''' <remarks>
+             ''' Fills <see cref="CoordSystems"/> and sets <see cref="CoordSys"/> to the first found system.
+             ''' </remarks>
+             ''' <exception cref="ParseException">  Raises at the first error occurred while parsing, hence <see cref="CollectParseErrors"/> isn't recognized. </exception>
+             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Sub SurveyData()
-                Dim RecDefSet As New RecordDefinitionSetDBB(Me.FormatVersion)
-                Dim RecDef12 As RecDefDbbSA12 = DirectCast(RecDefSet.RecType.Item(12), RecDefDbbSA12)
-
-                _CoordSystems = New Collection(Of String)
-
-                For Each DataLine As DataTextLine In Me.DataLineStream
+                Try 
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyData, Me.FilePath))
                     
-                    ' Get and validate record type.
-                    Dim RecordTypeField As DataField(Of Integer) = DataLine.ParseField(RecDefSet.SAxx.SA_TYP)
-                    Dim SA_TYP As Integer = RecordTypeField.Value
-                    'If (Not RecDefSet.RecType.ContainsKey(SA_TYP)) Then
-                    '    Throw New ParseException(New ParseError(ParseErrorLevel.Error,
-                    '                                            DataLine.SourceLineNo,
-                    '                                            RecordTypeField.Source.Column,
-                    '                                            RecordTypeField.Source.Column + RecordTypeField.Source.Length,
-                    '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_InvalidRecordType, RecordTypeField.Source.Value),
-                    '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_ValidRecordTypes, RecDefSet.RecType.Keys.ToCSV()),
-                    '                                            Nothing
-                    '                                           ))
-                    'End If
+                    Dim RecDefSet As New RecordDefinitionSetDBB(Me.FormatVersion)
+                    Dim RecDef12 As RecDefDbbSA12 = DirectCast(RecDefSet.RecType.Item(12), RecDefDbbSA12)
                     
-                    ' Point coordinates
-                    If (SA_TYP = 12) Then
-                        'Dim SA12_LSYS As DataField(Of String) = DataLine.ParseField(RecDef12.LSYS)
-                        Dim CoordSys As String = DataLine.ParseField(RecDef12.LSYS).Value?.Trim()
-                        If (Not _CoordSystems.Contains(CoordSys)) Then _CoordSystems.Add(CoordSys)
+                    _CoordSystems = New Collection(Of String)
+                    
+                    For Each DataLine As DataTextLine In Me.DataLineStream
+                        
+                        ' Get and validate record type.
+                        Dim RecordTypeField As DataField(Of Integer) = DataLine.ParseField(RecDefSet.SAxx.SA_TYP)
+                        Dim SA_TYP As Integer = RecordTypeField.Value
+                        'If (Not RecDefSet.RecType.ContainsKey(SA_TYP)) Then
+                        '    Throw New ParseException(New ParseError(ParseErrorLevel.Error,
+                        '                                            DataLine.SourceLineNo,
+                        '                                            RecordTypeField.Source.Column,
+                        '                                            RecordTypeField.Source.Column + RecordTypeField.Source.Length,
+                        '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_InvalidRecordType, RecordTypeField.Source.Value),
+                        '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_ValidRecordTypes, RecDefSet.RecType.Keys.ToCSV()),
+                        '                                            Nothing
+                        '                                           ))
+                        'End If
+                        
+                        ' Point coordinates
+                        If (SA_TYP = 12) Then
+                            'Dim SA12_LSYS As DataField(Of String) = DataLine.ParseField(RecDef12.LSYS)
+                            Dim CoordSys As String = DataLine.ParseField(RecDef12.LSYS).Value?.Trim()
+                            If (Not _CoordSystems.Contains(CoordSys)) Then _CoordSystems.Add(CoordSys)
+                        End If
+                    Next
+                    
+                    ' Set current coordinates system.
+                    If (_CoordSystems.Count > 0) Then
+                        CoordSys = _CoordSystems(0)
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataSuccess, Me.CoordSys, _CoordSystems?.ToCSV()))
+                    Else
+                        Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataNoCoordSystems, Me.FilePath))
                     End If
-                Next
-
-                ' Set current coordinates system.
-                If (_CoordSystems.Count > 0) Then
-                    CoordSys = _CoordSystems(0)
-                End If
-
-                Logger.LogDebug(Sprintf("SurveyData(): set CoordSys='%s' (found these systems: %s).", Me.CoordSys, Me.CoordSystems.ToCSV()))
+                    
+                Catch ex As ParseException
+                    If (ex.ParseError IsNot Nothing) Then Me.ParseErrors.Add(ex.ParseError)
+                    Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataParsingFailed, Me.FilePath))
+                Catch ex as System.Exception
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataFailed, Me.FilePath), ex)
+                Finally
+                    Me.ParseErrors.ToLoggingConsole()
+                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                End Try
             End Sub
             
-            '''' <summary> Reads the cross fields file and provides the cross fields as lazy established enumerable. </summary>
-            ' ''' <returns> All cross fields of <see cref="DataFile.FilePath"/> as lazy established enumerable. </returns>
-            ' ''' <remarks>
-            ' ''' <para>
-            ' ''' If this method fails, <see cref="IParseErrors.ParseErrors"/> should provide the parse errors occurred."
-            ' ''' </para>
-            ' ''' </remarks>
-            ' ''' <exception cref="ParseException">  At least one error occurred while parsing, hence <see cref="IParseErrors.ParseErrors"/> isn't empty. </exception>
-            ' ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
-            'Public ReadOnly Iterator Property CrossFieldStream() As IEnumerable(Of CrossField)
-            '    Get
-            '        Try 
-            '            Logger.logInfo(sprintf(My.Resources.Message_DbbFileReader_LoadStart, Me.FilePath))
-            '            
-            '            'Me.Reset(Me.FilePath)  ** done in Me.DataLineStream
-            '            
-            '            Dim RecDef12  As New RecordDefinition()
-            '            Dim CFCount As Integer = 0
-            '            
-            '            For Each DataLine As DataTextLine In Me.DataLineStream
-            '                
-            '                Dim FieldID As DataField(Of String) = Nothing
-            '                
-            '                If (DataLine.HasData) Then
-            '                    Try
-            '                        Dim LeftID  As String = Nothing
-            '                        Dim RightID As String = Nothing
-            '                        
-            '                        DataLine.FieldDelimiter = ","
-            '                        
-            '                        Dim LeftIDField  As DataField(Of String) = DataLine.ParseField(RecDef12.LeftID)
-            '                        Dim RightIDField As DataField(Of String) = DataLine.ParseField(RecDef12.RightID)
-            '                        
-            '                        If (LeftIDField.Value.IsEmptyOrWhiteSpace() AndAlso RightIDField.Value.IsEmptyOrWhiteSpace()) Then
-            '                            Throw New ParseException(New ParseError(ParseErrorLevel.[Error], DataLine.SourceLineNo, 0, 0, My.Resources.Message_DbbFileReader_EmptyIDPair, Nothing, Me.FilePath))
-            '                        End If
-            '                        
-            '                        If (LeftIDField.Value.IsNotEmptyOrWhiteSpace()) Then
-            '                            FieldID = LeftIDField
-            '                            LeftID  = ParseID(FieldID.Value)
-            '                        End If
-            '                        
-            '                        If (RightIDField.Value.IsNotEmptyOrWhiteSpace()) Then
-            '                            FieldID = RightIDField
-            '                            RightID = ParseID(FieldID.Value)
-            '                        End If
-            '                        
-            '                        CFCount += 1
-            '                        Yield (New CrossField(LeftID, RightID))
-            '                        
-            '                    Catch ex As InvalidIDException
-            '                        Me.ParseErrors.Add(ParseError.Create(ParseErrorLevel.[Error], DataLine.SourceLineNo, FieldID, ex.Message, Nothing, Me.FilePath))
-            '                        If (Not Me.CollectParseErrors) Then
-            '                            Throw New ParseException(sprintf(My.Resources.Message_DbbFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
-            '                        End If
-            '                        
-            '                    Catch ex As ParseException When (ex.ParseError IsNot Nothing)
-            '                        Me.ParseErrors.Add(ex.ParseError)
-            '                        If (Not Me.CollectParseErrors) Then
-            '                            Throw New ParseException(sprintf(My.Resources.Message_DbbFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
-            '                        End If
-            '                    End Try
-            '                End If
-            '            Next
-            '            
-            '            ' Throw exception if parsing errors has been collected.
-            '            If (Me.ParseErrors.HasErrors) Then
-            '                Throw New ParseException(sprintf(My.Resources.Message_DbbFileReader_LoadParsingFailed, Me.ParseErrors.ErrorCount, Me.FilePath))
-            '            ElseIf (CFCount = 0) Then
-            '                Logger.logWarning(sprintf(My.Resources.Message_CrossFieldSet_Empty, Me.FilePath))
-            '            End If
-            '            
-            '            'Logger.logDebug(CrossFields.ToString())
-            '            Logger.logInfo(sprintf(My.Resources.Message_DbbFileReader_LoadSuccess, CFCount, Me.FilePath))
-            '            
-            '        Catch ex As ParseException
-            '            Throw
-            '        Catch ex as System.Exception
-            '            Throw New RemarkException(sprintf(My.Resources.Message_DbbFileReader_LoadFailed, Me.FilePath), ex)
-            '        Finally
-            '            Me.ParseErrors.ToLoggingConsole()
-            '            If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
-            '        End Try
-            '    End Get
-            'End Property
+            ''' <summary> Reads topology from the DBB file. </summary>
+             ''' <remarks>
+             ''' Sets properties <see cref="GeneralNodeInfo"/>, <see cref="NodesAtTrack"/> and <see cref="EdgesAtTrack"/>.
+             ''' </remarks>
+             ''' <exception cref="ParseException">  Raises at the first error occurred while parsing, hence <see cref="CollectParseErrors"/> isn't recognized. </exception>
+             ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
+            Public Sub LoadTopology()
+                Try 
+                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopology, Me.FilePath))
+                    
+                    'Dim RecDefSet As New RecordDefinitionSetDBB(Me.FormatVersion)
+                    'Dim RecDef12 As RecDefDbbSA12 = DirectCast(RecDefSet.RecType.Item(12), RecDefDbbSA12)
+                    '
+                    '_CoordSystems = New Collection(Of String)
+                    '
+                    'For Each DataLine As DataTextLine In Me.DataLineStream
+                    '    
+                    '    ' Get and validate record type.
+                    '    Dim RecordTypeField As DataField(Of Integer) = DataLine.ParseField(RecDefSet.SAxx.SA_TYP)
+                    '    Dim SA_TYP As Integer = RecordTypeField.Value
+                    '    'If (Not RecDefSet.RecType.ContainsKey(SA_TYP)) Then
+                    '    '    Throw New ParseException(New ParseError(ParseErrorLevel.Error,
+                    '    '                                            DataLine.SourceLineNo,
+                    '    '                                            RecordTypeField.Source.Column,
+                    '    '                                            RecordTypeField.Source.Column + RecordTypeField.Source.Length,
+                    '    '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_InvalidRecordType, RecordTypeField.Source.Value),
+                    '    '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_ValidRecordTypes, RecDefSet.RecType.Keys.ToCSV()),
+                    '    '                                            Nothing
+                    '    '                                           ))
+                    '    'End If
+                    '    
+                    '    ' Point coordinates
+                    '    If (SA_TYP = 12) Then
+                    '        'Dim SA12_LSYS As DataField(Of String) = DataLine.ParseField(RecDef12.LSYS)
+                    '        Dim CoordSys As String = DataLine.ParseField(RecDef12.LSYS).Value?.Trim()
+                    '        If (Not _CoordSystems.Contains(CoordSys)) Then _CoordSystems.Add(CoordSys)
+                    '    End If
+                    'Next
+                    '
+                    '' Set current coordinates system.
+                    'If (_CoordSystems.Count > 0) Then
+                    '    CoordSys = _CoordSystems(0)
+                    '    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologySuccess, Me.CoordSys, _CoordSystems?.ToCSV()))
+                    'Else
+                    '    Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNoCoordSystems, Me.FilePath))
+                    'End If
+                    
+                Catch ex As ParseException
+                    If (ex.ParseError IsNot Nothing) Then Me.ParseErrors.Add(ex.ParseError)
+                    Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyParsingFailed, Me.FilePath))
+                Catch ex as System.Exception
+                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyFailed, Me.FilePath), ex)
+                Finally
+                    Me.ParseErrors.ToLoggingConsole()
+                    If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
+                End Try
+            End Sub
+            
             
         #End Region
         
@@ -533,7 +522,7 @@ Namespace Domain.IO
                     End If
                     Exit for
                 Next
-                Logger.LogDebug(Sprintf("GetDbbVersion(): DBB format version ='%s' (File: %s).", RetValue, Me.FilePath))
+                Logger.LogDebug(Sprintf("GetDbbVersion(): DBB format version ='%s' (File: %s).", RetValue.ToDisplayString(), Me.FilePath))
                 Return RetValue
             End Function
             
