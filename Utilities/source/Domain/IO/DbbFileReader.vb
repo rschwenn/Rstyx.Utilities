@@ -2,6 +2,7 @@
 Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Linq
 
 Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Domain
@@ -47,10 +48,13 @@ Namespace Domain.IO
         
         #Region "Properties"
             
+            Dim _GeneralNodeInfo As SortedDictionary(Of String, NodeInfo)
+            Dim _NodesAtTracks   As SortedDictionary(Of String, IEnumerable(Of NodeAtTrack))
+            Dim _EdgesAtTracks   As SortedDictionary(Of String, Collection(Of EdgeAtTrack))
             Dim _CoordSystems    As Collection(Of String)
-            Dim _GeneralNodeInfo As Dictionary(Of String, NodeInfo)
-            Dim _NodesAtTrack    As Dictionary(Of String, Collection(Of NodeAtTrack))
-            Dim _EdgesAtTrack    As Dictionary(Of String, Collection(Of EdgeAtTrack))
+            
+            ''' <summary> Determines the coordinate system, for which point coordinates are read from DBB. Defaults to "?". </summary>
+            Public Property CoordSys() As String = "?"
             
             ''' <summary> Gets a list of all coordinate systems used in this DBB file. </summary>
             Public ReadOnly Property CoordSystems() As Collection(Of String)
@@ -63,7 +67,8 @@ Namespace Domain.IO
             End Property
             
             ''' <summary> Gets a list of all nodes in this DBB file with general info. </summary>
-            Public ReadOnly Property GeneralNodeInfo() As Dictionary(Of String, NodeInfo)
+             ''' <remarks> The dictionary key is the full node name (15 characters long). </remarks>
+            Public ReadOnly Property GeneralNodeInfo() As SortedDictionary(Of String, NodeInfo)
                 Get
                     If (_GeneralNodeInfo Is Nothing) Then
                         LoadTopology()
@@ -72,33 +77,75 @@ Namespace Domain.IO
                 End Get
             End Property
             
-            ''' <summary> Gets all nodes in this DBB file, grouped by rails. </summary>
-            ''' <remarks>
-            ''' Fills <see cref="CoordSystems"/> and sets <see cref="CoordSys"/> to the first found system.
-            ''' </remarks>
-            Public ReadOnly Property NodesAtTrack() As Dictionary(Of String, Collection(Of NodeAtTrack))
+            'Dim SortedPoints As IOrderedEnumerable(Of IGeoPoint) = InputBlock.Points.OrderBy(Function(ByVal p) p.ID)
+
+            ''' <summary> Gets all nodes in this DBB file, grouped by tracks. </summary>
+             ''' <returns> A Dictionary with a collection of topology nodes for each track. It won't be <see langword="null"/>, but may be empty. </returns>
+             ''' <remarks> The nodes collection for a certain track can be accessed via dictionary key resp. "TrackKey", created by <see cref="GetTrackKey"/>. </remarks>
+            Public ReadOnly Property NodesAtTracks() As SortedDictionary(Of String, IEnumerable(Of NodeAtTrack))
                 Get
-                    If (_NodesAtTrack Is Nothing) Then
+                    If (_NodesAtTracks Is Nothing) Then
                         LoadTopology()
                     End If
-                    Return _NodesAtTrack
-                End Get
-            End Property
-            
-            ''' <summary> Gets a list of all nodes in this DBB file with general info. </summary>
-            Public ReadOnly Property EdgesAtTrack() As Dictionary(Of String, Collection(Of EdgeAtTrack))
-                Get
-                    If (_EdgesAtTrack Is Nothing) Then
-                        LoadTopology()
-                    End If
-                    Return _EdgesAtTrack
+                    Return _NodesAtTracks
                 End Get
             End Property
 
-            'Dim SortedPoints As IOrderedEnumerable(Of IGeoPoint) = InputBlock.Points.OrderBy(Function(ByVal p) p.ID)
+            ''' <summary> Gets all edges in this DBB file, grouped by tracks. </summary>
+             ''' <returns> A Dictionary with a collection of topology edges for each track. It won't be <see langword="null"/>, but may be empty. </returns>
+             ''' <remarks> The edges collection for a certain track can be accessed via dictionary key resp. "TrackKey", created by <see cref="GetTrackKey"/>. </remarks>
+            Public ReadOnly Property EdgesAtTracks() As SortedDictionary(Of String, Collection(Of EdgeAtTrack))
+                Get
+                    If (_EdgesAtTracks Is Nothing) Then
+                        LoadTopology()
+                    End If
+                    Return _EdgesAtTracks
+                End Get
+            End Property
+
+            ''' <summary> Gets all nodes for the given track. </summary>
+             ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
+             ''' <param name="RailsCode"> The rails code for the Item. </param>
+             ''' <returns> Collection of topology nodes for the desired track, ordered by kilometer. It won't be <see langword="null"/>, but may be empty. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
+            Public ReadOnly Property NodesAtTrack(TrackNo As String, RailsCode As Integer) As IEnumerable(Of NodeAtTrack)
+                Get
+                    If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
+
+                    If (_NodesAtTracks Is Nothing) Then
+                        LoadTopology()
+                    End If
+
+                    Dim TrackKey As String = GetTrackKey(TrackNo, RailsCode)
+                    If (Not _NodesAtTracks.ContainsKey(TrackKey)) Then
+                        _NodesAtTracks.Add(TrackKey, New Collection(Of NodeAtTrack))
+                    End If
+
+                    Return _NodesAtTracks.Item(TrackKey)
+                End Get
+            End Property
             
-           ''' <summary> Determines the coordinate system, for which point coordinates are read from DBB. Defaults to "?". </summary>
-           Public Property CoordSys() As String = "?"
+            ''' <summary> Gets all edges for the given track. </summary>
+             ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
+             ''' <param name="RailsCode"> The rails code for the Item. </param>
+             ''' <returns> Collection of topology edges for the desired track. It won't be <see langword="null"/>, but may be empty. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
+            Public ReadOnly Property EdgesAtTrack(TrackNo As String, RailsCode As Integer) As Collection(Of EdgeAtTrack)
+                Get
+                    If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
+
+                    If (_EdgesAtTracks Is Nothing) Then
+                        LoadTopology()
+                    End If
+
+                    Dim TrackKey As String = GetTrackKey(TrackNo, RailsCode)
+                    If (Not _EdgesAtTracks.ContainsKey(TrackKey)) Then
+                        _EdgesAtTracks.Add(TrackKey, New Collection(Of EdgeAtTrack))
+                    End If
+
+                    Return _EdgesAtTracks.Item(TrackKey)
+                End Get
+            End Property
            
         #End Region
         
@@ -121,25 +168,15 @@ Namespace Domain.IO
                     
                     For Each DataLine As DataTextLine In Me.DataLineStream
                         
-                        ' Get and validate record type.
+                        ' Get record type.
                         Dim RecordTypeField As DataField(Of Integer) = DataLine.ParseField(RecDefSet.SAxx.SA_TYP)
                         Dim SA_TYP As Integer = RecordTypeField.Value
-                        'If (Not RecDefSet.RecType.ContainsKey(SA_TYP)) Then
-                        '    Throw New ParseException(New ParseError(ParseErrorLevel.Error,
-                        '                                            DataLine.SourceLineNo,
-                        '                                            RecordTypeField.Source.Column,
-                        '                                            RecordTypeField.Source.Column + RecordTypeField.Source.Length,
-                        '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_InvalidRecordType, RecordTypeField.Source.Value),
-                        '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_ValidRecordTypes, RecDefSet.RecType.Keys.ToCSV()),
-                        '                                            Nothing
-                        '                                           ))
-                        'End If
                         
                         ' Point coordinates
                         If (SA_TYP = 12) Then
                             'Dim SA12_LSYS As DataField(Of String) = DataLine.ParseField(RecDef12.LSYS)
-                            Dim CoordSys As String = DataLine.ParseField(RecDef12.LSYS).Value?.Trim()
-                            If (Not _CoordSystems.Contains(CoordSys)) Then _CoordSystems.Add(CoordSys)
+                            Dim CooSys As String = DataLine.ParseField(RecDef12.LSYS).Value
+                            If (Not _CoordSystems.Contains(CooSys)) Then _CoordSystems.Add(CooSys)
                         End If
                     Next
                     
@@ -172,42 +209,164 @@ Namespace Domain.IO
                 Try 
                     Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopology, Me.FilePath))
                     
-                    'Dim RecDefSet As New RecordDefinitionSetDBB(Me.FormatVersion)
-                    'Dim RecDef12 As RecDefDbbSA12 = DirectCast(RecDefSet.RecType.Item(12), RecDefDbbSA12)
-                    '
-                    '_CoordSystems = New Collection(Of String)
-                    '
-                    'For Each DataLine As DataTextLine In Me.DataLineStream
-                    '    
-                    '    ' Get and validate record type.
-                    '    Dim RecordTypeField As DataField(Of Integer) = DataLine.ParseField(RecDefSet.SAxx.SA_TYP)
-                    '    Dim SA_TYP As Integer = RecordTypeField.Value
-                    '    'If (Not RecDefSet.RecType.ContainsKey(SA_TYP)) Then
-                    '    '    Throw New ParseException(New ParseError(ParseErrorLevel.Error,
-                    '    '                                            DataLine.SourceLineNo,
-                    '    '                                            RecordTypeField.Source.Column,
-                    '    '                                            RecordTypeField.Source.Column + RecordTypeField.Source.Length,
-                    '    '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_InvalidRecordType, RecordTypeField.Source.Value),
-                    '    '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_ValidRecordTypes, RecDefSet.RecType.Keys.ToCSV()),
-                    '    '                                            Nothing
-                    '    '                                           ))
-                    '    'End If
-                    '    
-                    '    ' Point coordinates
-                    '    If (SA_TYP = 12) Then
-                    '        'Dim SA12_LSYS As DataField(Of String) = DataLine.ParseField(RecDef12.LSYS)
-                    '        Dim CoordSys As String = DataLine.ParseField(RecDef12.LSYS).Value?.Trim()
-                    '        If (Not _CoordSystems.Contains(CoordSys)) Then _CoordSystems.Add(CoordSys)
-                    '    End If
-                    'Next
-                    '
-                    '' Set current coordinates system.
-                    'If (_CoordSystems.Count > 0) Then
-                    '    CoordSys = _CoordSystems(0)
-                    '    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologySuccess, Me.CoordSys, _CoordSystems?.ToCSV()))
-                    'Else
-                    '    Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNoCoordSystems, Me.FilePath))
-                    'End If
+                    _GeneralNodeInfo = New SortedDictionary(Of String, NodeInfo)
+                    _NodesAtTracks   = New SortedDictionary(Of String, IEnumerable(Of NodeAtTrack))
+                    _EdgesAtTracks   = New SortedDictionary(Of String, Collection(Of EdgeAtTrack))
+
+                    Dim NodePointIDs As New Dictionary(Of String, String)  ' Key=PointID, Item=NodeFullName
+
+                    Dim RecDefSet As New RecordDefinitionSetDBB(Me.FormatVersion)
+                    Dim RecDef11  As RecDefDbbSA11 = DirectCast(RecDefSet.RecType.Item(11), RecDefDbbSA11)
+                    Dim RecDef12  As RecDefDbbSA12 = DirectCast(RecDefSet.RecType.Item(12), RecDefDbbSA12)
+                    Dim RecDef31  As RecDefDbbSA31 = DirectCast(RecDefSet.RecType.Item(31), RecDefDbbSA31)
+                    Dim RecDef33  As RecDefDbbSA33 = DirectCast(RecDefSet.RecType.Item(33), RecDefDbbSA33)
+
+                    Dim EdgesCount        As Integer = 0
+                    Dim NodesGeneralCount As Integer = 0
+                    Dim NodesCoordCount   As Integer = 0
+                    Dim NodesAtTrackCount As Integer = 0
+                    
+                    ' Collect track independent node and edge information.
+                    For Each DataLine As DataTextLine In Me.DataLineStream
+                        
+                        ' Get and validate record type.
+                        Dim RecordTypeField As DataField(Of Integer) = DataLine.ParseField(RecDefSet.SAxx.SA_TYP)
+                        Dim SA_TYP As Integer = RecordTypeField.Value
+                        'If (Not RecDefSet.RecType.ContainsKey(SA_TYP)) Then
+                         '    Throw New ParseException(New ParseError(ParseErrorLevel.Error,
+                         '                                            DataLine.SourceLineNo,
+                         '                                            RecordTypeField.Source.Column,
+                         '                                            RecordTypeField.Source.Column + RecordTypeField.Source.Length,
+                         '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_InvalidRecordType, RecordTypeField.Source.Value),
+                         '                                            Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_ValidRecordTypes, RecDefSet.RecType.Keys.ToCSV()),
+                         '                                            Nothing
+                         '                                           ))
+                        'End If
+                        
+
+                        Select Case SA_TYP
+                            
+                            Case 31  ' Node
+                                
+                                Dim SA31_KNOTEN As DataField(Of String)  = DataLine.ParseField(RecDef31.KNOTEN)
+                                Dim SA31_KNTYP  As DataField(Of Integer) = DataLine.ParseField(RecDef31.KNTYP)
+                                Dim SA31_PAD    As DataField(Of String)  = DataLine.ParseField(RecDef31.PAD)
+                                Dim SA31_KNBE   As DataField(Of String)  = DataLine.ParseField(RecDef31.KNBE)
+                                
+                                ' Create new node.
+                                Dim Node As New NodeInfo()
+                                Node.FullName    = SA31_KNOTEN.Value
+                                Node.Type        = SA31_KNTYP.Value
+                                Node.PointID     = SA31_PAD.Value
+                                Node.Description = SA31_KNBE.Value
+                                
+                                _GeneralNodeInfo.Add(Node.FullName, Node)
+                                NodePointIDs.Add(Node.PointID, Node.FullName)
+                                NodesGeneralCount += 1
+                                
+                                
+                            Case 33  ' Edge
+                                
+                                Dim SA33_AKNOTEN As DataField(Of String)  = DataLine.ParseField(RecDef33.AKNOTEN)
+                                Dim SA33_EKNOTEN As DataField(Of String)  = DataLine.ParseField(RecDef33.EKNOTEN)
+                                Dim SA33_STRECKE As DataField(Of String)  = DataLine.ParseField(RecDef33.STRECKE)
+                                Dim SA33_STRRIKZ As DataField(Of Integer) = DataLine.ParseField(RecDef33.STRRIKZ)                                                   
+                                
+                                ' Create and new edge to given track.
+                                Dim Edge As New EdgeAtTrack()
+                                Edge.ANodeFullName = SA33_AKNOTEN.Value
+                                Edge.BNodeFullName = SA33_EKNOTEN.Value
+                                Edge.RailsNameNo   = SA33_STRECKE.Value
+                                Edge.RailsCode     = SA33_STRRIKZ.Value
+
+                                Dim TrackKey As String = GetTrackKey(Edge.RailsNameNo, Edge.RailsCode)
+                                If (Not _EdgesAtTracks.ContainsKey(TrackKey)) Then
+                                    _EdgesAtTracks.Add(TrackKey, New Collection(Of EdgeAtTrack))
+                                End If
+                                
+                                _EdgesAtTracks(TrackKey).Add(Edge)
+                                EdgesCount += 1
+                        End Select
+                    Next
+                    
+
+                    ' Collect track and point related node information.
+                    For Each DataLine As DataTextLine In Me.DataLineStream
+                        
+                        ' Get and validate record type.
+                        Dim RecordTypeField As DataField(Of Integer) = DataLine.ParseField(RecDefSet.SAxx.SA_TYP)
+                        Dim SA_TYP As Integer = RecordTypeField.Value
+                        
+                        Select Case SA_TYP
+                            
+                            Case 11  ' Track related point info
+                                
+                                Dim SA11_PAD      As DataField(Of String)    = DataLine.ParseField(RecDef11.PAD)
+                                Dim SA11_STATION  As DataField(Of Kilometer) = DataLine.ParseField(RecDef11.STATION)
+                                Dim SA11_PSTRECKE As DataField(Of String)    = DataLine.ParseField(RecDef11.PSTRECKE)
+                                Dim SA11_PSTRRIKZ As DataField(Of Integer)   = DataLine.ParseField(RecDef11.PSTRRIKZ)        
+                                
+                                Dim PointID As String = SA11_PAD.Value
+                                
+                                ' Create new track related node info.
+                                If (NodePointIDs.ContainsKey(PointID)) Then
+                                    
+                                    Dim TrackID   As String    = SA11_PSTRECKE.Value
+                                    Dim RailsCode As Integer   = SA11_PSTRRIKZ.Value
+                                    Dim Km        As Kilometer = SA11_STATION.Value
+                                    Dim TrackKey  As String    = GetTrackKey(TrackID, RailsCode)
+                                    
+                                    Dim Node As New NodeAtTrack()
+                                    Node.FullName    = NodePointIDs(PointID)
+                                    Node.Kilometer   = Km
+                                    Node.RailsNameNo = TrackID
+                                    Node.RailsCode   = RailsCode
+                                    
+                                    If (Not _NodesAtTracks.ContainsKey(TrackKey)) Then
+                                        _NodesAtTracks.Add(TrackKey, New Collection(Of NodeAtTrack))
+                                    End If
+
+                                    '_NodesAtTracks(TrackKey).Add(Node)
+                                    DirectCast(_NodesAtTracks(TrackKey), Collection(Of NodeAtTrack)).Add(Node)
+                                    NodesAtTrackCount += 1
+                                End If
+                                
+                                
+                            Case 12  ' Point coordinates
+                                
+                                Dim SA12_PAD  As DataField(Of String) = DataLine.ParseField(RecDef12.PAD)
+                                Dim SA12_LSYS As DataField(Of String) = DataLine.ParseField(RecDef12.LSYS)
+                                Dim SA12_Y    As DataField(Of Double) = DataLine.ParseField(RecDef12.Y)
+                                Dim SA12_X    As DataField(Of Double) = DataLine.ParseField(RecDef12.X)
+                                
+                                Dim PointID As String = SA12_PAD.Value
+                                Dim CooSys  As String = SA12_LSYS.Value
+                                
+                                ' Complete node with coordinates.
+                                If ((CooSys = Me.CoordSys) AndAlso NodePointIDs.ContainsKey(PointID)) Then
+                                    Dim Node As NodeInfo =_GeneralNodeInfo.Item(NodePointIDs(PointID))
+                                    Node.CoordSys = CooSys
+                                    Node.Y = SA12_Y.Value
+                                    Node.X = SA12_X.Value
+                                    NodesCoordCount += 1
+                                End If
+                        End Select
+                    Next
+
+                    ' Sort _NodesAtTracks by kilometer.
+                    For Each TrackKey As String In _NodesAtTracks.Keys.ToArray()
+                        _NodesAtTracks(TrackKey) = _NodesAtTracks(TrackKey).OrderBy(Of Kilometer)(Function(ByVal Node) Node.Kilometer)
+                    Next
+                    
+                    ' Summary
+                    If (NodesGeneralCount = 0) Then
+                        Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNoNodes, Me.FilePath))
+                    Else
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologySuccess, Me.FilePath))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNodesCount1, NodesGeneralCount, NodesCoordCount, Me.CoordSys))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNodesCount2, NodesAtTrackCount, _NodesAtTracks.Count, _NodesAtTracks.Keys.ToCSV()))
+                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyEdgesCount,  EdgesCount,        _EdgesAtTracks.Count, _EdgesAtTracks.Keys.ToCSV()))
+                    End If
                     
                 Catch ex As ParseException
                     If (ex.ParseError IsNot Nothing) Then Me.ParseErrors.Add(ex.ParseError)
@@ -219,6 +378,26 @@ Namespace Domain.IO
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
                 End Try
             End Sub
+            
+            ''' <summary> Creates a key for a given track in order to access dictionaries. </summary>
+             ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
+             ''' <param name="RailsCode"> The rails code for the Item. </param>
+             ''' <returns> Track key (pattern "1234@1" or "13@4") for accessing dictionary properties <see cref="NodesAtTracks"/> and <see cref="EdgesAtTracks"/>. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
+            Public Function GetTrackKey(TrackNo As String, RailsCode As Integer) As String
+                If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
+                Return TrackNo.Trim() & "@" & CStr(RailsCode)
+            End Function
+            
+            ''' <summary> Creates a detailed list of topology. </summary>
+             ''' <returns> Detailed list of topology. </returns>
+            Public Function GetTopologyList() As String
+                Dim TopoList As New System.Text.StringBuilder()
+
+                #
+
+                Return TopoList.ToString()
+            End Function
             
             
         #End Region
@@ -271,7 +450,7 @@ Namespace Domain.IO
                     
                     Me.PAD      = New DataFieldDefinition(Of String)("PAD"       , DataFieldPositionType.ColumnAndLength,  2, 11)  
                     Me.STATION  = New DataFieldDefinition(Of Kilometer)("STATION", DataFieldPositionType.ColumnAndLength, 21, 13, DataFieldOptions.NotRequired)
-                    Me.PSTRECKE = New DataFieldDefinition(Of String)("STRECKE"   , DataFieldPositionType.ColumnAndLength, 86,  4)  
+                    Me.PSTRECKE = New DataFieldDefinition(Of String)("PSTRECKE"  , DataFieldPositionType.ColumnAndLength, 86,  4, DataFieldOptions.Trim)  
                     Me.PSTRRIKZ = New DataFieldDefinition(Of Integer)("PSTRRIKZ" , DataFieldPositionType.ColumnAndLength, 90,  1)                                    
                 End Sub
                 
@@ -324,14 +503,14 @@ Namespace Domain.IO
                     Me.KNOTEN = New DataFieldDefinition(Of String)("KNOTEN", DataFieldPositionType.ColumnAndLength,  2, 15)  
                     Me.KNTYP  = New DataFieldDefinition(Of Integer)("KNTYP", DataFieldPositionType.ColumnAndLength, 17,  2)                                    
                     Me.PAD    = New DataFieldDefinition(Of String)("PAD"   , DataFieldPositionType.ColumnAndLength, 19, 11)
-                    Me.KNBE   = New DataFieldDefinition(Of Integer)("KNBE" , DataFieldPositionType.ColumnAndLength, If(FormatVersion=DbbFormatVersion.DBGIS,75,90), 40, DataFieldOptions.NotRequired)
+                    Me.KNBE   = New DataFieldDefinition(Of String)("KNBE" , DataFieldPositionType.ColumnAndLength, If(FormatVersion=DbbFormatVersion.DBGIS,75,90), 40, DataFieldOptions.NotRequired)
                 End Sub
                 
                 #Region "Public Fields"
                     Public KNOTEN As DataFieldDefinition(Of String)
                     Public KNTYP  As DataFieldDefinition(Of Integer)                                                    
                     Public PAD    As DataFieldDefinition(Of String)
-                    Public KNBE   As DataFieldDefinition(Of Integer)                                                    
+                    Public KNBE   As DataFieldDefinition(Of String)                                                    
                 #End Region
             End Class
             
@@ -346,7 +525,7 @@ Namespace Domain.IO
                     
                     Me.AKNOTEN = New DataFieldDefinition(Of String)("AKNOTEN" , DataFieldPositionType.ColumnAndLength,  2, 15)  
                     Me.EKNOTEN = New DataFieldDefinition(Of String)("EKNOTEN" , DataFieldPositionType.ColumnAndLength, 17, 15)  
-                    Me.STRECKE = New DataFieldDefinition(Of String)("STRECKE" , DataFieldPositionType.ColumnAndLength, 32,  4)  
+                    Me.STRECKE = New DataFieldDefinition(Of String)("STRECKE" , DataFieldPositionType.ColumnAndLength, 32,  4, DataFieldOptions.Trim)  
                     Me.STRRIKZ = New DataFieldDefinition(Of Integer)("STRRIKZ", DataFieldPositionType.ColumnAndLength, 36,  1)                                    
                 End Sub
                 
@@ -369,14 +548,34 @@ Namespace Domain.IO
                 None = 0
                 
                 ''' <summary> Format version "DBGIS". </summary>
-                DBGIS  = 1
+                DBGIS = 1
                 
                 ''' <summary> Format version "AVANI". </summary>
-                AGON6  = 2
+                AGON6 = 2
                 
             End Enum
             
-            ''' <summary> General topology node info. </summary>
+            ''' <summary> Known node types. </summary>
+            Public Enum NodeType As Integer
+                
+                ''' <summary> Not defined. </summary>
+                None = 0
+                
+                ''' <summary> Junction. </summary>
+                Junction = 1
+                
+                ''' <summary> End of rails. </summary>
+                EndOfRails = 2
+                
+                ''' <summary> Track Change. </summary>
+                TrackChange = 3
+                
+                ''' <summary> Rails crossing. </summary>
+                Crossing = 4
+                
+            End Enum
+            
+            ''' <summary> General info of a topology node. </summary>
             Public Class NodeInfo
                 
                 ''' <summary> Node full name resp. ID. </summary>
@@ -388,7 +587,7 @@ Namespace Domain.IO
                 ''' <summary> Node description, i.e. junction designation. </summary>
                 Public Property Description()   As String
                 
-                ''' <summary> Determines the coordinates system. </summary>
+                ''' <summary> Determines the coordinates system. May be <see langword="null"/>, if coordinates are unknown. </summary>
                 Public Property CoordSys()      As String
                 
                 ''' <summary> ID of underlying point ("PAD"). </summary>
@@ -407,7 +606,7 @@ Namespace Domain.IO
                 
             End Class
             
-            ''' <summary> General topology node info. </summary>
+            ''' <summary> Track related info of a topology node. </summary>
             Public Class NodeAtTrack
                 
                 ''' <summary> Node full name resp. ID. </summary>
@@ -429,7 +628,7 @@ Namespace Domain.IO
                 
             End Class
             
-            ''' <summary> General topology node info. </summary>
+            ''' <summary>  Track related info of a topology edge. </summary>
             Public Class EdgeAtTrack
                 
                 ''' <summary> A-Node full name resp. ID. </summary>
@@ -450,7 +649,6 @@ Namespace Domain.IO
                 End Function
                 
             End Class
-            
            
         #End Region
             

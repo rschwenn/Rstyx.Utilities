@@ -1423,4 +1423,24 @@
     <value>Unerwarteter Fehler beim Lesen der Topologie aus DBB-Datei '%s'.</value>
     <comment>File Name: String</comment>
   </data>
+  <data name="DbbFileReader_LoadTopologyNoNodes" xml:space="preserve">
+    <value>Keine Knoten gefunden in DBB '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="DbbFileReader_LoadTopologySuccess" xml:space="preserve">
+    <value>Topologie erfolgreich gelesen aus DBB-Datei '%s'.</value>
+    <comment>File Name: String</comment>
+  </data>
+  <data name="DbbFileReader_LoadTopologyNodesCount1" xml:space="preserve">
+    <value> - %d Knoten, davon %d mit Koordinaten im System '%s'</value>
+    <comment>Nodes Count: Integer; Nodes with Coord Count: Integer; CoordSys: String</comment>
+  </data>
+  <data name="DbbFileReader_LoadTopologyNodesCount2" xml:space="preserve">
+    <value> - %d gleisbezogene Knoteninfo' (Kilometer) bzgl. %d Gleise: %s</value>
+    <comment>Nodes Track Info Count: Integer; Tracks Count: Integer; Tracks List: String</comment>
+  </data>
+  <data name="DbbFileReader_LoadTopologyEdgesCount" xml:space="preserve">
+    <value> - %d Kanten bzgl. %d Gleise: %s</value>
+    <comment>Edges Count: Integer; Tracks Count: Integer; Tracks List: String</comment>
+  </data>
 </root>

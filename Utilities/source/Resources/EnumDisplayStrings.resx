@@ -789,4 +789,28 @@
   <data name="Rstyx_Utilities_Domain_RailFixingRule_StrongFixed" xml:space="preserve">
     <value>stark festgelegt</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_DbbFormatVersion_None" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_DbbFormatVersion_DBGIS" xml:space="preserve">
+    <value>DB-GIS</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_DbbFormatVersion_AGON6" xml:space="preserve">
+    <value>AGON_V6</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_None" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Junction" xml:space="preserve">
+    <value>Weiche</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_EndOfRails" xml:space="preserve">
+    <value>Gleisende</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_TrackChange" xml:space="preserve">
+    <value>Streckenwechsel</value>
+  </data>
+  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Crossing" xml:space="preserve">
+    <value>Kreuzung</value>
+  </data>
 </root>

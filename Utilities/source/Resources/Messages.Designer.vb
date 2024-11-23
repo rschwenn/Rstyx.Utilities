@@ -335,6 +335,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die  - %d Kanten bzgl. %d Gleise: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopologyEdgesCount() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopologyEdgesCount", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unerwarteter Fehler beim Lesen der Topologie aus DBB-Datei &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_LoadTopologyFailed() As String
@@ -344,11 +353,47 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die  - %d Knoten, davon %d mit Koordinaten im System &apos;%s&apos; ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopologyNodesCount1() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopologyNodesCount1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die  - %d gleisbezogene Knoteninfo&apos; (Kilometer) bzgl. %d Gleise: %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopologyNodesCount2() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopologyNodesCount2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Keine Knoten gefunden in DBB &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopologyNoNodes() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopologyNoNodes", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Es ist ein Fehler aufgetreten beim Analysieren der DBB-Datei &apos;%s&apos;. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_LoadTopologyParsingFailed() As String
             Get
                 Return ResourceManager.GetString("DbbFileReader_LoadTopologyParsingFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Topologie erfolgreich gelesen aus DBB-Datei &apos;%s&apos;. ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_LoadTopologySuccess() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_LoadTopologySuccess", resourceCulture)
             End Get
         End Property
         
