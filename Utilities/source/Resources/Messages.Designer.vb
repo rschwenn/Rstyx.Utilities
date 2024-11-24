@@ -443,6 +443,69 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die     - Kante von Knoten A [%18s] nach Knoten B [%18s] ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_TopologyListEdge() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_TopologyListEdge", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Kanten (Gesamtanzahl = %d): ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_TopologyListEdgesHeader() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_TopologyListEdgesHeader", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die \n  Gleis %s, RiKz %d  (%d Kanten): ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_TopologyListEdgesTrackHeader() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_TopologyListEdgesTrackHeader", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Topologie-Details aus DBB-Datei &apos;%s&apos;: ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_TopologyListHeader() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_TopologyListHeader", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die     - Knoten [%18s]: %16s  (%3s: %12.3f, %12.3f)  -  %-9s:  %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_TopologyListNode() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_TopologyListNode", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Knoten (Gesamtanzahl = %d), Koordinaten im System &quot;%s&quot;: ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_TopologyListNodesHeader() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_TopologyListNodesHeader", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die \n  Gleis %s, RiKz %d  (%d Knoten): ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property DbbFileReader_TopologyListNodesTrackHeader() As String
+            Get
+                Return ResourceManager.GetString("DbbFileReader_TopologyListNodesTrackHeader", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Unterstützte Satzarten sind: %s. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_ValidRecordTypes() As String

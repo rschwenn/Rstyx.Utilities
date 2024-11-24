@@ -8,6 +8,7 @@ Imports Rstyx.Utilities
 Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
+Imports Rstyx.Utilities.StringExtensions
 
 Namespace Domain.IO
     
@@ -49,8 +50,8 @@ Namespace Domain.IO
         #Region "Properties"
             
             Dim _GeneralNodeInfo As SortedDictionary(Of String, NodeInfo)
-            Dim _NodesAtTracks   As SortedDictionary(Of String, IEnumerable(Of NodeAtTrack))
-            Dim _EdgesAtTracks   As SortedDictionary(Of String, Collection(Of EdgeAtTrack))
+            Dim _NodesAtTracks   As SortedDictionary(Of String, List(Of NodeAtTrack))
+            Dim _EdgesAtTracks   As SortedDictionary(Of String, List(Of EdgeAtTrack))
             Dim _CoordSystems    As Collection(Of String)
             
             ''' <summary> Determines the coordinate system, for which point coordinates are read from DBB. Defaults to "?". </summary>
@@ -82,7 +83,7 @@ Namespace Domain.IO
             ''' <summary> Gets all nodes in this DBB file, grouped by tracks. </summary>
              ''' <returns> A Dictionary with a collection of topology nodes for each track. It won't be <see langword="null"/>, but may be empty. </returns>
              ''' <remarks> The nodes collection for a certain track can be accessed via dictionary key resp. "TrackKey", created by <see cref="GetTrackKey"/>. </remarks>
-            Public ReadOnly Property NodesAtTracks() As SortedDictionary(Of String, IEnumerable(Of NodeAtTrack))
+            Public ReadOnly Property NodesAtTracks() As SortedDictionary(Of String, List(Of NodeAtTrack))
                 Get
                     If (_NodesAtTracks Is Nothing) Then
                         LoadTopology()
@@ -94,7 +95,7 @@ Namespace Domain.IO
             ''' <summary> Gets all edges in this DBB file, grouped by tracks. </summary>
              ''' <returns> A Dictionary with a collection of topology edges for each track. It won't be <see langword="null"/>, but may be empty. </returns>
              ''' <remarks> The edges collection for a certain track can be accessed via dictionary key resp. "TrackKey", created by <see cref="GetTrackKey"/>. </remarks>
-            Public ReadOnly Property EdgesAtTracks() As SortedDictionary(Of String, Collection(Of EdgeAtTrack))
+            Public ReadOnly Property EdgesAtTracks() As SortedDictionary(Of String, List(Of EdgeAtTrack))
                 Get
                     If (_EdgesAtTracks Is Nothing) Then
                         LoadTopology()
@@ -118,7 +119,7 @@ Namespace Domain.IO
 
                     Dim TrackKey As String = GetTrackKey(TrackNo, RailsCode)
                     If (Not _NodesAtTracks.ContainsKey(TrackKey)) Then
-                        _NodesAtTracks.Add(TrackKey, New Collection(Of NodeAtTrack))
+                        _NodesAtTracks.Add(TrackKey, New List(Of NodeAtTrack))
                     End If
 
                     Return _NodesAtTracks.Item(TrackKey)
@@ -130,7 +131,7 @@ Namespace Domain.IO
              ''' <param name="RailsCode"> The rails code for the Item. </param>
              ''' <returns> Collection of topology edges for the desired track. It won't be <see langword="null"/>, but may be empty. </returns>
              ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
-            Public ReadOnly Property EdgesAtTrack(TrackNo As String, RailsCode As Integer) As Collection(Of EdgeAtTrack)
+            Public ReadOnly Property EdgesAtTrack(TrackNo As String, RailsCode As Integer) As List(Of EdgeAtTrack)
                 Get
                     If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
 
@@ -140,7 +141,7 @@ Namespace Domain.IO
 
                     Dim TrackKey As String = GetTrackKey(TrackNo, RailsCode)
                     If (Not _EdgesAtTracks.ContainsKey(TrackKey)) Then
-                        _EdgesAtTracks.Add(TrackKey, New Collection(Of EdgeAtTrack))
+                        _EdgesAtTracks.Add(TrackKey, New List(Of EdgeAtTrack))
                     End If
 
                     Return _EdgesAtTracks.Item(TrackKey)
@@ -159,7 +160,7 @@ Namespace Domain.IO
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Sub SurveyData()
                 Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyData, Me.FilePath))
+                    Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyData, Me.FilePath))
                     
                     Dim RecDefSet As New RecordDefinitionSetDBB(Me.FormatVersion)
                     Dim RecDef12 As RecDefDbbSA12 = DirectCast(RecDefSet.RecType.Item(12), RecDefDbbSA12)
@@ -183,16 +184,16 @@ Namespace Domain.IO
                     ' Set current coordinates system.
                     If (_CoordSystems.Count > 0) Then
                         CoordSys = _CoordSystems(0)
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataSuccess, Me.CoordSys, _CoordSystems?.ToCSV()))
+                        Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataSuccess, Me.CoordSys, _CoordSystems?.ToCSV()))
                     Else
-                        Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataNoCoordSystems, Me.FilePath))
+                        Logger.logWarning(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataNoCoordSystems, Me.FilePath))
                     End If
                     
                 Catch ex As ParseException
                     If (ex.ParseError IsNot Nothing) Then Me.ParseErrors.Add(ex.ParseError)
-                    Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataParsingFailed, Me.FilePath))
+                    Throw New ParseException(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataParsingFailed, Me.FilePath))
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataFailed, Me.FilePath), ex)
+                    Throw New RemarkException(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_SurveyDataFailed, Me.FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
@@ -207,11 +208,11 @@ Namespace Domain.IO
              ''' <exception cref="RemarkException"> Wraps any other exception. </exception>
             Public Sub LoadTopology()
                 Try 
-                    Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopology, Me.FilePath))
+                    Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopology, Me.FilePath))
                     
                     _GeneralNodeInfo = New SortedDictionary(Of String, NodeInfo)
-                    _NodesAtTracks   = New SortedDictionary(Of String, IEnumerable(Of NodeAtTrack))
-                    _EdgesAtTracks   = New SortedDictionary(Of String, Collection(Of EdgeAtTrack))
+                    _NodesAtTracks   = New SortedDictionary(Of String, List(Of NodeAtTrack))
+                    _EdgesAtTracks   = New SortedDictionary(Of String, List(Of EdgeAtTrack))
 
                     Dim NodePointIDs As New Dictionary(Of String, String)  ' Key=PointID, Item=NodeFullName
 
@@ -246,7 +247,7 @@ Namespace Domain.IO
 
                         Select Case SA_TYP
                             
-                            Case 31  ' Node
+                            Case 31  ' TrackNode
                                 
                                 Dim SA31_KNOTEN As DataField(Of String)  = DataLine.ParseField(RecDef31.KNOTEN)
                                 Dim SA31_KNTYP  As DataField(Of Integer) = DataLine.ParseField(RecDef31.KNTYP)
@@ -281,7 +282,7 @@ Namespace Domain.IO
 
                                 Dim TrackKey As String = GetTrackKey(Edge.RailsNameNo, Edge.RailsCode)
                                 If (Not _EdgesAtTracks.ContainsKey(TrackKey)) Then
-                                    _EdgesAtTracks.Add(TrackKey, New Collection(Of EdgeAtTrack))
+                                    _EdgesAtTracks.Add(TrackKey, New List(Of EdgeAtTrack))
                                 End If
                                 
                                 _EdgesAtTracks(TrackKey).Add(Edge)
@@ -323,11 +324,11 @@ Namespace Domain.IO
                                     Node.RailsCode   = RailsCode
                                     
                                     If (Not _NodesAtTracks.ContainsKey(TrackKey)) Then
-                                        _NodesAtTracks.Add(TrackKey, New Collection(Of NodeAtTrack))
+                                        _NodesAtTracks.Add(TrackKey, New List(Of NodeAtTrack))
                                     End If
 
-                                    '_NodesAtTracks(TrackKey).Add(Node)
-                                    DirectCast(_NodesAtTracks(TrackKey), Collection(Of NodeAtTrack)).Add(Node)
+                                    _NodesAtTracks(TrackKey).Add(Node)
+                                    'DirectCast(_NodesAtTracks(TrackKey), List(Of NodeAtTrack)).Add(TrackNode)
                                     NodesAtTrackCount += 1
                                 End If
                                 
@@ -353,26 +354,26 @@ Namespace Domain.IO
                         End Select
                     Next
 
-                    ' Sort _NodesAtTracks by kilometer.
+                    ' Sort nodes per track by kilometer.
                     For Each TrackKey As String In _NodesAtTracks.Keys.ToArray()
-                        _NodesAtTracks(TrackKey) = _NodesAtTracks(TrackKey).OrderBy(Of Kilometer)(Function(ByVal Node) Node.Kilometer)
+                        _NodesAtTracks(TrackKey).Sort(Function(Node1, Node2) If(Node1.Kilometer.TDBValue < Node2.Kilometer.TDBValue, -1, If(Node1.Kilometer.TDBValue > Node2.Kilometer.TDBValue, +1, 0)))
                     Next
                     
                     ' Summary
                     If (NodesGeneralCount = 0) Then
-                        Logger.logWarning(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNoNodes, Me.FilePath))
+                        Logger.logWarning(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNoNodes, Me.FilePath))
                     Else
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologySuccess, Me.FilePath))
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNodesCount1, NodesGeneralCount, NodesCoordCount, Me.CoordSys))
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNodesCount2, NodesAtTrackCount, _NodesAtTracks.Count, _NodesAtTracks.Keys.ToCSV()))
-                        Logger.logInfo(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyEdgesCount,  EdgesCount,        _EdgesAtTracks.Count, _EdgesAtTracks.Keys.ToCSV()))
+                        Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologySuccess, Me.FilePath))
+                        Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNodesCount1, NodesGeneralCount, NodesCoordCount, Me.CoordSys))
+                        Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyNodesCount2, NodesAtTrackCount, _NodesAtTracks.Count, _NodesAtTracks.Keys.ToCSV()))
+                        Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyEdgesCount,  EdgesCount,        _EdgesAtTracks.Count, _EdgesAtTracks.Keys.ToCSV()))
                     End If
                     
                 Catch ex As ParseException
                     If (ex.ParseError IsNot Nothing) Then Me.ParseErrors.Add(ex.ParseError)
-                    Throw New ParseException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyParsingFailed, Me.FilePath))
+                    Throw New ParseException(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyParsingFailed, Me.FilePath))
                 Catch ex as System.Exception
-                    Throw New RemarkException(sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyFailed, Me.FilePath), ex)
+                    Throw New RemarkException(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopologyFailed, Me.FilePath), ex)
                 Finally
                     Me.ParseErrors.ToLoggingConsole()
                     If (Me.ShowParseErrorsInJedit) Then Me.ParseErrors.ShowInJEdit()
@@ -389,12 +390,55 @@ Namespace Domain.IO
                 Return TrackNo.Trim() & "@" & CStr(RailsCode)
             End Function
             
+            ''' <summary> Formats a given node's full name to pattern "12345678-12-1234-1". </summary>
+             ''' <param name="NodeFullName"> The rails code for the Item. </param>
+             ''' <returns> Formatted node name. </returns>
+            Public Function FormatNodeName(NodeFullName As String) As String
+                Dim RetValue As String = NodeFullName
+                If (NodeFullName.IsNotEmptyOrWhiteSpace() AndAlso NodeFullName.Length = 15) Then
+                    RetValue = NodeFullName.Substring(0,8) & "-" & NodeFullName.Substring(8,2) & "-" & NodeFullName.Substring(10,4) & "-" & NodeFullName.Substring(14)
+                End If
+                Return RetValue
+            End Function
+            
             ''' <summary> Creates a detailed list of topology. </summary>
              ''' <returns> Detailed list of topology. </returns>
             Public Function GetTopologyList() As String
                 Dim TopoList As New System.Text.StringBuilder()
 
-                #
+                TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListHeader, Me.FilePath).ToHeadLine(LineChar:="=", Padding:=True))
+
+                ' Edges
+                Dim EdgesCount As Integer = 0
+                For Each TrackKey As String In Me.EdgesAtTracks.Keys
+                    EdgesCount += Me.EdgesAtTracks(TrackKey).Count
+                Next
+                TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdgesHeader, EdgesCount).ToHeadLine(LineChar:="-", Padding:=False))
+                For Each TrackKey As String In Me.EdgesAtTracks.Keys
+                    Dim TrackNo   As String = Me.EdgesAtTracks(TrackKey)(0).RailsNameNo
+                    Dim RailsCode As String = Me.EdgesAtTracks(TrackKey)(0).RailsCode
+                    TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdgesTrackHeader, TrackNo, RailsCode, Me.EdgesAtTracks(TrackKey).Count))
+                    For Each Edge As EdgeAtTrack In Me.EdgesAtTracks(TrackKey)
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdge, FormatNodeName(Edge.ANodeFullName), FormatNodeName(Edge.BNodeFullName)))
+                    Next
+                Next
+
+                ' Nodes
+                TopoList.AppendLine()
+                TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNodesHeader, Me.GeneralNodeInfo.Count, Me.CoordSys).ToHeadLine(LineChar:="-", Padding:=False))
+                For Each TrackKey As String In Me.NodesAtTracks.Keys
+                    Dim TrackNo   As String = Me.NodesAtTracks(TrackKey)(0).RailsNameNo
+                    Dim RailsCode As String = Me.NodesAtTracks(TrackKey)(0).RailsCode
+                    TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNodesTrackHeader, TrackNo, RailsCode, Me.NodesAtTracks(TrackKey).Count))
+                    For Each TrackNode As NodeAtTrack In Me.NodesAtTracks(TrackKey)
+                        Dim KmSt As String = If(RailsCode = 4, Sprintf("%.3f", TrackNode.Kilometer.Value), TrackNode.Kilometer.ToKilometerNotation(3, " "))
+                        Dim Node As NodeInfo = Me.GeneralNodeInfo(TrackNode.FullName)
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, FormatNodeName(TrackNode.FullName), KmSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
+                    Next
+                Next
+                
+                TopoList.AppendLine()
+                TopoList.AppendLine("=".Repeat(120))
 
                 Return TopoList.ToString()
             End Function
@@ -578,13 +622,13 @@ Namespace Domain.IO
             ''' <summary> General info of a topology node. </summary>
             Public Class NodeInfo
                 
-                ''' <summary> Node full name resp. ID. </summary>
+                ''' <summary> TrackNode full name resp. ID. </summary>
                 Public Property FullName()      As String
                 
-                ''' <summary> Node type. </summary>
-                Public Property Type()          As Integer
+                ''' <summary> TrackNode type. </summary>
+                Public Property Type()          As NodeType = NodeType.None
                 
-                ''' <summary> Node description, i.e. junction designation. </summary>
+                ''' <summary> TrackNode description, i.e. junction designation. </summary>
                 Public Property Description()   As String
                 
                 ''' <summary> Determines the coordinates system. May be <see langword="null"/>, if coordinates are unknown. </summary>
@@ -609,7 +653,7 @@ Namespace Domain.IO
             ''' <summary> Track related info of a topology node. </summary>
             Public Class NodeAtTrack
                 
-                ''' <summary> Node full name resp. ID. </summary>
+                ''' <summary> TrackNode full name resp. ID. </summary>
                 Public Property FullName        As String
                 
                 ''' <summary> Kilometer of node. </summary>
@@ -631,10 +675,10 @@ Namespace Domain.IO
             ''' <summary>  Track related info of a topology edge. </summary>
             Public Class EdgeAtTrack
                 
-                ''' <summary> A-Node full name resp. ID. </summary>
+                ''' <summary> A-TrackNode full name resp. ID. </summary>
                 Public Property ANodeFullName   As String
                 
-                ''' <summary> B-Node full name resp. ID. </summary>
+                ''' <summary> B-TrackNode full name resp. ID. </summary>
                 Public Property BNodeFullName   As String
                 
                 ''' <summary> Code of track rails (right, left, single, station). </summary>
@@ -698,7 +742,7 @@ Namespace Domain.IO
             '    Dim FormattedID As String = xID
             '    If (xID.IsNotEmptyOrWhiteSpace()) Then
             '        If (CrossField.IsAuxPointID(xID)) Then
-            '            FormattedID = sprintf("%s %8s", CrossField.AuxPointFlag, GeoVEPoint.FormatID(CrossField.GetUnflaggedID(xID)))
+            '            FormattedID = Sprintf("%s %8s", CrossField.AuxPointFlag, GeoVEPoint.FormatID(CrossField.GetUnflaggedID(xID)))
             '        Else
             '            FormattedID = GeoVEPoint.FormatID(xID)
             '        End If
