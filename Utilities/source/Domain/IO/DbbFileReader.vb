@@ -9,6 +9,7 @@ Imports Rstyx.Utilities.Domain
 Imports Rstyx.Utilities.IO
 Imports Rstyx.Utilities.StringUtils
 Imports Rstyx.Utilities.StringExtensions
+Imports System
 
 Namespace Domain.IO
     
@@ -278,7 +279,7 @@ Namespace Domain.IO
                                 Edge.ANodeFullName = SA33_AKNOTEN.Value
                                 Edge.BNodeFullName = SA33_EKNOTEN.Value
                                 Edge.RailsNameNo   = SA33_STRECKE.Value
-                                Edge.RailsCode     = SA33_STRRIKZ.Value
+                                Edge.RailsCode     = If(SA33_STRRIKZ.Value = 0, 1, SA33_STRRIKZ.Value) ' Zero isn't valid anymore.
 
                                 Dim TrackKey As String = GetTrackKey(Edge.RailsNameNo, Edge.RailsCode)
                                 If (Not _EdgesAtTracks.ContainsKey(TrackKey)) Then
@@ -313,7 +314,7 @@ Namespace Domain.IO
                                 If (NodePointIDs.ContainsKey(PointID)) Then
                                     
                                     Dim TrackID   As String    = SA11_PSTRECKE.Value
-                                    Dim RailsCode As Integer   = SA11_PSTRRIKZ.Value
+                                    Dim RailsCode As Integer   = If(SA11_PSTRRIKZ.Value = 0, 1, SA11_PSTRRIKZ.Value) ' Zero isn't valid anymore.
                                     Dim Km        As Kilometer = SA11_STATION.Value
                                     Dim TrackKey  As String    = GetTrackKey(TrackID, RailsCode)
                                     
@@ -328,7 +329,6 @@ Namespace Domain.IO
                                     End If
 
                                     _NodesAtTracks(TrackKey).Add(Node)
-                                    'DirectCast(_NodesAtTracks(TrackKey), List(Of NodeAtTrack)).Add(TrackNode)
                                     NodesAtTrackCount += 1
                                 End If
                                 
@@ -354,9 +354,17 @@ Namespace Domain.IO
                         End Select
                     Next
 
-                    ' Sort nodes per track by kilometer.
+                    ' Sort nodes per track by kilometer. If RailsCode=4, then sort by OperationPoint before.
                     For Each TrackKey As String In _NodesAtTracks.Keys.ToArray()
-                        _NodesAtTracks(TrackKey).Sort(Function(Node1, Node2) If(Node1.Kilometer.TDBValue < Node2.Kilometer.TDBValue, -1, If(Node1.Kilometer.TDBValue > Node2.Kilometer.TDBValue, +1, 0)))
+                        If (SplitTrackKey(TrackKey).Value = 4) Then
+                            _NodesAtTracks(TrackKey).Sort(Function(Node1, Node2)
+                                                              Dim RetValue As Int32 = String.Compare(Node1.FullName.Substring(0,10), Node2.FullName.Substring(0,10))
+                                                              If (RetValue = 0) Then RetValue = If(Node1.Kilometer.TDBValue < Node2.Kilometer.TDBValue, -1, If(Node1.Kilometer.TDBValue > Node2.Kilometer.TDBValue, +1, 0))
+                                                              Return RetValue
+                                                          End Function)
+                        Else
+                            _NodesAtTracks(TrackKey).Sort(Function(Node1, Node2) If(Node1.Kilometer.TDBValue < Node2.Kilometer.TDBValue, -1, If(Node1.Kilometer.TDBValue > Node2.Kilometer.TDBValue, +1, 0)))
+                        End If
                     Next
                     
                     ' Summary
@@ -387,7 +395,17 @@ Namespace Domain.IO
              ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
             Public Function GetTrackKey(TrackNo As String, RailsCode As Integer) As String
                 If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
-                Return TrackNo.Trim() & "@" & CStr(RailsCode)
+                Return TrackNo & "@" & CStr(RailsCode)
+            End Function
+            
+            ''' <summary> Splits a track key (pattern "1234@1" or "13@4") into track number and rails code. </summary>
+             ''' <param name="TrackKey"> The track key to split. </param>
+             ''' <returns> KeyValuPair where: <b>Key=track number</b> and <b>Value=rails code</b>. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackKey"/> is <see langword="null"/> or empty or white space. </exception>
+            Public Function SplitTrackKey(TrackKey As String) As KeyValuePair(Of String, Integer)
+                If (TrackKey.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackKey")
+                Dim RetValue As New KeyValuePair(Of String, Integer)(TrackKey.Left("@"), CInt(TrackKey.Right("@")))
+                Return RetValue
             End Function
             
             ''' <summary> Formats a given node's full name to pattern "12345678-12-1234-1". </summary>
@@ -414,26 +432,43 @@ Namespace Domain.IO
                     EdgesCount += Me.EdgesAtTracks(TrackKey).Count
                 Next
                 TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdgesHeader, EdgesCount).ToHeadLine(LineChar:="-", Padding:=False))
+                'TopoList.AppendLine()
+                'For Each TrackKey As String In Me.EdgesAtTracks.Keys
+                '    Dim kvp       As KeyValuePair(Of String, Integer) = SplitTrackKey(TrackKey)
+                '    Dim TrackNo   As String  = kvp.Key
+                '    Dim RailsCode As Integer = kvp.Value
+                '    TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdgesTrackHeader, TrackNo, RailsCode, Me.EdgesAtTracks(TrackKey).Count))
+                'Next
                 For Each TrackKey As String In Me.EdgesAtTracks.Keys
-                    Dim TrackNo   As String = Me.EdgesAtTracks(TrackKey)(0).RailsNameNo
-                    Dim RailsCode As String = Me.EdgesAtTracks(TrackKey)(0).RailsCode
-                    TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdgesTrackHeader, TrackNo, RailsCode, Me.EdgesAtTracks(TrackKey).Count))
+                    TopoList.AppendLine()
                     For Each Edge As EdgeAtTrack In Me.EdgesAtTracks(TrackKey)
-                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdge, FormatNodeName(Edge.ANodeFullName), FormatNodeName(Edge.BNodeFullName)))
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdge, Edge.RailsNameNo, Edge.RailsCode, FormatNodeName(Edge.ANodeFullName), FormatNodeName(Edge.BNodeFullName)))
                     Next
                 Next
 
                 ' Nodes
                 TopoList.AppendLine()
+                TopoList.AppendLine()
                 TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNodesHeader, Me.GeneralNodeInfo.Count, Me.CoordSys).ToHeadLine(LineChar:="-", Padding:=False))
+                'TopoList.AppendLine()
+                'For Each TrackKey As String In Me.NodesAtTracks.Keys
+                '    Dim kvp        As KeyValuePair(Of String, Integer) = SplitTrackKey(TrackKey)
+                '    Dim TrackNo    As String  = kvp.Key
+                '    Dim RailsCode  As Integer = kvp.Value
+                '    TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNodesTrackHeader, TrackNo, RailsCode, Me.NodesAtTracks(TrackKey).Count))
+                'Next
                 For Each TrackKey As String In Me.NodesAtTracks.Keys
-                    Dim TrackNo   As String = Me.NodesAtTracks(TrackKey)(0).RailsNameNo
-                    Dim RailsCode As String = Me.NodesAtTracks(TrackKey)(0).RailsCode
-                    TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNodesTrackHeader, TrackNo, RailsCode, Me.NodesAtTracks(TrackKey).Count))
+                    Dim LastKm   As Double  = Double.NaN
+                    Dim LastOpPt As String  = "?"
                     For Each TrackNode As NodeAtTrack In Me.NodesAtTracks(TrackKey)
-                        Dim KmSt As String = If(RailsCode = 4, Sprintf("%.3f", TrackNode.Kilometer.Value), TrackNode.Kilometer.ToKilometerNotation(3, " "))
+                        Dim KmSt As String   = If(TrackNode.RailsCode = 4, Sprintf("%.3f", TrackNode.Kilometer.Value), TrackNode.Kilometer.ToKilometerNotation(3, " "))
                         Dim Node As NodeInfo = Me.GeneralNodeInfo(TrackNode.FullName)
-                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, FormatNodeName(TrackNode.FullName), KmSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
+                        Dim dSt  As Double   = TrackNode.Kilometer.Value - LastKm
+                        Dim OpPt As String   = TrackNode.FullName.Substring(0,10)
+                        If (Not (OpPt = LastOpPt)) Then TopoList.AppendLine()
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, TrackNode.RailsNameNo, TrackNode.RailsCode, FormatNodeName(TrackNode.FullName), KmSt, dSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
+                        LastKm   = TrackNode.Kilometer.Value
+                        LastOpPt = OpPt
                     Next
                 Next
                 
@@ -494,7 +529,7 @@ Namespace Domain.IO
                     
                     Me.PAD      = New DataFieldDefinition(Of String)("PAD"       , DataFieldPositionType.ColumnAndLength,  2, 11)  
                     Me.STATION  = New DataFieldDefinition(Of Kilometer)("STATION", DataFieldPositionType.ColumnAndLength, 21, 13, DataFieldOptions.NotRequired)
-                    Me.PSTRECKE = New DataFieldDefinition(Of String)("PSTRECKE"  , DataFieldPositionType.ColumnAndLength, 86,  4, DataFieldOptions.Trim)  
+                    Me.PSTRECKE = New DataFieldDefinition(Of String)("PSTRECKE"  , DataFieldPositionType.ColumnAndLength, 86,  4)  
                     Me.PSTRRIKZ = New DataFieldDefinition(Of Integer)("PSTRRIKZ" , DataFieldPositionType.ColumnAndLength, 90,  1)                                    
                 End Sub
                 
@@ -569,7 +604,7 @@ Namespace Domain.IO
                     
                     Me.AKNOTEN = New DataFieldDefinition(Of String)("AKNOTEN" , DataFieldPositionType.ColumnAndLength,  2, 15)  
                     Me.EKNOTEN = New DataFieldDefinition(Of String)("EKNOTEN" , DataFieldPositionType.ColumnAndLength, 17, 15)  
-                    Me.STRECKE = New DataFieldDefinition(Of String)("STRECKE" , DataFieldPositionType.ColumnAndLength, 32,  4, DataFieldOptions.Trim)  
+                    Me.STRECKE = New DataFieldDefinition(Of String)("STRECKE" , DataFieldPositionType.ColumnAndLength, 32,  4)  
                     Me.STRRIKZ = New DataFieldDefinition(Of Integer)("STRRIKZ", DataFieldPositionType.ColumnAndLength, 36,  1)                                    
                 End Sub
                 

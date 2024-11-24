@@ -443,7 +443,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die     - Kante von Knoten A [%18s] nach Knoten B [%18s] ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die   - Gleis %+4s,  RiKz %d,  Kante von Knoten A [%18s] nach Knoten B [%18s] ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_TopologyListEdge() As String
             Get
@@ -461,7 +461,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die \n  Gleis %s, RiKz %d  (%d Kanten): ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die   Gleis %+4s,  RiKz %d:  %4d Kanten ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_TopologyListEdgesTrackHeader() As String
             Get
@@ -479,7 +479,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die     - Knoten [%18s]: %16s  (%3s: %12.3f, %12.3f)  -  %-9s:  %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die   - Gleis %+4s,  RiKz %d,  Knoten [%18s]: %16s   dKm=%6.1f   (%3s: %12.3f, %12.3f)  -  %-9s:  %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_TopologyListNode() As String
             Get
@@ -497,7 +497,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die \n  Gleis %s, RiKz %d  (%d Knoten): ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die   Gleis %+4s,  RiKz %d:  %4d Knoten ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbFileReader_TopologyListNodesTrackHeader() As String
             Get

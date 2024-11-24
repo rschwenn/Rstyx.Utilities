@@ -1451,18 +1451,18 @@
     <value>Kanten (Gesamtanzahl = %d):</value>
   </data>
   <data name="DbbFileReader_TopologyListEdgesTrackHeader" xml:space="preserve">
-    <value>\n  Gleis %s, RiKz %d  (%d Kanten):</value>
+    <value>  Gleis %+4s,  RiKz %d:  %4d Kanten</value>
   </data>
   <data name="DbbFileReader_TopologyListEdge" xml:space="preserve">
-    <value>    - Kante von Knoten A [%18s] nach Knoten B [%18s]</value>
+    <value>  - Gleis %+4s,  RiKz %d,  Kante von Knoten A [%18s] nach Knoten B [%18s]</value>
   </data>
   <data name="DbbFileReader_TopologyListNodesHeader" xml:space="preserve">
     <value>Knoten (Gesamtanzahl = %d), Koordinaten im System "%s":</value>
   </data>
   <data name="DbbFileReader_TopologyListNodesTrackHeader" xml:space="preserve">
-    <value>\n  Gleis %s, RiKz %d  (%d Knoten):</value>
+    <value>  Gleis %+4s,  RiKz %d:  %4d Knoten</value>
   </data>
   <data name="DbbFileReader_TopologyListNode" xml:space="preserve">
-    <value>    - Knoten [%18s]: %16s  (%3s: %12.3f, %12.3f)  -  %-9s:  %s</value>
+    <value>  - Gleis %+4s,  RiKz %d,  Knoten [%18s]: %16s   dKm=%6.1f   (%3s: %12.3f, %12.3f)  -  %-9s:  %s</value>
   </data>
 </root>
