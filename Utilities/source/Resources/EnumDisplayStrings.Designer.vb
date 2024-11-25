@@ -1483,51 +1483,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Kreuzung ähnelt.
-        '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Crossing() As String
-            Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Crossing", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Gleisende ähnelt.
-        '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_EndOfRails() As String
-            Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_EndOfRails", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Weiche ähnelt.
-        '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Junction() As String
-            Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Junction", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
-        '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_None() As String
-            Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_None", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Streckenwechsel ähnelt.
-        '''</summary>
-        Friend ReadOnly Property Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_TrackChange() As String
-            Get
-                Return ResourceManager.GetString("Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_TrackChange", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die eindeutig ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Normal() As String
@@ -1560,6 +1515,51 @@ Namespace Resources
         Friend ReadOnly Property Rstyx_Utilities_Domain_KilometerStatus_Unknown() As String
             Get
                 Return ResourceManager.GetString("Rstyx_Utilities_Domain_KilometerStatus_Unknown", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Kreuzung ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_NodeType_Crossing() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_NodeType_Crossing", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gleisende ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_NodeType_EndOfRails() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_NodeType_EndOfRails", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Weiche ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_NodeType_Junction() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_NodeType_Junction", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die unbekannt ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_NodeType_None() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_NodeType_None", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Streckenwechsel ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_NodeType_TrackChange() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_NodeType_TrackChange", resourceCulture)
             End Get
         End Property
         

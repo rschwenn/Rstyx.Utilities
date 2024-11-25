@@ -50,7 +50,7 @@ Namespace Domain.IO
         
         #Region "Properties"
             
-            Dim _GeneralNodeInfo As SortedDictionary(Of String, NodeInfo)
+            Dim _GeneralNodeInfo As SortedDictionary(Of String, TopologyNode)
             Dim _NodesAtTracks   As SortedDictionary(Of String, List(Of NodeAtTrack))
             Dim _EdgesAtTracks   As SortedDictionary(Of String, List(Of EdgeAtTrack))
             Dim _CoordSystems    As Collection(Of String)
@@ -70,7 +70,7 @@ Namespace Domain.IO
             
             ''' <summary> Gets a list of all nodes in this DBB file with general info. </summary>
              ''' <remarks> The dictionary key is the full node name (15 characters long). </remarks>
-            Public ReadOnly Property GeneralNodeInfo() As SortedDictionary(Of String, NodeInfo)
+            Public ReadOnly Property GeneralNodeInfo() As SortedDictionary(Of String, TopologyNode)
                 Get
                     If (_GeneralNodeInfo Is Nothing) Then
                         LoadTopology()
@@ -211,7 +211,7 @@ Namespace Domain.IO
                 Try 
                     Logger.logInfo(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_LoadTopology, Me.FilePath))
                     
-                    _GeneralNodeInfo = New SortedDictionary(Of String, NodeInfo)
+                    _GeneralNodeInfo = New SortedDictionary(Of String, TopologyNode)
                     _NodesAtTracks   = New SortedDictionary(Of String, List(Of NodeAtTrack))
                     _EdgesAtTracks   = New SortedDictionary(Of String, List(Of EdgeAtTrack))
 
@@ -256,15 +256,18 @@ Namespace Domain.IO
                                 Dim SA31_KNBE   As DataField(Of String)  = DataLine.ParseField(RecDef31.KNBE)
                                 
                                 ' Create new node.
-                                Dim Node As New NodeInfo()
+                                Dim Node As New TopologyNode()
                                 Node.FullName    = SA31_KNOTEN.Value
                                 Node.Type        = SA31_KNTYP.Value
                                 Node.PointID     = SA31_PAD.Value
                                 Node.Description = SA31_KNBE.Value
+                                Node.DeriveOperationPointAndTitle()
                                 
-                                _GeneralNodeInfo.Add(Node.FullName, Node)
-                                NodePointIDs.Add(Node.PointID, Node.FullName)
-                                NodesGeneralCount += 1
+                                If (Node.FullName.IsNotEmptyOrWhiteSpace()) Then
+                                    _GeneralNodeInfo.Add(Node.FullName, Node)
+                                    NodePointIDs.Add(Node.PointID, Node.FullName)
+                                    NodesGeneralCount += 1
+                                End If
                                 
                                 
                             Case 33  ' Edge
@@ -345,7 +348,7 @@ Namespace Domain.IO
                                 
                                 ' Complete node with coordinates.
                                 If ((CooSys = Me.CoordSys) AndAlso NodePointIDs.ContainsKey(PointID)) Then
-                                    Dim Node As NodeInfo =_GeneralNodeInfo.Item(NodePointIDs(PointID))
+                                    Dim Node As TopologyNode =_GeneralNodeInfo.Item(NodePointIDs(PointID))
                                     Node.CoordSys = CooSys
                                     Node.Y = SA12_Y.Value
                                     Node.X = SA12_X.Value
@@ -461,10 +464,10 @@ Namespace Domain.IO
                     Dim LastKm   As Double  = Double.NaN
                     Dim LastOpPt As String  = "?"
                     For Each TrackNode As NodeAtTrack In Me.NodesAtTracks(TrackKey)
-                        Dim KmSt As String   = If(TrackNode.RailsCode = 4, Sprintf("%.3f", TrackNode.Kilometer.Value), TrackNode.Kilometer.ToKilometerNotation(3, " "))
-                        Dim Node As NodeInfo = Me.GeneralNodeInfo(TrackNode.FullName)
-                        Dim dSt  As Double   = TrackNode.Kilometer.Value - LastKm
-                        Dim OpPt As String   = TrackNode.FullName.Substring(0,10)
+                        Dim Node As TopologyNode = Me.GeneralNodeInfo(TrackNode.FullName)
+                        Dim KmSt As String = If(TrackNode.RailsCode = 4, Sprintf("%.3f", TrackNode.Kilometer.Value), TrackNode.Kilometer.ToKilometerNotation(3, " "))
+                        Dim dSt  As Double = TrackNode.Kilometer.Value - LastKm
+                        Dim OpPt As String = TrackNode.FullName.Substring(0,10)
                         If (Not (OpPt = LastOpPt)) Then TopoList.AppendLine()
                         TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, TrackNode.RailsNameNo, TrackNode.RailsCode, FormatNodeName(TrackNode.FullName), KmSt, dSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
                         LastKm   = TrackNode.Kilometer.Value
@@ -633,57 +636,6 @@ Namespace Domain.IO
                 AGON6 = 2
                 
             End Enum
-            
-            ''' <summary> Known node types. </summary>
-            Public Enum NodeType As Integer
-                
-                ''' <summary> Not defined. </summary>
-                None = 0
-                
-                ''' <summary> Junction. </summary>
-                Junction = 1
-                
-                ''' <summary> End of rails. </summary>
-                EndOfRails = 2
-                
-                ''' <summary> Track Change. </summary>
-                TrackChange = 3
-                
-                ''' <summary> Rails crossing. </summary>
-                Crossing = 4
-                
-            End Enum
-            
-            ''' <summary> General info of a topology node. </summary>
-            Public Class NodeInfo
-                
-                ''' <summary> TrackNode full name resp. ID. </summary>
-                Public Property FullName()      As String
-                
-                ''' <summary> TrackNode type. </summary>
-                Public Property Type()          As NodeType = NodeType.None
-                
-                ''' <summary> TrackNode description, i.e. junction designation. </summary>
-                Public Property Description()   As String
-                
-                ''' <summary> Determines the coordinates system. May be <see langword="null"/>, if coordinates are unknown. </summary>
-                Public Property CoordSys()      As String
-                
-                ''' <summary> ID of underlying point ("PAD"). </summary>
-                Public Property PointID()       As String
-                
-                ''' <summary>  The easting coordinate in [m]. </summary>
-                Public Property Y()             As Double = Double.NaN
-                
-                ''' <summary>  The northing coordinate in [m]. </summary>
-                Public Property X()             As Double = Double.NaN
-                    
-                ''' <inheritdoc/>
-                Public Overrides Function ToString() As String
-                    Return Sprintf(Rstyx.Utilities.Resources.Messages.DbbNodeInfo_ToString, Me.FullName, Me.Type, Me.Description)
-                End Function
-                
-            End Class
             
             ''' <summary> Track related info of a topology node. </summary>
             Public Class NodeAtTrack

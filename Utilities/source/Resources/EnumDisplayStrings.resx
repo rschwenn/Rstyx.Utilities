@@ -798,19 +798,19 @@
   <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_DbbFormatVersion_AGON6" xml:space="preserve">
     <value>AGON_V6</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_None" xml:space="preserve">
+  <data name="Rstyx_Utilities_Domain_NodeType_None" xml:space="preserve">
     <value>unbekannt</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Junction" xml:space="preserve">
+  <data name="Rstyx_Utilities_Domain_NodeType_Junction" xml:space="preserve">
     <value>Weiche</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_EndOfRails" xml:space="preserve">
+  <data name="Rstyx_Utilities_Domain_NodeType_EndOfRails" xml:space="preserve">
     <value>Gleisende</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_TrackChange" xml:space="preserve">
+  <data name="Rstyx_Utilities_Domain_NodeType_TrackChange" xml:space="preserve">
     <value>Streckenwechsel</value>
   </data>
-  <data name="Rstyx_Utilities_Domain_IO_DbbFileReader_NodeType_Crossing" xml:space="preserve">
+  <data name="Rstyx_Utilities_Domain_NodeType_Crossing" xml:space="preserve">
     <value>Kreuzung</value>
   </data>
 </root>

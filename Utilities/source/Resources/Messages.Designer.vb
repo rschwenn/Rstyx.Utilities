@@ -524,15 +524,6 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Knoten &apos;%s&apos; (Typ=%d):  %s ähnelt.
-        '''</summary>
-        Public Shared ReadOnly Property DbbNodeInfo_ToString() As String
-            Get
-                Return ResourceManager.GetString("DbbNodeInfo_ToString", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Datenbank-Verbindung zur Excel-Arbeitsmappe &apos;%s&apos; konnte nicht hergestelt werden. ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DBUtils_ConnectionToExcelWorkbookFailed() As String
@@ -3238,6 +3229,15 @@ Namespace Resources
         Public Shared ReadOnly Property TcFileReader_ToString() As String
             Get
                 Return ResourceManager.GetString("TcFileReader_ToString", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Knotenname &apos;%s&apos;  (Bst &apos;%s&apos; / KnBez %s) %s:  %s ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property TopologyNode_ToString() As String
+            Get
+                Return ResourceManager.GetString("TopologyNode_ToString", resourceCulture)
             End Get
         End Property
         
