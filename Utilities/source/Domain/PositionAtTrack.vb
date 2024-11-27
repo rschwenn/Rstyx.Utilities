@@ -43,8 +43,17 @@ Namespace Domain
         
         ''' <summary> Specification of track side. </summary>
         Public Property Side            As TrackSide = TrackSide.None
-                
-         ''' <inheritdoc/>
+        
+        ''' <summary> Tries to convert Me.<see cref="RailsCode"/> into a number. ''' </summary>
+         ''' <returns> Me.<see cref="RailsCode"/> as number on success, otherwise <see langword="null"/>. It never returns Zero, but rather 1. </returns>
+        Public Function GetRailsCodeAsInteger() As Nullable(Of Integer)
+            Dim RetValue As Nullable(Of Integer) = Nothing
+            Integer.TryParse(Me.RailsCode, RetValue)
+            If (RetValue = 0) Then RetValue = 1
+            Return RetValue
+        End Function
+
+        ''' <inheritdoc/>
         Public Overrides Function ToString() As String
             Dim PositionString As New Collection(Of String)
             If (Me.TrackNo.HasValue)                     Then PositionString.Add(Rstyx.Utilities.Resources.Messages.PositionAtTrack_Label_Track     & ": " & Me.TrackNo)

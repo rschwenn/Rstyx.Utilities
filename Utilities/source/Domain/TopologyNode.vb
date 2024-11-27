@@ -80,9 +80,27 @@ Namespace Domain
             End If
         End Sub
         
+        ''' <summary> Formats a given node's full name to pattern "12345678-12-1234-1". </summary>
+         ''' <returns> Formatted node name, if <see cref="FullName"/> is 15 characters long. </returns>
+        Public Function GetFormattedNodeName() As String
+            Return GetFormattedNodeName(Me.FullName)
+        End Function
+        
         ''' <inheritdoc/>
         Public Overrides Function ToString() As String
             Return Sprintf(Rstyx.Utilities.Resources.Messages.TopologyNode_ToString, Me.FullName, Me.OperationPoint, Me.Title, Me.Type.ToDisplayString(), Me.Description)
+        End Function
+        
+
+        ''' <summary> Formats a given node's full name to pattern "12345678-12-1234-1". </summary>
+         ''' <param name="NodeFullName"> The rails code for the Item. </param>
+         ''' <returns> Formatted node name, if <paramref name="NodeFullName"/> is 15 characters long. </returns>
+        Public Shared Function GetFormattedNodeName(NodeFullName As String) As String
+            Dim RetValue As String = NodeFullName
+            If (NodeFullName.IsNotEmptyOrWhiteSpace() AndAlso NodeFullName.Length = 15) Then
+                RetValue = NodeFullName.Substring(0,8) & "-" & NodeFullName.Substring(8,2) & "-" & NodeFullName.Substring(10,4) & "-" & NodeFullName.Substring(14)
+            End If
+            Return RetValue
         End Function
         
     End Class

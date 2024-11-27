@@ -591,7 +591,7 @@ Namespace Domain
             End Sub
             
             ''' <summary> Parses a double TDB notation and sets all properties. </summary>
-             ''' <param name="TDB"> A usual Kilometer notation or a numerical String. </param>
+             ''' <param name="TDB"> A usual TDB Kilometer notation. </param>
             Private Sub ParseTDB(ByVal TDB As Double)
                 
                 Dim Kilometer As Double = Truncate((TDB - 100000000) / 10000) / 10

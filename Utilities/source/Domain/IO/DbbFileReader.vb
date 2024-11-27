@@ -50,9 +50,9 @@ Namespace Domain.IO
         
         #Region "Properties"
             
-            Dim _GeneralNodeInfo As SortedDictionary(Of String, TopologyNode)
-            Dim _NodesAtTracks   As SortedDictionary(Of String, List(Of NodeAtTrack))
-            Dim _EdgesAtTracks   As SortedDictionary(Of String, List(Of EdgeAtTrack))
+            Dim _GeneralNodeInfo As SortedDictionary(Of String, TopologyNode)           ' Key = Node FullName
+            Dim _NodesAtTracks   As SortedDictionary(Of String, List(Of NodeAtTrack))   ' Key = TrackKey - see GetTrackKey()
+            Dim _EdgesAtTracks   As SortedDictionary(Of String, List(Of EdgeAtTrack))   ' Key = TrackKey - see GetTrackKey()
             Dim _CoordSystems    As Collection(Of String)
             
             ''' <summary> Determines the coordinate system, for which point coordinates are read from DBB. Defaults to "?". </summary>
@@ -83,7 +83,7 @@ Namespace Domain.IO
 
             ''' <summary> Gets all nodes in this DBB file, grouped by tracks. </summary>
              ''' <returns> A Dictionary with a collection of topology nodes for each track. It won't be <see langword="null"/>, but may be empty. </returns>
-             ''' <remarks> The nodes collection for a certain track can be accessed via dictionary key resp. "TrackKey", created by <see cref="GetTrackKey"/>. </remarks>
+             ''' <remarks> The nodes collection for a certain track is sorted by kilometer and can be accessed via dictionary key resp. "TrackKey", created by <see cref="GetTrackKey"/>. </remarks>
             Public ReadOnly Property NodesAtTracks() As SortedDictionary(Of String, List(Of NodeAtTrack))
                 Get
                     If (_NodesAtTracks Is Nothing) Then
@@ -215,7 +215,7 @@ Namespace Domain.IO
                     _NodesAtTracks   = New SortedDictionary(Of String, List(Of NodeAtTrack))
                     _EdgesAtTracks   = New SortedDictionary(Of String, List(Of EdgeAtTrack))
 
-                    Dim NodePointIDs As New Dictionary(Of String, String)  ' Key=PointID, Item=NodeFullName
+                    Dim NodePointIDs As New Dictionary(Of String, String)  ' Key=PointID, Item=Km
 
                     Dim RecDefSet As New RecordDefinitionSetDBB(Me.FormatVersion)
                     Dim RecDef11  As RecDefDbbSA11 = DirectCast(RecDefSet.RecType.Item(11), RecDefDbbSA11)
@@ -391,37 +391,6 @@ Namespace Domain.IO
                 End Try
             End Sub
             
-            ''' <summary> Creates a key for a given track in order to access dictionaries. </summary>
-             ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
-             ''' <param name="RailsCode"> The rails code for the Item. </param>
-             ''' <returns> Track key (pattern "1234@1" or "13@4") for accessing dictionary properties <see cref="NodesAtTracks"/> and <see cref="EdgesAtTracks"/>. </returns>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
-            Public Function GetTrackKey(TrackNo As String, RailsCode As Integer) As String
-                If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
-                Return TrackNo & "@" & CStr(RailsCode)
-            End Function
-            
-            ''' <summary> Splits a track key (pattern "1234@1" or "13@4") into track number and rails code. </summary>
-             ''' <param name="TrackKey"> The track key to split. </param>
-             ''' <returns> KeyValuPair where: <b>Key=track number</b> and <b>Value=rails code</b>. </returns>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackKey"/> is <see langword="null"/> or empty or white space. </exception>
-            Public Function SplitTrackKey(TrackKey As String) As KeyValuePair(Of String, Integer)
-                If (TrackKey.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackKey")
-                Dim RetValue As New KeyValuePair(Of String, Integer)(TrackKey.Left("@"), CInt(TrackKey.Right("@")))
-                Return RetValue
-            End Function
-            
-            ''' <summary> Formats a given node's full name to pattern "12345678-12-1234-1". </summary>
-             ''' <param name="NodeFullName"> The rails code for the Item. </param>
-             ''' <returns> Formatted node name. </returns>
-            Public Function FormatNodeName(NodeFullName As String) As String
-                Dim RetValue As String = NodeFullName
-                If (NodeFullName.IsNotEmptyOrWhiteSpace() AndAlso NodeFullName.Length = 15) Then
-                    RetValue = NodeFullName.Substring(0,8) & "-" & NodeFullName.Substring(8,2) & "-" & NodeFullName.Substring(10,4) & "-" & NodeFullName.Substring(14)
-                End If
-                Return RetValue
-            End Function
-            
             ''' <summary> Creates a detailed list of topology. </summary>
              ''' <returns> Detailed list of topology. </returns>
             Public Function GetTopologyList() As String
@@ -445,7 +414,7 @@ Namespace Domain.IO
                 For Each TrackKey As String In Me.EdgesAtTracks.Keys
                     TopoList.AppendLine()
                     For Each Edge As EdgeAtTrack In Me.EdgesAtTracks(TrackKey)
-                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdge, Edge.RailsNameNo, Edge.RailsCode, FormatNodeName(Edge.ANodeFullName), FormatNodeName(Edge.BNodeFullName)))
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdge, Edge.RailsNameNo, Edge.RailsCode, TopologyNode.GetFormattedNodeName(Edge.ANodeFullName), TopologyNode.GetFormattedNodeName(Edge.BNodeFullName)))
                     Next
                 Next
 
@@ -465,11 +434,10 @@ Namespace Domain.IO
                     Dim LastOpPt As String  = "?"
                     For Each TrackNode As NodeAtTrack In Me.NodesAtTracks(TrackKey)
                         Dim Node As TopologyNode = Me.GeneralNodeInfo(TrackNode.FullName)
-                        Dim KmSt As String = If(TrackNode.RailsCode = 4, Sprintf("%.3f", TrackNode.Kilometer.Value), TrackNode.Kilometer.ToKilometerNotation(3, " "))
                         Dim dSt  As Double = TrackNode.Kilometer.Value - LastKm
                         Dim OpPt As String = TrackNode.FullName.Substring(0,10)
                         If (Not (OpPt = LastOpPt)) Then TopoList.AppendLine()
-                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, TrackNode.RailsNameNo, TrackNode.RailsCode, FormatNodeName(TrackNode.FullName), KmSt, dSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, TrackNode.RailsNameNo, TrackNode.RailsCode, TopologyNode.GetFormattedNodeName(TrackNode.FullName), TrackNode.GetFormattedKilometer(Precision:=3), dSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
                         LastKm   = TrackNode.Kilometer.Value
                         LastOpPt = OpPt
                     Next
@@ -647,14 +615,22 @@ Namespace Domain.IO
                 Public Property Kilometer       As Kilometer = New Kilometer()
                 
                 ''' <summary> Code of track rails (right, left, single, station). </summary>
-                Public Property RailsCode       As String = String.Empty
+                Public Property RailsCode       As Nullable(Of Integer) = Nothing
                 
                 ''' <summary> Name or number of track or rails. </summary>
                 Public Property RailsNameNo     As String = String.Empty
-                    
+                
+
+                ''' <summary> Formats <see cref="Kilometer"/> as kilometer notation or real number, dependent on <see cref="RailsCode"/>. </summary>
+                 ''' <param name="Precision"> The precision for the result. </param>
+                 ''' <returns> Kilometer notation, if <see cref="RailsCode"/> is 4, otherwise a real number. </returns>
+                Public Function GetFormattedKilometer(Precision As Integer) As String
+                    Return If(Me.RailsCode.HasValue AndAlso (Me.RailsCode = 4), Sprintf("%." & CStr(Precision) & "f", Me.Kilometer.Value), Me.Kilometer.ToKilometerNotation(Precision, " "))
+                End Function
+                
                 ''' <inheritdoc/>
                 Public Overrides Function ToString() As String
-                    Return Sprintf(Rstyx.Utilities.Resources.Messages.DbbNodeAtTrack_ToString, Me.FullName, Me.RailsNameNo, Me.RailsCode, Me.Kilometer.ToString())
+                    Return Sprintf(Rstyx.Utilities.Resources.Messages.DbbNodeAtTrack_ToString, Me.FullName, Me.RailsNameNo, Me.RailsCode, Me.GetFormattedKilometer(3))
                 End Function
                 
             End Class
@@ -683,59 +659,27 @@ Namespace Domain.IO
            
         #End Region
             
-        #Region "Private Shared Members"
+        #Region "Public Shared Members"
             
-            '''' <summary> Parses the given ID as an <see cref="GeoVEPoint"/> ID, if it's not <see langword="null"/>. </summary>
-            ' ''' <param name="xID"> The cross field point ID to parse. May be <see langword="null"/>. </param>
-            ' ''' <returns> A cross field point ID, or an empty string if ID is <see langword="null"/>. </returns>
-            ' ''' <remarks> <paramref name="xID"/> may be prefixed by "*" (auxiliary point). </remarks>
-            ' ''' <exception cref="InvalidIDException"> <paramref name="xID"/> has an invalid format. </exception>
-            'Private Shared Function ParseID(xID As String) As String
-            '    Dim ParsedID As String = xID
-            '    If (xID.IsNotEmptyOrWhiteSpace()) Then
-            '        Dim VEPoint As New GeoVEPoint()
-            '        If (CrossField.IsAuxPointID(xID)) Then
-            '            VEPoint.ID = CrossField.GetUnflaggedID(xID)
-            '            ParsedID   = CrossField.GetFlaggedID(VEPoint.ID)
-            '        Else
-            '            VEPoint.ID = xID
-            '            ParsedID   = VEPoint.ID
-            '        End If
-            '    End If
-            '    Return ParsedID
-            'End Function
-            '
-            '''' <summary> Verifies the given ID to be compatible for an <see cref="GeoVEPoint"/>, if it's not <see langword="null"/>. </summary>
-            ' ''' <param name="xID"> Point ID. </param>
-            ' ''' <remarks> <paramref name="xID"/> may be prefixed by "*" (auxiliary point). </remarks>
-            ' ''' <exception cref="InvalidIDException"> <paramref name="xID"/> has an invalid format. </exception>
-            'Public Shared Sub VerifyID(xID As String)
-            '    If (xID.IsNotEmptyOrWhiteSpace()) Then
-            '        Dim VEPoint As New GeoVEPoint()
-            '        If (CrossField.IsAuxPointID(xID)) Then
-            '            VEPoint.ID = CrossField.GetUnflaggedID(xID)
-            '        Else
-            '            VEPoint.ID = xID
-            '        End If
-            '    End If
-            'End Sub
-            '
-            '''' <summary> Gets the usual (decimal) VE notation from a given ID. </summary>
-            ' ''' <param name="xID"> The cross field point ID to format. May be <see langword="null"/>. </param>
-            ' ''' <returns> I.e. "12.34567", "1.23000" , or an empty string if ID is <see langword="null"/>. </returns>
-            ' ''' <remarks> <paramref name="xID"/> may be prefixed by "*" (auxiliary point). </remarks>
-            ' ''' <exception cref="InvalidIDException"> <paramref name="xID"/> has an invalid format. </exception>
-            'Private Shared Function FormatVEID(xID As String) As String
-            '    Dim FormattedID As String = xID
-            '    If (xID.IsNotEmptyOrWhiteSpace()) Then
-            '        If (CrossField.IsAuxPointID(xID)) Then
-            '            FormattedID = Sprintf("%s %8s", CrossField.AuxPointFlag, GeoVEPoint.FormatID(CrossField.GetUnflaggedID(xID)))
-            '        Else
-            '            FormattedID = GeoVEPoint.FormatID(xID)
-            '        End If
-            '    End If
-            '    Return FormattedID
-            'End Function
+            ''' <summary> Creates a key for a given track in order to access dictionaries. </summary>
+             ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
+             ''' <param name="RailsCode"> The rails code for the Item. </param>
+             ''' <returns> Track key (pattern "1234@1" or "13@4") for accessing dictionary properties <see cref="NodesAtTracks"/> and <see cref="EdgesAtTracks"/>. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
+            Public Shared Function GetTrackKey(TrackNo As String, RailsCode As Integer) As String
+                If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
+                Return TrackNo & "@" & CStr(RailsCode)
+            End Function
+            
+            ''' <summary> Splits a track key (pattern "1234@1" or "13@4") into track number and rails code. </summary>
+             ''' <param name="TrackKey"> The track key to split. </param>
+             ''' <returns> KeyValuPair where: <b>Key=track number</b> and <b>Value=rails code</b>. </returns>
+             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackKey"/> is <see langword="null"/> or empty or white space. </exception>
+            Public Shared Function SplitTrackKey(TrackKey As String) As KeyValuePair(Of String, Integer)
+                If (TrackKey.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackKey")
+                Dim RetValue As New KeyValuePair(Of String, Integer)(TrackKey.Left("@"), CInt(TrackKey.Right("@")))
+                Return RetValue
+            End Function
             
         #End Region
         

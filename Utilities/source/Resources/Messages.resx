@@ -1385,7 +1385,7 @@
     <comment>Name: String, Type: Integer, Description: String</comment>
   </data>
   <data name="DbbNodeAtTrack_ToString" xml:space="preserve">
-    <value>Knoten '%s' auf Gleis %s@%s:  %s</value>
+    <value>Knoten '%s' auf Gleis %s RiKz %d:  %s</value>
     <comment>FullName: String, RailsName: String, RailsCode: String, Kilometer: String</comment>
   </data>
   <data name="DbbEdgeAtTrack_ToString" xml:space="preserve">
@@ -1464,5 +1464,8 @@
   </data>
   <data name="DbbFileReader_TopologyListNode" xml:space="preserve">
     <value>  - Gleis %+4s,  RiKz %d,  Knoten [%18s]: %16s   dKm=%6.1f   (%3s: %12.3f, %12.3f)  -  %-9s:  %s</value>
+  </data>
+  <data name="Message_Process_TopologyFromDbb2" xml:space="preserve">
+    <value>Suche A- und E-Knoten für Engstellen ...</value>
   </data>
 </root>

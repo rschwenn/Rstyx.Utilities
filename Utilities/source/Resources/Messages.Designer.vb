@@ -515,7 +515,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Knoten &apos;%s&apos; auf Gleis %s@%s:  %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Knoten &apos;%s&apos; auf Gleis %s RiKz %d:  %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property DbbNodeAtTrack_ToString() As String
             Get
@@ -2671,6 +2671,15 @@ Namespace Resources
         Public Shared ReadOnly Property KvFile_StoreSuccess() As String
             Get
                 Return ResourceManager.GetString("KvFile_StoreSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Suche A- und E-Knoten für Engstellen ... ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Message_Process_TopologyFromDbb2() As String
+            Get
+                Return ResourceManager.GetString("Message_Process_TopologyFromDbb2", resourceCulture)
             End Get
         End Property
         
