@@ -19,6 +19,12 @@ Namespace Domain
         ''' <summary> Distance of B-Node to position. </summary>
         Public Property DistanceToNodeB     As Double = Double.NaN
         
+        ''' <summary> Date of assignment of <see cref="NodeA"/>. </summary>
+        Public Property AssignDateNodeA     As String
+        
+        ''' <summary> Date of assignment of <see cref="NodeB"/>. </summary>
+        Public Property AssignDateNodeB     As String
+        
     End Class
     
 End Namespace
