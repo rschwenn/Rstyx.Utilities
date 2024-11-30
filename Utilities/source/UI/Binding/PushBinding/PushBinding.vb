@@ -12,7 +12,7 @@
 '         <!-- RelativeSource, ElementName and Source PushBinding -->
 '         <pb:PushBinding TargetProperty="ActualHeight"
 '                         RelativeSource="{RelativeSource AncestorType={x:Type Window}}"
-'                         Path="Title"/>
+'                         Path="LocalName"/>
 '         <pb:PushBinding TargetProperty="ActualHeight"
 '                         ElementName="textBlock"
 '                         Path="Text"/>

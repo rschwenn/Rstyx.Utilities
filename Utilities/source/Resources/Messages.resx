@@ -1381,7 +1381,7 @@
     <comment>Supported record types: String</comment>
   </data>
   <data name="TopologyNode_ToString" xml:space="preserve">
-    <value>Knotenname '%s'  (Bst '%s' / KnBez %s) %s:  %s</value>
+    <value>Knoten '%s' %s:  %s</value>
     <comment>Name: String, Type: Integer, Description: String</comment>
   </data>
   <data name="DbbNodeAtTrack_ToString" xml:space="preserve">

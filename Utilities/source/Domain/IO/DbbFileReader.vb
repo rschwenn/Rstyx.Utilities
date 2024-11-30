@@ -250,18 +250,22 @@ Namespace Domain.IO
                             
                             Case 31  ' TrackNode
                                 
-                                Dim SA31_KNOTEN As DataField(Of String)  = DataLine.ParseField(RecDef31.KNOTEN)
-                                Dim SA31_KNTYP  As DataField(Of Integer) = DataLine.ParseField(RecDef31.KNTYP)
-                                Dim SA31_PAD    As DataField(Of String)  = DataLine.ParseField(RecDef31.PAD)
-                                Dim SA31_KNBE   As DataField(Of String)  = DataLine.ParseField(RecDef31.KNBE)
+                                Dim SA31_KNOTEN_NETZSCHL As DataField(Of String)  = DataLine.ParseField(RecDef31.KNOTEN_NETZSCHL)
+                                Dim SA31_KNOTEN_KENNZAHL As DataField(Of String)  = DataLine.ParseField(RecDef31.KNOTEN_KENNZAHL)
+                                Dim SA31_KNOTEN_NAME     As DataField(Of String)  = DataLine.ParseField(RecDef31.KNOTEN_NAME)  
+                                Dim SA31_KNTYP           As DataField(Of Integer) = DataLine.ParseField(RecDef31.KNTYP)
+                                Dim SA31_PAD             As DataField(Of String)  = DataLine.ParseField(RecDef31.PAD)
+                                Dim SA31_KNBE            As DataField(Of String)  = DataLine.ParseField(RecDef31.KNBE)
                                 
                                 ' Create new node.
                                 Dim Node As New TopologyNode()
-                                Node.FullName    = SA31_KNOTEN.Value
-                                Node.Type        = SA31_KNTYP.Value
-                                Node.PointID     = SA31_PAD.Value
-                                Node.Description = SA31_KNBE.Value
-                                Node.DeriveOperationPointAndTitle()
+                                Node.OperationPoint = SA31_KNOTEN_NETZSCHL.Value
+                                Node.OperationArea  = SA31_KNOTEN_KENNZAHL.Value
+                                Node.LocalName      = SA31_KNOTEN_NAME.Value
+                                Node.Type           = SA31_KNTYP.Value
+                                Node.PointID        = SA31_PAD.Value
+                                Node.Description    = SA31_KNBE.Value
+                                Node.DeriveFullName()
                                 
                                 If (Node.FullName.IsNotEmptyOrWhiteSpace()) Then
                                     _GeneralNodeInfo.Add(Node.FullName, Node)
@@ -272,15 +276,35 @@ Namespace Domain.IO
                                 
                             Case 33  ' Edge
                                 
-                                Dim SA33_AKNOTEN As DataField(Of String)  = DataLine.ParseField(RecDef33.AKNOTEN)
-                                Dim SA33_EKNOTEN As DataField(Of String)  = DataLine.ParseField(RecDef33.EKNOTEN)
+                                Dim SA33_AKNOTEN_NETZSCHL As DataField(Of String) = DataLine.ParseField(RecDef33.AKNOTEN_NETZSCHL)
+                                Dim SA33_AKNOTEN_KENNZAHL As DataField(Of String) = DataLine.ParseField(RecDef33.AKNOTEN_KENNZAHL)
+                                Dim SA33_AKNOTEN_NAME     As DataField(Of String) = DataLine.ParseField(RecDef33.AKNOTEN_NAME)
+                                
+                                Dim SA33_EKNOTEN_NETZSCHL As DataField(Of String) = DataLine.ParseField(RecDef33.EKNOTEN_NETZSCHL)
+                                Dim SA33_EKNOTEN_KENNZAHL As DataField(Of String) = DataLine.ParseField(RecDef33.EKNOTEN_KENNZAHL)
+                                Dim SA33_EKNOTEN_NAME     As DataField(Of String) = DataLine.ParseField(RecDef33.EKNOTEN_NAME)
+                    
                                 Dim SA33_STRECKE As DataField(Of String)  = DataLine.ParseField(RecDef33.STRECKE)
                                 Dim SA33_STRRIKZ As DataField(Of Integer) = DataLine.ParseField(RecDef33.STRRIKZ)                                                   
                                 
-                                ' Create and new edge to given track.
-                                Dim Edge As New EdgeAtTrack()
-                                Edge.ANodeFullName = SA33_AKNOTEN.Value
-                                Edge.BNodeFullName = SA33_EKNOTEN.Value
+                                ' Create node A full name.
+                                Dim NodeA As New TopologyNode()
+                                NodeA.OperationPoint = SA33_AKNOTEN_NETZSCHL.Value
+                                NodeA.OperationArea  = SA33_AKNOTEN_KENNZAHL.Value
+                                NodeA.LocalName      = SA33_AKNOTEN_NAME.Value
+                                NodeA.DeriveFullName()
+                                
+                                ' Create node B full name.
+                                Dim NodeB As New TopologyNode()
+                                NodeB.OperationPoint = SA33_AKNOTEN_NETZSCHL.Value
+                                NodeB.OperationArea  = SA33_AKNOTEN_KENNZAHL.Value
+                                NodeB.LocalName      = SA33_AKNOTEN_NAME.Value
+                                NodeB.DeriveFullName()
+
+                                ' Create new edge to given track.
+                                Dim Edge  As New EdgeAtTrack()
+                                Edge.ANodeFullName = NodeA.FullName
+                                Edge.BNodeFullName = NodeB.FullName
                                 Edge.RailsNameNo   = SA33_STRECKE.Value
                                 Edge.RailsCode     = If(SA33_STRRIKZ.Value = 0, 1, SA33_STRRIKZ.Value) ' Zero isn't valid anymore.
 
@@ -414,7 +438,7 @@ Namespace Domain.IO
                 For Each TrackKey As String In Me.EdgesAtTracks.Keys
                     TopoList.AppendLine()
                     For Each Edge As EdgeAtTrack In Me.EdgesAtTracks(TrackKey)
-                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdge, Edge.RailsNameNo, Edge.RailsCode, TopologyNode.GetFormattedNodeName(Edge.ANodeFullName), TopologyNode.GetFormattedNodeName(Edge.BNodeFullName)))
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListEdge, Edge.RailsNameNo, Edge.RailsCode, Edge.ANodeFullName, Edge.BNodeFullName))
                     Next
                 Next
 
@@ -437,7 +461,7 @@ Namespace Domain.IO
                         Dim dSt  As Double = TrackNode.Kilometer.Value - LastKm
                         Dim OpPt As String = TrackNode.FullName.Substring(0,10)
                         If (Not (OpPt = LastOpPt)) Then TopoList.AppendLine()
-                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, TrackNode.RailsNameNo, TrackNode.RailsCode, TopologyNode.GetFormattedNodeName(TrackNode.FullName), TrackNode.GetFormattedKilometer(Precision:=3), dSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
+                        TopoList.AppendLine(Sprintf(Rstyx.Utilities.Resources.Messages.DbbFileReader_TopologyListNode, TrackNode.RailsNameNo, TrackNode.RailsCode, TrackNode.FullName, TrackNode.GetFormattedKilometer(Precision:=3), dSt, Node.CoordSys, Node.Y, Node.X, Node.Type.ToDisplayString(), Node.Description.Trim()))
                         LastKm   = TrackNode.Kilometer.Value
                         LastOpPt = OpPt
                     Next
@@ -465,7 +489,7 @@ Namespace Domain.IO
                     RecType.Add(11, New RecDefDbbSA11())
                     RecType.Add(12, New RecDefDbbSA12())
                     RecType.Add(31, New RecDefDbbSA31(FormatVersion))
-                    RecType.Add(33, New RecDefDbbSA33())
+                    RecType.Add(33, New RecDefDbbSA33(FormatVersion))
                 End Sub
                 
                 ''' <summary> Definition of every record's begin (Record type and version). </summary>
@@ -550,17 +574,27 @@ Namespace Domain.IO
                     MyBase.New()
                     ' Column definitions are zero-ased!
                     
-                    Me.KNOTEN = New DataFieldDefinition(Of String)("KNOTEN", DataFieldPositionType.ColumnAndLength,  2, 15)  
-                    Me.KNTYP  = New DataFieldDefinition(Of Integer)("KNTYP", DataFieldPositionType.ColumnAndLength, 17,  2)                                    
-                    Me.PAD    = New DataFieldDefinition(Of String)("PAD"   , DataFieldPositionType.ColumnAndLength, 19, 11)
-                    Me.KNBE   = New DataFieldDefinition(Of String)("KNBE"  , DataFieldPositionType.ColumnAndLength, If(FormatVersion=DbbFormatVersion.DBGIS,75,90), 40, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                    If (FormatVersion = DbbFormatVersion.DBGIS) Then
+                        Me.KNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("KNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2, 10, DataFieldOptions.Trim)  
+                        Me.KNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("KNOTEN_KENNZAHL", DataFieldPositionType.Ignore,  0,  0)
+                    Else
+                        Me.KNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("KNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2,  8, DataFieldOptions.Trim)  
+                        Me.KNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("KNOTEN_KENNZAHL", DataFieldPositionType.ColumnAndLength, 10,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                    End If
+                    
+                    Me.KNOTEN_NAME = New DataFieldDefinition(Of String)("KNOTEN_NAME", DataFieldPositionType.ColumnAndLength, 12,  5, DataFieldOptions.Trim)  
+                    Me.KNTYP       = New DataFieldDefinition(Of Integer)("KNTYP"     , DataFieldPositionType.ColumnAndLength, 17,  2)                                    
+                    Me.PAD         = New DataFieldDefinition(Of String)("PAD"        , DataFieldPositionType.ColumnAndLength, 19, 11)
+                    Me.KNBE        = New DataFieldDefinition(Of String)("KNBE"       , DataFieldPositionType.ColumnAndLength, If(FormatVersion=DbbFormatVersion.DBGIS,75,90), 40, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                 End Sub
                 
                 #Region "Public Fields"
-                    Public KNOTEN As DataFieldDefinition(Of String)
-                    Public KNTYP  As DataFieldDefinition(Of Integer)                                                    
-                    Public PAD    As DataFieldDefinition(Of String)
-                    Public KNBE   As DataFieldDefinition(Of String)                                                    
+                    Public KNOTEN_NETZSCHL As DataFieldDefinition(Of String)
+                    Public KNOTEN_KENNZAHL As DataFieldDefinition(Of String)
+                    Public KNOTEN_NAME     As DataFieldDefinition(Of String)
+                    Public KNTYP           As DataFieldDefinition(Of Integer)                                                    
+                    Public PAD             As DataFieldDefinition(Of String)
+                    Public KNBE            As DataFieldDefinition(Of String)                                                    
                 #End Region
             End Class
             
@@ -569,19 +603,40 @@ Namespace Domain.IO
                 Inherits RecDefDbbSAxx
                 
                 ''' <summary> Sets the field definitions. </summary>
-                Public Sub New()
+                Public Sub New(FormatVersion As DbbFormatVersion)
                     MyBase.New()
                     ' Column definitions are zero-ased!
                     
-                    Me.AKNOTEN = New DataFieldDefinition(Of String)("AKNOTEN" , DataFieldPositionType.ColumnAndLength,  2, 15)  
-                    Me.EKNOTEN = New DataFieldDefinition(Of String)("EKNOTEN" , DataFieldPositionType.ColumnAndLength, 17, 15)  
+                    If (FormatVersion = DbbFormatVersion.DBGIS) Then
+                        Me.AKNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("AKNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2, 10, DataFieldOptions.Trim)  
+                        Me.AKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("AKNOTEN_KENNZAHL", DataFieldPositionType.Ignore,  0,  0)
+                        
+                        Me.EKNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("EKNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength, 17, 10, DataFieldOptions.Trim)  
+                        Me.EKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("EKNOTEN_KENNZAHL", DataFieldPositionType.Ignore,  0,  0)
+                    Else
+                        Me.AKNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("AKNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2,  8, DataFieldOptions.Trim)  
+                        Me.AKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("AKNOTEN_KENNZAHL", DataFieldPositionType.ColumnAndLength, 10,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                        
+                        Me.EKNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("EKNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength, 17,  8, DataFieldOptions.Trim)  
+                        Me.EKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("EKNOTEN_KENNZAHL", DataFieldPositionType.ColumnAndLength, 25,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                    End If
+                    
+                    Me.AKNOTEN_NAME = New DataFieldDefinition(Of String)("AKNOTEN_NAME", DataFieldPositionType.ColumnAndLength, 12,  5, DataFieldOptions.Trim)  
+                    Me.EKNOTEN_NAME = New DataFieldDefinition(Of String)("EKNOTEN_NAME", DataFieldPositionType.ColumnAndLength, 27,  5, DataFieldOptions.Trim)  
+                    
                     Me.STRECKE = New DataFieldDefinition(Of String)("STRECKE" , DataFieldPositionType.ColumnAndLength, 32,  4)  
                     Me.STRRIKZ = New DataFieldDefinition(Of Integer)("STRRIKZ", DataFieldPositionType.ColumnAndLength, 36,  1)                                    
                 End Sub
                 
                 #Region "Public Fields"
-                    Public AKNOTEN As DataFieldDefinition(Of String)
-                    Public EKNOTEN As DataFieldDefinition(Of String)
+                    Public AKNOTEN_NETZSCHL As DataFieldDefinition(Of String)
+                    Public AKNOTEN_KENNZAHL As DataFieldDefinition(Of String)
+                    Public AKNOTEN_NAME     As DataFieldDefinition(Of String)
+                    
+                    Public EKNOTEN_NETZSCHL As DataFieldDefinition(Of String)
+                    Public EKNOTEN_KENNZAHL As DataFieldDefinition(Of String)
+                    Public EKNOTEN_NAME     As DataFieldDefinition(Of String)
+                    
                     Public STRECKE As DataFieldDefinition(Of String)
                     Public STRRIKZ As DataFieldDefinition(Of Integer)                                                    
                 #End Region

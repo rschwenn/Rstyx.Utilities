@@ -19,7 +19,7 @@ Namespace UI.Controls
             Private Shared DefaultDirectoryDefault      As String  = String.Empty
             Private Shared EditButtonIsEnabledDefault   As Boolean = True
             Private Shared EditButtonVisibilityDefault  As System.Windows.Visibility = System.Windows.Visibility.Visible
-            Private Shared FileDialogTitleDefault       As String  = String.Empty    ' Default Title
+            Private Shared FileDialogTitleDefault       As String  = String.Empty    ' Default LocalName
             Private Shared FileFilterDefault            As String  = "Alle Dateien (*.*)|*.*"
             Private Shared FileFilterIndexDefault       As Integer = 1  ' First filter
             Private Shared FileModeDefault              As System.IO.FileMode = System.IO.FileMode.Open

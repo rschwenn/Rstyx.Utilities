@@ -3242,7 +3242,7 @@ Namespace Resources
         End Property
         
         '''<summary>
-        '''  Sucht eine lokalisierte Zeichenfolge, die Knotenname &apos;%s&apos;  (Bst &apos;%s&apos; / KnBez %s) %s:  %s ähnelt.
+        '''  Sucht eine lokalisierte Zeichenfolge, die Knoten &apos;%s&apos; %s:  %s ähnelt.
         '''</summary>
         Public Shared ReadOnly Property TopologyNode_ToString() As String
             Get
