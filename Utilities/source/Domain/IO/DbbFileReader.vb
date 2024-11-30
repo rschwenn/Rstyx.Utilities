@@ -553,7 +553,7 @@ Namespace Domain.IO
                     Me.KNOTEN = New DataFieldDefinition(Of String)("KNOTEN", DataFieldPositionType.ColumnAndLength,  2, 15)  
                     Me.KNTYP  = New DataFieldDefinition(Of Integer)("KNTYP", DataFieldPositionType.ColumnAndLength, 17,  2)                                    
                     Me.PAD    = New DataFieldDefinition(Of String)("PAD"   , DataFieldPositionType.ColumnAndLength, 19, 11)
-                    Me.KNBE   = New DataFieldDefinition(Of String)("KNBE" , DataFieldPositionType.ColumnAndLength, If(FormatVersion=DbbFormatVersion.DBGIS,75,90), 40, DataFieldOptions.NotRequired)
+                    Me.KNBE   = New DataFieldDefinition(Of String)("KNBE"  , DataFieldPositionType.ColumnAndLength, If(FormatVersion=DbbFormatVersion.DBGIS,75,90), 40, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
                 End Sub
                 
                 #Region "Public Fields"
@@ -600,7 +600,7 @@ Namespace Domain.IO
                 ''' <summary> Format version "DBGIS". </summary>
                 DBGIS = 1
                 
-                ''' <summary> Format version "AVANI". </summary>
+                ''' <summary> Format version "AVANI" alias "6 AGNON". </summary>
                 AGON6 = 2
                 
             End Enum

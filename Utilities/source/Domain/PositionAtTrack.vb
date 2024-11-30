@@ -48,8 +48,11 @@ Namespace Domain
          ''' <returns> Me.<see cref="RailsCode"/> as number on success, otherwise <see langword="null"/>. It never returns Zero, but rather 1. </returns>
         Public Function GetRailsCodeAsInteger() As Nullable(Of Integer)
             Dim RetValue As Nullable(Of Integer) = Nothing
-            Integer.TryParse(Me.RailsCode, RetValue)
-            If (RetValue = 0) Then RetValue = 1
+            If (Me.RailsCode IsNot Nothing) Then
+                Dim RetInt As Integer
+                If (Integer.TryParse(Me.RailsCode, RetInt)) Then RetValue = RetInt
+                If (RetValue = 0) Then RetValue = 1
+            End If
             Return RetValue
         End Function
 

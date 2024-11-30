@@ -75,8 +75,8 @@ Namespace Domain
         ''' <summary> Sets <see cref="OperationPoint"/> (10 characters) and <see cref="Title"/> (5 characters) by splitting <see cref="FullName"/> if it is 15 characters long. </summary>
         Public Sub DeriveOperationPointAndTitle()
             If (Me.FullName?.Length = 15) Then
-                Me.OperationPoint = Me.FullName.Substring(0, 10).Trim()
-                Me.Title          = Me.FullName.Substring(10, 5).Trim()
+                Me.OperationPoint = Me.FullName.Substring(0, 10)  '.Trim()
+                Me.Title          = Me.FullName.Substring(10, 5)  '.Trim()
             End If
         End Sub
         
@@ -97,8 +97,8 @@ Namespace Domain
          ''' <returns> Formatted node name, if <paramref name="NodeFullName"/> is 15 characters long. </returns>
         Public Shared Function GetFormattedNodeName(NodeFullName As String) As String
             Dim RetValue As String = NodeFullName
-            If (NodeFullName.IsNotEmptyOrWhiteSpace() AndAlso NodeFullName.Length = 15) Then
-                RetValue = NodeFullName.Substring(0,8) & "-" & NodeFullName.Substring(8,2) & "-" & NodeFullName.Substring(10,4) & "-" & NodeFullName.Substring(14)
+            If (NodeFullName?.Length = 15) Then
+                RetValue = NodeFullName.Substring(0,8) & "-" & NodeFullName.Substring(8,2) & "-" & NodeFullName.Substring(10,4) & "-" & NodeFullName.Substring(14,1)
             End If
             Return RetValue
         End Function
