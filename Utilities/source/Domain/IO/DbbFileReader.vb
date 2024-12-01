@@ -109,11 +109,8 @@ Namespace Domain.IO
              ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
              ''' <param name="RailsCode"> The rails code for the Item. </param>
              ''' <returns> Collection of topology nodes for the desired track, ordered by kilometer. It won't be <see langword="null"/>, but may be empty. </returns>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
             Public ReadOnly Property NodesAtTrack(TrackNo As String, RailsCode As Integer) As IEnumerable(Of NodeAtTrack)
                 Get
-                    If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
-
                     If (_NodesAtTracks Is Nothing) Then
                         LoadTopology()
                     End If
@@ -131,11 +128,8 @@ Namespace Domain.IO
              ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
              ''' <param name="RailsCode"> The rails code for the Item. </param>
              ''' <returns> Collection of topology edges for the desired track. It won't be <see langword="null"/>, but may be empty. </returns>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
             Public ReadOnly Property EdgesAtTrack(TrackNo As String, RailsCode As Integer) As List(Of EdgeAtTrack)
                 Get
-                    If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
-
                     If (_EdgesAtTracks Is Nothing) Then
                         LoadTopology()
                     End If
@@ -576,7 +570,7 @@ Namespace Domain.IO
                     
                     If (FormatVersion = DbbFormatVersion.DBGIS) Then
                         Me.KNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("KNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2, 10, DataFieldOptions.Trim)  
-                        Me.KNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("KNOTEN_KENNZAHL", DataFieldPositionType.Ignore,  0,  0)
+                        Me.KNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("KNOTEN_KENNZAHL", DataFieldPositionType.Ignore, 99, 99)
                     Else
                         Me.KNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("KNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2,  8, DataFieldOptions.Trim)  
                         Me.KNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("KNOTEN_KENNZAHL", DataFieldPositionType.ColumnAndLength, 10,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
@@ -609,10 +603,10 @@ Namespace Domain.IO
                     
                     If (FormatVersion = DbbFormatVersion.DBGIS) Then
                         Me.AKNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("AKNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2, 10, DataFieldOptions.Trim)  
-                        Me.AKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("AKNOTEN_KENNZAHL", DataFieldPositionType.Ignore,  0,  0)
+                        Me.AKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("AKNOTEN_KENNZAHL", DataFieldPositionType.Ignore, 99, 99)
                         
                         Me.EKNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("EKNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength, 17, 10, DataFieldOptions.Trim)  
-                        Me.EKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("EKNOTEN_KENNZAHL", DataFieldPositionType.Ignore,  0,  0)
+                        Me.EKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("EKNOTEN_KENNZAHL", DataFieldPositionType.Ignore, 99, 99)
                     Else
                         Me.AKNOTEN_NETZSCHL = New DataFieldDefinition(Of String)("AKNOTEN_NETZSCHL", DataFieldPositionType.ColumnAndLength,  2,  8, DataFieldOptions.Trim)  
                         Me.AKNOTEN_KENNZAHL = New DataFieldDefinition(Of String)("AKNOTEN_KENNZAHL", DataFieldPositionType.ColumnAndLength, 10,  2, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
@@ -720,10 +714,8 @@ Namespace Domain.IO
              ''' <param name="TrackNo">   The track number or rails name for the Item. </param>
              ''' <param name="RailsCode"> The rails code for the Item. </param>
              ''' <returns> Track key (pattern "1234@1" or "13@4") for accessing dictionary properties <see cref="NodesAtTracks"/> and <see cref="EdgesAtTracks"/>. </returns>
-             ''' <exception cref="System.ArgumentNullException"> <paramref name="TrackNo"/> is <see langword="null"/> or empty or white space. </exception>
             Public Shared Function GetTrackKey(TrackNo As String, RailsCode As Integer) As String
-                If (TrackNo.IsEmptyOrWhiteSpace()) Then Throw New System.ArgumentNullException("TrackNo")
-                Return TrackNo & "@" & CStr(RailsCode)
+                Return Sprintf("%s@%d", TrackNo, RailsCode)
             End Function
             
             ''' <summary> Splits a track key (pattern "1234@1" or "13@4") into track number and rails code. </summary>
