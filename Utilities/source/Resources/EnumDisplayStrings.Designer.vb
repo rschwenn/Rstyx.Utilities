@@ -1042,6 +1042,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Notepad++ ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Apps_AppUtils_SupportedEditors_NotepadPP() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Apps_AppUtils_SupportedEditors_NotepadPP", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die UltraEdit ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Apps_AppUtils_SupportedEditors_UltraEdit() As String

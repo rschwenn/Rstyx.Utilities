@@ -18,6 +18,7 @@ Namespace Apps
             Private Shared ReadOnly SyncHandle          As New Object()
             Private Shared _Instance                    As AppUtils = Nothing
             
+            Private Shared _AppPathNotepadPP            As String = Nothing
             Private Shared _AppPathUltraEdit            As String = Nothing
             Private Shared _AppPathCrimsonEditor        As String = Nothing
             Private Shared _AppPathJava                 As String = Nothing
@@ -68,8 +69,11 @@ Namespace Apps
                 ''' <summary> jEdit </summary>
                 jEdit = 2
                 
+                ''' <summary> Notepad++ </summary>
+                NotepadPP = 3
+                
                 ''' <summary> Crimson Editor </summary>
-                CrimsonEditor = 3
+                CrimsonEditor = 4
             End Enum
             
         #End Region
@@ -165,6 +169,40 @@ Namespace Apps
                             _AppPathUltraEdit = GetAppPathUltraEdit()
                         End If
                         Return _AppPathUltraEdit
+                    End SyncLock
+                End Get
+            End Property
+            
+            ''' <summary> Returns the path of the existing Notepad++ application file. </summary>
+             ''' <remarks>
+             ''' <para>
+             ''' Returns an empty String if the application file hasn't been found.
+             ''' </para>
+             ''' <para>
+             ''' notepad++.exe is searched for in the following places:
+             ''' </para>
+             ''' <list type="number">
+             '''     <item>
+             '''         <description> in HKEY_LOCAL_MACHINE\SOFTWARE\Notepad++\ </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> %PROGRAMFILES%\Notepad++\ </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> %PROGRAMW6432%\Notepad++\ </description>
+             '''     </item>
+             '''     <item>
+             '''         <description> in %PATH% without subdirectories </description>
+             '''     </item>
+             ''' </list>
+             ''' </remarks>
+            Public Shared ReadOnly Property AppPathNotepadPP() As String
+                Get
+                    SyncLock (SyncHandle)
+                        If (_AppPathNotepadPP Is Nothing) Then
+                            _AppPathNotepadPP = GetAppPathNotepadPP()
+                        End If
+                        Return _AppPathNotepadPP
                     End SyncLock
                 End Get
             End Property
@@ -598,6 +636,54 @@ Namespace Apps
                 Return UEditExe
             End Function
             
+            ''' <summary> Searches for the Notepad++ application file in some places. </summary>
+             ''' <returns> The found application file path or String.Empty. </returns>
+            Private Shared Function GetAppPathNotepadPP() As String
+                
+                Dim NotepadPpExe      As String = String.Empty
+                Dim Key_NotepadPpExe  As String = "HKEY_LOCAL_MACHINE\SOFTWARE\Notepad++\"
+                Dim fi                As FileInfo
+                Const AppName         As String = "notepad++.exe"
+                Logger.LogDebug("GetAppPathNotepadPP(): Programmdatei von Notepad++ ermitteln.")
+                
+                ' Folder from Registry.
+                Dim FolderFromReg As String = RegUtils.GetStringValue(Key_NotepadPpExe)
+                If (FolderFromReg Is Nothing) Then
+                    Logger.LogDebug(StringUtils.Sprintf("GetAppPathNotepadPP(): Programmpfad von Notepad++ nicht gefunden in Registry unter: '%s'", Key_NotepadPpExe))
+                Else
+                    Logger.LogDebug(StringUtils.Sprintf("GetAppPathNotepadPP(): Programmpfad von Notepad++ gefunden in Registry unter: '%s' => '%s'", Key_NotepadPpExe, FolderFromReg))
+                    fi = IO.FileUtils.FindFile(AppName, FolderFromReg, ";", SearchOption.TopDirectoryOnly)
+                    If (fi IsNot Nothing) Then NotepadPpExe = fi.FullName
+                End If
+                
+                ' Check default paths of NotepadPP.
+                If (NotepadPpExe.IsEmptyOrWhiteSpace()) Then
+                    Dim DefaultFolder     As String = "\Notepad++"
+                    Dim DefaultFolders(1) As String
+                    DefaultFolders(0) = "%PROGRAMFILES%" & DefaultFolder
+                    DefaultFolders(1) = "%PROGRAMW6432%" & DefaultFolder
+                    Logger.LogDebug("GetAppPathNotepadPP(): Programmdatei von Notepad++ im Dateisystem suchen in Standardpfaden.")
+                    fi = IO.FileUtils.FindFile(AppName, DefaultFolders.Join(";"c), ";", SearchOption.TopDirectoryOnly)
+                    If (fi IsNot Nothing) Then NotepadPpExe = fi.FullName
+                End if
+                
+                ' Search in %PATH%
+                If (NotepadPpExe.IsEmptyOrWhiteSpace()) Then
+                    Logger.LogDebug("GetAppPathNotepadPP(): Programmdatei von Notepad++ im Dateisystem suchen im %PATH%.")
+                    fi = IO.FileUtils.FindFile(AppName, Environment.ExpandEnvironmentVariables("%PATH%"), ";", SearchOption.TopDirectoryOnly)
+                    If (fi IsNot Nothing) Then NotepadPpExe = fi.FullName
+                End if
+                
+                ' Result
+                If (NotepadPpExe.IsEmptyOrWhiteSpace()) Then
+                    Logger.LogDebug("GetAppPathNotepadPP(): Programmdatei von Notepad++ nicht gefunden.")
+                Else 
+                    Logger.LogDebug(StringUtils.Sprintf("GetAppPathNotepadPP(): Programmdatei von Notepad++ gefunden: '%s'.", NotepadPpExe))
+                End if
+                
+                Return NotepadPpExe
+            End Function
+            
             ''' <summary> Searches for the Java application file in some places and gets it's environment. </summary>
              ''' <remarks> Determines the Java application file path and %JAVA_HOME%. </remarks>
             Private Shared Sub GetJavaEnvironment()
@@ -773,6 +859,11 @@ Namespace Apps
                 ' UltraEdit.
                 If (AppPathUltraEdit.IsNotEmptyOrWhiteSpace()) Then
                     Editors.Add(SupportedEditors.UltraEdit, New EditorInfo(SupportedEditors.UltraEdit.ToDisplayString(), AppPathUltraEdit, String.Empty))
+                End If
+                
+                ' NotepadPP.
+                If (AppPathNotepadPP.IsNotEmptyOrWhiteSpace()) Then
+                    Editors.Add(SupportedEditors.NotepadPP, New EditorInfo(SupportedEditors.NotepadPP.ToDisplayString(), AppPathNotepadPP, String.Empty))
                 End If
                 
                 ' Crimson Editor.
