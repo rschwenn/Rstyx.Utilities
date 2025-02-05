@@ -383,7 +383,7 @@ Namespace Apps
              ''' Notes on jEdit's command line:
              ''' </para>
              ''' <para>
-             ''' The Java command line is: "-ms128m -mx1024m -Dawt.useSystemAAFontSettings=on -Dsun.java2d.noddraw=true -jar &lt;path of jedit.jar&gt;.
+             ''' The Java command line is: "-Dfile.encoding=COMPAT --add-opens java.base/java.net=ALL-UNNAMED -jar &lt;path of jedit.jar&gt;.
              ''' </para>
              ''' <para>
              ''' The options "-reuseview -background" are automatically specified.
@@ -394,7 +394,7 @@ Namespace Apps
              ''' </remarks>
             Public Shared Sub StartEditor(ByVal TargetEditor As SupportedEditors, ByVal Arguments As String)
                 
-                Logger.LogDebug(StringUtils.Sprintf("startEditor(): Anforderungen: Editor = '%s', Argumente = '%s'.", TargetEditor.ToDisplayString(), Arguments))
+                Logger.LogDebug(StringUtils.Sprintf("StartEditor(): Anforderungen: Editor = '%s', Argumente = '%s'.", TargetEditor.ToDisplayString(), Arguments))
                 
                 ' Validate Arguments.
                 Dim ErrMessage  As String = Nothing
@@ -419,8 +419,8 @@ Namespace Apps
                 StartInfo.FileName  = AvailableEditors.Item(TargetEditor).AppPath
                 StartInfo.Arguments = AvailableEditors.Item(TargetEditor).Arguments & " " & Arguments
                 
-                Logger.LogDebug(StringUtils.Sprintf("startEditor(): Auszuführende Datei: '%s'.", StartInfo.FileName))
-                Logger.LogDebug(StringUtils.Sprintf("startEditor(): Argumente: '%s'.", StartInfo.Arguments))
+                Logger.LogDebug(StringUtils.Sprintf("StartEditor(): Auszuführende Datei: '%s'.", StartInfo.FileName))
+                Logger.LogDebug(StringUtils.Sprintf("StartEditor(): Argumente: '%s'.", StartInfo.Arguments))
                 Logger.LogDebug(StringUtils.Sprintf("startEditor(): %s wird gestartet.", TargetEditor.ToDisplayString()))
                 
                 Using EditorProcess As System.Diagnostics.Process = System.Diagnostics.Process.Start(StartInfo)
@@ -432,7 +432,7 @@ Namespace Apps
              ''' <exception cref="System.IO.FileNotFoundException"> <paramref name="AbsoluteFilePath"/> hasn't been found. </exception>
             Public Shared Sub StartFile(ByVal AbsoluteFilePath As String)
                 
-                Logger.LogDebug(StringUtils.Sprintf("startFile(): zu startende Datei = '%s'.", AbsoluteFilePath))
+                Logger.LogDebug(StringUtils.Sprintf("StartFile(): zu startende Datei = '%s'.", AbsoluteFilePath))
                 
                 Using FileProcess As System.Diagnostics.Process = System.Diagnostics.Process.Start(AbsoluteFilePath)
                 End Using
@@ -879,7 +879,7 @@ Namespace Apps
                 Else
                     ' Arguments: all for Java and basic for jEdit.
                     'Arguments = "-ms128m -mx1024m -Dawt.useSystemAAFontSettings=on -Dsun.java2d.noddraw=true -jar """ & AppPathJEdit & """ -reuseview -background "
-                    Arguments = "-jar """ & AppPathJEdit & """ -reuseview -background "
+                    Arguments = "-Dfile.encoding=COMPAT --add-opens java.base/java.net=ALL-UNNAMED -jar """ & AppPathJEdit & """ -reuseview -background "
                             
                     ' Arguments: jEdit settings directory if needed.
                     if (JEDIT_SETTINGS.IsNotEmptyOrWhiteSpace()) Then
