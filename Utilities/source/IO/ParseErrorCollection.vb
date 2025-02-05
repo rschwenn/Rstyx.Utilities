@@ -338,7 +338,7 @@ Namespace IO
         
         #Region "Private Members"
             
-            ''' <summary> Creates a beanshell script for jEdit that shows max. 100..150 errors and warnings in jEdit's error list. </summary>
+            ''' <summary> Creates a beanshell script file for jEdit that shows max. 100..150 errors and warnings in jEdit's error list. </summary>
              ''' <returns> Full path to the created beanshell script. </returns>
             Private Function ToJeditBeanshell() As String
                 
@@ -360,22 +360,70 @@ Namespace IO
                     oBsh.WriteLine("// :mode=beanshell:")
                     oBsh.WriteLine("import errorlist.*;")
                     oBsh.WriteLine("")
+                    oBsh.WriteLine("// Globals")
+                    oBsh.WriteLine("final String scriptName = """ & String2Java(ScriptPath) & """;  // scriptPath isn't defined for startup script.")
+                    oBsh.WriteLine("final int MaxLoopCount  = 500000000;")
+                    oBsh.WriteLine("")
+                    oBsh.WriteLine("// Helper: Wait for jedit's last view. Returns true, if found.")
+                    oBsh.WriteLine("private boolean WaitForLastView(String scriptName, int MaxLoopCount) {")
+                    oBsh.WriteLine("  boolean success = true;")
+                    oBsh.WriteLine("  int LoopCount = 0;")
+                    oBsh.WriteLine("  Log.log(Log.MESSAGE, scriptName, scriptName + "": Waiting for last view..."");")
+                    oBsh.WriteLine("	while ((jEdit.getLastView() == null) && (LoopCount < MaxLoopCount)) {")
+                    oBsh.WriteLine("	  LoopCount ++;")
+                    oBsh.WriteLine("	}")
+                    oBsh.WriteLine("	if (jEdit.getLastView() != null) {")
+                    oBsh.WriteLine("	  Log.log(Log.MESSAGE, scriptName, scriptName + "": Got last view. LoopCount="" + LoopCount);")
+                    oBsh.WriteLine("	} else {  ")
+                    oBsh.WriteLine("	  success = false;")
+                    oBsh.WriteLine("	  Log.log(Log.MESSAGE, scriptName, scriptName + "": Didn't got last view. LoopCount="" + LoopCount);")
+                    oBsh.WriteLine("	}")
+                    oBsh.WriteLine("  return success;")
+                    oBsh.WriteLine("}")
+                    oBsh.WriteLine("")
+                    oBsh.WriteLine("// Helper: Wait for error-list plugin. Returns true, if found.")
+                    oBsh.WriteLine("private boolean WaitForErrorList(String scriptName, int MaxLoopCount) {")
+                    oBsh.WriteLine("  boolean success = true;")
+                    oBsh.WriteLine("  int LoopCount = 0;")
+                    oBsh.WriteLine("  Log.log(Log.MESSAGE, scriptName, scriptName + "": Waiting for ErrorList plugin..."");")
+                    oBsh.WriteLine("	while ((jEdit.getPlugin(""errorlist.ErrorListPlugin"") == null) && (LoopCount < MaxLoopCount)) {")
+                    oBsh.WriteLine("	  LoopCount ++;")
+                    oBsh.WriteLine("	}")
+                    oBsh.WriteLine("	if (jEdit.getPlugin(""errorlist.ErrorListPlugin"") != null) {")
+                    oBsh.WriteLine("	  Log.log(Log.MESSAGE, scriptName, scriptName + "": Found ErrorList plugin. LoopCount="" + LoopCount);")
+                    oBsh.WriteLine("	} else {  ")
+                    oBsh.WriteLine("	  success = false;")
+                    oBsh.WriteLine("	  Log.log(Log.MESSAGE, scriptName, scriptName + "": Didn't found ErrorList plugin. LoopCount="" + LoopCount);")
+                    oBsh.WriteLine("	}")
+                    oBsh.WriteLine("  return success;")
+                    oBsh.WriteLine("}")
+                    oBsh.WriteLine("")
+                    oBsh.WriteLine("")
                     oBsh.WriteLine("void addErrorToList() {")
                     oBsh.WriteLine("  ")
                     oBsh.WriteLine("  void run() {")
-                    oBsh.WriteLine("    // get a valid view at jedit's startup")
-                    oBsh.WriteLine("    view = jEdit.getLastView();")
-                    oBsh.WriteLine("    ")
-                    oBsh.WriteLine("    // clear list of errors via the action, that also can be invoked by keyed-in")
-                    oBsh.WriteLine("    // in the actionbar or by clicking the appropriate button.")
-                    oBsh.WriteLine("    jEdit.getAction(""error-list-clear"").invoke(view);")
-                    oBsh.WriteLine("    ")
-                    oBsh.WriteLine("    // Create and register DefaultErrorSource")
-                    oBsh.WriteLine("    DefaultErrorSource errsrc = new DefaultErrorSource(""Rstyx.Utilities.IO.ParseErrorCollection.ToJeditBeanshell"");")
-                    oBsh.WriteLine("    ErrorSource.registerErrorSource(errsrc);")
-                    oBsh.WriteLine("    ")
-                    oBsh.WriteLine("    ")
-                    oBsh.WriteLine("    // *********************************************************************************************")
+                    oBsh.WriteLine("    // preparations for startup script")
+                    oBsh.WriteLine("    boolean success = WaitForLastView(scriptName, MaxLoopCount) && WaitForErrorList(scriptName, MaxLoopCount);")
+                    oBsh.WriteLine("	  ")
+                    oBsh.WriteLine("    // ")
+                    oBsh.WriteLine("	  if (!success) {")
+                    oBsh.WriteLine("	    Log.log(Log.MESSAGE, scriptName, scriptName + "": failed."");")
+                    oBsh.WriteLine("	  } else {")
+                    oBsh.WriteLine("	    Log.log(Log.MESSAGE, scriptName, scriptName + "": working..."");")
+                    oBsh.WriteLine("	    ")
+                    oBsh.WriteLine("      // get a valid view at jedit's startup")
+                    oBsh.WriteLine("      view = jEdit.getLastView();")
+                    oBsh.WriteLine("      ")
+                    oBsh.WriteLine("      // open error-list dockable and clear list of errors by invoking actions.")
+                    oBsh.WriteLine("      jEdit.getAction(""error-list-clear"").invoke(view);")
+                    oBsh.WriteLine("      jEdit.getAction(""error-list"").invoke(view);")
+                    oBsh.WriteLine("      ")
+                    oBsh.WriteLine("      // Create and register DefaultErrorSource")
+                    oBsh.WriteLine("      DefaultErrorSource errsrc = new DefaultErrorSource(""Rstyx.Utilities.IO.ParseErrorCollection.ToJeditBeanshell"");")
+                    oBsh.WriteLine("      ErrorSource.registerErrorSource(errsrc);")
+                    oBsh.WriteLine("      ")
+                    oBsh.WriteLine("      ")
+                    oBsh.WriteLine("      // *********************************************************************************************")
                     
                     ' Body (variable).
                     For i As Integer = 0 To ItemCount - 1
@@ -389,23 +437,23 @@ Namespace IO
                             Msg        = oErr.Message.SplitLines()
                             
                             ' Create new error with main message.
-                            SourceText = StringUtils.Sprintf("    DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s  [Zeile %d]"");",
+                            SourceText = StringUtils.Sprintf("      DefaultErrorSource.DefaultError err = new DefaultErrorSource.DefaultError(errsrc, %s, ""%s"", %d, %d, %d, ""%s  [Zeile %d]"");",
                                          Level, SourcePath, oErr.LineNo - 1, oErr.StartColumn, oErr.EndColumn, String2Java(Msg(0)), oErr.LineNo)
                             oBsh.WriteLine(SourceText)
                             
                             ' Extra message lines.
                             For k As Integer = 1 To Msg.Length - 1
-                                oBsh.WriteLine(StringUtils.Sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
+                                oBsh.WriteLine(StringUtils.Sprintf("      err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                             Next
                             If (oErr.Hints IsNot Nothing) Then
                                 Msg = oErr.Hints.Split("\r?\n")
                                 For k As Integer = 0 To Msg.Length - 1
-                                    oBsh.WriteLine(StringUtils.Sprintf("    err.addExtraMessage(""%s"");", String2Java(Msg(k))))
+                                    oBsh.WriteLine(StringUtils.Sprintf("      err.addExtraMessage(""%s"");", String2Java(Msg(k))))
                                 Next
                             End If
                             
                             ' Commit newly created error to list.
-                            oBsh.WriteLine("    errsrc.addError(err);" & Environment.NewLine)
+                            oBsh.WriteLine("      errsrc.addError(err);" & Environment.NewLine)
                         End If
                     Next
 
@@ -415,20 +463,19 @@ Namespace IO
                     End If
                     
                     ' Footer.
-                    oBsh.WriteLine("    //*********************************************************************************************")
-                    oBsh.WriteLine("    ")
-                    oBsh.WriteLine("    ")
-                    oBsh.WriteLine("    // Do not unregister - so the errors stay deleteable by the errorlist plugin itself (see above)")
-                    oBsh.WriteLine("    // ErrorSource.unregisterErrorSource(errsrc);")
-                    oBsh.WriteLine("    errsrc = null;")
+                    oBsh.WriteLine("      //*********************************************************************************************")
+                    oBsh.WriteLine("      ")
+                    oBsh.WriteLine("      ")
+                    oBsh.WriteLine("      // Do not unregister - so the errors stay deleteable by the errorlist plugin itself (see above)")
+                    oBsh.WriteLine("      // ErrorSource.unregisterErrorSource(errsrc);")
+                    oBsh.WriteLine("      errsrc = null;")
+                    oBsh.WriteLine("      ")
+                    oBsh.WriteLine("	    Log.log(Log.MESSAGE, scriptName, scriptName + "": finished."");")
+                    oBsh.WriteLine("    }")
                     oBsh.WriteLine("  }")
                     oBsh.WriteLine("  ")
-                    oBsh.WriteLine("  // manage startup/nonstartup script")
-                    oBsh.WriteLine("  if (jEdit.getLastView() == null) {")
-                    oBsh.WriteLine("    VFSManager.runInAWTThread(this);")
-                    oBsh.WriteLine("  } else {")
-                    oBsh.WriteLine("    run();")
-                    oBsh.WriteLine("  }")
+                    oBsh.WriteLine("  // Run in background, since script should wait until jedit is ready to run it.")
+                    oBsh.WriteLine("  ThreadUtilities.runInBackground(this);")
                     oBsh.WriteLine("}")
                     oBsh.WriteLine("")
                     oBsh.WriteLine("addErrorToList();")
