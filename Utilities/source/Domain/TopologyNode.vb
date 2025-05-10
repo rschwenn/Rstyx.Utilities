@@ -36,38 +36,41 @@ Namespace Domain
              ''' DBAG full name schema: "12345678-12-1234-5"
              ''' See <see cref="DeriveFullName()"/> and <see cref="DeriveNameParts()"/>.
              ''' </remarks>
-            Public Property FullName()          As String
+            Public Property FullName()              As String
             
             ''' <summary> Operation point the node belogs to (name or numerical ID). May be <see langword="null"/>. </summary>
-            Public Property OperationPoint()    As String
+            Public Property OperationPoint()        As String
+            
+            ''' <summary> Description of the node's operation point (i.e. station name). May be <see langword="null"/>. </summary>
+            Public Property OperationPointDescr()   As String
             
             ''' <summary> Operation area the node belogs to. May be <see langword="null"/>. </summary>
-            Public Property OperationArea()     As String
+            Public Property OperationArea()         As String
             
             ''' <summary> Local name of the node (i.e. junction number). May be <see langword="null"/>. </summary>
-            Public Property LocalName()         As String
+            Public Property LocalName()             As String
             
             ''' <summary> TrackNode type. </summary>
-            Public Property Type()              As NodeType = NodeType.None
+            Public Property Type()                  As NodeType = NodeType.None
             
             ''' <summary> Description of the node (i.e. junction designation like 49-190-1:9). May be <see langword="null"/>. </summary>
-            Public Property Description()       As String
+            Public Property Description()           As String
             
             
             ''' <summary> Code (or shortcut title) of the node. May be <see langword="null"/>. </summary>
-            Public Property Code()              As String
+            Public Property Code()                  As String
             
             ''' <summary> Determines the coordinates system. May be <see langword="null"/>, if coordinates are unknown. </summary>
-            Public Property CoordSys()          As String
+            Public Property CoordSys()              As String
             
             ''' <summary> ID of underlying point. May be <see langword="null"/>. </summary>
-            Public Property PointID()           As String
+            Public Property PointID()               As String
             
             ''' <summary>  The easting coordinate in [m]. </summary>
-            Public Property Y()                 As Double = Double.NaN
+            Public Property Y()                     As Double = Double.NaN
             
             ''' <summary>  The northing coordinate in [m]. </summary>
-            Public Property X()                 As Double = Double.NaN
+            Public Property X()                     As Double = Double.NaN
            
         #End Region
            
@@ -104,7 +107,7 @@ Namespace Domain
             
             ''' <summary> Returns <see langword="true"/>, if both <see cref="FullName"/> and <see cref="LocalName"/> are <see langword="null"/> or empty or white space, otherwise <see langword="false"/>. </summary>
             Public Function IsEmpty() As Boolean 
-                Return (Me.FullName.IsEmptyOrWhiteSpace() AndAlso Me.LocalName.IsEmptyOrWhiteSpace())
+                Return (Me.OperationPoint.IsEmptyOrWhiteSpace() AndAlso Me.OperationArea.IsEmptyOrWhiteSpace() AndAlso Me.LocalName.IsEmptyOrWhiteSpace())
             End Function
             
             ''' <inheritdoc/>
