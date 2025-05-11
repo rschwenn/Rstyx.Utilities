@@ -524,8 +524,8 @@ Namespace Domain
              ''' <remarks>
              ''' <para>
              ''' The string attribute value will be converted into property value by "CType". 
-             ''' If the conversion fails, the attribute won't be removed from <see cref="Attributes"/>,
-             ''' and a warning will be logged.
+             ''' A String property value will be trimmed. 
+             ''' If the conversion fails, the attribute won't be removed from <see cref="Attributes"/>, and a warning will be logged.
              ''' </para>
              ''' <para>
              ''' Hint: At this time there is no way for the warnings to get into the <see cref="IO.GeoPointFile.ParseErrors"/>,
@@ -541,7 +541,7 @@ Namespace Domain
             
                     If (Me.Attributes.ContainsKey(AttributeName)) Then
                         
-                        Dim AttributeValue As String = Me.Attributes(AttributeName)
+                        Dim AttributeValue As String = Me.Attributes(AttributeName).Trim()
                         Try
                             If (AttributeValue.IsNotEmptyOrWhiteSpace()) Then
                                 Me.SetPropertyValue(PropertyPath, AttributeValue, BindingFlags.Public Or BindingFlags.Instance)
