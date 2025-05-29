@@ -106,8 +106,8 @@ Namespace Domain.IO
             
             #Region "Settings"
                 
-                ''' <summary> The distance between rails for determining cant (used for calculations). Defaults to 1.500. </summary>
-                Public Property CantBase() As Double = 1.500
+                ''' <summary> The distance between rails for determining cant (used for calculations). Defaults to <see cref="RailPair.DefaultCantBase"/> (usually 1.500). </summary>
+                Public Property CantBase() As Double = RailPair.DefaultCantBase
                 
                 ''' <summary> If <see langword="true"/> and no kilometer value is found, the station value will be used also as kilometer. Defaults to <see langword="true"/>. </summary>
                 Public Property StationAsKilometer() As Boolean = True

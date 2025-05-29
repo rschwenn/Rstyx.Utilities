@@ -73,13 +73,26 @@ Namespace Domain
             
         #End Region
         
-        #Region "Public Fields"
+        #Region "Public Shared Fields"
+            
+            ''' <summary> Default value for cant base (1.500). </summary>
+            Public Shared DefaultCantBase           As Double = 1.500
             
             ''' <summary> Default value for maximum cant deficiency (0.130). </summary>
-            Public Shared DefaultMaxCantDeficiency As Double = 0.130
+            Public Shared DefaultMaxCantDeficiency  As Double = 0.130
             
             ''' <summary> The minimum value for a valid speed. </summary>
-            Public Shared MinimumSpeed                    As Double = 5.0
+            Public Shared MinimumSpeed              As Double = 5.0
+            
+            ''' <summary> Determines the minimum value that will be accepted for cant base. </summary>
+            Public Shared MinimumCantBase           As Double = 0.1
+            
+            ''' <summary> A given cant lower than this value, will be snapped to Zero cant. </summary>
+            Public Shared CantZeroSnap              As Double = 0.0003
+            
+            ''' <summary> A given radius lower than this value will be snapped to infinity radius resp. tangent (with sign!). </summary>
+             ''' <remarks> Default is 50. This way an input radius lower than 100 will be rejected. </remarks>
+            Public Shared RadiusInfinitySnap        As Double = 50.0
             
         #End Region
         
@@ -106,20 +119,6 @@ Namespace Domain
                 Me.AddRule(UnknownConfigurationRule)
                 Me.AddRule(SpeedToSmallRule)
             End Sub
-            
-        #End Region
-        
-        #Region "Public Shared Fields"
-            
-            ''' <summary> Determines the minimum value that will be accepted for cant base. </summary>
-            Public Shared MinimumCantBase       As Double = 0.1
-            
-            ''' <summary> A given cant lower than this value, will be snapped to Zero cant. </summary>
-            Public Shared CantZeroSnap          As Double = 0.0003
-            
-            ''' <summary> A given radius lower than this value will be snapped to infinity radius resp. tangent (with sign!). </summary>
-             ''' <remarks> Default is 50. This way an input radius lower than 100 will be rejected. </remarks>
-            Public Shared RadiusInfinitySnap    As Double = 50.0
             
         #End Region
         

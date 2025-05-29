@@ -148,8 +148,8 @@ Namespace Domain
             
             
             ''' <inheritdoc/>
-            ''' <remarks> This value defaults to 1.500. </remarks>
-            Public Property CantBase()      As Double = 1.500 Implements IPointAtTrackGeometry.CantBase
+            ''' <remarks> This value defaults to <see cref="RailPair.DefaultCantBase"/> (usually 1.500). </remarks>
+            Public Property CantBase()      As Double = RailPair.DefaultCantBase Implements IPointAtTrackGeometry.CantBase
             
             ''' <inheritdoc/>
             Public Property Speed()         As Double = Double.NaN Implements IPointAtTrackGeometry.Speed
