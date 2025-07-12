@@ -1468,4 +1468,8 @@
   <data name="Message_Process_TopologyFromDbb2" xml:space="preserve">
     <value>Suche A- und E-Knoten für Engstellen ...</value>
   </data>
+  <data name="GeoPointFile_EditOptions_5" xml:space="preserve">
+    <value>              - u=xx als absolute Angabe interpretieren:  %s\n</value>
+    <comment>Yes|No: String</comment>
+  </data>
 </root>

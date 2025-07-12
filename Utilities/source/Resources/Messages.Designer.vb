@@ -1982,6 +1982,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die               - u=xx als absolute Angabe interpretieren:  %s\n ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property GeoPointFile_EditOptions_5() As String
+            Get
+                Return ResourceManager.GetString("GeoPointFile_EditOptions_5", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die   Optionen: - InfoText als iTrassen-Codierung erzeugen:  %s\n ähnelt.
         '''</summary>
         Public Shared ReadOnly Property GeoPointFile_OutputOptions_1() As String

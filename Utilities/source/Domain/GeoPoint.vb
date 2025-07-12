@@ -66,6 +66,9 @@ Namespace Domain
         ''' <summary> The <see cref="GeoPoint.Comment"/> should be parsed too, if <see cref="GeoPoint.Kind"/> is <c>None</c> after parsing <see cref="GeoPoint.Info"/>.</summary>
         ParseCommentToo = 8
         
+        ''' <summary> The classic (ambiguous) notation of actual cant in <see cref="GeoPoint.Info"/> (u=xx) should be treated as <see cref="GeoPoint.ActualCantAbs"/>. </summary>
+        TreatClassicCantNotationAsAbsolute = 16
+        
     End Enum
     
     ''' <summary> Point output options (i.e. for applying while writing to file). </summary>
@@ -964,7 +967,7 @@ Namespace Domain
                     Dim ParseCant     As Boolean = ((Me.Kind = GeoPointKind.None) OrElse ((Me.Kind = GeoPointKind.Rails) AndAlso IsUnknownCant))
                     
                     If (ParseCant) Then
-                        RetValue = Me.ParseInfoForActualCant(TryComment:=TryComment)
+                        RetValue = Me.ParseInfoForActualCant(Options.HasFlag(GeoPointEditOptions.TreatClassicCantNotationAsAbsolute), TryComment)
                     End If
                 End If
                 
@@ -1039,6 +1042,7 @@ Namespace Domain
             End Function
             
             ''' <summary> Parses actual cant from <see cref="GeoPoint.Info"/> property. </summary>
+             ''' <param name="TreatClassicCantNotationAsAbsolute"> If <see langword="true"/> classic (ambiguous) notation of actual cant in <see cref="GeoPoint.Info"/> (u=xx) will be treated as <see cref="GeoPoint.ActualCantAbs"/>. </param>
              ''' <param name="TryComment"> If <see langword="true"/> and no cant has been found in <see cref="GeoPoint.Info"/>, the <see cref="GeoPoint.Comment"/> will be parsed, too. </param>
              ''' <remarks>
              ''' <para>
@@ -1064,11 +1068,12 @@ Namespace Domain
              ''' </list>
              ''' </para>
              ''' </remarks>
-            Protected Function ParseInfoForActualCant(Optional TryComment As Boolean = False) As ParseInfoTextResult
+            Protected Function ParseInfoForActualCant(TreatClassicCantNotationAsAbsolute As Boolean, TryComment As Boolean) As ParseInfoTextResult
                 
                 Me.ActualCant    = Double.NaN
                 Me.ActualCantAbs = Double.NaN
                 
+                Dim ClassicU    As Double  = Double.NaN
                 Dim i           As Integer = 0
                 Dim SearchCount As Integer = If(TryComment, 2, 1)
                 Dim SearchText  As String  = Me.Info
@@ -1093,7 +1098,7 @@ Namespace Domain
                                     
                                     Select Case oMatch.Groups(1).Value.ToLower()
                                         Case "ueb":  Me.ActualCantAbs = -1 * CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
-                                        Case "u":    Me.ActualCant    =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
+                                        Case "u":    ClassicU         =      CDbl(oMatch.Groups(2).Value.Replace(" ", String.Empty)) / 1000
                                     End Select
                                     
                                     If (i = 1) Then
@@ -1104,6 +1109,17 @@ Namespace Domain
                                 End If
                             End If
                         Next
+
+                        ' Assign cant from classic notation (u=xx).
+                        If (Not Double.IsNaN(ClassicU)) Then
+                            If (TreatClassicCantNotationAsAbsolute) Then
+                                If (Double.IsNaN(Me.ActualCantAbs)) Then Me.ActualCantAbs = ClassicU
+                            Else
+                                Me.ActualCant = ClassicU
+                            End If
+                        End If
+
+                        ' Prepare search in comment.
                         If (i = 1) Then
                             Me.Info = SearchText
                         Else

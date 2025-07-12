@@ -165,6 +165,7 @@ Namespace Domain.IO
             Protected Function GetPointEditOptionsLogText() As String
                 Dim LogText As String
                 LogText  = Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_1, Me.EditOptions.HasFlag(GeoPointEditOptions.Parse_iTC).ToDisplayString())
+                LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_5, Me.EditOptions.HasFlag(GeoPointEditOptions.TreatClassicCantNotationAsAbsolute).ToDisplayString())
                 LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_2, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForActualCant).ToDisplayString())
                 LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_3, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseInfoForPointKind).ToDisplayString())
                 LogText &= Sprintf(Rstyx.Utilities.Resources.Messages.GeoPointFile_EditOptions_4, Me.EditOptions.HasFlag(GeoPointEditOptions.ParseCommentToo).ToDisplayString())

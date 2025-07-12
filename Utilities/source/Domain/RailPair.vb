@@ -434,7 +434,7 @@ Namespace Domain
             
             
             ''' <summary> Re-configures this RailPair based on a <see cref="GeoTcPoint"/>. </summary>
-             ''' <param name="PointGeometry">  The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
+             ''' <param name="PointGeometry"> The point which provides cant, cant base, radius and optionally vertical radius and speed. </param>
              ''' <remarks>
              ''' <para>
              ''' Besides the essential geometry properties (see <see cref="Reconfigure(Double, Double)"/>), this method changes also:

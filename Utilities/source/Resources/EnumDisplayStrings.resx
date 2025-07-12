@@ -816,4 +816,7 @@
   <data name="Rstyx_Utilities_Domain_NodeType_Crossing" xml:space="preserve">
     <value>Kreuzung</value>
   </data>
+  <data name="Rstyx_Utilities_Domain_GeoPointEditOptions_TreatClassicCantNotationAsAbsolute" xml:space="preserve">
+    <value>Klassische Notation u=xx als absolute Angabe interpretieren</value>
+  </data>
 </root>

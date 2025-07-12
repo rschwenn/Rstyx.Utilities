@@ -1285,6 +1285,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Klassische Notation u=xx als absolute Angabe interpretieren ähnelt.
+        '''</summary>
+        Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointEditOptions_TreatClassicCantNotationAsAbsolute() As String
+            Get
+                Return ResourceManager.GetString("Rstyx_Utilities_Domain_GeoPointEditOptions_TreatClassicCantNotationAsAbsolute", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Festpunkt ähnelt.
         '''</summary>
         Friend ReadOnly Property Rstyx_Utilities_Domain_GeoPointKind_FixPoint() As String
