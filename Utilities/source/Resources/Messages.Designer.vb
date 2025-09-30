@@ -875,6 +875,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attributcode1 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_AT1() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_AT1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attributcode2 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_AT2() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_AT2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 1 Name ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_AttKey1() As String
@@ -893,6 +911,24 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut1 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Attribut1() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Attribut1", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Attribut2 ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Attribut2() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Attribut2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Attribut 1 Wert ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_AttValue1() As String
@@ -907,6 +943,15 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_AttValue2() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_AttValue2", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Berechnungscode ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_BC() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_BC", resourceCulture)
             End Get
         End Property
         
@@ -965,6 +1010,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Flags ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_FL() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_FL", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Kennzeichen ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_Flags() As String
@@ -988,6 +1042,51 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_G() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_G", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grafikcode ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GC() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GC", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grafik-Dimension ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GDim() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GDim", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Grafik-Exzentrum ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GExz() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GExz", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gewicht Höhe ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GH() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GH", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Gewicht Lage ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_GL() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_GL", resourceCulture)
             End Get
         End Property
         
@@ -1145,6 +1244,15 @@ Namespace Resources
         End Property
         
         '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Koordinatensystem ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_KS() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_KS", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Sucht eine lokalisierte Zeichenfolge, die Abwicklungsmass (Tunnelprofil) ähnelt.
         '''</summary>
         Public Shared ReadOnly Property Domain_Label_L() As String
@@ -1213,6 +1321,15 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_ObjectKey() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_ObjectKey", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Objektschlüssel ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_OS() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_OS", resourceCulture)
             End Get
         End Property
         
@@ -1528,6 +1645,15 @@ Namespace Resources
         Public Shared ReadOnly Property Domain_Label_ZDGM() As String
             Get
                 Return ResourceManager.GetString("Domain_Label_ZDGM", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Sucht eine lokalisierte Zeichenfolge, die Zeitstempel ähnelt.
+        '''</summary>
+        Public Shared ReadOnly Property Domain_Label_Zeitstempel() As String
+            Get
+                Return ResourceManager.GetString("Domain_Label_Zeitstempel", resourceCulture)
             End Get
         End Property
         

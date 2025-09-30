@@ -91,7 +91,7 @@ Namespace Domain
             Public Shared CantZeroSnap              As Double = 0.0003
             
             ''' <summary> A given radius lower than this value will be snapped to infinity radius resp. tangent (with sign!). </summary>
-             ''' <remarks> Default is 50. This way an input radius lower than 100 will be rejected. </remarks>
+             ''' <remarks> Default is 50. This way an input radius lower than 50 will be rejected. </remarks>
             Public Shared RadiusInfinitySnap        As Double = 50.0
             
         #End Region

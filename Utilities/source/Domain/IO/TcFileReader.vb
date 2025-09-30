@@ -871,88 +871,120 @@ Namespace Domain.IO
                  ''' </remarks>
                 Public Sub New(InitIgnore As Boolean)
                     If (InitIgnore) Then
-                        Me.ID       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.Ignore, 99, 99)
-                        Me.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.St       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.Ignore, 99, 99)
-                        Me.Km       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.Ignore, 99, 99)
-                        Me.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.QG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.HG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.UebL     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.UebR     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.Ueb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.Ignore, 99, 99)
-                        Me.Heb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.Ignore, 99, 99)
-                        Me.G        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.Ri       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.Ra       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.V        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.R        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.L        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.Ignore, 99, 99)
-                        Me.HDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.ZDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.Tm       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.RaLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RaLGS,    DataFieldPositionType.Ignore, 99, 99)
-                        Me.AbLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_AbLGS,    DataFieldPositionType.Ignore, 99, 99)
-                        Me.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.Ignore, 99, 99)
-                        Me.HGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.Ignore, 99, 99)
-                        Me.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.Ignore, 99, 99)
-                        Me.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.Ignore, 99, 99)
-                        Me.YA       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_YA,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.XA       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_XA,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.ZA       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZA,       DataFieldPositionType.Ignore, 99, 99)
-                        Me.MiniR    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniR,    DataFieldPositionType.Ignore, 99, 99)
-                        Me.MiniUeb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniUeb,  DataFieldPositionType.Ignore, 99, 99)
-                        Me.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.Ignore, 99, 99)
-                        Me.KmText   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.Ignore, 99, 99)
-                        Me.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.Ignore, 99, 99)
-                        Me.FreeData = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment,  DataFieldPositionType.Ignore, 99, 99)
+                        Me.ID           = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.Ignore, 99, 99)
+                        Me.Y            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.X            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.Z            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.St           = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.Ignore, 99, 99)
+                        Me.Km           = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.Ignore, 99, 99)
+                        Me.Q            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.H            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.HSOK         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.QG           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.HG           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.UebL         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.UebR         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.Ueb          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.Heb          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.G            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.Ri           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.Ra           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.V            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.R            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.L            = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.Ignore, 99, 99)
+                        Me.HDGM         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.ZDGM         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.Tm           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.QT           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.ZSOK         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.ZLGS         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.Ignore, 99, 99)
+                        Me.RaLGS        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RaLGS,    DataFieldPositionType.Ignore, 99, 99)
+                        Me.AbLGS        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_AbLGS,    DataFieldPositionType.Ignore, 99, 99)
+                        Me.RG           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.LG           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.QGT          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.HGT          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.QGS          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.HGS          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.Ignore, 99, 99)
+                        Me.YA           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_YA,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.XA           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_XA,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.ZA           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZA,       DataFieldPositionType.Ignore, 99, 99)
+                        Me.MiniR        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniR,    DataFieldPositionType.Ignore, 99, 99)
+                        Me.MiniUeb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniUeb,  DataFieldPositionType.Ignore, 99, 99)
+                        Me.KmStatus     = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.Ignore, 99, 99)
+                        Me.KmText       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.Ignore, 99, 99)
+
+                        Me.BC           = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_BC         , DataFieldPositionType.Ignore, 99, 99)
+                        Me.OS           = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_OS         , DataFieldPositionType.Ignore, 99, 99)
+                        Me.GC           = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_GC         , DataFieldPositionType.Ignore, 99, 99)
+                        Me.GDim         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GDim       , DataFieldPositionType.Ignore, 99, 99)
+                        Me.GExz         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GExz       , DataFieldPositionType.Ignore, 99, 99)
+                        Me.Zeitstempel  = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Zeitstempel, DataFieldPositionType.Ignore, 99, 99)
+                        Me.FL           = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_FL         , DataFieldPositionType.Ignore, 99, 99)
+                        Me.GL           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GL         , DataFieldPositionType.Ignore, 99, 99)
+                        Me.GH           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GH         , DataFieldPositionType.Ignore, 99, 99)
+                        Me.AT1          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_AT1        , DataFieldPositionType.Ignore, 99, 99)
+                        Me.Attribut1    = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Attribut1  , DataFieldPositionType.Ignore, 99, 99) 
+                        Me.AT2          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_AT2        , DataFieldPositionType.Ignore, 99, 99)
+                        Me.Attribut2    = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Attribut2  , DataFieldPositionType.Ignore, 99, 99) 
+                        Me.KS           = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KS         , DataFieldPositionType.Ignore, 99, 99)
+                
+                        Me.Text         = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text       , DataFieldPositionType.Ignore, 99, 99)
+                        Me.FreeData     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Comment    , DataFieldPositionType.Ignore, 99, 99)
                     End If
                 End Sub
                 
                 Public Delimiter As Char = " "c
                 Public LineEndCommentToken As String = Nothing
                 
-                Public KmStatus As DataFieldDefinition(Of KilometerStatus)
-                Public KmText   As DataFieldDefinition(Of String)
-                Public H        As DataFieldDefinition(Of Double)
-                Public QG       As DataFieldDefinition(Of Double)
-                Public HG       As DataFieldDefinition(Of Double)
-                Public UebL     As DataFieldDefinition(Of Double)
-                Public UebR     As DataFieldDefinition(Of Double)
-                Public Heb      As DataFieldDefinition(Of Double)
-                Public G        As DataFieldDefinition(Of Double)
-                Public V        As DataFieldDefinition(Of Double)
-                Public R        As DataFieldDefinition(Of Double)
-                Public L        As DataFieldDefinition(Of Double)
-                Public HDGM     As DataFieldDefinition(Of Double)
-                Public ZDGM     As DataFieldDefinition(Of Double)
-                Public Tm       As DataFieldDefinition(Of Double)
-                Public QT       As DataFieldDefinition(Of Double)
-                Public LG       As DataFieldDefinition(Of Double)
-                Public RG       As DataFieldDefinition(Of Double)
-                Public QGT      As DataFieldDefinition(Of Double)
-                Public HGT      As DataFieldDefinition(Of Double)
-                Public QGS      As DataFieldDefinition(Of Double)
-                Public HGS      As DataFieldDefinition(Of Double)
-                Public ZLGS     As DataFieldDefinition(Of Double)
-                Public RaLGS    As DataFieldDefinition(Of Double)
-                Public AbLGS    As DataFieldDefinition(Of Double)
-                Public YA       As DataFieldDefinition(Of Double)
-                Public XA       As DataFieldDefinition(Of Double)
-                Public ZA       As DataFieldDefinition(Of Double)
-                Public MiniR    As DataFieldDefinition(Of Double)
-                Public MiniUeb  As DataFieldDefinition(Of Double)
-                Public Text     As DataFieldDefinition(Of String)
-                Public FreeData As DataFieldDefinition(Of String)
+                Public KmStatus     As DataFieldDefinition(Of KilometerStatus)
+                Public KmText       As DataFieldDefinition(Of String)
+                Public H            As DataFieldDefinition(Of Double)
+                Public QG           As DataFieldDefinition(Of Double)
+                Public HG           As DataFieldDefinition(Of Double)
+                Public UebL         As DataFieldDefinition(Of Double)
+                Public UebR         As DataFieldDefinition(Of Double)
+                Public Heb          As DataFieldDefinition(Of Double)
+                Public G            As DataFieldDefinition(Of Double)
+                Public V            As DataFieldDefinition(Of Double)
+                Public R            As DataFieldDefinition(Of Double)
+                Public L            As DataFieldDefinition(Of Double)
+                Public HDGM         As DataFieldDefinition(Of Double)
+                Public ZDGM         As DataFieldDefinition(Of Double)
+                Public Tm           As DataFieldDefinition(Of Double)
+                Public QT           As DataFieldDefinition(Of Double)
+                Public LG           As DataFieldDefinition(Of Double)
+                Public RG           As DataFieldDefinition(Of Double)
+                Public QGT          As DataFieldDefinition(Of Double)
+                Public HGT          As DataFieldDefinition(Of Double)
+                Public QGS          As DataFieldDefinition(Of Double)
+                Public HGS          As DataFieldDefinition(Of Double)
+                Public ZLGS         As DataFieldDefinition(Of Double)
+                Public RaLGS        As DataFieldDefinition(Of Double)
+                Public AbLGS        As DataFieldDefinition(Of Double)
+                Public YA           As DataFieldDefinition(Of Double)
+                Public XA           As DataFieldDefinition(Of Double)
+                Public ZA           As DataFieldDefinition(Of Double)
+                Public MiniR        As DataFieldDefinition(Of Double)
+                Public MiniUeb      As DataFieldDefinition(Of Double)
+
+                Public BC           As DataFieldDefinition(Of String)
+                Public OS           As DataFieldDefinition(Of String)
+                Public GC           As DataFieldDefinition(Of String)
+                Public GDim         As DataFieldDefinition(Of Double)
+                Public GExz         As DataFieldDefinition(Of Double)
+                Public Zeitstempel  As DataFieldDefinition(Of String)
+                Public FL           As DataFieldDefinition(Of String)
+                Public GL           As DataFieldDefinition(Of Double)
+                Public GH           As DataFieldDefinition(Of Double)
+                Public AT1          As DataFieldDefinition(Of String)
+                Public Attribut1    As DataFieldDefinition(Of String) 
+                Public AT2          As DataFieldDefinition(Of String)
+                Public Attribut2    As DataFieldDefinition(Of String) 
+                Public KS           As DataFieldDefinition(Of String)
+                
+                Public Text         As DataFieldDefinition(Of String)
+                Public FreeData     As DataFieldDefinition(Of String)
             End Class
             
             ''' <summary> Definition of a Verm.esn TC source record. </summary>
@@ -1086,53 +1118,70 @@ Namespace Domain.IO
                             
                             Dim FieldName As String = Trim(FieldNames(i - 1))
                             
-                            ' A0: PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | KmText | RaLGS | AbLGS | YA | XA | ZA  | MiniR | MiniUeb | STB1 | STB2 | STB3 | STB4 | STB5 | STB6 | STB7 | STB8 | STB9 | Text | Kommentar
+                            ' A0: PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | KmText | RaLGS | AbLGS | YA | XA | ZA | MiniR | MiniUeb | STB1 | STB2 | STB3 | STB4 | STB5 | STB6 | STB7 | STB8 | STB9 | Text | Kommentar
+                            ' A0: PktNr | Y | X | Z | St | Km | Q | H | HSOK | QG | HG | UebLi | UebRe | Ueb | Heb | G | Ri | Ra | V | R | L | HDGM | ZDGM | Tm | QT | ZSOK | ZLGS | RG | LG | QGT | HGT | QGS | HGS | KmStatus | KmText | RaLGS | AbLGS | YA | XA | ZA | MiniR | MiniUeb | STB1 | STB2 | STB3 | STB4 | STB5 | STB6 | STB7 | STB8 | STB9 | BC | OS | GC | GDim | GExz | Zeitstempel | FL | GL | GH | AT1| Attribut1 | AT2| Attribut2 | KS | Text | Kommentar
                             
                             Select Case FieldName
-                                Case "PktNr"     : RecordDef.ID       = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.WordNumber, i, 0)
-                                Case "Y"         : RecordDef.Y        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "X"         : RecordDef.X        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "Z"         : RecordDef.Z        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "St"        : RecordDef.St       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.WordNumber, i, 0)
-                                Case "Km"        : RecordDef.Km       = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.WordNumber, i, 0)
-                                Case "Q"         : RecordDef.Q        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "H"         : RecordDef.H        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "HSOK"      : RecordDef.HSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.WordNumber, i, 0)
-                                Case "QG"        : RecordDef.QG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "HG"        : RecordDef.HG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "UebLi"     : RecordDef.UebL     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.WordNumber, i, 0)
-                                Case "UebRe"     : RecordDef.UebR     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.WordNumber, i, 0)
-                                Case "Ueb"       : RecordDef.Ueb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.WordNumber, i, 0)
-                                Case "Heb"       : RecordDef.Heb      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.WordNumber, i, 0)
-                                Case "G"         : RecordDef.G        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "Ri"        : RecordDef.Ri       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "Ra"        : RecordDef.Ra       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "V"         : RecordDef.V        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "R"         : RecordDef.R        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "L"         : RecordDef.L        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.WordNumber, i, 0)
-                                Case "HDGM"      : RecordDef.HDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.WordNumber, i, 0)
-                                Case "ZDGM"      : RecordDef.ZDGM     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.WordNumber, i, 0)
-                                Case "Tm"        : RecordDef.Tm       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "QT"        : RecordDef.QT       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "ZSOK"      : RecordDef.ZSOK     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.WordNumber, i, 0)
-                                Case "ZLGS"      : RecordDef.ZLGS     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.WordNumber, i, 0)
-                                Case "RaLGS"     : RecordDef.RaLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RaLGS,    DataFieldPositionType.WordNumber, i, 0)
-                                Case "AbLGS"     : RecordDef.AbLGS    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_AbLGS,    DataFieldPositionType.WordNumber, i, 0)
-                                Case "RG"        : RecordDef.RG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "LG"        : RecordDef.LG       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "QGT"       : RecordDef.QGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.WordNumber, i, 0)
-                                Case "HGT"       : RecordDef.HGT      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.WordNumber, i, 0)
-                                Case "QGS"       : RecordDef.QGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.WordNumber, i, 0)
-                                Case "HGS"       : RecordDef.HGS      = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.WordNumber, i, 0)
-                                Case "YA"        : RecordDef.YA       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_YA,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "XA"        : RecordDef.XA       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_XA,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "ZA"        : RecordDef.ZA       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZA,       DataFieldPositionType.WordNumber, i, 0)
-                                Case "MiniR"     : RecordDef.MiniR    = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniR,    DataFieldPositionType.WordNumber, i, 0)
-                                Case "MiniUeb"   : RecordDef.MiniUeb  = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniUeb,  DataFieldPositionType.WordNumber, i, 0)
-                                Case "KmStatus"  : RecordDef.KmStatus = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.WordNumber, i, 0)
-                                Case "KmText"    : RecordDef.KmText   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
-                                Case "Text"      : RecordDef.Text     = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text,     DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
-                                Case "Kommentar" : RecordDef.FreeData = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_FreeData, DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                                Case "PktNr"        : RecordDef.ID          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_PointID,  DataFieldPositionType.WordNumber, i, 0)
+                                Case "Y"            : RecordDef.Y           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Y,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "X"            : RecordDef.X           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_X,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "Z"            : RecordDef.Z           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Z,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "St"           : RecordDef.St          = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_St,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "Km"           : RecordDef.Km          = New DataFieldDefinition(Of Kilometer)(Rstyx.Utilities.Resources.Messages.Domain_Label_Km,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "Q"            : RecordDef.Q           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Q,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "H"            : RecordDef.H           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_H,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "HSOK"         : RecordDef.HSOK        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HSOK,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "QG"           : RecordDef.QG          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "HG"           : RecordDef.HG          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "UebLi"        : RecordDef.UebL        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebL,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "UebRe"        : RecordDef.UebR        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_UebR,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "Ueb"          : RecordDef.Ueb         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ueb,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "Heb"          : RecordDef.Heb         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Heb,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "G"            : RecordDef.G           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_G,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "Ri"           : RecordDef.Ri          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ri,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "Ra"           : RecordDef.Ra          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Ra,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "V"            : RecordDef.V           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_V,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "R"            : RecordDef.R           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_R,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "L"            : RecordDef.L           = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_L,        DataFieldPositionType.WordNumber, i, 0)
+                                Case "HDGM"         : RecordDef.HDGM        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HDGM,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "ZDGM"         : RecordDef.ZDGM        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZDGM,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "Tm"           : RecordDef.Tm          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_Tm,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "QT"           : RecordDef.QT          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QT,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "ZSOK"         : RecordDef.ZSOK        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZSOK,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "ZLGS"         : RecordDef.ZLGS        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZLGS,     DataFieldPositionType.WordNumber, i, 0)
+                                Case "RaLGS"        : RecordDef.RaLGS       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RaLGS,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "AbLGS"        : RecordDef.AbLGS       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_AbLGS,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "RG"           : RecordDef.RG          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_RG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "LG"           : RecordDef.LG          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_LG,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "QGT"          : RecordDef.QGT         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGT,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "HGT"          : RecordDef.HGT         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGT,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "QGS"          : RecordDef.QGS         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_QGS,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "HGS"          : RecordDef.HGS         = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_HGS,      DataFieldPositionType.WordNumber, i, 0)
+                                Case "YA"           : RecordDef.YA          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_YA,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "XA"           : RecordDef.XA          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_XA,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "ZA"           : RecordDef.ZA          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_ZA,       DataFieldPositionType.WordNumber, i, 0)
+                                Case "MiniR"        : RecordDef.MiniR       = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniR,    DataFieldPositionType.WordNumber, i, 0)
+                                Case "MiniUeb"      : RecordDef.MiniUeb     = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_MiniUeb,  DataFieldPositionType.WordNumber, i, 0)
+                                Case "KmStatus"     : RecordDef.KmStatus    = New DataFieldDefinition(Of KilometerStatus)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmStatus, DataFieldPositionType.WordNumber, i, 0)
+                                Case "KmText"       : RecordDef.KmText      = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KmText,   DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+
+                                Case "BC"           : RecordDef.BC          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_BC         , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                                Case "OS"           : RecordDef.OS          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_OS         , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                                Case "GC"           : RecordDef.GC          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_GC         , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                                Case "GDim"         : RecordDef.GDim        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GDim       , DataFieldPositionType.WordNumber, i, 0)
+                                Case "GExz"         : RecordDef.GExz        = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GExz       , DataFieldPositionType.WordNumber, i, 0)
+                                Case "Zeitstempel"  : RecordDef.Zeitstempel = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Zeitstempel, DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                                Case "FL"           : RecordDef.FL          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_FL         , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                                Case "GL"           : RecordDef.GL          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GL         , DataFieldPositionType.WordNumber, i, 0)
+                                Case "GH"           : RecordDef.GH          = New DataFieldDefinition(Of Double)(Rstyx.Utilities.Resources.Messages.Domain_Label_GH         , DataFieldPositionType.WordNumber, i, 0)
+                                Case "AT1"          : RecordDef.AT1         = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_AT1        , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                                Case "Attribut1"    : RecordDef.Attribut1   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Attribut1  , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd) 
+                                Case "AT2"          : RecordDef.AT2         = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_AT2        , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+                                Case "Attribut2"    : RecordDef.Attribut2   = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Attribut2  , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd) 
+                                Case "KS"           : RecordDef.KS          = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_KS         , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.Trim)
+
+                                Case "Text"         : RecordDef.Text        = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_Text       , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
+                                Case "Kommentar"    : RecordDef.FreeData    = New DataFieldDefinition(Of String)(Rstyx.Utilities.Resources.Messages.Domain_Label_FreeData   , DataFieldPositionType.WordNumber, i, 0, DataFieldOptions.NotRequired + DataFieldOptions.TrimEnd)
                             End Select
                         Next
                         
@@ -1393,75 +1442,103 @@ Namespace Domain.IO
                                     
                                     Dim p       As New GeoTcPoint()
                                     Dim IpktAux As GeoIPoint
+                                    Dim TcAux   As GeoTcPoint
                                     
                                     ' ID
                                     FieldID = DataLine.ParseField(RecDef.ID) 
                                     p.ID    = FieldID.Value
                                     
                                     ' Cartesian coordinates.
-                                    Dim FieldY As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
-                                    Dim FieldX As DataField(Of Double) = DataLine.ParseField(RecDef.X)
-                                    Dim FieldZ As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
+                                    Dim FieldY    As DataField(Of Double) = DataLine.ParseField(RecDef.Y)
+                                    Dim FieldX    As DataField(Of Double) = DataLine.ParseField(RecDef.X)
+                                    Dim FieldZ    As DataField(Of Double) = DataLine.ParseField(RecDef.Z)
+                                    Dim FieldTime As DataField(Of String) = DataLine.ParseField(RecDef.Zeitstempel)
                                     
-                                    p.Y       = FieldY.Value
-                                    p.X       = FieldX.Value
-                                    p.Z       = FieldZ.Value
+                                    p.Y         = FieldY.Value
+                                    p.X         = FieldX.Value
+                                    p.Z         = FieldZ.Value
+                                    p.wp        = DataLine.ParseField(RecDef.GL).Value
+                                    p.wh        = DataLine.ParseField(RecDef.GH).Value
+                                    p.CoordSys  = DataLine.ParseField(RecDef.KS).Value
+
+                                    ' Object key: Remove leading zero's if integer.
+                                    Dim KeyText As String = DataLine.ParseField(RecDef.OS).Value
+                                    Dim KeyInt  As Integer
+                                    If (Integer.TryParse(KeyText, KeyInt)) Then KeyText = KeyInt.ToString()
+                                    If (KeyText = "0") Then KeyText = String.Empty
+                                    p.ObjectKey = KeyText
                                     
-                                    ' Track   values.
-                                    p.St      = DataLine.ParseField(RecDef.St).Value
-                                    p.Km      = DataLine.ParseField(RecDef.Km).Value
-                                    p.Q       = DataLine.ParseField(RecDef.Q).Value
-                                    p.H       = DataLine.ParseField(RecDef.H).Value
-                                    p.HSOK    = DataLine.ParseField(RecDef.HSOK).Value
+                                    ' Track values.
+                                    p.St        = DataLine.ParseField(RecDef.St).Value
+                                    p.Km        = DataLine.ParseField(RecDef.Km).Value
+                                    p.Q         = DataLine.ParseField(RecDef.Q).Value
+                                    p.H         = DataLine.ParseField(RecDef.H).Value
+                                    p.HSOK      = DataLine.ParseField(RecDef.HSOK).Value
                                     
-                                    p.QG      = DataLine.ParseField(RecDef.QG).Value
-                                    p.HG      = DataLine.ParseField(RecDef.HG).Value
+                                    p.QG        = DataLine.ParseField(RecDef.QG).Value
+                                    p.HG        = DataLine.ParseField(RecDef.HG).Value
                                     
-                                    UebL      = DataLine.ParseField(RecDef.UebL).Value
-                                    UebR      = DataLine.ParseField(RecDef.UebR).Value
-                                    p.Ueb     = DataLine.ParseField(RecDef.Ueb).Value
-                                    p.Heb     = DataLine.ParseField(RecDef.Heb).Value
+                                    UebL        = DataLine.ParseField(RecDef.UebL).Value
+                                    UebR        = DataLine.ParseField(RecDef.UebR).Value
+                                    p.Ueb       = DataLine.ParseField(RecDef.Ueb).Value
+                                    p.Heb       = DataLine.ParseField(RecDef.Heb).Value
                                     
-                                    p.G       = DataLine.ParseField(RecDef.G).Value
-                                    p.Ra      = DataLine.ParseField(RecDef.Ra).Value
-                                    p.Ri      = DataLine.ParseField(RecDef.Ri).Value
-                                    p.Ri      = Math.MathUtils.NormalizeRadiant(p.Ri)
+                                    p.G         = DataLine.ParseField(RecDef.G).Value
+                                    p.Ra        = DataLine.ParseField(RecDef.Ra).Value
+                                    p.Ri        = DataLine.ParseField(RecDef.Ri).Value
+                                    p.Ri        = Math.MathUtils.NormalizeRadiant(p.Ri)
                                     
-                                    p.V       = DataLine.ParseField(RecDef.V).Value
-                                    p.R       = DataLine.ParseField(RecDef.R).Value
-                                    p.L       = DataLine.ParseField(RecDef.L).Value
+                                    p.V         = DataLine.ParseField(RecDef.V).Value
+                                    p.R         = DataLine.ParseField(RecDef.R).Value
+                                    p.L         = DataLine.ParseField(RecDef.L).Value
                                     
-                                    p.HDGM    = DataLine.ParseField(RecDef.HDGM).Value
-                                    p.ZDGM    = DataLine.ParseField(RecDef.ZDGM).Value
+                                    p.HDGM      = DataLine.ParseField(RecDef.HDGM).Value
+                                    p.ZDGM      = DataLine.ParseField(RecDef.ZDGM).Value
                                     
-                                    p.Tm      = DataLine.ParseField(RecDef.Tm).Value
-                                    p.QT      = DataLine.ParseField(RecDef.QT).Value
+                                    p.Tm        = DataLine.ParseField(RecDef.Tm).Value
+                                    p.QT        = DataLine.ParseField(RecDef.QT).Value
                                     
-                                    p.ZSOK    = DataLine.ParseField(RecDef.ZSOK).Value
-                                    p.ZLGS    = DataLine.ParseField(RecDef.ZLGS).Value
-                                    p.RaLGS   = DataLine.ParseField(RecDef.RaLGS).Value
-                                    p.AbLGS   = DataLine.ParseField(RecDef.AbLGS).Value
+                                    p.ZSOK      = DataLine.ParseField(RecDef.ZSOK).Value
+                                    p.ZLGS      = DataLine.ParseField(RecDef.ZLGS).Value
+                                    p.RaLGS     = DataLine.ParseField(RecDef.RaLGS).Value
+                                    p.AbLGS     = DataLine.ParseField(RecDef.AbLGS).Value
                                     
-                                    p.RG      = DataLine.ParseField(RecDef.RG).Value
-                                    p.LG      = DataLine.ParseField(RecDef.LG).Value
-                                    p.QGT     = DataLine.ParseField(RecDef.QGT).Value
-                                    p.HGT     = DataLine.ParseField(RecDef.HGT).Value
-                                    p.QGS     = DataLine.ParseField(RecDef.QGS).Value
-                                    p.HGS     = DataLine.ParseField(RecDef.HGS).Value
+                                    p.RG        = DataLine.ParseField(RecDef.RG).Value
+                                    p.LG        = DataLine.ParseField(RecDef.LG).Value
+                                    p.QGT       = DataLine.ParseField(RecDef.QGT).Value
+                                    p.HGT       = DataLine.ParseField(RecDef.HGT).Value
+                                    p.QGS       = DataLine.ParseField(RecDef.QGS).Value
+                                    p.HGS       = DataLine.ParseField(RecDef.HGS).Value
                                     
-                                    p.YA      = DataLine.ParseField(RecDef.YA).Value
-                                    p.XA      = DataLine.ParseField(RecDef.XA).Value
-                                    p.ZA      = DataLine.ParseField(RecDef.ZA).Value
+                                    p.YA        = DataLine.ParseField(RecDef.YA).Value
+                                    p.XA        = DataLine.ParseField(RecDef.XA).Value
+                                    p.ZA        = DataLine.ParseField(RecDef.ZA).Value
                                     
-                                    p.MiniR   = DataLine.ParseField(RecDef.MiniR).Value
-                                    p.MiniUeb = DataLine.ParseField(RecDef.MiniUeb).Value
-                                    
+                                    p.MiniR     = DataLine.ParseField(RecDef.MiniR).Value
+                                    p.MiniUeb   = DataLine.ParseField(RecDef.MiniUeb).Value
+
                                     p.CantBase = Me.CantBase
                                     p.TrackRef = Block.TrackRef
 
                                     ' Source info, neccessary for creating ParseError in point parsing methods.
                                     p.SourcePath   = Block.Source.FilePath
                                     p.SourceLineNo = DataLine.SourceLineNo
+                        
+                                    ' Parse time stamp if given (DataLine.ParseField is unable to do it).
+                                    If (FieldTime.Value.IsNotEmptyOrWhiteSpace()) Then
+                                        Dim TimeStamp As DateTime
+                                        Dim success   As Boolean = DateTime.TryParseExact(FieldTime.Value, "s", Nothing, Globalization.DateTimeStyles.None, TimeStamp)
+                                        If (success) Then
+                                            p.TimeStamp = TimeStamp
+                                        Else
+                                            Throw New ParseException(ParseError.Create(ParseErrorLevel.[Error],
+                                                                                       DataLine.SourceLineNo,
+                                                                                       FieldTime,
+                                                                                       Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_InvalidFieldNotTimeStamp, FieldTime.Definition.Caption, FieldTime.Value),
+                                                                                       Sprintf(Rstyx.Utilities.Resources.Messages.iPktFile_HintValidTimeStampFormat, "2012-04-11T15:23:01"),
+                                                                                       Me.FilePath))
+                                        End If
+                                    End If
                                     
                                     ' Kilometer: Text and Status.
                                     Dim KmStat As KilometerStatus = DataLine.ParseField(RecDef.KmStatus).Value
@@ -1517,6 +1594,19 @@ Namespace Domain.IO
                                     p.Kind          = IpktAux.Kind
                                     p.KindText      = IpktAux.KindText
                                     p.MarkType      = IpktAux.MarkType
+
+                                    ' GeoIPoint specific values -> Save as attributes.
+                                    IpktAux.CalcCode    = DataLine.ParseField(RecDef.BC).Value
+                                    IpktAux.GraficsCode = DataLine.ParseField(RecDef.GC).Value
+                                    IpktAux.GraficsDim  = DataLine.ParseField(RecDef.GDim).Value
+                                    IpktAux.GraficsEcc  = DataLine.ParseField(RecDef.GExz).Value
+                                    IpktAux.Flags       = DataLine.ParseField(RecDef.FL).Value
+                                    IpktAux.AttKey1     = DataLine.ParseField(RecDef.AT1).Value
+                                    IpktAux.AttValue1   = DataLine.ParseField(RecDef.Attribut1).Value
+                                    IpktAux.AttKey2     = DataLine.ParseField(RecDef.AT2).Value
+                                    IpktAux.AttValue2   = DataLine.ParseField(RecDef.Attribut2).Value
+                                    TcAux               = IpktAux.AsGeoTcPoint()
+                                    p.Attributes        = TcAux.Attributes
                                     
                                     ' Justify Cant and Resolve Ambiguities.
                                     ' TODO: Check tolerances and infinities.

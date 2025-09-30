@@ -1472,4 +1472,46 @@
     <value>              - u=xx als absolute Angabe interpretieren:  %s\n</value>
     <comment>Yes|No: String</comment>
   </data>
+  <data name="Domain_Label_BC" xml:space="preserve">
+    <value>Berechnungscode</value>
+  </data>
+  <data name="Domain_Label_OS" xml:space="preserve">
+    <value>Objektschlüssel</value>
+  </data>
+  <data name="Domain_Label_GC" xml:space="preserve">
+    <value>Grafikcode</value>
+  </data>
+  <data name="Domain_Label_GDim" xml:space="preserve">
+    <value>Grafik-Dimension</value>
+  </data>
+  <data name="Domain_Label_GExz" xml:space="preserve">
+    <value>Grafik-Exzentrum</value>
+  </data>
+  <data name="Domain_Label_Zeitstempel" xml:space="preserve">
+    <value>Zeitstempel</value>
+  </data>
+  <data name="Domain_Label_FL" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="Domain_Label_GL" xml:space="preserve">
+    <value>Gewicht Lage</value>
+  </data>
+  <data name="Domain_Label_GH" xml:space="preserve">
+    <value>Gewicht Höhe</value>
+  </data>
+  <data name="Domain_Label_AT1" xml:space="preserve">
+    <value>Attributcode1</value>
+  </data>
+  <data name="Domain_Label_Attribut1" xml:space="preserve">
+    <value>Attribut1</value>
+  </data>
+  <data name="Domain_Label_AT2" xml:space="preserve">
+    <value>Attributcode2</value>
+  </data>
+  <data name="Domain_Label_Attribut2" xml:space="preserve">
+    <value>Attribut2</value>
+  </data>
+  <data name="Domain_Label_KS" xml:space="preserve">
+    <value>Koordinatensystem</value>
+  </data>
 </root>

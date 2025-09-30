@@ -82,7 +82,7 @@ Namespace Domain
         Property Info()             As String
 
         ''' <summary> An information text regarding point height. </summary>
-        Property HeightInfo         As String
+        Property HeightInfo()       As String
         
         ''' <summary> The point's kind or type. </summary>
         Property Kind()             As GeoPointKind
