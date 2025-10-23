@@ -387,7 +387,7 @@ Public Class MainViewModel
         Public Sub TestExcelDataReader()
             
             Dim TableName  = "Standorte"
-            Dim Workbook   = "X:\Quellen\DotNet\VisualBasic\Rstyx.Utilities\TestWpf\TestData\Standortdaten.xlsx"
+            Dim Workbook   = "C:\ProgramData\intermetric\MicroStation\Workspace\standards\I_Tabellen\Standortdaten.xlsx"
             
             Logger.LogInfo("TestExcelDataReader:")
             Dim Sheet As DataTable = GetExcelSheet(TableName, Workbook)
@@ -559,7 +559,7 @@ Public Class MainViewModel
                 
                 
                 ''Call StartProcessTest()
-                ''Call TestExcelDataReader()
+                Call TestExcelDataReader()
                 '
                 ''Call TestOrder()
                 ''Call TestPDF()
